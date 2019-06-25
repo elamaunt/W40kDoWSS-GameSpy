@@ -190,7 +190,7 @@ namespace GSMasterServer.Servers
                 }
 
                 GC.Collect();
-
+                
                 Thread.Sleep(5 * 60 * 1000);
             }
         }
