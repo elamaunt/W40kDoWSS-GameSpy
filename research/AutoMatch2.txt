@@ -1,0 +1,22 @@
+:SadisticMagician!XqGlOFWs4X|165897482@68.7.165.125 JOIN :#GSP!redalert3pc!M9cDDK9J1M
+UTM SadisticMagician :QMREQ/ 
+:SadisticMagician!XqGlOFWs4X|165897482@* UTM Sidonuke :QMRES/ Faction=4
+:SadisticMagician!XqGlOFWs4X|165897482@* UTM Sidonuke :QMRES/ Color=2
+:SadisticMagician!XqGlOFWs4X|165897482@* UTM Sidonuke :QMRES/ IP=1141351805
+:SadisticMagician!XqGlOFWs4X|165897482@* UTM Sidonuke :QMRES/ NAT=0
+:SadisticMagician!XqGlOFWs4X|165897482@* UTM Sidonuke :QMRES/ Rank=0
+:SadisticMagician!XqGlOFWs4X|165897482@* UTM Sidonuke :QMRES/ ProfileID=165897482
+:SadisticMagician!XqGlOFWs4X|165897482@* UTM Sidonuke :QMRES/ BroadcastEnabled=0
+:SadisticMagician!XqGlOFWs4X|165897482@* UTM Sidonuke :QMRDY/ 
+UTM #GSP!redalert3pc!M9cDDK9J1M :QMGO/ 3 59102000 0 Sidonuke -668448144 7 0 0 50 165497110 0 SadisticMagician 1141351805 4 2 0 0 165897482 1
+UTM SadisticMagician :NAT/ NATHOST0 126392713 Sidonuke
+:SadisticMagician!XqGlOFWs4X|165897482@* UTM Sidonuke :NAT NATINITED1 126392713 SadisticMagician
+UTM Sidonuke,SadisticMagician :NAT/ NEGO0 1 788998A
+:Sidonuke!Xq41W4OFpX|165497110@* UTM Sidonuke :NAT/ NEGO0 1 788998A
+UTM Sidonuke,SadisticMagician :NAT CONNDONE1 0 788998A
+MODE Sidonuke +q
+UTM #GSP!redalert3pc!M9cDDK9J1M :GML 
+PRIVMSG #GSP!redalert3pc!M9cDDK9J1M :@@@GML 216.40.74.112/OLD
+SETCKEY #GPG!2171 Sidonuke :\b_flags\sg
+SETCKEY #GSP!redalert3pc!M9cDDK9J1M Sidonuke :\b_flags\shg
+PART #GPG!2171 :

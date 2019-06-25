@@ -1,0 +1,24 @@
+CRYPT des 1 redalert3pcb
+
+### GAMEKEY: uBZwpf
+:s 705 * SjcYwcde>PQImGcE RC>AjNWf[m>jd=gr
+### CLIENT CHALLENGE: SjcYwcde>PQImGcE
+### SERVER CHALLENGE: RC>AjNWf[m>jd=gr 
+
+USRIP 
+>Ignore reply
+
+USER XaaaaaaaaX|13371337 127.0.0.1 peerchat.gamespy.com :0000000000000000000000000000000
+>We can use any info we want =)
+
+NICK Sidonuke 
+>Any nick will do
+
+JOIN #GPG!2266 
+MODE #GPG!2266 
+GETCKEY #GPG!2266 * 000 0 :\username\b_flags
+>Ignore Responses. Its not needed for a fake client
+SETCKEY #GPG!2266 Sidonuke :\b_clanName\\b_arenaTeamID\\b_locale\\b_wins\\b_losses\\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\
+>Send what ever info we want.
+GETCKEY #GPG!2266 * 001 0 :\b_clanName\b_arenaTeamID\b_locale\b_wins\b_losses\b_rank1v1\b_rank2v2\b_clan1v1\b_clan2v2\b_onlineRank  
+>Ignore this too.

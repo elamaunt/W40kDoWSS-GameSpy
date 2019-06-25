@@ -1,0 +1,39 @@
+----------------------------------
+Log file appended at:
+  04/11/08   (dd/mm/yy)
+  23:26:25
+----------------------------------
+
+CRYPT des 1 redalert3pc
+
+### GAMEKEY: uBZwpf
+:s 705 * mltC`=dZqWlKQmh? tT`l?BH`rbRf?PE\
+### CLIENT CHALLENGE: mltC`=dZqWlKQmh?
+### SERVER CHALLENGE: tT`l?BH`rbRf?PE\
+USRIP
+:s 302  :=+@216.40.74.112
+USER Xq41W4OFpX|165497110 127.0.0.1 peerchat.gamespy.com :fed32e04231660dea6d0ae9a41c8ed3b
+NICK Sidonuke
+:s 001 Sidonuke :Welcome to the Matrix Sidonuke
+:s 002 Sidonuke :Your host is xs0, running version 1.0
+:s 003 Sidonuke :This server was created Fri Oct 19 1979 at 21:50:00 PDT
+:s 004 Sidonuke s 1.0 iq biklmnopqustvhe
+:s 375 Sidonuke :- (M) Message of the day - 
+:s 372 Sidonuke :- Welcome to GameSpy
+:s 376 Sidonuke :End of MOTD command
+CDKEY AAAAAAAAAAAAAAAAAAAA (Notice this isnt a vaild key you may not be authenticated) (testing will be done soon)
+:s 706 Sidonuke 1 :Authenticated
+JOIN #GPG!2176 
+:Sidonuke!Xq41W4OFpX|165497110@* JOIN :#GPG!2176
+MODE #GPG!2176
+:s 332 Sidonuke #GPG!2176 :Click on the "Game Info" button at the top of your screen for the latest information on patches, add-on files, interviews, strategy guides and more!  It`s all there!
+:s 333 Sidonuke #GPG!2176 SERVER 1225379572
+:s 353 Sidonuke * #GPG!2176 :@ChatMonitor-gs randlemadden straightedge101 Fresh{0} GerNtlER fil1987 bulksta Armoredwood sucake KushFader liucmc Rawrior birdman711 acode100 joemoma ChewyTwoey Charlton03 shogunapocolypse Roguecoder koreajon ani21stillakid chaoboj ddubs14 Fluid DasPeakz Ricoman Lixt Shnoosh Beef-Stewart Deikum Aeoneth robh1214 Fizzyboy Ahva Tron67 Stargher Feudal1 TUB><MadMarine bfire853 A_Steamy_Pickle Khaos HvpE hubr645 supercomanderwan chocolatehamster theasiannoob
+:s 353 Sidonuke * #GPG!2176 :gatekeep Rockanator27 SyphenX wiznxg Mert GermanC4 TryLee Nukemuff capcomroy -b4p- FinalBahamutC2K ObiWanCeleri marel1985 turck3 MaiDeMao Maiku_Wongu sungod feeling580 TartarusMkII hellfirereborn quelys atxboy512 GrenadeShark akishadows{0} breal4u269 pilotrowa PrimarchHorus Matrix Boxtao Talinai danknation DarkWizard Pigzorkly PatrikLim Teeko Viking205 Aly699 Keson jerkstore RangerDan600 Defektor Sombust Ishan22 Sidonuke
+:s 366 Sidonuke #GPG!2176 :End of NAMES list
+GETCKEY #GPG!2176 * 000 0 :\username\b_flags
+SETCKEY #GPG!2176 Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\2\b_losses\8\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\1
+GETCKEY #GPG!2176 * 001 0 :\b_clanName\b_arenaTeamID\b_locale\b_wins\b_losses\b_rank1v1\b_rank2v2\b_clan1v1\b_clan2v2\b_onlineRank
+SETCKEY #GPG!2176 Sidonuke :\b_rank1v1\-1\b_rank2v2\-1\b_clan1v1\-1\b_clan2v2\-1
+SETCKEY #GPG!2176 Sidonuke :\b_onlineRank\1
+:s 324 Sidonuke #GPG!2176 +tnp 

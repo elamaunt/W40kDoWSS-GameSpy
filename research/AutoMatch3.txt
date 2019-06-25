@@ -1,0 +1,27 @@
+MODE Sidonuke -q
+JOIN #GPG!2171 
+:s 353 Sidonuke = #GSP!redalert3pc!M9cDDK9J1M :@Sidonuke SadisticMagician
+:s 366 Sidonuke #GSP!redalert3pc!M9cDDK9J1M :End of NAMES list
+GETCKEY #GSP!redalert3pc!M9cDDK9J1M * 020 0 :\username\b_flags
+:s 702 #GSP!redalert3pc!M9cDDK9J1M #GSP!redalert3pc!M9cDDK9J1M SadisticMagician BCAST :\b_flags\s
+:s 702 Sidonuke #GSP!redalert3pc!M9cDDK9J1M SadisticMagician 020 :\XqGlOFWs4X|165897482\s
+:s 702 Sidonuke #GSP!redalert3pc!M9cDDK9J1M Sidonuke 020 :\Xq41W4OFpX|165497110\sh
+:s 703 Sidonuke #GSP!redalert3pc!M9cDDK9J1M 020 :End of GETCKEY
+:Sidonuke!Xq41W4OFpX|165497110@* JOIN :#GPG!2171
+:s 332 Sidonuke #GPG!2171 :Click on the "Game Info" button at the top of your screen for the latest information on patches, add-on files, interviews, strategy guides and more!  It`s all there!
+:s 333 Sidonuke #GPG!2171 SERVER 1225343647
+:s 353 Sidonuke * #GPG!2171 :@ChatMonitor-gs Lanz Cerebrumm ra3test45 SovietAri forthree Rock0727 z0mb0r Monkeybomber Stamp79 MTPILOT Carbon1nTheRough lingle AAHHHHHHHHHHHaaa LlamaLord Schlegeljr luisosaurus Fireatomicman0 Mocha claybucket moman2001 Namahs tongtongbae commondier weles pajing nero9 Vectrex yyyiiiuuu tdanger dj-cor ahkeongjai MagicDK dunkytots Glahardt potuyt ShaqATK mechanizeddemon UNRSomonah 586WS245JCY8WWAB noir3v Fizzyboy eErroR Jibba Skill2Kill PyroCryo bertspank
+:s 353 Sidonuke * #GPG!2171 :H3adkill XtremeX3 Nuctank mvpofbhd green_reaper05 Jamsandwich NumbRoss rhacker777 pdtr corban-fx SpacedOutFX DeathMArineOL HellfireOLSK melonadeq ch0comilk DeathMidgetSquad phaty01 Strigori ixaosich Adareth{0} king3vbo WheelBaller rsXbwa Azeroth48 doomranger8 p40thawk Fome Kelet Sidonuke
+:s 366 Sidonuke #GPG!2171 :End of NAMES list
+MODE #GPG!2171
+SETCKEY #GPG!2171 Sidonuke :\b_flags\s
+GETCKEY #GPG!2171 * 021 0 :\username\b_flags
+SETCKEY #GPG!2171 Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\2\b_losses\9\b_rank1v1\-1\b_rank2v2\-1\b_clan1v1\-1\b_clan2v2\-1\b_onlineRank\2
+SETCKEY #GSP!redalert3pc!M9cDDK9J1M Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\2\b_losses\9\b_rank1v1\-1\b_rank2v2\-1\b_clan1v1\-1\b_clan2v2\-1\b_onlineRank\2
+GETCKEY #GPG!2171 * 022 0 :\b_clanName\b_arenaTeamID\b_locale\b_wins\b_losses\b_rank1v1\b_rank2v2\b_clan1v1\b_clan2v2\b_onlineRank
+PART #GSP!redalert3pc!M9cDDK9J1M :
+SETCKEY #GPG!2171 Sidonuke :\b_flags\
+:s 702 #GSP!redalert3pc!M9cDDK9J1M #GSP!redalert3pc!M9cDDK9J1M SadisticMagician BCAST :\b_clanName\tB\b_arenaTeamID\29213\b_locale\0\b_wins\26\b_losses\20\b_rank1v1\-1\b_rank2v2\-1\b_clan1v1\-1\b_clan2v2\-1\b_onlineRank\5
+:s 702 #GSP!redalert3pc!M9cDDK9J1M #GSP!redalert3pc!M9cDDK9J1M Sidonuke BCAST :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\2\b_losses\9\b_rank1v1\-1\b_rank2v2\-1\b_clan1v1\-1\b_clan2v2\-1\b_onlineRank\2
+:Sidonuke!Xq41W4OFpX|165497110@* PART #GSP!redalert3pc!M9cDDK9J1M :
+:s 324 Sidonuke #GPG!2171 +tnp 

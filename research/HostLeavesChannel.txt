@@ -1,0 +1,10 @@
+>Host updates his status
+:s 702 #GPG!2266 #GPG!2266 car2nr BCAST :\b_flags\
+>he parts.
+:car2nr!X44vuulsFX|155970863@* PART #GSP!redalert3pcb!MaPJ9aPhaM :
+>we part
+PART #GSP!redalert3pcb!MaPJ9aPhaM :
+>update our status
+SETCKEY #GPG!2266 Sidonuke :\b_flags\
+>status updated.
+:s 702 #GPG!2266 #GPG!2266 Sidonuke BCAST :\b_flags\

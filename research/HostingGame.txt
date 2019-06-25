@@ -1,0 +1,46 @@
+JOIN #GSP!redalert3pc!M9cDDK9J1M 
+:Sidonuke!Xq41W4OFpX|165497110@216.40.74.112 JOIN :#GSP!redalert3pc!M9cDDK9J1M
+MODE #GSP!redalert3pc!M9cDDK9J1M
+:s 331 Sidonuke #GSP!redalert3pc!M9cDDK9J1M :No topic is set
+:s 353 Sidonuke * #GSP!redalert3pc!M9cDDK9J1M :@Sidonuke
+:s 366 Sidonuke #GSP!redalert3pc!M9cDDK9J1M :End of NAMES list
+MODE #GSP!redalert3pc!M9cDDK9J1M +k lol123
+MODE #GSP!redalert3pc!M9cDDK9J1M
+SETCKEY #GPG!2166 Sidonuke :\b_flags\s
+SETCKEY #GSP!redalert3pc!M9cDDK9J1M Sidonuke :\b_flags\sh
+GETCKEY #GSP!redalert3pc!M9cDDK9J1M * 009 0 :\username\b_flags
+TOPIC #GSP!redalert3pc!M9cDDK9J1M :Sidonuke hosting test
+MODE #GSP!redalert3pc!M9cDDK9J1M +l 6
+SETCKEY #GPG!2166 Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\2\b_losses\8\b_rank1v1\-1\b_rank2v2\-1\b_clan1v1\-1\b_clan2v2\-1\b_onlineRank\1
+SETCKEY #GSP!redalert3pc!M9cDDK9J1M Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\2\b_losses\8\b_rank1v1\-1\b_rank2v2\-1\b_clan1v1\-1\b_clan2v2\-1\b_onlineRank\1
+UTM #GSP!redalert3pc!M9cDDK9J1M :PN/ 0=Sidonuke
+UTM #GSP!redalert3pc!M9cDDK9J1M :SL/ M=283data/maps/official/map_mp_2_feasel4;MC=17793252;MS=0;SD=1819790562;GSID=4087;GT=-1;PC=-1;RU=3 100 10000 0 1 10 0 1 0 -1 0 -1 -1 1 ;S=H,D8284A70,0,TT,-1,7,-1,-1,0,1,-1,:O:X:X:X:X:;
+UTM #GSP!redalert3pc!M9cDDK9J1M :Pings/ ,0,0,0,0,0
+UTM #GSP!redalert3pc!M9cDDK9J1M :PIDS/ 0, , , , , , , , , , , ,
+UTM Sidonuke :REQ/ PlayerTemplate=4
+UTM Sidonuke :REQ/ Color=0
+:s 702 #GPG!2166 #GPG!2166 Sidonuke BCAST :\b_flags\s
+:s 324 Sidonuke #GSP!redalert3pc!M9cDDK9J1M +tnp 
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M +k lol123
+:s 324 Sidonuke #GSP!redalert3pc!M9cDDK9J1M +tnpk lol123
+:s 702 #GSP!redalert3pc!M9cDDK9J1M #GSP!redalert3pc!M9cDDK9J1M Sidonuke BCAST :\b_flags\sh
+:s 702 Sidonuke #GSP!redalert3pc!M9cDDK9J1M Sidonuke 009 :\Xq41W4OFpX|165497110\sh
+:s 703 Sidonuke #GSP!redalert3pc!M9cDDK9J1M 009 :End of GETCKEY
+:Sidonuke!Xq41W4OFpX|165497110@* TOPIC #GSP!redalert3pc!M9cDDK9J1M :Sidonuke hosting test
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M +l 6
+:s 702 #GSP!redalert3pc!M9cDDK9J1M #GSP!redalert3pc!M9cDDK9J1M Sidonuke BCAST :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\2\b_losses\8\b_rank1v1\-1\b_rank2v2\-1\b_clan1v1\-1\b_clan2v2\-1\b_onlineRank\1
+MODE #GSP!redalert3pc!M9cDDK9J1M -i+p-s-m+n+t+l+e 6
+:s 702 #GPG!2166 #GPG!2166 Sidonuke BCAST :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\2\b_losses\8\b_rank1v1\-1\b_rank2v2\-1\b_clan1v1\-1\b_clan2v2\-1\b_onlineRank\1
+:Sidonuke!Xq41W4OFpX|165497110@* UTM Sidonuke :REQ/ PlayerTemplate=4
+:Sidonuke!Xq41W4OFpX|165497110@* UTM Sidonuke :REQ/ Color=0
+UTM #GSP!redalert3pc!M9cDDK9J1M :PN/ 0=Sidonuke
+UTM #GSP!redalert3pc!M9cDDK9J1M :SL/ M=283data/maps/official/map_mp_2_feasel4;MC=17793252;MS=0;SD=1819790562;GSID=4087;GT=-1;PC=-1;RU=3 100 10000 0 1 10 0 1 0 -1 0 -1 -1 1 ;S=H,D8284A70,0,TT,-1,4,-1,-1,0,1,-1,:O:X:X:X:X:;
+UTM #GSP!redalert3pc!M9cDDK9J1M :Pings/ ,0,0,0,0,0
+UTM #GSP!redalert3pc!M9cDDK9J1M :PIDS/ 9dd4916, , , , , , , , , , , ,
+UTM #GSP!redalert3pc!M9cDDK9J1M :PN/ 0=Sidonuke
+UTM #GSP!redalert3pc!M9cDDK9J1M :SL/ M=283data/maps/official/map_mp_2_feasel4;MC=17793252;MS=0;SD=1819790562;GSID=4087;GT=-1;PC=-1;RU=3 100 10000 0 1 10 0 1 0 -1 0 -1 -1 1 ;S=H,D8284A70,0,TT,0,4,-1,-1,0,1,-1,:O:X:X:X:X:;
+UTM #GSP!redalert3pc!M9cDDK9J1M :Pings/ ,0,0,0,0,0
+UTM #GSP!redalert3pc!M9cDDK9J1M :PIDS/ 9dd4916, , , , , , , , , , , ,
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M -p
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M +e
+PRIVMSG #GSP!redalert3pc!M9cDDK9J1M :hosted test

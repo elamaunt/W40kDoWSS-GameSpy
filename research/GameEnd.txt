@@ -1,0 +1,4 @@
+MODE Sidonuke -q
+SETCKEY #GSP!redalert3pcb!MzJ3P31DKM Sidonuke :\b_flags\s
+JOIN #GPG!2266 
+:Sidonuke!XlG1W4OFpX|153849803@* JOIN :#GPG!2266

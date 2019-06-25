@@ -1,0 +1,62 @@
+>Join the game
+JOIN #GSP!redalert3pcb!MaPJ9aPhaM 
+>we have joined
+:Sidonuke!XlG1W4OFpX|153849803@* JOIN :#GSP!redalert3pcb!MaPJ9aPhaM
+>Get modes
+MODE #GSP!redalert3pcb!MaPJ9aPhaM
+>Topic
+:s 332 Sidonuke #GSP!redalert3pcb!MaPJ9aPhaM :car2nr 1 vs 1
+>Users list
+:s 333 Sidonuke #GSP!redalert3pcb!MaPJ9aPhaM car2nr 1219384396
+:s 353 Sidonuke = #GSP!redalert3pcb!MaPJ9aPhaM :@car2nr Sidonuke
+:s 366 Sidonuke #GSP!redalert3pcb!MaPJ9aPhaM :End of NAMES list
+>Tell lobby we are staging
+SETCKEY #GPG!2266 Sidonuke :\b_flags\s
+>Tell game lobby we are staging
+SETCKEY #GSP!redalert3pcb!MaPJ9aPhaM Sidonuke :\b_flags\s
+>Get game lobby user flags
+GETCKEY #GSP!redalert3pcb!MaPJ9aPhaM * 023 0 :\username\b_flags
+>Update ranking to lobby
+SETCKEY #GPG!2266 Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\62\b_losses\32\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+>Tell game lobby our rank
+SETCKEY #GSP!redalert3pcb!MaPJ9aPhaM Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\62\b_losses\32\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+>Get ranking of people in game lobby
+GETCKEY #GSP!redalert3pcb!MaPJ9aPhaM * 024 0 :\b_clanName\b_arenaTeamID\b_locale\b_wins\b_losses\b_rank1v1\b_rank2v2\b_clan1v1\b_clan2v2\b_onlineRank
+>Unknown... (Give me rules update?)
+UTM #GSP!redalert3pcb!MaPJ9aPhaM :BCLR/ 
+>Response about game rules.
+>Player names and there slot
+:car2nr!*@* UTM #GSP!redalert3pcb!MaPJ9aPhaM :PN/ 0=car2nr,1=Sidonuke
+>Rules information
+>M=Link to the Map we are playing
+>MC=Unknown
+>MS=Unknown
+>SD=Unknown
+>GSID=Unknown
+>GT=Unknown
+>PC=Unknown
+>RU=Rules setting
+>S=Slot Information
+:car2nr!*@* UTM #GSP!redalert3pcb!MaPJ9aPhaM :SL/ M=281data/maps/official/map_mp_2_black1b;MC=FEAA7D29;MS=0;SD=597651853;GSID=31EB;GT=-1;PC=-1;RU=3 100 10000 0 1 10 0 1 0 -1 0 -1 -1 -1 ;S=H,465F54F0,0,TT,-1,7,1,0,0,1,-1,:H,D8284AED,8088,FT,-1,7,-1,-1,0,1,-1,:X:X:X:X:;
+>Map Changed?
+UTM car2nr :MAP 1
+>Game Lobby Modes
+:s 324 Sidonuke #GSP!redalert3pcb!MaPJ9aPhaM +tnle 6
+>Finally got our user status sent back to us
+:s 702 #GSP!redalert3pcb!MaPJ9aPhaM #GSP!redalert3pcb!MaPJ9aPhaM Sidonuke BCAST :\b_flags\s
+>EncodedIP/ProfileID/Flags List
+:s 702 Sidonuke #GSP!redalert3pcb!MaPJ9aPhaM Sidonuke 023 :\XlG1W4OFpX|153849803\s
+>Notice he has 'sh' flags? it means hes staging and a host
+:s 702 Sidonuke #GSP!redalert3pcb!MaPJ9aPhaM car2nr 023 :\X44vuulsFX|155970863\sh
+:s 703 Sidonuke #GSP!redalert3pcb!MaPJ9aPhaM 023 :End of GETCKEY
+>More game Lobby Settings
+>Pings to be used for NAT Nego
+:car2nr!*@* UTM #GSP!redalert3pcb!MaPJ9aPhaM :Pings/ ,,0,0,0,0
+>PIDs... Unknown
+:car2nr!*@* UTM #GSP!redalert3pcb!MaPJ9aPhaM :PIDS/ 0, ,92b8fcb, , , , , , , , , ,
+>Ranking Update from us
+:s 702 #GSP!redalert3pcb!MaPJ9aPhaM #GSP!redalert3pcb!MaPJ9aPhaM Sidonuke BCAST :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\62\b_losses\32\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+>Ranking info for users
+:s 702 Sidonuke #GSP!redalert3pcb!MaPJ9aPhaM Sidonuke 024 :\\0\0\62\32\\\\\0
+:s 702 Sidonuke #GSP!redalert3pcb!MaPJ9aPhaM car2nr 024 :\\0\0\0\5\\\\\0
+:s 703 Sidonuke #GSP!redalert3pcb!MaPJ9aPhaM 024 :End of GETCKEY

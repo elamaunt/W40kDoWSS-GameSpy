@@ -1,0 +1,31 @@
+JOIN #GSP!redalert3pcb!M9lDDK9PaM 
+:Sidonuke!XlG1W4OFpX|153849803@216.40.74.237 JOIN :#GSP!redalert3pcb!M9lDDK9PaM
+MODE #GSP!redalert3pcb!M9lDDK9PaM
+:s 331 Sidonuke #GSP!redalert3pcb!M9lDDK9PaM :No topic is set
+:s 353 Sidonuke * #GSP!redalert3pcb!M9lDDK9PaM :@Sidonuke
+:s 366 Sidonuke #GSP!redalert3pcb!M9lDDK9PaM :End of NAMES list
+MODE #GSP!redalert3pcb!M9lDDK9PaM
+SETCKEY #GPG!2266 Sidonuke :\b_flags\s
+SETCKEY #GSP!redalert3pcb!M9lDDK9PaM Sidonuke :\b_flags\sh
+GETCKEY #GSP!redalert3pcb!M9lDDK9PaM * 027 0 :\username\b_flags
+TOPIC #GSP!redalert3pcb!M9lDDK9PaM :Sidonuke 1v1aaa
+MODE #GSP!redalert3pcb!M9lDDK9PaM +l 6
+SETCKEY #GPG!2266 Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\62\b_losses\32\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+SETCKEY #GSP!redalert3pcb!M9lDDK9PaM Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\62\b_losses\32\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+:s 324 Sidonuke #GSP!redalert3pcb!M9lDDK9PaM +tnp 
+MODE #GSP!redalert3pcb!M9lDDK9PaM -i+p-s-m+n+t+l+e 6
+UTM #GSP!redalert3pcb!M9lDDK9PaM :PN/ 0=Sidonuke
+UTM #GSP!redalert3pcb!M9lDDK9PaM :SL/ M=281data/maps/official/map_mp_2_feasel1;MC=32853103;MS=0;SD=-1294104150;GSID=4402;GT=-1;PC=-1;RU=3 100 10000 0 1 10 0 1 0 -1 0 -1 -1 -1 ;S=H,D8284AED,0,TT,-1,7,-1,-1,0,1,-1,:O:X:X:X:X:;
+UTM #GSP!redalert3pcb!M9lDDK9PaM :Pings/ ,0,0,0,0,0
+UTM #GSP!redalert3pcb!M9lDDK9PaM :PIDS/ 0, , , , , , , , , , , ,
+UTM Sidonuke :MAP 1
+:s 324 Sidonuke #GSP!redalert3pcb!M9lDDK9PaM +tnp 
+:s 702 #GSP!redalert3pcb!M9lDDK9PaM #GSP!redalert3pcb!M9lDDK9PaM Sidonuke BCAST :\b_flags\sh
+:s 702 Sidonuke #GSP!redalert3pcb!M9lDDK9PaM Sidonuke 027 :\XlG1W4OFpX|153849803\sh
+:s 703 Sidonuke #GSP!redalert3pcb!M9lDDK9PaM 027 :End of GETCKEY
+:Sidonuke!XlG1W4OFpX|153849803@* TOPIC #GSP!redalert3pcb!M9lDDK9PaM :Sidonuke 1v1aaa
+:Sidonuke!XlG1W4OFpX|153849803@* MODE #GSP!redalert3pcb!M9lDDK9PaM +l 6
+:s 702 #GSP!redalert3pcb!M9lDDK9PaM #GSP!redalert3pcb!M9lDDK9PaM Sidonuke BCAST :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\62\b_losses\32\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+:Sidonuke!XlG1W4OFpX|153849803@* MODE #GSP!redalert3pcb!M9lDDK9PaM -p
+:Sidonuke!XlG1W4OFpX|153849803@* MODE #GSP!redalert3pcb!M9lDDK9PaM +e
+:Sidonuke!XlG1W4OFpX|153849803@* UTM Sidonuke :MAP 1

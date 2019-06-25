@@ -1,0 +1,12 @@
+JOIN #GSP!redalert3pcb!MaPJ9aPhaM 
+MODE #GSP!redalert3pcb!MaPJ9aPhaM 
+>This must be set
+SETCKEY #GPG!2266 Sidonuke :\b_flags\s
+SETCKEY #GSP!redalert3pcb!MaPJ9aPhaM Sidonuke :\b_flags\s
+GETCKEY #GSP!redalert3pcb!MaPJ9aPhaM * 023 0 :\username\b_flags
+>Send the same ranking info as before.
+SETCKEY #GPG!2266 Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\62\b_losses\32\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+SETCKEY #GSP!redalert3pcb!MaPJ9aPhaM Sidonuke :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\62\b_losses\32\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+GETCKEY #GSP!redalert3pcb!MaPJ9aPhaM * 024 0 :\b_clanName\b_arenaTeamID\b_locale\b_wins\b_losses\b_rank1v1\b_rank2v2\b_clan1v1\b_clan2v2\b_onlineRank
+UTM #GSP!redalert3pcb!MaPJ9aPhaM :BCLR/
+UTM car2nr :MAP 1

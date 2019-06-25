@@ -1,0 +1,29 @@
+:lutinblanc!*@* PRIVMSG #GPG!2266 :What with a "Please wait for Refresh NAT to be completed" error?
+>This is a normal chat message. =p
+>In the RA3 Client coloring for chat works like this.
+>Having "@" or +o results in light blue chat
+>If you are a VIP ProfileID as defined in the RA3 Client your chat is blue always
+>Being on a players friend list results in pink chat
+>Normal Players are red chat
+
+:s 702 #GPG!2266 #GPG!2266 TonyFerelli BCAST :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\0\b_losses\0\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+>This updates our ranking information to everyone in chat
+:s 702 #GPG!2266 #GPG!2266 bourne93 BCAST :\b_flags\s
+>This updates our player status
+>Flags List
+>s = Starting a game
+>h = We are the hosting for the game
+>g = We are ingame (ingame is marked as sg)
+
+:yxovertka!XFO9pvFf4X|155981446@* QUIT :Later!
+>Results from logging off or Crashing
+
+:Cuycoybuster!XsGf4OWsFX|152886244@* PART #GPG!2266 :
+>Result from changing lobbys or going into a game.
+>This could be useful for knowing when to run a whois command to get his channels and see what game he joined. If no channels are listed then its a loby change.
+
+:matchcola!*@* NOTICE #GSP!redalert3pcb!MzJ3P31DKM :5...
+>This is for a game lobby and not the main lobby but this results in white text from no name. When sent to channels.
+>If its sent only to a user he only sees the white text (A name may be attached. Dont know...)
+>If a notice is sent to a game lobby while the game is in session no text is sent.
+>If a notice is sent to a player while ingame we will see the message ingame with blue text and Username : Text

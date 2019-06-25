@@ -1,0 +1,31 @@
+JOIN #GSP!redalert3pc!M9cDDK9J1M 
+:Sidonuke!Xq41W4OFpX|165497110@216.40.74.112 JOIN :#GSP!redalert3pc!M9cDDK9J1M
+MODE #GSP!redalert3pc!M9cDDK9J1M
+:s 331 Sidonuke #GSP!redalert3pc!M9cDDK9J1M :No topic is set
+:s 353 Sidonuke * #GSP!redalert3pc!M9cDDK9J1M :@Sidonuke
+:s 366 Sidonuke #GSP!redalert3pc!M9cDDK9J1M :End of NAMES list
+MODE #GSP!redalert3pc!M9cDDK9J1M
+SETCKEY #GPG!2171 Sidonuke :\b_flags\s
+SETCKEY #GSP!redalert3pc!M9cDDK9J1M Sidonuke :\b_flags\sh
+GETCKEY #GSP!redalert3pc!M9cDDK9J1M * 019 0 :\username\b_flags
+TOPIC #GSP!redalert3pc!M9cDDK9J1M :Sidonuke
+MODE #GSP!redalert3pc!M9cDDK9J1M +l 2
+MODE #GSP!redalert3pc!M9cDDK9J1M +i+p+s+m+n+t+l+e 2
+:s 324 Sidonuke #GSP!redalert3pc!M9cDDK9J1M +tnp 
+MODE #GSP!redalert3pc!M9cDDK9J1M -i+p-s-m+n+t+l+e 2
+:s 324 Sidonuke #GSP!redalert3pc!M9cDDK9J1M +tnp 
+:s 702 #GSP!redalert3pc!M9cDDK9J1M #GSP!redalert3pc!M9cDDK9J1M Sidonuke BCAST :\b_flags\sh
+:Sidonuke!Xq41W4OFpX|165497110@* TOPIC #GSP!redalert3pc!M9cDDK9J1M :Sidonuke
+:s 702 Sidonuke #GSP!redalert3pc!M9cDDK9J1M Sidonuke 019 :\Xq41W4OFpX|165497110\sh
+:s 703 Sidonuke #GSP!redalert3pc!M9cDDK9J1M 019 :End of GETCKEY
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M +l 2
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M +i
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M -p
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M +s
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M +m
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M +e
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M -i
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M -s
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M +p
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M -p
+:Sidonuke!Xq41W4OFpX|165497110@* MODE #GSP!redalert3pc!M9cDDK9J1M -m

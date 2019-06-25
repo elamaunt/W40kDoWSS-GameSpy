@@ -1,0 +1,28 @@
+UTM #GSP!redalert3pcb!M9lDDK9PaM :PN/ 0=Sidonuke
+UTM #GSP!redalert3pcb!M9lDDK9PaM :SL/ M=281data/maps/official/map_mp_2_feasel1;MC=32853103;MS=0;SD=-1294104150;GSID=4402;GT=-1;PC=-1;RU=3 100 10000 0 1 10 0 1 0 -1 0 -1 -1 -1 ;S=H,D8284AED,0,TT,-1,8,-1,-1,0,1,-1,:O:X:X:X:X:;
+UTM #GSP!redalert3pcb!M9lDDK9PaM :Pings/ ,0,0,0,0,0
+UTM #GSP!redalert3pcb!M9lDDK9PaM :PIDS/ 0, , , , , , , , , , , ,
+UTM #GSP!redalert3pcb!M9lDDK9PaM :KPA/ 
+
+UTM Sidonuke :REQ/ PlayerTemplate=8
+UTM Sidonuke :REQ/ Color=0
+UTM Sidonuke :REQ/ Team=0
+UTM Sidonuke :REQ/ StartPos=1
+
+PRIVMSG #GSP!redalert3pcb!M9lDDK9PaM :open slot
+UTM #GSP!redalert3pcb!M9lDDK9PaM :PN/ 0=Sidonuke
+UTM #GSP!redalert3pcb!M9lDDK9PaM :SL/ M=281data/maps/official/map_mp_2_feasel1;MC=32853103;MS=0;SD=-1294104150;GSID=4402;GT=-1;PC=-1;RU=3 100 10000 0 1 10 0 1 0 -1 0 -1 -1 -1 ;S=H,D8284AED,0,TT,1,4,1,1,0,1,-1,:O:O:X:X:X:;
+UTM #GSP!redalert3pcb!M9lDDK9PaM :Pings/ ,0,0,0,0,0
+UTM #GSP!redalert3pcb!M9lDDK9PaM :PIDS/ 0, , , , , , , , , , , ,
+
+PRIVMSG #GSP!redalert3pcb!M9lDDK9PaM :close slot
+UTM #GSP!redalert3pcb!M9lDDK9PaM :PN/ 0=Sidonuke
+UTM #GSP!redalert3pcb!M9lDDK9PaM :SL/ M=281data/maps/official/map_mp_2_feasel1;MC=32853103;MS=0;SD=-1294104150;GSID=4402;GT=-1;PC=-1;RU=3 100 10000 0 1 10 0 1 0 -1 0 -1 -1 -1 ;S=H,D8284AED,0,TT,1,4,1,1,0,1,-1,:O:X:X:X:X:;
+UTM #GSP!redalert3pcb!M9lDDK9PaM :Pings/ ,0,0,0,0,0
+UTM #GSP!redalert3pcb!M9lDDK9PaM :PIDS/ 0, , , , , , , , , , , ,
+
+UTM #GSP!redalert3pcb!MzJ3P31DKM :BCLR/
+
+UTM matchcola :READY true
+
+:matchcola!*@* UTM #GSP!redalert3pcb!MzJ3P31DKM :HWS/ true

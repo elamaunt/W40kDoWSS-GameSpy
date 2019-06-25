@@ -1,0 +1,49 @@
+Crypt init:
+CRYPT des 1 stringhold2 \r
+:s 705 * 0000000000000000 0000000000000000 \r
+
+Connection is now encrypted with 128bit cipher
+--------------------------------------------------------------------------------
+Public IP-Address check:
+USRIP \r
+:s 302  :=+@127.0.0.1" \r
+--------------------------------------------------------------------------------
+Set User:
+USER XGa4lqOa9X|0 127.0.0.1 peerchat.gamespy.com :46fff08dd5535a73f012f101bb469042 \r
+|c--|username----|hostname-|servername-----------|username-----------------------|
+                   ^-hardcoded 
+--------------------------------------------------------------------------------
+Set Nick:
+NICK LeKeks \r
+calls Welcome & Motd on first execution!
+--------------------------------------------------------------------------------
+Welcome:
+:s 001 Welcome User. Pleased to meet you..
+:s 002 Some more text..
+--------------------------------------------------------------------------------
+Motd:
+:s 375 [MOTD] I like cookies :3
+:s 376 [MOTD] some more text...
+--------------------------------------------------------------------------------
+Login:
+LOGIN * <pwdhash> :<user@mail@domain.tld> 
+||
+LOGIN <> <Nickname> <pwdhash>
+
+:s 707 <userid> <accountid>
+--------------------------------------------------------------------------------
+CDKey:
+CDKEY <key>
+:s 706 <state> :<message> 
+
+state = 1: ok   , message = "Authenticated"
+state = 0: fail , message = "Failed"
+--------------------------------------------------------------------------------
+Quit:
+QUIT :Later!
+QUIT :See ya!
+
+================================================================================
+
+http://thq.vo.llnwd.net/o10/DoW/automatch/AutomatchDefaultsSS.lua
+http://thq.vo.llnwd.net/o10/DoW/lobby/RussianLobbyRooms.lua

@@ -1,0 +1,8 @@
+PRIVMSG #GPG!2266 text
+>for chatting
+NOTICE #GPG!2266 text
+>for system messages (This is a hack)
+PRIVMSG User text
+>for whispers
+NOTICE User text 
+>for system messages to users (This is a hack)
