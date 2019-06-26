@@ -46,10 +46,10 @@ namespace GSMasterServer.Servers
                 Port = port
             });
 
-            new Thread(StartCleanup)
+           /* new Thread(StartCleanup)
             {
                 Name = "Server Reporting Cleanup Thread"
-            }.Start();
+            }.Start();*/
 
             new Thread(StartDynamicInfoReload)
             {
@@ -246,7 +246,11 @@ namespace GSMasterServer.Servers
                     if (!ParseServerDetails(remote, receivedBytes.Skip(5).ToArray()))
                     {
                         // this should be some sort of proper encrypted challenge, but for now i'm just going to hard code it because I don't know how the encryption works...
-                        byte[] response = new byte[] { 0xfe, 0xfd, 0x01, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3], 0x44, 0x3d, 0x73, 0x7e, 0x6a, 0x59, 0x30, 0x30, 0x37, 0x43, 0x39, 0x35, 0x41, 0x42, 0x42, 0x35, 0x37, 0x34, 0x43, 0x43, 0x00 };
+                        //byte[] response = new byte[] { 0xfe, 0xfd, 0x01, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3], 0x44, 0x3d, 0x73, 0x7e, 0x6a, 0x59, 0x30, 0x30, 0x37, 0x43, 0x39, 0x35, 0x41, 0x42, 0x42, 0x35, 0x37, 0x34, 0x43, 0x43, 0x00 };
+
+                        // Рабочий вариант server challenge из кода сервака для Цивы 4
+                        byte[] response = new byte[] { 0xfe, 0xfd, 0x01, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3], 0x41, 0x43, 0x4E, 0x2B, 0x78, 0x38, 0x44, 0x6D, 0x57, 0x49, 0x76, 0x6D, 0x64, 0x5A, 0x41, 0x51, 0x45, 0x37, 0x68, 0x41, 0x00 };
+                        
                         _socket.SendTo(response, remote);
                     }
                 }
@@ -258,9 +262,15 @@ namespace GSMasterServer.Servers
                     Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
 
                     // confirm against the hardcoded challenge
-                    byte[] validate = new byte[] { 0x72, 0x62, 0x75, 0x67, 0x4a, 0x34, 0x34, 0x64, 0x34, 0x7a, 0x2b, 0x66, 0x61, 0x78, 0x30, 0x2f, 0x74, 0x74, 0x56, 0x56, 0x46, 0x64, 0x47, 0x62, 0x4d, 0x7a, 0x38, 0x41, 0x00 };
+                    //byte[] validate = new byte[] { 0x72, 0x62, 0x75, 0x67, 0x4a, 0x34, 0x34, 0x64, 0x34, 0x7a, 0x2b, 0x66, 0x61, 0x78, 0x30, 0x2f, 0x74, 0x74, 0x56, 0x56, 0x46, 0x64, 0x47, 0x62, 0x4d, 0x7a, 0x38, 0x41, 0x00 };
+                    
+
+                    byte[] validate = Encoding.UTF8.GetBytes("Iare43/78WkOVaU1Aanv8vrXbSwA\0"); //new byte[] { 0x41, 0x42, 0x4A, 0x36, 0x47, 0x74, 0x4E, 0x42, 0x35, 0x6D, 0x55, 0x59, 0x48, 0x7A, 0x30, 0x2B, 0x78, 0x34, 0x38, 0x46, 0x36, 0x34, 0x76, 0x4A, 0x54, 0x51, 0x45, 0x41, 0x00 };
+
                     byte[] clientResponse = new byte[validate.Length];
                     Array.Copy(receivedBytes, 5, clientResponse, 0, clientResponse.Length);
+
+                    var resStr = Encoding.UTF8.GetString(clientResponse);
 
                     // if we validate, reply back a good response
                     if (clientResponse.SequenceEqual(validate))
@@ -417,16 +427,16 @@ namespace GSMasterServer.Servers
                 }
             }
 
-            if (String.IsNullOrWhiteSpace(server.gamename) || !server.gamename.Equals("battlefield2", StringComparison.InvariantCultureIgnoreCase))
+            if (String.IsNullOrWhiteSpace(server.gamename) || !server.gamename.Equals("whamdowfr", StringComparison.InvariantCultureIgnoreCase))
             {
                 // only allow servers with a gamename of battlefield2
                 return true; // true means we don't send back a response
             }
-            else if (String.IsNullOrWhiteSpace(server.gamevariant) || !_modWhitelist.ToList().Any(x => SQLMethods.EvaluateIsLike(server.gamevariant, x)))
+          /*  else if (String.IsNullOrWhiteSpace(server.gamevariant) || !_modWhitelist.ToList().Any(x => SQLMethods.EvaluateIsLike(server.gamevariant, x)))
             {
                 // only allow servers with a gamevariant of those listed in modwhitelist.txt, or (pr || pr_*) by default
                 return true; // true means we don't send back a response
-            }
+            }*/
 
             // you've got to have all these properties in order for your server to be valid
             if (!String.IsNullOrWhiteSpace(server.hostname) &&

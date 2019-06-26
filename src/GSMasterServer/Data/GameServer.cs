@@ -8,7 +8,7 @@ namespace GSMasterServer.Data
 
 	internal class GameServer
 	{
-		[NonFilter]
+        [NonFilter]
 		public bool Valid { get; set; }
 
 		[NonFilter]
@@ -50,40 +50,20 @@ namespace GSMasterServer.Data
 		public int maxplayers { get; set; }
 		public string gamemode { get; set; }
 		public bool password { get; set; }
-		public int timelimit { get; set; }
-		public int roundtime { get; set; }
 		public int hostport { get; set; }
-		public bool bf2_dedicated { get; set; }
-		public bool bf2_ranked { get; set; }
-		public bool bf2_anticheat { get; set; }
-		public string bf2_os { get; set; }
-		public bool bf2_autorec { get; set; }
-		public string bf2_d_idx { get; set; }
-		public string bf2_d_dl { get; set; }
-		public bool bf2_voip { get; set; }
-		public bool bf2_autobalanced { get; set; }
-		public bool bf2_friendlyfire { get; set; }
-		public string bf2_tkmode { get; set; }
-		public double bf2_startdelay { get; set; }
-		public double bf2_spawntime { get; set; }
-		public string bf2_sponsortext { get; set; }
-		public string bf2_sponsorlogo_url { get; set; }
-		public string bf2_communitylogo_url { get; set; }
-		public int bf2_scorelimit { get; set; }
-		public double bf2_ticketratio { get; set; }
-		public double bf2_teamratio { get; set; }
-		public string bf2_team1 { get; set; }
-		public string bf2_team2 { get; set; }
-		public bool bf2_bots { get; set; }
-		public bool bf2_pure { get; set; }
-		public int bf2_mapsize { get; set; }
-		public bool bf2_globalunlocks { get; set; }
-		public double bf2_fps { get; set; }
-		public bool bf2_plasma { get; set; }
-		public int bf2_reservedslots { get; set; }
-		public double bf2_coopbotratio { get; set; }
-		public int bf2_coopbotcount { get; set; }
-		public int bf2_coopbotdiff { get; set; }
-		public bool bf2_novehicles { get; set; }
-	}
+		public int numwaiting { get; set; }
+		public int maxwaiting { get; set; }
+		public int numservers { get; set; }
+		public int numplayersname { get; set; }
+		public int score_ { get; set; }
+
+        public bool teamplay  { get; set; }
+        public int groupid { get; set; }
+        public int numobservers { get; set; }
+        public int maxobservers { get; set; }
+        public string modname { get; set; }
+        public string moddisplayname { get; set; }
+        public string modversion { get; set; }
+        public bool devmode { get; set; }
+    }
 }

@@ -26,64 +26,34 @@ namespace GSMasterServer.Servers
         public ServerListRetrieve(IPAddress listen, ushort port, ServerListReport report)
         {
             _report = report;
-            /*
-			_report.Servers.TryAdd("test", new List<GameServer>() {
-				new GameServer() {
-					Valid = true,
-					IPAddress = "192.168.1.2",
-					QueryPort = 29900,
-					country = "AU",
-					hostname = "[PR v1.2.0.0] 42",
-					gamename = "battlefield2",
-					gamever = "1.5.3153-802.0",
-					mapname = "Awesome Map",
-					gametype = "gpm_cq",
-					gamevariant = "pr",
-					numplayers = 100,
-					maxplayers = 100,
-					gamemode = "openplaying",
-					password = false,
-					timelimit = 14400,
-					roundtime = 1,
-					hostport = 16567,
-					bf2_dedicated = true,
-					bf2_ranked = true,
-					bf2_anticheat = false,
-					bf2_os = "win32",
-					bf2_autorec = true,
-					bf2_d_idx = "http://",
-					bf2_d_dl = "http://",
-					bf2_voip = true,
-					bf2_autobalanced = false,
-					bf2_friendlyfire = true,
-					bf2_tkmode = "No Punish",
-					bf2_startdelay = 240.0,
-					bf2_spawntime = 300.0,
-					bf2_sponsortext = "Welcome to an awesome server!",
-					bf2_sponsorlogo_url = "http://",
-					bf2_communitylogo_url = "http://",
-					bf2_scorelimit = 100,
-					bf2_ticketratio = 100.0,
-					bf2_teamratio = 100.0,
-					bf2_team1 = "US",
-					bf2_team2 = "MEC",
-					bf2_bots = false,
-					bf2_pure = false,
-					bf2_mapsize = 64,
-					bf2_globalunlocks = true,
-					bf2_fps = 35.0,
-					bf2_plasma = true,
-					bf2_reservedslots = 16,
-					bf2_coopbotratio = 0,
-					bf2_coopbotcount = 0,
-					bf2_coopbotdiff = 0,
-					bf2_novehicles = false
-				}
-			});
+
+           /* _report.Servers.TryAdd("test",
+                new GameServer()
+                {
+                    Valid = true,
+                    IPAddress = "192.168.1.20",
+                    QueryPort = 29900,
+                    country = "RU",
+                    hostname = "sF|elamaunt",
+                    gamename = "whamdowfr",
+                    gamever = "1.1.120",
+                    mapname = "Battle Marshes (2)",
+                    gametype = "ranked",
+                    gamevariant = "pr",
+                    //numplayers = 100,
+                    //maxplayers = 100,
+                    gamemode = "dxp2",
+                    password = false,
+                    hostport = 16567,
+                    natneg = true,
+                    numplayersname = 1,
+                    maxwaiting = 2,
+                    numwaiting = 1,
+                    numservers = 2,
+                    statechanged = 1
+                });*/
 
 			IQueryable<GameServer> servers = _report.Servers.Select(x => x.Value).AsQueryable();
-			Console.WriteLine(servers.Where("gamever = '1.5.3153-802.0' and gamevariant = 'pr' and hostname like '%[[]PR v1.2.0.0% %' and hostname like '%2%'").Count());
-			*/
 
             _thread = new Thread(StartServer)
             {
@@ -324,14 +294,22 @@ namespace GSMasterServer.Servers
         private bool ParseRequest(SocketState state, string message)
         {
             // d    whamdowfr whamdowfr fkT>_2Cr \hostname\numwaiting\maxwaiting\numservers\numplayersname
+            // \u0001\u0012\0\u0001\u0003\u0001\0\0\0whamdowfr\0whamdowfr\0.Ts,PRe`(groupid is null) AND (groupid > 0)\0\\hostname\\gamemode\\hostname\\hostport\\mapname\\password\\gamever\\numplayers\\maxplayers\\score_\\teamplay\\gametype\\gamevariant\\groupid\\numobservers\\maxobservers\\modname\\moddisplayname\\modversion\\devmode\0\0\0\0\u0004
 
-
-             string[] data = message.Split(new char[] { '\x00', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] data = message.Split(new char[] { '\x00' }, StringSplitOptions.RemoveEmptyEntries);
 
             if (!data[2].Equals("whamdowfr", StringComparison.OrdinalIgnoreCase))
                 return false;
 
             string validate = data[4];
+            string filter = null;
+
+            if (validate.Length > 8)
+            {
+                filter = validate.Substring(8);
+                validate = validate.Substring(0,8);
+            }
+
             string[] fields = data[5].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
 
             /*string gamename = data[1].ToLowerInvariant();
@@ -341,7 +319,7 @@ namespace GSMasterServer.Servers
 
             //Log(Category, String.Format("Received client request: {0}:{1}", ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
 
-            IQueryable<GameServer> servers = _report.Servers.ToList().Select(x => x.Value).Where(x => x.Valid).AsQueryable();
+            IQueryable<GameServer> servers = _report.Servers.Values.Where(x => x.Valid).AsQueryable();
             /*if (!String.IsNullOrWhiteSpace(filter))
             {
                 try
@@ -378,7 +356,9 @@ namespace GSMasterServer.Servers
             IPEndPoint remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
 
             byte[] ipBytes = remoteEndPoint.Address.GetAddressBytes();
-            byte[] value2 = BitConverter.GetBytes((ushort)6500);
+
+            byte[] value2 = BitConverter.GetBytes((ushort)remoteEndPoint.Port);
+            //byte[] value2 = BitConverter.GetBytes((ushort)6500);
             byte fieldsCount = (byte)fields.Length;
 
             List<byte> data = new List<byte>();
@@ -446,13 +426,20 @@ namespace GSMasterServer.Servers
 
         private static string GetField(GameServer server, string fieldName)
         {
-            object value = server.GetType().GetProperty(fieldName).GetValue(server, null);
-            if (value == null)
-                return String.Empty;
-            else if (value is Boolean)
-                return (bool)value ? "1" : "0";
-            else
-                return value.ToString();
+            try
+            {
+                object value = server.GetType().GetProperty(fieldName).GetValue(server, null);
+                if (value == null)
+                    return String.Empty;
+                else if (value is Boolean)
+                    return (bool)value ? "1" : "0";
+                else
+                    return value.ToString();
+            }
+            catch (Exception ex)
+            {
+                return "0";
+            }
         }
 
         private string FixFilter(string filter)
