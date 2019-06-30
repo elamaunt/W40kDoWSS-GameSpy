@@ -47,12 +47,28 @@ namespace IrcD.ServerReplies
         public void RegisterComplete(UserInfo info)
         {
             // SendWelcome(info);
-            
+
             // Спаю нужно только это
             BuildMessageHeader(info, ReplyCode.Welcome);
             _response.Append($" {info.Nick} :Wellcome");
             info.WriteLine(_response);
-            
+
+
+           /* info.WriteLine(":s 001 Sidonuke :Welcome to the Matrix Sidonuke");
+            info.WriteLine(":s 002 Sidonuke :Your host is xs1, running version 1.0");
+            info.WriteLine(":s 003 Sidonuke :This server was created Fri Oct 19 1979 at 21:50:00 PDT");*/
+            //SendMyInfo(info);
+            /*info.WriteLine(":s 375 Sidonuke :- (M) Message of the day - ");
+            info.WriteLine(":s 372 Sidonuke :- Welcome to GameSpy");
+            info.WriteLine(":s 376 Sidonuke :End of MOTD command");*/
+
+           
+               /* SendListUserClient(info);
+                SendListUserOp(info);
+                SendListUserUnknown(info);
+                SendListUserChannels(info);
+                SendListUserMe(info);*/
+
             /*SendWelcome(info);
              SendYourHost(info);
              SendCreated(info);
@@ -184,7 +200,7 @@ namespace IrcD.ServerReplies
         public void SendCDKeyAuthentificated(UserInfo info)
         {
             BuildMessageHeader(info, ReplyCode.CDKey);
-            _response.Append(" ok: 1 :\"Authenticated\"");
+            _response.Append($" {info.Nick}: 1 :\"Authenticated\"");
             info.WriteLine(_response);
         }
 
@@ -247,10 +263,12 @@ namespace IrcD.ServerReplies
             _response.Append(" ");
             _response.Append("ircD.Net.");
             _response.Append(System.Reflection.Assembly.GetExecutingAssembly().GetName().Version);
-            _response.Append(" ");
+            _response.Append(" w n");
+           
+           /* _response.Append(" ");
             _response.Append(_ircDaemon.SupportedUserModes);
             _response.Append(" ");
-            _response.Append(_ircDaemon.SupportedRanks.ToString() + _ircDaemon.SupportedChannelModes);
+            _response.Append(_ircDaemon.SupportedRanks.ToString() + _ircDaemon.SupportedChannelModes);*/
 
             info.WriteLine(_response);
         }

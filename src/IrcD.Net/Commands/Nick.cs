@@ -70,23 +70,13 @@ namespace IrcD.Commands
                 info.InitNick(args[0]);
                 return;
             }*/
-
-            // Announce nick change to itself
-
-            /*Send(new NickArgument(info, info, args[0]));
-
-            // Announce nick change to all channels it is in
-            foreach (var channelInfo in info.Channels)
-            {
-                Send(new NickArgument(info, channelInfo, args[0]));
-            }*/
-
+            
             Send(new NickArgument(info, info, args[0]));
 
             foreach (var channelInfo in info.Channels)
                 Send(new NickArgument(info, channelInfo, args[0]));
 
-            info.Rename(args[0]);
+            //info.Rename(args[0]);
         }
 
         protected override int PrivateSend(CommandArgument commandArgument)

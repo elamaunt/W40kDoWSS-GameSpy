@@ -177,7 +177,7 @@ namespace GSMasterServer.Servers
 
                 using (var ms = new MemoryStream(state.Buffer))
                 {
-                    if (request.Url.EndsWith("Russiandow_news.txt"))
+                    if (request.Url.EndsWith("news.txt"))
                     {
                         HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/Russiandow_news.txt", Encoding.Unicode));
                         goto END;
@@ -191,19 +191,20 @@ namespace GSMasterServer.Servers
 
                     if (request.Url.StartsWith("/motd/vercheck"))
                     {
-                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.Success());
+                        //HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(@"\newver\1\newvername\1.4\dlurl\http://127.0.0.1/NewPatchHere.exe"));
+                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(@"\newver\0"));
                         goto END;
                     }
 
                     if (request.Url.EndsWith("LobbyRooms.lua"))
                     {
-                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/LobbyRooms.lua"));
+                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/LobbyRooms.lua", Encoding.ASCII));
                         goto END;
                     }
 
-                    if (request.Url.EndsWith("AutomatchDefaultsSS.lua"))
+                    if (request.Url.EndsWith("AutomatchDefaultsSS.lua") || request.Url.EndsWith("AutomatchDefaultsDXP2Fixed.lua"))
                     {
-                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/AutomatchDefaults.lua"));
+                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/AutomatchDefaults.lua", Encoding.ASCII));
                         goto END;
                     }
 

@@ -1,10 +1,8 @@
-﻿using IrcD.Core;
-using IrcD.Core.Utils;
-using GSMasterServer.Data;
+﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
-using Reality.Net.GameSpy.Servers;
+using IrcD.Core;
+using IrcD.Core.Utils;
 using System;
-using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -12,20 +10,22 @@ using System.Threading;
 
 namespace GSMasterServer.Servers
 {
-    internal class ChatServer : Server
+    internal class StatsServer : Server
     {
-        private const string Category = "Chat";
+        const string Category = "Stats";
+
+        const string XorKEY = "GameSpy3D";
 
         Thread _thread;
         Socket _newPeerAceptingsocket;
         readonly ManualResetEvent _reset = new ManualResetEvent(false);
         readonly IrcDaemon _ircDaemon;
 
-        public ChatServer(IPAddress address, ushort port)
+        public StatsServer(IPAddress address, ushort port)
         {
             _thread = new Thread(StartServer)
             {
-                Name = "Chat Socket Thread"
+                Name = "Stats Socket Thread"
             };
 
             _thread.Start(new AddressInfo()
@@ -59,7 +59,6 @@ namespace GSMasterServer.Servers
                 _newPeerAceptingsocket.Bind(new IPEndPoint(info.Address, info.Port));
                 _newPeerAceptingsocket.Listen(10);
 
-
             }
             catch (Exception e)
             {
@@ -81,13 +80,18 @@ namespace GSMasterServer.Servers
             _reset.Set();
 
             Socket listener = (Socket)ar.AsyncState;
-            Socket handler = listener.EndAccept(ar);
+            Socket socket = listener.EndAccept(ar);
 
             SocketState state = new SocketState()
             {
-                Socket = handler
+                Socket = socket
             };
-
+            
+           // socket.Send(XorBytes(@"\auth\\gamename\whamdowfr\response\f11f999a8f79bb080663a697c87adde5\port\0\id\1\final\", XorKEY));
+            socket.Send(XorBytes(@"\lc\1\challenge\KNDVKXFQWP\id\1\final\", XorKEY));
+           // socket.Send(XorBytes(@"\auth\\gamename\whamdowfr\response\f11f999a8f79bb080663a697c87ad\port\0\id\1\final\", XorKEY));
+            // Thread.Sleep(50);
+            // socket.Send(XorBytes(@"\newgame\\sesskey\788355045\\challenge\370025987\final\", XorKEY));
             WaitForData(state);
         }
 
@@ -134,114 +138,28 @@ namespace GSMasterServer.Servers
                     return;
 
                 var buffer = state.Buffer;
-                
-                using (var ms = new MemoryStream(buffer, 0, received))
+
+                var input = Encoding.ASCII.GetString(XorBytes(buffer, 0, received-7, XorKEY), 0, received);
+
+                Log(Category, input);
+
+                if (input.StartsWith(@"\auth\\gamename\whamdowfr\"))
                 {
-                    if (!state.Encoded)
-                    {
+                    SendToClient(state, @"\lc\2\sesskey\51437\proof\24094a7d02f25bd6b9b221bbf9c47900\id\1\final\");
 
-
-                        using (var reader = new StreamReader(ms))
-                        {
-                            //var asciValue = reader.ReadToEnd();
-                            
-                            //_ircDaemon.ProcessSocketMessage(state.Socket, asciValue, state, SendToClient);
-
-                             Log("CHATDATA", reader.ReadToEnd());
-
-                             ms.Position = 0;
-
-                             var line = reader.ReadLine();
-
-                             if (line.StartsWith("CRYPT"))
-                             {
-                                 state.Encoded = true;
-
-                                 // DC
-                                 //var gamename = "whammer40kdc".ToAssciiBytes();
-                                 //var gamekey = "Ue9v3H".ToAssciiBytes();
-
-                                 var gamename = "whamdowfr".ToAssciiBytes();
-                                 var gamekey = "pXL838".ToAssciiBytes();
-
-                                 var chall = "0000000000000000".ToAssciiBytes();
-
-                                 var clientKey = new ChatCrypt.GDCryptKey();
-                                 var serverKey = new ChatCrypt.GDCryptKey();
-
-                                 fixed (byte* challPtr = chall)
-                                 {
-                                     fixed (byte* gamekeyPtr = gamekey)
-                                     {
-                                         ChatCrypt.GSCryptKeyInit(clientKey, challPtr, gamekeyPtr, gamekey.Length);
-                                         ChatCrypt.GSCryptKeyInit(serverKey, challPtr, gamekeyPtr, gamekey.Length);
-                                     }
-                                 }
-
-                                 state.ClientKey = clientKey;
-                                 state.ServerKey = serverKey;
-
-                                 SendToClient(ref state, DataFunctions.StringToBytes(":s 705 * 0000000000000000 0000000000000000\r\n"));
-                             }
-                        }
-                    }
-                    else
-                    {
-                        using (var reader = new BinaryReader(ms, Encoding.ASCII))
-                        {
-                            var start = ms.Position;
-
-                            var bytes = reader.ReadBytes((int)(ms.Length - ms.Position));
-
-                            var asciValueInput = Encoding.ASCII.GetString(bytes);
-
-                            byte* bytesPtr = stackalloc byte[bytes.Length];
-
-                            for (int i = 0; i < bytes.Length; i++)
-                                bytesPtr[i] = bytes[i];
-
-                            ChatCrypt.GSEncodeDecode(state.ClientKey, bytesPtr, bytes.Length);
-
-                            for (int i = 0; i < bytes.Length; i++)
-                                bytes[i] = bytesPtr[i];
-
-                            var asciValue = Encoding.ASCII.GetString(bytes);
-
-                            Log("CHATDATA", asciValue);
-
-                            if (asciValue.StartsWith("LOGIN"))
-                            {
-                                var nick = asciValue.Split(' ')[2];
-
-                                _ircDaemon.RegisterNewUser(state.Socket, nick, state, SendToClient);
-
-                                var bytesToSend = ":s 707 * 12345678 87654321\r\n".ToAssciiBytes();
-                               
-                                fixed (byte* bytesToSendPtr = bytesToSend)
-                                    ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
-
-                                SendToClient(ref state, bytesToSend);
-                                
-                                goto CONTINUE;
-                            }
-
-                            if (asciValue.StartsWith("USRIP"))
-                            {
-                                var bytesToSend = ":s 302  :=+@127.0.0.1\r\n".ToAssciiBytes();
-
-                                fixed (byte* bytesToSendPtr = bytesToSend)
-                                    ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
-
-                                SendToClient(ref state, bytesToSend);
-                                
-                                goto CONTINUE;
-                            }
-                            //_ircDaemon.ProcessSocketMessage(state.Socket, $"INVITE {nick} #GPG!0");
-
-                            _ircDaemon.ProcessSocketMessage(state.Socket, asciValue);
-                        }
-                    }
+                    goto CONTINUE;
                 }
+
+                if (input.StartsWith(@"\authp\\pid\"))
+                {
+                    // \authp\\pid\87654321\resp\7e2270c581e8daf5a5321ff218953035\lid\1\final\
+
+                    SendToClient(state, @"\pauthr\100000004\lid\1\final\");
+
+                    goto CONTINUE;
+                }
+
+
             }
             catch (ObjectDisposedException)
             {
@@ -287,15 +205,9 @@ namespace GSMasterServer.Servers
         {
             var state = (SocketState)abstractState;
 
-            Log("CHATRESP", message);
+            Log("StatsRESP", message);
 
-            var bytesToSend = message.ToAssciiBytes();
-
-            if (state.Encoded)
-            {
-                fixed (byte* bytesToSendPtr = bytesToSend)
-                    ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
-            }
+            var bytesToSend = XorBytes(message, XorKEY);
 
             SendToClient(ref state, bytesToSend);
             return bytesToSend.Length;
@@ -357,6 +269,27 @@ namespace GSMasterServer.Servers
                         return;
                 }
             }
+        }
+
+        byte[] XorBytes(byte[] data, int start, int count, string keystr)
+        {
+            byte[] key = Encoding.ASCII.GetBytes(keystr);
+
+            for (int i = start; i < count; i++)
+                data[i] = (byte)(data[i] ^ key[i % key.Length]);
+
+            return data;
+        }
+
+        byte[] XorBytes(string str, string keystr)
+        {
+            byte[] data = Encoding.ASCII.GetBytes(str);
+            byte[] key = Encoding.ASCII.GetBytes(keystr);
+
+            for (int i = 0; i < data.Length; i++)
+                data[i] = (byte)(data[i] ^ key[i % key.Length]);
+
+            return data;
         }
 
         private class SocketState : IDisposable

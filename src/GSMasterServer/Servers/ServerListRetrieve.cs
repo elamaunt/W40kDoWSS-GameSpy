@@ -1,4 +1,5 @@
 ﻿using GSMasterServer.Data;
+using GSMasterServer.Utils;
 using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
 using System;
@@ -410,7 +411,7 @@ namespace GSMasterServer.Servers
 
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    data.AddRange(DataFunctions.StringToBytes(GetField(server, fields[i])));
+                    data.AddRange(GetField(server, fields[i]).ToAssciiBytes());
 
                     if (i < fields.Length - 1)
                         data.AddRange(new byte[] { 0, 255 });
@@ -426,22 +427,14 @@ namespace GSMasterServer.Servers
 
         private static string GetField(GameServer server, string fieldName)
         {
-            try
-            {
-                object value = server.GetType().GetProperty(fieldName).GetValue(server, null);
-                if (value == null)
-                    return String.Empty;
-                else if (value is Boolean)
-                    return (bool)value ? "1" : "0";
-                else
-                    return value.ToString();
-            }
-            catch (Exception ex)
-            {
-                return "0";
-            }
+            object value = server.GetByName(fieldName);
+            if (value == null)
+                return string.Empty;
+            else if (value is bool)
+                return (bool)value ? "1" : "0";
+            else
+                return value.ToString();
         }
-
         private string FixFilter(string filter)
         {
             // escape [

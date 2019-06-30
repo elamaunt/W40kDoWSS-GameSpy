@@ -127,9 +127,6 @@ namespace IrcD.Core
             SetupModes();
             //Add ChannelTypes
             SetupChannelTypes();
-
-            // Попытка создать первую комнату
-            Channels.Add("#Room 1", new ChannelInfo("#Room 1", this));
         }
 
         private void SetupCommands()
@@ -272,12 +269,12 @@ namespace IrcD.Core
             info.InitNick(nick);
             Sockets[socket] = info;
         }
-
+        
         public void ProcessSocketMessage(Socket socket, string message)
         {
             // USER X14saFv19X| 87654321 127.0.0.1 peerchat.gamespy.com :c7923ffb345487895fd66e20ca24ca00
             // NICK *
-
+            
             var userInfo = Sockets[socket];
 
             try

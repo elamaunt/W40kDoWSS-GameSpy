@@ -1,0 +1,38 @@
+[2016-04-07 14:54:34 | GameSpyGamestatsServer] [81.248.248.37:2012] Received connection from 81.248.248.37:2012
+[2016-04-07 14:54:34 | GameSpyGamestatsServer] [81.248.248.37:2012] SENDING: '\lc\1\challenge\EZVXDHCDVU\id\1\final\'...
+[2016-04-07 14:54:34 | GameSpyGamestatsServer] STATS RESPONSE: \auth\\gamename\itadakistwii\response\3243045147200f8da439a56ecbcf4631\port\0\id\1\final\
+{'__cmd_val__': '', 'gamename': 'itadakistwii', 'auth': '', 'port': '0', '__cmd__': 'auth', 'id': '1', 'response': '3243045147200f8da439a56ecbcf4631'}
+[2016-04-07 14:54:34 | GameSpyGamestatsServer] [81.248.248.37:2012] Parsing 'auth'...
+[2016-04-07 14:54:34 | GameSpyGamestatsServer] [81.248.248.37:2012 | 1442729939 | itadakistwii] SENDING: '\lc\2\sesskey\1442729939\proof\0\id\1\final\'...
+[2016-04-07 14:54:35 | GameSpyGamestatsServer] STATS RESPONSE: \authp\\authtoken\NDS2msatnix2n2TCehhNvr1vDb54H6xpOV1vEkO7dl4rNqsSUt7qMdCUbITtQnkVxmgCo9qPOUzdHviPrmk\resp\dabe53849d1a0460abce946910f85d2b\lid\0\final\
+{'authtoken': 'NDS2msatnix2n2TCehhNvr1vDb54H6xpOV1vEkO7dl4rNqsSUt7qMdCUbITtQnkVxmgCo9qPOUzdHviPrmk', 'lid': '0', '__cmd_val__': '', 'resp': 'dabe53849d1a0460abce946910f85d2b', 'authp': '', '__cmd__': 'authp'}
+[2016-04-07 14:54:35 | GamespyDatabase] [m3XgDJto] STARTING: SELECT data FROM nas_logins WHERE authtoken = NDS2msatnix2n2TCehhNvr1vDb54H6xpOV1vEkO7dl4rNqsSUt7qMdCUbITtQnkVxmgCo9qPOUzdHviPrmk
+[2016-04-07 14:54:35 | GamespyDatabase] [m3XgDJto] DONE: Took 0.000311851501465 real time / 0.000282 processor time
+[2016-04-07 14:54:35 | GamespyDatabase] [0NKrP9tK] STARTING: SELECT COUNT(*) FROM users WHERE userid = 6281159064254 AND gsbrcd = ST7J3hmm3d7
+[2016-04-07 14:54:35 | GamespyDatabase] [0NKrP9tK] DONE: Took 7.20024108887e-05 real time / 7e-05 processor time
+[2016-04-07 14:54:35 | GamespyDatabase] [AycjpJam] STARTING: SELECT * FROM users WHERE userid = 6281159064254 and gsbrcd = ST7J3hmm3d7
+[2016-04-07 14:54:35 | GamespyDatabase] [AycjpJam] DONE: Took 0.000150918960571 real time / 0.000128 processor time
+[2016-04-07 14:54:35 | GamespyDatabase] [mtnwDY83] STARTING: SELECT COUNT(*) FROM users WHERE profileid = 6
+[2016-04-07 14:54:35 | GamespyDatabase] [mtnwDY83] DONE: Took 4.29153442383e-05 real time / 4.2e-05 processor time
+[2016-04-07 14:54:35 | GamespyDatabase] [lkfjRj1X] STARTING: DELETE FROM sessions WHERE profileid = 6
+[2016-04-07 14:54:35 | GamespyDatabase] [lkfjRj1X] DONE: Took 0.000159978866577 real time / 0.000158 processor time
+[2016-04-07 14:54:35 | GamespyDatabase] [QoLNJ7cn] STARTING: SELECT COUNT(*) FROM sessions WHERE session = 41376552
+[2016-04-07 14:54:35 | GamespyDatabase] [QoLNJ7cn] DONE: Took 5.00679016113e-05 real time / 4.8e-05 processor time
+[2016-04-07 14:54:35 | GamespyDatabase] [ggCyNFWG] STARTING: INSERT INTO sessions VALUES (41376552, 6, )
+[2016-04-07 14:54:35 | GamespyDatabase] [ggCyNFWG] DONE: Took 9.70363616943e-05 real time / 9.50000000001e-05 processor time
+[2016-04-07 14:54:35 | GameSpyGamestatsServer] [81.248.248.37:2012 | 1442729939 | itadakistwii] SENDING: '\pauthr\6\lid\0\final\'...
+[2016-04-07 14:54:35 | GameSpyProfileServer] [81.248.248.37:1996 | 6 | ST7J] RESPONSE: '\addbuddy\\sesskey\86168863\newprofileid\5\reason\\final\'...
+[2016-04-07 14:54:35 | GameSpyProfileServer] [81.248.248.37:1996 | 6 | ST7J] {'addbuddy': '', '__cmd_val__': '', 'reason': '', '__cmd__': 'addbuddy', 'sesskey': '86168863', 'newprofileid': '5'}
+[2016-04-07 14:54:35 | GamespyDatabase] [Odc5Bhvy] STARTING: SELECT * FROM buddies WHERE userProfileId = 6 AND blocked = 0
+[2016-04-07 14:54:35 | GamespyDatabase] [Odc5Bhvy] DONE: Took 9.01222229004e-05 real time / 6.2e-05 processor time
+[2016-04-07 14:54:35 | GamespyDatabase] [SFNsCFp8] STARTING: SELECT * FROM buddies WHERE userProfileId = 6 AND blocked = 0
+[2016-04-07 14:54:35 | GamespyDatabase] [SFNsCFp8] DONE: Took 2.50339508057e-05 real time / 2.3e-05 processor time
+[2016-04-07 14:54:35 | GamespyDatabase] [MP6y8WTX] STARTING: SELECT * FROM buddies WHERE userProfileId = 6 AND blocked = 0
+[2016-04-07 14:54:35 | GamespyDatabase] [MP6y8WTX] DONE: Took 2.59876251221e-05 real time / 2.4e-05 processor time
+[2016-04-07 14:54:35 | GamespyDatabase] [ueDJpcCW] STARTING: SELECT * FROM buddies WHERE userProfileId = 6 AND blocked = 0
+[2016-04-07 14:54:35 | GamespyDatabase] [ueDJpcCW] DONE: Took 2.40802764893e-05 real time / 2.2e-05 processor time
+[2016-04-07 14:54:35 | GameSpyGamestatsServer] STATS RESPONSE: \getpd\\pid\5\ptype\3\dindex\0\keys\itast_friend_p\lid\0\final\
+{'lid': '0', 'keys': '\x01itast_friend_p', '__cmd_val__': '', 'pid': '5', 'ptype': '3', 'dindex': '0', '__cmd__': 'getpd', 'getpd': ''}
+[2016-04-07 14:54:35 | GamespyDatabase] [geEotNYm] STARTING: SELECT * FROM gamestat_profile WHERE profileid = 5 AND dindex = 0 AND ptype = 3
+[2016-04-07 14:54:35 | GamespyDatabase] [geEotNYm] DONE: Took 0.000156879425049 real time / 0.000119 processor time
+[2016-04-07 14:54:35 | GameSpyGamestatsServer] [81.248.248.37:2012 | 1442729939 | itadakistwii] SENDING: '\getpdr\1\lid\0\pid\5\mod\1460040875\length\149\data\\itast_friend_p\AEcAdQBlAHMAdAAgAEYAAAAAAAAAAEAOAG4AbwAgAG4AYQBtAGUAAAAAAABAQIAAAAXs-4LSAAQYQAGAKKIQbAhYFEq4jQCKAIolBAAAAAAAAAAAAAAAAAAAAAAAAAAAd68*\final\'...

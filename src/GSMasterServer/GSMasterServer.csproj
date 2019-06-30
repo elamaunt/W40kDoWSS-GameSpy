@@ -101,6 +101,7 @@
     <Compile Include="Servers\LoginServerMessages.cs" />
     <Compile Include="Servers\Server.cs" />
     <Compile Include="Servers\ServerNatNeg.cs" />
+    <Compile Include="Servers\StatsServer.cs" />
     <Compile Include="Utils\ByteHelpers.cs" />
     <Compile Include="Utils\ChatCrypt.cs" />
     <Compile Include="Utils\DynamicLinq.cs" />

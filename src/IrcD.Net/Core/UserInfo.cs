@@ -187,6 +187,16 @@ namespace IrcD.Core
             return Nick + "!" + User + "@" + Host;
         }
 
+        public int WriteLine(string line)
+        {
+#if DEBUG
+            Logger.Log(line.ToString(), location: "OUT:" + Nick);
+#endif
+            // Костыль дла переопределения отправки
+            return _send(_state, line + IrcDaemon.ServerCrLf);
+            //return Socket.Send(Encoding.UTF8.GetBytes(line + IrcDaemon.ServerCrLf));
+        }
+
         public override int WriteLine(StringBuilder line)
         {
 #if DEBUG

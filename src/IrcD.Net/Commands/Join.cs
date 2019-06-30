@@ -50,7 +50,7 @@ namespace IrcD.Commands
                                     select temp)
             {
                 ChannelInfo chan;
-
+                
                 if (IrcDaemon.Channels.ContainsKey(channel))
                 {
                     chan = IrcDaemon.Channels[channel];

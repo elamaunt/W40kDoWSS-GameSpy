@@ -1,42 +1,30 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GSMasterServer.Data
 {
-	internal class NonFilterAttribute : Attribute
+    internal class GameServer
 	{
-	}
+        static readonly Dictionary<string, Func<GameServer, object>> _gettesCache = new Dictionary<string, Func<GameServer, object>>();
 
-	internal class GameServer
-	{
-        [NonFilter]
-		public bool Valid { get; set; }
-
-		[NonFilter]
+        public bool Valid { get; set; }
+        
 		public string IPAddress { get; set; }
-
-		[NonFilter]
+        
 		public int QueryPort { get; set; }
-
-		[NonFilter]
+        
 		public DateTime LastRefreshed { get; set; }
-
-		[NonFilter]
+        
 		public DateTime LastPing { get; set; }
-
-
-		[NonFilter]
+        
 		public string localip0 { get; set; }
-
-		[NonFilter]
+        
 		public string localip1 { get; set; }
-
-		[NonFilter]
+        
 		public int localport { get; set; }
-
-		[NonFilter]
+        
 		public bool natneg { get; set; }
 
-		[NonFilter]
 		public int statechanged { get; set; }
 
 		public string country { get; set; }
@@ -65,5 +53,13 @@ namespace GSMasterServer.Data
         public string moddisplayname { get; set; }
         public string modversion { get; set; }
         public bool devmode { get; set; }
+
+        internal object GetByName(string fieldName)
+        {
+            if (_gettesCache.TryGetValue(fieldName, out Func<GameServer, object> getter))
+                return getter(this);
+            else
+                return (_gettesCache[fieldName] = typeof(GameServer).GetProperty(fieldName).GetValue)(this);
+        }
     }
 }

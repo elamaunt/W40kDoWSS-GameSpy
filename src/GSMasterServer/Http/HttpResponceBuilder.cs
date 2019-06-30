@@ -6,6 +6,25 @@ namespace GSMasterServer.Http
 {
     internal class HttpResponceBuilder
     {
+        public static HttpResponse FileUTF8(string path)
+        {
+            try
+            {
+                var resp = new HttpResponse()
+                {
+                    ReasonPhrase = "Ok",
+                    StatusCode = "200",
+                    ContentAsUTF8 = System.IO.File.ReadAllText(path)
+                };
+                
+                return resp;
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
         public static HttpResponse File(string path, Encoding encoding = null)
         {
             try
@@ -25,7 +44,7 @@ namespace GSMasterServer.Http
                 };
 
                 resp.Headers.Add("Content-Type", QuickMimeTypeMapper.GetMimeType(Path.GetExtension(path)));
-                resp.Headers.Add("Content-Length", bytes.Length.ToString());
+                //resp.Headers.Add("Content-Length", bytes.Length.ToString());
 
                 return resp;
 
@@ -66,6 +85,16 @@ namespace GSMasterServer.Http
                 ReasonPhrase = "NotFound",
                 StatusCode = "404",
                 ContentAsUTF8 = content
+            };
+        }
+
+        public static HttpResponse Text(string text)
+        {
+            return new HttpResponse()
+            {
+                ReasonPhrase = "Ok",
+                StatusCode = "200",
+                ContentAsUTF8 = text
             };
         }
     }

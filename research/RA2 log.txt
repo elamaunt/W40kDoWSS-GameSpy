@@ -1,0 +1,190 @@
+CRYPT des 1 redalert3pcb
+
+### GAMEKEY: uBZwpf
+:s 705 * SjcYwcde>PQImGcE RC>AjNWf[m>jd=gr
+### CLIENT CHALLENGE: SjcYwcde>PQImGcE
+### SERVER CHALLENGE: RC>AjNWf[m>jd=gr
+>We get our IP from the peerchat servers to use in our user info
+USRIP
+>Server gives us our IP
+>Setup our user info
+>XlG1W4OFpX|153849803 = EncodedIP|GSProfileId
+>:71d11854800540d25e87d7e3af2daa6f = CDKey
+:s 302  :=+@216.40.74.237
+USER XlG1W4OFpX|153849803 127.0.0.1 peerchat.gamespy.com :71d11854800540d25e87d7e3af2daa6f
+>Setup what User Name we want.
+
+
+NICK SyS
+>Yay we are connected
+:s 001 SyS :Welcome to the Matrix SyS
+:s 002 SyS :Your host is xs1, running version 1.0
+:s 003 SyS :This server was created Fri Oct 19 1979 at 21:50:00 PDT
+:s 004 SyS s 1.0 iq biklmnopqustvhe
+:s 375 SyS :- (M) Message of the day - 
+:s 372 SyS :- Welcome to GameSpy
+:s 376 SyS :End of MOTD command
+
+
+>Join the lobby channel "Casual 1" for RA3
+JOIN #GPG!2266 
+
+
+>We have joined =3
+:SyS!XlG1W4OFpX|153849803@* JOIN :#GPG!2266
+
+
+>Get Modes for channel
+MODE #GPG!2266
+
+
+>Topic =3 (Unused)
+:s 332 SyS #GPG!2266 :Click on the "Game Info" button at the top of your screen for the latest information on patches, add-on files, interviews, strategy guides and more!  It`s all there!
+
+
+
+>Unknown...
+:s 333 SyS #GPG!2266 SERVER 1217231339
+
+
+>User list
+:s 353 SyS * #GPG!2266 :@ChatMonitor-gs Trismegistus RebelWithout Night-Hawk VarXX oceanz87 raybrowning4 TheKaiser koodi1 PGrg844 GritSpitter guwer MattMCM thunder1234 {36C}-CoSm0s Alibubble xomm bLEST wesa lutinblanc stallone Pr0wn attredies CrazyRu55ian slowkid R.Ocelot Shepperd xervant yxovertka Solo80 Bajter Yolan Cheeseball XaraCoS tomcch92 Brillosch959 General1337 PATALOPOLIS WildBorman PsychoIncarnate Anser Teeze NotFor Admiral_DuGalle CEPMoebius nexusataxia Taurispp
+:s 353 SyS * #GPG!2266 :ajaxgigant Cuycoybuster chriswar Dunkelherz TonyFerelli SyS
+:s 366 SyS #GPG!2266 :End of NAMES list
+
+
+>Get user flags for everyone in lobby (Playing status and more)
+GETCKEY #GPG!2266 * 000 0 :\username\b_flags
+
+
+>Setup our ranking information
+SETCKEY #GPG!2266 SyS :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\62\b_losses\32\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+
+
+>Get all players ranking info
+GETCKEY #GPG!2266 * 001 0 :\b_clanName\b_arenaTeamID\b_locale\b_wins\b_losses\b_rank1v1\b_rank2v2\b_clan1v1\b_clan2v2\b_onlineRank
+
+
+:s 324 SyS #GPG!2266 +tnp // Modes?
+
+
+>GETCKEY #GPG!2266 * 000 0 :\username\b_flags Response
+:s 702 SyS #GPG!2266 SyS 000 :\XlG1W4OFpX|153849803\
+> #GPG!2266 SyS 000 :\XlG1W4OFpX|153849803\
+
+
+> Channel      Username        EncodeIP       ProfileID     Extra Flags
+
+
+:s 702 SyS #GPG!2266 TonyFerelli 000 :\XDaupalslX|155978172\
+:s 702 SyS #GPG!2266 Dunkelherz 000 :\XlDDfqOfaX|155981948\
+:s 702 SyS #GPG!2266 chriswar 000 :\XGsqlaGfqX|153361449\
+:s 702 SyS #GPG!2266 Cuycoybuster 000 :\XsGf4OWsFX|152886244\
+:s 702 SyS #GPG!2266 ajaxgigant 000 :\XWWsFGusWX|155981926\
+:s 702 SyS #GPG!2266 Taurispp 000 :\XflWFWlfvX|153603382\
+:s 702 SyS #GPG!2266 nexusataxia 000 :\XsGsufqs1X|155647501\
+:s 702 SyS #GPG!2266 CEPMoebius 000 :\XWssvpFsaX|155963137\
+:s 702 SyS #GPG!2266 Admiral_DuGalle 000 :\XGGu1sGs4X|153456486\s
+:s 702 SyS #GPG!2266 NotFor 000 :\XqFlpFup1X|153306376\s
+:s 702 SyS #GPG!2266 Teeze 000 :\XaGfav4WOX|153263245\
+:s 702 SyS #GPG!2266 Anser 000 :\XlGupWsflX|155981868\s
+:s 702 SyS #GPG!2266 PsychoIncarnate 000 :\Xu1fupWsaX|154026950\
+:s 702 SyS #GPG!2266 WildBorman 000 :\Xp1vqOvf9X|155981467\s
+:s 702 SyS #GPG!2266 PATALOPOLIS 000 :\XvD9WvuspX|155977568\
+:s 702 SyS #GPG!2266 General1337 000 :\Xq41DuFsaX|153578977\
+:s 702 SyS #GPG!2266 Brillosch959 000 :\XllvWODfpX|155978645\s
+:s 702 SyS #GPG!2266 tomcch92 000 :\XvOG99qFvX|155975492\
+:s 702 SyS #GPG!2266 XaraCoS 000 :\XfuvfWGpvX|155552342\s
+:s 702 SyS #GPG!2266 Cheeseball 000 :\XGlWlWFqqX|155629842\s
+:s 702 SyS #GPG!2266 Yolan 000 :\XvlufvlfaX|152915806\s
+:s 702 SyS #GPG!2266 Bajter 000 :\XFp14F9f4X|152886486\s
+:s 702 SyS #GPG!2266 Solo80 000 :\XfquGFOs1X|155981341\s
+:s 702 SyS #GPG!2266 yxovertka 000 :\XFO9pvFf4X|155981446\
+:s 702 SyS #GPG!2266 xervant 000 :\Xpu4sl9fGX|155981359\
+:s 702 SyS #GPG!2266 Shepperd 000 :\XssFWW4saX|153734341\s
+:s 702 SyS #GPG!2266 R.Ocelot 000 :\XaluFlF9WX|155965963\
+:s 702 SyS #GPG!2266 slowkid 000 :\XpvuupqsaX|155971860\s
+:s 702 SyS #GPG!2266 CrazyRu55ian 000 :\XuafpW4sFX|155981541\s
+:s 702 SyS #GPG!2266 attredies 000 :\XFvs1v1saX|155981482\
+:s 702 SyS #GPG!2266 Pr0wn 000 :\Xaff4DasWX|153527008\s
+:s 702 SyS #GPG!2266 stallone 000 :\X9WqfaDflX|153313478\
+:s 702 SyS #GPG!2266 lutinblanc 000 :\X4qDpDlvpX|155980845\
+:s 702 SyS #GPG!2266 wesa 000 :\XaWWfGuf4X|155976830\
+:s 702 SyS #GPG!2266 bLEST 000 :\Xa1vOuDsqX|153007714\
+:s 702 SyS #GPG!2266 xomm 000 :\X11vl9vs4X|153600235\
+:s 702 SyS #GPG!2266 Alibubble 000 :\XO1FfqssaX|153562528\
+:s 702 SyS #GPG!2266 {36C}-CoSm0s 000 :\XlfOWsvaWX|155980608\
+:s 702 SyS #GPG!2266 thunder1234 000 :\X4ufspqs9X|154027272\
+:s 702 SyS #GPG!2266 MattMCM 000 :\Xssq1vas4X|155518742\
+:s 702 SyS #GPG!2266 guwer 000 :\Xvl1FDaFqX|152886656\
+:s 702 SyS #GPG!2266 GritSpitter 000 :\Xuas9lGsaX|155979347\
+:s 702 SyS #GPG!2266 PGrg844 000 :\XFpsOuFspX|152888944\
+:s 702 SyS #GPG!2266 koodi1 000 :\XvvquGuf4X|154053602\
+:s 702 SyS #GPG!2266 TheKaiser 000 :\XavqqqfqGX|155510690\
+:s 702 SyS #GPG!2266 raybrowning4 000 :\X9lGfq4vpX|154277383\
+:s 702 SyS #GPG!2266 oceanz87 000 :\XulufDWvpX|155411221\
+:s 702 SyS #GPG!2266 VarXX 000 :\Xlpl1WasqX|152133654\
+:s 702 SyS #GPG!2266 Night-Hawk 000 :\XG9sfl1spX|153159886\
+:s 702 SyS #GPG!2266 RebelWithout 000 :\XfO19GpWOX|154008306\
+:s 702 SyS #GPG!2266 Trismegistus 000 :\XWWfFfFFlX|155776766\
+:s 702 SyS #GPG!2266 ChatMonitor-gs 000 :\XaaaaaaaaX|25677635\
+>End of the user flags list for the channel
+:s 703 SyS #GPG!2266 000 :End of GETCKEY
+>BCAST is a player flags change for SyS of #GPG!2266. Make sure clients stay synced.
+:s 702 #GPG!2266 #GPG!2266 SyS BCAST :\b_clanName\\b_arenaTeamID\0\b_locale\0\b_wins\62\b_losses\32\b_rank1v1\\b_rank2v2\\b_clan1v1\\b_clan2v2\\b_onlineRank\0
+>This is our Player Ranking List
+:s 702 SyS #GPG!2266 SyS 001 :\\0\0\62\32\\\\\0
+:s 702 SyS #GPG!2266 TonyFerelli 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 Dunkelherz 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 chriswar 001 :\\0\0\19\11\\\\\0
+:s 702 SyS #GPG!2266 Cuycoybuster 001 :\\0\0\0\2\\\\\0
+:s 702 SyS #GPG!2266 ajaxgigant 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 Taurispp 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 nexusataxia 001 :\\0\0\17\20\\\\\0
+:s 702 SyS #GPG!2266 CEPMoebius 001 :\\0\0\3\4\\\\\01f[
+:s 702 SyS #GPG!2266 Admiral_DuGalle 001 :\\0\0\119\38\\\\\0
+:s 702 SyS #GPG!2266 NotFor 001 :\\0\0\251\58\\\\\0
+:s 702 SyS #GPG!2266 Teeze 001 :\\0\0\95\48\\\\\0
+:s 702 SyS #GPG!2266 Anser 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 PsychoIncarnate 001 :\\0\0\2\2\\\\\0
+:s 702 SyS #GPG!2266 WildBorman 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 PATALOPOLIS 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 General1337 001 :\\0\0\2\0\\\\\0
+:s 702 SyS #GPG!2266 Brillosch959 001 :\\0\0\0\1\\\\\0
+:s 702 SyS #GPG!2266 tomcch92 001 :\\0\0\0\1\\\\\0
+:s 702 SyS #GPG!2266 XaraCoS 001 :\\0\0\16\21\\\\\0
+:s 702 SyS #GPG!2266 Cheeseball 001 :\\0\0\26\5\\\\\0
+:s 702 SyS #GPG!2266 Yolan 001 :\\0\0\33\34\\\\\0
+:s 702 SyS #GPG!2266 Bajter 001 :\\0\0\40\11\\\\\0
+:s 702 SyS #GPG!2266 Solo80 001 :\\0\0\1\0\\\\\0
+:s 702 SyS #GPG!2266 yxovertka 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 xervant 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 Shepperd 001 :\\0\0\7\28\\\\\0
+:s 702 SyS #GPG!2266 R.Ocelot 001 :\\0\0\1\1\\\\\0
+:s 702 SyS #GPG!2266 slowkid 001 :\\0\0\0\1\\\\\0
+:s 702 SyS #GPG!2266 CrazyRu55ian 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 attredies 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 Pr0wn 001 :\\0\0\4\6\\\\\0
+:s 702 SyS #GPG!2266 stallone 001 :\\0\0\48\18\\\\\0
+:s 702 SyS #GPG!2266 lutinblanc 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 wesa 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 bLEST 001 :\\0\0\97\28\\\\\0
+:s 702 SyS #GPG!2266 xomm 001 :\\0\0\3\3\\\\\0
+:s 702 SyS #GPG!2266 Alibubble 001 :\\0\0\20\8\\\\\0
+:s 702 SyS #GPG!2266 {36C}-CoSm0s 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 thunder1234 001 :\\0\0\12\36\\\\\0
+:s 702 SyS #GPG!2266 MattMCM 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 guwer 001 :\\0\0\16\26\\\\\0
+:s 702 SyS #GPG!2266 GritSpitter 001 :\\0\0\0\0\\\\\0
+:s 702 SyS #GPG!2266 PGrg844 001 :\\0\0\16\20\\\\\0
+:s 702 SyS #GPG!2266 koodi1 001 :\\0\0\22\17\\\\\0
+:s 702 SyS #GPG!2266 TheKaiser 001 :\\0\0\25\6\\\\\0
+:s 702 SyS #GPG!2266 raybrowning4 001 :\\0\0\17\49\\\\\0
+:s 702 SyS #GPG!2266 oceanz87 001 :\\0\0\20\34\\\\\0
+:s 702 SyS #GPG!2266 VarXX 001 :\\0\0\2\4\\\\\0
+:s 702 SyS #GPG!2266 Night-Hawk 001 :\\0\0\34\9\\\\\0
+:s 702 SyS #GPG!2266 RebelWithout 001 :\\0\0\11\41\\\\\0
+:s 702 SyS #GPG!2266 Trismegistus 001 :\\0\0\2\18\\\\\0
+:s 702 SyS #GPG!2266 ChatMonitor-gs 001 :\\\\\\\\\\
+>And finally the end of the ranking list...
+:s 703 SyS #GPG!2266 001 :End of GETCKEY

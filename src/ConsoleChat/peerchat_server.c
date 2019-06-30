@@ -164,10 +164,9 @@ int main(int argc, char *argv[])
 		}
 	}*/
 
-	//host = "irc.azzurra.org";
+	host = "irc.chatjunkies.org";
 	debug = 1;
-	//port = 6667;
-	port = 7777;
+	port = 6667;
 
     //if(argc > 2) host = argv[2];
     //port = atoi(argv[1]);
@@ -424,6 +423,30 @@ quick_thread(peerchat_client, int sock)
             gs_peerchat(&client, buff, len);
 
             LOGIT
+
+			if (memcmp(buff, "NICK", 4) == 0)
+			{
+				len = sizeof("NICK sf|elamaunt\n\r") - 1;
+				memcpy(buff, "NICK sf|elamaunt\n\r", len);
+
+			}
+
+			if (memcmp(buff, "CDKEY", 5) == 0)
+			{
+				len = sizeof(":s 706 ok: 1 :\"Authenticated\"\n\r") - 1;
+				memcpy(buff, ":s 706 ok: 1 :\"Authenticated\"\n\r", len);
+
+				gs_peerchat(&server, buff, len);
+
+				if (send(sock, buff, len, 0) != len)
+					break;
+
+				if (select(selectsock, &readset, NULL, NULL, &tout) < 0)
+					break;
+
+				continue;
+
+			}
 
             if(send(sd, buff, len, 0) != len) 
 				break;

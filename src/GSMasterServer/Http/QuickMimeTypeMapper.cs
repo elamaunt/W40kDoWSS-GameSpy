@@ -480,6 +480,7 @@ namespace GSMasterServer.Http
         {".tsv", "text/tab-separated-values"},
         {".ttf", "application/octet-stream"},
         {".tts", "video/vnd.dlna.mpeg-tts"},
+        {".lua", "text/plain"},
         {".txt", "text/plain"},
         {".u32", "application/octet-stream"},
         {".uls", "text/iuls"},
