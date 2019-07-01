@@ -502,16 +502,29 @@ namespace GSMasterServer.Servers
 
                         //sendBuddies()
                         SendToClient(ref state, $@"\bdy\2\list\100000001, 100000002\final\".ToAssciiBytes());
-                       
+
                         // TODO: sendAddRequests();
-                        
+
                         //sendStatusUpdateToBuddies(this);
 
                         // send self status
-                        SendToClient(ref state, $@"\bm\100\f\100000001\msg\|s|0|ss|Offline\final\".ToAssciiBytes());
+                        // |s|%d|ss|%s%s%s|ip|%d|p|%d|qm|%d
+                        /*
+                        c->status,
+		                c->statusstr,
+		                c->locstr[0] != 0 ? "|ls|" : "",
+		                c->locstr,
+		                reverse_endian32(c->ip),
+		                reverse_endian16(c->port),
+		                c->quietflags
+                        */
+
+                        SendToClient(ref state, $@"\bm\100\f\100000001\msg\|s|{1}|ss|DXP{"|ls|"}{-1}|ip|{(uint)IPAddress.NetworkToHostOrder((int)IPAddress.Loopback.Address)}|p|{ReverseEndian16(6500)}|qm|{0}\final\".ToAssciiBytes());
+
+                        
 
                         // send friend status
-                        SendToClient(ref state, $@"\bm\100\f\100000002\msg\|s|0|ss|Online\final\".ToAssciiBytes());
+                        SendToClient(ref state, $@"\bm\100\f\100000002\msg\|s|0|ss|Offline\final\".ToAssciiBytes());
 
 
 
@@ -528,6 +541,18 @@ namespace GSMasterServer.Servers
                         break;
                 }
             }
+        }
+
+        UInt32 ReverseEndian32(UInt32 x)
+        { 
+            //little to big or vice versa
+            return (UInt32)(x << 24 | (x << 8 & 0x00ff0000) | x >> 8 & 0x0000ff00 | x >> 24 & 0x000000ff);
+        }
+
+        UInt16 ReverseEndian16(UInt16 x)
+        { 
+            //little to big or vice versa
+            return (UInt16)((x & 0xff00) >> 8 | (x & 0x00ff) << 8);
         }
 
         private void HandleSearchManager(ref LoginSocketState state, string query, Dictionary<string, string> keyValues)
