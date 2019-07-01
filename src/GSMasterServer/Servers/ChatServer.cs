@@ -139,50 +139,64 @@ namespace GSMasterServer.Servers
                 {
                     if (!state.Encoded)
                     {
-
-
                         using (var reader = new StreamReader(ms))
                         {
-                            //var asciValue = reader.ReadToEnd();
-                            
-                            //_ircDaemon.ProcessSocketMessage(state.Socket, asciValue, state, SendToClient);
+                            var asciValue = reader.ReadToEnd();
 
-                             Log("CHATDATA", reader.ReadToEnd());
+                             Log("CHATDATA", asciValue);
 
                              ms.Position = 0;
 
                              var line = reader.ReadLine();
 
-                             if (line.StartsWith("CRYPT"))
-                             {
-                                 state.Encoded = true;
+                            if (line.StartsWith("CRYPT"))
+                            {
+                                state.Encoded = true;
+                                
+                                byte[] gamename;
+                                byte[] gamekey = null;
 
-                                 // DC
-                                 //var gamename = "whammer40kdc".ToAssciiBytes();
-                                 //var gamekey = "Ue9v3H".ToAssciiBytes();
+                                if (line.Contains("whammer40kdc"))
+                                {
+                                    gamename = "whammer40kdc".ToAssciiBytes();
+                                    gamekey = "Ue9v3H".ToAssciiBytes();
+                                }
 
-                                 var gamename = "whamdowfr".ToAssciiBytes();
-                                 var gamekey = "pXL838".ToAssciiBytes();
+                                if (line.Contains("whamdowfr"))
+                                {
+                                    gamename = "whamdowfr".ToAssciiBytes();
+                                    gamekey = "pXL838".ToAssciiBytes();
+                                }
 
-                                 var chall = "0000000000000000".ToAssciiBytes();
+                                if (gamekey == null)
+                                {
+                                    state.Dispose();
+                                    return;
+                                }
 
-                                 var clientKey = new ChatCrypt.GDCryptKey();
-                                 var serverKey = new ChatCrypt.GDCryptKey();
+                                var chall = "0000000000000000".ToAssciiBytes();
 
-                                 fixed (byte* challPtr = chall)
-                                 {
-                                     fixed (byte* gamekeyPtr = gamekey)
-                                     {
-                                         ChatCrypt.GSCryptKeyInit(clientKey, challPtr, gamekeyPtr, gamekey.Length);
-                                         ChatCrypt.GSCryptKeyInit(serverKey, challPtr, gamekeyPtr, gamekey.Length);
-                                     }
-                                 }
+                                var clientKey = new ChatCrypt.GDCryptKey();
+                                var serverKey = new ChatCrypt.GDCryptKey();
 
-                                 state.ClientKey = clientKey;
-                                 state.ServerKey = serverKey;
+                                fixed (byte* challPtr = chall)
+                                {
+                                    fixed (byte* gamekeyPtr = gamekey)
+                                    {
+                                        ChatCrypt.GSCryptKeyInit(clientKey, challPtr, gamekeyPtr, gamekey.Length);
+                                        ChatCrypt.GSCryptKeyInit(serverKey, challPtr, gamekeyPtr, gamekey.Length);
+                                    }
+                                }
 
-                                 SendToClient(ref state, DataFunctions.StringToBytes(":s 705 * 0000000000000000 0000000000000000\r\n"));
-                             }
+                                state.ClientKey = clientKey;
+                                state.ServerKey = serverKey;
+
+                                SendToClient(ref state, DataFunctions.StringToBytes(":s 705 * 0000000000000000 0000000000000000\r\n"));
+                            }
+                            else
+                            {
+                                _ircDaemon.ProcessSocketMessage(state.Socket, asciValue, state, SendToClient);
+                            }
                         }
                     }
                     else
@@ -194,7 +208,7 @@ namespace GSMasterServer.Servers
                             var bytes = reader.ReadBytes((int)(ms.Length - ms.Position));
 
                             var asciValueInput = Encoding.ASCII.GetString(bytes);
-
+                            
                             byte* bytesPtr = stackalloc byte[bytes.Length];
 
                             for (int i = 0; i < bytes.Length; i++)
@@ -227,7 +241,7 @@ namespace GSMasterServer.Servers
 
                             if (asciValue.StartsWith("USRIP"))
                             {
-                                var bytesToSend = ":s 302  :=+@127.0.0.1\r\n".ToAssciiBytes();
+                                var bytesToSend = ":s 302 sF|elamaunt :sF|elamaunt=+@127.0.0.1\r\n".ToAssciiBytes();
 
                                 fixed (byte* bytesToSendPtr = bytesToSend)
                                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
@@ -236,8 +250,7 @@ namespace GSMasterServer.Servers
                                 
                                 goto CONTINUE;
                             }
-                            //_ircDaemon.ProcessSocketMessage(state.Socket, $"INVITE {nick} #GPG!0");
-
+                            
                             _ircDaemon.ProcessSocketMessage(state.Socket, asciValue);
                         }
                     }

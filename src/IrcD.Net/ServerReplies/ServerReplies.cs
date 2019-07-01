@@ -49,25 +49,40 @@ namespace IrcD.ServerReplies
             // SendWelcome(info);
 
             // Спаю нужно только это
-            BuildMessageHeader(info, ReplyCode.Welcome);
-            _response.Append($" {info.Nick} :Wellcome");
-            info.WriteLine(_response);
+            /*BuildMessageHeader(info, ReplyCode.Welcome);
+            _response.Append($":s {info.Nick} :Wellcome");
+            info.WriteLine(_response);*/
+            
+            info.WriteLine($":SERVER!SERVER@* NOTICE {info.Nick} :Authenticated");
+            info.WriteLine($":s 001 {info.Nick} :Welcome to the Matrix {info.Nick}");
+            info.WriteLine($":s 002 {info.Nick} :Your host is xs0, running version 1.0");
+            info.WriteLine($":s 003 {info.Nick} :This server was created Fri Oct 19 1979 at 21:50:00 PDT");
+            info.WriteLine($":s 004 {info.Nick} s 1.0 iq biklmnopqustvhe");
+            info.WriteLine($":s 375 {info.Nick} :- (M) Message of the day - ");
+            info.WriteLine($":s 372 {info.Nick} :- Welcome to GameSpy");
+            
 
 
-           /* info.WriteLine(":s 001 Sidonuke :Welcome to the Matrix Sidonuke");
-            info.WriteLine(":s 002 Sidonuke :Your host is xs1, running version 1.0");
-            info.WriteLine(":s 003 Sidonuke :This server was created Fri Oct 19 1979 at 21:50:00 PDT");*/
+            //info.WriteLine($":SERVER!SERVER@* NOTICE :NEW USER: sF|elamaunt!XvDsFqOa9X|87654321@127.0.0.1");
+            //info.WriteLine($":SERVER!SERVER@* NOTICE :sF|elamaunt has joined #GPG123");
+            // info.WriteLine($"JOIN #gsp!chatmain");
+            // sendToAllWithMode((int)EUserMode_ShowConns,":SERVER!SERVER@* NOTICE :NEW USER: %s!%s@%s",nick,user,host);
+
+
+            /* info.WriteLine(":s 001 Sidonuke :Welcome to the Matrix Sidonuke");
+             info.WriteLine(":s 002 Sidonuke :Your host is xs1, running version 1.0");
+             info.WriteLine(":s 003 Sidonuke :This server was created Fri Oct 19 1979 at 21:50:00 PDT");*/
             //SendMyInfo(info);
             /*info.WriteLine(":s 375 Sidonuke :- (M) Message of the day - ");
             info.WriteLine(":s 372 Sidonuke :- Welcome to GameSpy");
             info.WriteLine(":s 376 Sidonuke :End of MOTD command");*/
 
-           
-               /* SendListUserClient(info);
-                SendListUserOp(info);
-                SendListUserUnknown(info);
-                SendListUserChannels(info);
-                SendListUserMe(info);*/
+
+            /* SendListUserClient(info);
+             SendListUserOp(info);
+             SendListUserUnknown(info);
+             SendListUserChannels(info);
+             SendListUserMe(info);*/
 
             /*SendWelcome(info);
              SendYourHost(info);

@@ -58,7 +58,7 @@ namespace IrcD.Core
             }
         }
 
-        public int MaxNickLength { get; set; } = 9;
+        public int MaxNickLength { get; set; } = 16;
         public int MaxLineLength { get; set; } = 510;
         public int MaxLanguages { get; set; } = 10;
         public int MaxSilence { get; set; } = 20;
@@ -78,9 +78,19 @@ namespace IrcD.Core
         public string StandardKickMessage { get; set; } = "Kicked";
         public string StandardKillMessage { get; set; } = "Killed";
 
-        public Dictionary<string, string> OLine { get; } = new Dictionary<string, string>();
-
-        public List<OperHost> OperHosts { get; } = new List<OperHost>();
+        public Dictionary<string, string> OLine { get; } = new Dictionary<string, string>()
+        {
+            { "ChatMonitor", "ihatethiswork" }
+        };
+        
+        public List<OperHost> OperHosts { get; } = new List<OperHost>()
+        {
+            new OperHost()
+            {
+                Allow = true,
+                WildcardHostMask = new Tools.WildCard("127.0.0.1", Tools.WildcardMatch.Anywhere)
+            }
+        };
 
         /// <summary>
         /// Some clients have big problems with correct parsing of the RFC,

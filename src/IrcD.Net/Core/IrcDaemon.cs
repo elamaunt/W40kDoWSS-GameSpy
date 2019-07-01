@@ -269,13 +269,14 @@ namespace IrcD.Core
             info.InitNick(nick);
             Sockets[socket] = info;
         }
-        
-        public void ProcessSocketMessage(Socket socket, string message)
+
+        public void ProcessSocketMessage(Socket socket, string message, object state = null, Func<object, string, int> send = null)
         {
             // USER X14saFv19X| 87654321 127.0.0.1 peerchat.gamespy.com :c7923ffb345487895fd66e20ca24ca00
             // NICK *
             
-            var userInfo = Sockets[socket];
+            if (!Sockets.TryGetValue(socket, out UserInfo userInfo))
+                userInfo = Sockets[socket] = new UserInfo(this, socket, ((IPEndPoint)socket.RemoteEndPoint).Address.ToString(), false, String.IsNullOrEmpty(Options.ServerPass), state, send);
 
             try
             {

@@ -33,50 +33,53 @@ namespace IrcD.Commands
 
         protected override void PrivateHandle(UserInfo info, List<string> args)
         {
-            // Блокируем изменение ника
-            // Через указанный костыль
-            args[0] = info.Nick;
-
-            /*if (!info.PassAccepted)
+            if (info.Nick != null)
             {
-                IrcDaemon.Replies.SendPasswordMismatch(info);
-                return;
+                args[0] = info.Nick;
             }
-
-            if (args.Count < 1)
+            else
             {
-                IrcDaemon.Replies.SendNoNicknameGiven(info);
-                return;
+                if (!info.PassAccepted)
+                {
+                    IrcDaemon.Replies.SendPasswordMismatch(info);
+                    return;
+                }
+
+                if (args.Count < 1)
+                {
+                    IrcDaemon.Replies.SendNoNicknameGiven(info);
+                    return;
+                }
+
+                if (IrcDaemon.Nicks.ContainsKey(args[0]))
+                {
+                    IrcDaemon.Replies.SendNicknameInUse(info, args[0]);
+                    return;
+                }
+
+                if (!IrcDaemon.ValidNick(args[0]))
+                {
+                    IrcDaemon.Replies.SendErroneousNickname(info, args[0]);
+                    return;
+                }
+
+                // *** NICK command valid after this point ***
+
+                if (!info.NickExists)
+                {
+                    //First Nick Command
+                    IrcDaemon.Nicks.Add(args[0], info);
+                    info.InitNick(args[0]);
+                    return;
+                }
             }
-
-            if (IrcDaemon.Nicks.ContainsKey(args[0]))
-            {
-                IrcDaemon.Replies.SendNicknameInUse(info, args[0]);
-                return;
-            }
-
-            if (!IrcDaemon.ValidNick(args[0]))
-            {
-                IrcDaemon.Replies.SendErroneousNickname(info, args[0]);
-                return;
-            }
-
-            // *** NICK command valid after this point ***
-
-            if (!info.NickExists)
-            {
-                //First Nick Command
-                IrcDaemon.Nicks.Add(args[0], info);
-                info.InitNick(args[0]);
-                return;
-            }*/
             
             Send(new NickArgument(info, info, args[0]));
 
             foreach (var channelInfo in info.Channels)
                 Send(new NickArgument(info, channelInfo, args[0]));
 
-            //info.Rename(args[0]);
+            info.Rename(args[0]);
         }
 
         protected override int PrivateSend(CommandArgument commandArgument)

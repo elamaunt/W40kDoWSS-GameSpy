@@ -44,7 +44,7 @@ namespace IrcD.Commands
                 return;
             }
 
-            if (ValidOperLine(args[0], args[1]))
+            if (ValidOperLine(args[0], args[2]))
             {
                 info.Modes.Add(new ModeLocalOperator());
                 info.Modes.Add(new ModeOperator());
@@ -73,7 +73,7 @@ namespace IrcD.Commands
             string realpass;
             if (IrcDaemon.Options.OLine.TryGetValue(user, out realpass))
             {
-                if (pass == realpass)
+                if (StringComparer.Ordinal.Compare(pass, realpass) == 0)
                     return true;
             }
 

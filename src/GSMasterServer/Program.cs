@@ -59,7 +59,7 @@ namespace GSMasterServer
 
             // no needs
             //UNKServer unknownServer = new UNKServer(bind, 6500);
-            // DirectPlayServer directPlayServer = new DirectPlayServer(bind, 6515);
+            //DirectPlayServer directPlayServer = new DirectPlayServer(bind, 6515);
 
             while (true)
                 Thread.Sleep(1000);

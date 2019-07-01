@@ -1,4 +1,5 @@
 ﻿using GSMasterServer.Data;
+using GSMasterServer.Utils;
 using Reality.Net.GameSpy.Servers;
 using System;
 using System.Collections.Generic;
@@ -497,6 +498,23 @@ namespace GSMasterServer.Servers
                         break;
 
                     case "status":
+                        // \status\1\sesskey\17562\statstring\DXP\locstring\-1
+
+                        //sendBuddies()
+                        SendToClient(ref state, $@"\bdy\2\list\100000001, 100000002\final\".ToAssciiBytes());
+                       
+                        // TODO: sendAddRequests();
+                        
+                        //sendStatusUpdateToBuddies(this);
+
+                        // send self status
+                        SendToClient(ref state, $@"\bm\100\f\100000001\msg\|s|0|ss|Offline\final\".ToAssciiBytes());
+
+                        // send friend status
+                        SendToClient(ref state, $@"\bm\100\f\100000002\msg\|s|0|ss|Online\final\".ToAssciiBytes());
+
+
+
                         break;
 
                     case "logout":

@@ -12,8 +12,8 @@
 
   <!--OLine: you really should change that. Everyone in this list gets OPER privilege-->
   <oper>
-    <user>admin</user>
-    <pass>pass4u</pass>
+    <user>ChatMonitor</user>
+    <pass>ihatethiswork</pass>
   </oper>
 
   <!--Allow and deny pattern are matched in the order of appearence, the standard is deny all, so there should be at least one allow line to be able to use OPER-->
@@ -76,21 +76,6 @@
 
   <!--Message of the day: can have Mirc colors but, diplayed on connect-->
   <motd>
-    &#x03;14                                                       \|||/
-    &#x03;2 _           _  _       _ &#x02;             _&#x02;               &#x03;14(&#x03;2o o&#x03;14)
-    &#x03;2(_)        _| || |_    | |&#x02;            | |&#x02;      &#x03;14,~~~ooO~~(_)~~~~~~~~~,
-    &#x03;2 _ _ __ __|_  __  _| __| |&#x02;  _ __   ___| |_&#x02;     &#x03;14|&#x03;    apophis.ch&#x03;14      |
-    &#x03;2| | '__/ __|| || |_ / _` |&#x02; | '_ \ / _ \ __|&#x02;    &#x03;14|&#x03;   Thomas Bruderer&#x03;14  |
-    &#x03;2| | | | (_|_  __  _| (_| |&#x02;_| | | |  __/ |_&#x02;     &#x03;14|&#x03;      2009 - 2010&#x03;14   |
-    &#x03;2|_|_|  \___||_||_|  \__,_&#x02;(_)_| |_|\___|\__|&#x02;    &#x03;14'~~~~~~~~~~~~~~ooO~~~'
-    &#x03;14                                                      |__|__|
-    &#x02;Complete IRC Daemon for .NET and Mono&#x02;                  &#x03;14|| ||
-    &#x03;4______________________________________________________&#x03;14ooO Ooo&#x03;4__________&#x03;
-    &#x03;4'&#x03;                                                                       &#x03;4'&#x03;
-    &#x03;4|&#x03;                                                                       &#x03;4|&#x03;
-    &#x03;4|&#x03;  Small Code Footprint, 100% clean C# code, Fully compliant with RFC   &#x03;4|&#x03;
-    &#x03;4|&#x03;                                                                       &#x03;4|&#x03;
-    &#x03;4'_______________________________________________________________________'&#x03;
   </motd>
 
 </config>

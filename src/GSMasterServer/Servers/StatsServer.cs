@@ -87,11 +87,7 @@ namespace GSMasterServer.Servers
                 Socket = socket
             };
             
-           // socket.Send(XorBytes(@"\auth\\gamename\whamdowfr\response\f11f999a8f79bb080663a697c87adde5\port\0\id\1\final\", XorKEY));
             socket.Send(XorBytes(@"\lc\1\challenge\KNDVKXFQWP\id\1\final\", XorKEY));
-           // socket.Send(XorBytes(@"\auth\\gamename\whamdowfr\response\f11f999a8f79bb080663a697c87ad\port\0\id\1\final\", XorKEY));
-            // Thread.Sleep(50);
-            // socket.Send(XorBytes(@"\newgame\\sesskey\788355045\\challenge\370025987\final\", XorKEY));
             WaitForData(state);
         }
 
@@ -143,18 +139,22 @@ namespace GSMasterServer.Servers
 
                 Log(Category, input);
 
-                if (input.StartsWith(@"\auth\\gamename\whamdowfr\"))
+                if (input.StartsWith(@"\auth\\gamename\"))
                 {
-                    SendToClient(state, @"\lc\2\sesskey\51437\proof\24094a7d02f25bd6b9b221bbf9c47900\id\1\final\");
+                    SendToClient(state, @"\lc\2\sesskey\1482017401\proof\0\id\1\final\");
 
                     goto CONTINUE;
                 }
 
                 if (input.StartsWith(@"\authp\\pid\"))
                 {
+                    // \authp\\pid\87654321\resp\67512e365ba89497d60963caa4ce23d4\lid\1\final\
+
                     // \authp\\pid\87654321\resp\7e2270c581e8daf5a5321ff218953035\lid\1\final\
 
-                    SendToClient(state, @"\pauthr\100000004\lid\1\final\");
+                    SendToClient(state, @"\pauthr\87654321\lid\1\final\");
+                    //SendToClient(state, @"\pauthr\-3\lid\1\errmsg\helloworld\final\");
+                    //SendToClient(state, @"\pauthr\100000004\lid\1\final\");
 
                     goto CONTINUE;
                 }
