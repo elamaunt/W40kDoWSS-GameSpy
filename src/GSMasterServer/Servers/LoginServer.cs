@@ -536,7 +536,11 @@ namespace GSMasterServer.Servers
                     case "registernick":
                         SendToClient(ref state, DataFunctions.StringToBytes(string.Format(@"\rn\{0}\id\{1}\final\", keyValues["uniquenick"], keyValues["id"])));
                         break;
-                        
+
+                    case "ka":
+                        SendToClient(ref state, $@"\ka\\final\".ToAssciiBytes());
+                        break;
+
                     default:
                         break;
                 }

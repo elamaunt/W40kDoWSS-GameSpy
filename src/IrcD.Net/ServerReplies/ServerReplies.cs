@@ -78,11 +78,11 @@ namespace IrcD.ServerReplies
             info.WriteLine(":s 376 Sidonuke :End of MOTD command");*/
 
 
-            /* SendListUserClient(info);
+             SendListUserClient(info);
              SendListUserOp(info);
              SendListUserUnknown(info);
              SendListUserChannels(info);
-             SendListUserMe(info);*/
+             SendListUserMe(info);
 
             /*SendWelcome(info);
              SendYourHost(info);

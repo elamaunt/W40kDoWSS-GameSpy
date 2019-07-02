@@ -6,6 +6,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GSMasterServer.Servers
 {
@@ -174,6 +175,7 @@ namespace GSMasterServer.Servers
                     request = HttpHelper.GetRequest(ms);
                 
                 Log(Category, Encoding.UTF8.GetString(state.Buffer, 0, received).Replace('\n', ' ').Replace('\r', ' '));
+
 
                 using (var ms = new MemoryStream(state.Buffer))
                 {

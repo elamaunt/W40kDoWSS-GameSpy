@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GSMasterServer.Servers
 {
@@ -229,7 +230,7 @@ namespace GSMasterServer.Servers
 
                                 _ircDaemon.RegisterNewUser(state.Socket, nick, state, SendToClient);
 
-                                var bytesToSend = ":s 707 * 12345678 87654321\r\n".ToAssciiBytes();
+                                var bytesToSend = $":s 707 sF|elamaunt 12345678 87654321\r\n".ToAssciiBytes();
                                
                                 fixed (byte* bytesToSendPtr = bytesToSend)
                                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);

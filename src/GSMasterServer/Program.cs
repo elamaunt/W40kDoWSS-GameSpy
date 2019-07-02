@@ -57,10 +57,6 @@ namespace GSMasterServer
             HttpServer httpServer = new HttpServer(bind, 80);
             StatsServer statsServer = new StatsServer(bind, 29920);
 
-            // no needs
-            //UNKServer unknownServer = new UNKServer(bind, 6500);
-            //DirectPlayServer directPlayServer = new DirectPlayServer(bind, 6515);
-
             while (true)
                 Thread.Sleep(1000);
         }
