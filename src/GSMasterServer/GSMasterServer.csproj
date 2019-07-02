@@ -95,7 +95,6 @@
     <Compile Include="Http\QuickMimeTypeMapper.cs" />
     <Compile Include="Http\Route.cs" />
     <Compile Include="Servers\ChatServer.cs" />
-    <Compile Include="Servers\DirectPlayServer.cs" />
     <Compile Include="Servers\HttpServer.cs" />
     <Compile Include="Servers\LoginServer.cs" />
     <Compile Include="Servers\CDKeyServer.cs" />
@@ -103,7 +102,6 @@
     <Compile Include="Servers\Server.cs" />
     <Compile Include="Servers\ServerNatNeg.cs" />
     <Compile Include="Servers\StatsServer.cs" />
-    <Compile Include="Servers\UNKServer.cs" />
     <Compile Include="Utils\ByteHelpers.cs" />
     <Compile Include="Utils\ChatCrypt.cs" />
     <Compile Include="Utils\DynamicLinq.cs" />
