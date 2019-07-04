@@ -923,6 +923,19 @@ namespace IrcD.ServerReplies
             _response.Append(chan.Topic);
 
             info.WriteLine(_response);
+
+            //":s 333 Sidonuke #GPG!2176 SERVER 1225379572"
+            /*BuildMessageHeader(info, ReplyCode.Server);
+            _response.Append(" ");
+            _response.Append(chan.Name);
+            _response.Append(" ");
+            _response.Append("SERVER");
+            _response.Append(" ");
+            _response.Append("1225379572");
+
+            info.WriteLine(_response);*/
+
+           // ":SERVER!SERVER@* NOTICE %s :%s"
         }
 
         /// <summary>

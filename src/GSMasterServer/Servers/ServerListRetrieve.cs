@@ -314,22 +314,22 @@ namespace GSMasterServer.Servers
                 // d    whamdowfr whamdowfr fkT>_2Cr \hostname\numwaiting\maxwaiting\numservers\numplayersname
                 //var bytes = @"\fieldcount\8\groupid\hostname\numplayers\maxwaiting\numwaiting\numservers\password\other\309\Europe\0\50\0\0\0\.maxplayers.0\408\Pros\0\50\0\0\0\.maxplayers.0\254\West Coast 2\0\50\0\0\0\.maxplayers.0\255\West Coast 3\0\50\0\0\0\.maxplayers.0\256\East Coast 1\0\50\0\0\0\.maxplayers.0\257\East Coast 2\0\50\0\0\0\.maxplayers.0\253\West Coast 1\0\50\0\0\0\.maxplayers.0\258\East Coast 3\0\50\0\0\0\.maxplayers.0\407\Newbies\0\50\0\0\0\.maxplayers.0\final\".ToAssciiBytes();
 
+
+                //127 0 0 1 207 55
+
+                var bytes = new List<byte>();
+
+                // was ip
                 IPEndPoint remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
+                bytes.AddRange(remoteEndPoint.Address.GetAddressBytes());
+                
+                byte[] value2 = BitConverter.GetBytes((ushort)6500);
 
-                byte[] ipBytes = remoteEndPoint.Address.GetAddressBytes();
-
-                byte[] value2 = BitConverter.GetBytes((ushort)remoteEndPoint.Port);
-                //byte[] value2 = BitConverter.GetBytes((ushort)6500);
-                byte fieldsCount = 5;
-
-                List<byte> bytes = new List<byte>();
-                bytes.AddRange(ipBytes);
                 bytes.AddRange(BitConverter.IsLittleEndian ? value2.Reverse() : value2);
-                bytes.Add(fieldsCount);
+
+                bytes.Add(5); // fields count
                 bytes.Add(0);
-
-                //var str = @"\hostname\numwaiting\maxwaiting\numservers\numplayersname";
-
+                
                 bytes.AddRange(DataFunctions.StringToBytes("hostname"));
                 bytes.Add(0);
                 bytes.Add(0);
@@ -345,33 +345,52 @@ namespace GSMasterServer.Servers
                 bytes.AddRange(DataFunctions.StringToBytes("numplayersname"));
                 bytes.Add(0);
                 bytes.Add(0);
-
+            
                 for (int i = 1; i <= 10; i++)
                 {
                     bytes.Add(81);
-                    bytes.AddRange(IPAddress.Loopback.GetAddressBytes());
-                    bytes.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)6500).Reverse() : BitConverter.GetBytes((ushort)6500));
-                    bytes.Add(255);
+                    
+                    var b2 = BitConverter.GetBytes((long)i);
 
-                    bytes.AddRange(DataFunctions.StringToBytes("Room 1"));
+                    bytes.Add(b2[3]);
+                    bytes.Add(b2[2]);
+                    bytes.Add(b2[1]);
+                    bytes.Add(b2[0]);
+
                     bytes.Add(0);
+                    bytes.Add(0);
+                    
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes("Room "+i));
+                    bytes.Add(0);
+
                     bytes.Add(255);
                     bytes.AddRange(DataFunctions.StringToBytes("1"));
                     bytes.Add(0);
+
                     bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("2"));
+                    bytes.AddRange(DataFunctions.StringToBytes("200"));
                     bytes.Add(0);
+
                     bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("3"));
+                    bytes.AddRange(DataFunctions.StringToBytes("1"));
                     bytes.Add(0);
+
                     bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("4"));
+                    bytes.AddRange(DataFunctions.StringToBytes("1"));
                     bytes.Add(0);
                 }
 
                 bytes.AddRange(new byte[] { 0, 255, 255, 255, 255 });
 
                 var array = bytes.ToArray();
+
+                 var str = DataFunctions.BytesToString(array);
+
+              //  var array = DataFunctions.StringToBytes("\u007f \0 \0 \u0001 \u0019 d \u0001 \0 hostname \0 \0 Q \u007f \0 \0 \u0001 \u0019 d ÿ Room 1 \0 \0 ÿÿÿÿ");
+
+                // working with Room 1
+                //var array = DataFunctions.StringToBytes("\u007f\0\0\u0001\u0019d\u0001\0hostname\0\0Q\u007f\0\0\u0001\u0019dÿRoom 1\0\0ÿÿÿÿ");
 
                 byte[] enc = GSEncoding.Encode(DataFunctions.StringToBytes("pXL838"), DataFunctions.StringToBytes(validate), array, array.LongLength);
 
@@ -431,17 +450,14 @@ namespace GSMasterServer.Servers
         private static byte[] PackServerList(SocketState state, IEnumerable<GameServer> servers, string[] fields)
         {
             IPEndPoint remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
+            List<byte> data = new List<byte>();
 
-            byte[] ipBytes = remoteEndPoint.Address.GetAddressBytes();
+            data.AddRange(remoteEndPoint.Address.GetAddressBytes());
 
             byte[] value2 = BitConverter.GetBytes((ushort)remoteEndPoint.Port);
-            //byte[] value2 = BitConverter.GetBytes((ushort)6500);
-            byte fieldsCount = (byte)fields.Length;
-
-            List<byte> data = new List<byte>();
-            data.AddRange(ipBytes);
             data.AddRange(BitConverter.IsLittleEndian ? value2.Reverse() : value2);
-            data.Add(fieldsCount);
+
+            data.Add((byte)fields.Length);
             data.Add(0);
 
             foreach (var field in fields)

@@ -98,7 +98,7 @@ namespace IrcD.Core
 
         #endregion
 
-        public IrcDaemon(IrcMode ircMode = IrcMode.Modern)
+        public IrcDaemon(IrcMode ircMode = IrcMode.Rfc1459)
         {
             Capabilities = new List<string>();
 

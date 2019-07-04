@@ -87,6 +87,7 @@ namespace IrcD.ServerReplies
         UniqueOpIs =                     325,
         NoTopic =                        331,
         Topic =                          332,
+        Server =                         333, // For gamespy
         Inviting =                       341,
         Summoning =                      342,
         InviteList =                     346,
