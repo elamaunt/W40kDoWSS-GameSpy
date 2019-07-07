@@ -1,7 +1,7 @@
-﻿using IrcD.Core;
-using IrcD.Core.Utils;
-using GSMasterServer.Data;
+﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
+using IrcD.Core;
+using IrcD.Core.Utils;
 using Reality.Net.GameSpy.Servers;
 using System;
 using System.IO;
@@ -9,7 +9,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace GSMasterServer.Servers
 {
@@ -20,7 +19,10 @@ namespace GSMasterServer.Servers
         Thread _thread;
         Socket _newPeerAceptingsocket;
         readonly ManualResetEvent _reset = new ManualResetEvent(false);
-        readonly IrcDaemon _ircDaemon;
+        public readonly static IrcDaemon IrcDaemon = new IrcDaemon(IrcMode.Modern);
+
+        public static byte[] Gamename;
+        public static byte[] Gamekey = null;
 
         public ChatServer(IPAddress address, ushort port)
         {
@@ -34,8 +36,6 @@ namespace GSMasterServer.Servers
                 Address = address,
                 Port = port
             });
-
-            _ircDaemon = new IrcDaemon(IrcMode.Modern);
         }
 
         private void StartServer(object parameter)
@@ -154,22 +154,19 @@ namespace GSMasterServer.Servers
                             {
                                 state.Encoded = true;
                                 
-                                byte[] gamename;
-                                byte[] gamekey = null;
-
                                 if (line.Contains("whammer40kdc"))
                                 {
-                                    gamename = "whammer40kdc".ToAssciiBytes();
-                                    gamekey = "Ue9v3H".ToAssciiBytes();
+                                    Gamename = "whammer40kdc".ToAssciiBytes();
+                                    Gamekey = "Ue9v3H".ToAssciiBytes();
                                 }
 
                                 if (line.Contains("whamdowfr"))
                                 {
-                                    gamename = "whamdowfr".ToAssciiBytes();
-                                    gamekey = "pXL838".ToAssciiBytes();
+                                    Gamename = "whamdowfr".ToAssciiBytes();
+                                    Gamekey = "pXL838".ToAssciiBytes();
                                 }
 
-                                if (gamekey == null)
+                                if (Gamekey == null)
                                 {
                                     state.Dispose();
                                     return;
@@ -182,10 +179,10 @@ namespace GSMasterServer.Servers
 
                                 fixed (byte* challPtr = chall)
                                 {
-                                    fixed (byte* gamekeyPtr = gamekey)
+                                    fixed (byte* gamekeyPtr = Gamekey)
                                     {
-                                        ChatCrypt.GSCryptKeyInit(clientKey, challPtr, gamekeyPtr, gamekey.Length);
-                                        ChatCrypt.GSCryptKeyInit(serverKey, challPtr, gamekeyPtr, gamekey.Length);
+                                        ChatCrypt.GSCryptKeyInit(clientKey, challPtr, gamekeyPtr, Gamekey.Length);
+                                        ChatCrypt.GSCryptKeyInit(serverKey, challPtr, gamekeyPtr, Gamekey.Length);
                                     }
                                 }
 
@@ -196,7 +193,7 @@ namespace GSMasterServer.Servers
                             }
                             else
                             {
-                                _ircDaemon.ProcessSocketMessage(state.Socket, asciValue, state, SendToClient);
+                                IrcDaemon.ProcessSocketMessage(state.Socket, asciValue, state, SendToClient);
                             }
                         }
                     }
@@ -220,15 +217,15 @@ namespace GSMasterServer.Servers
                             for (int i = 0; i < bytes.Length; i++)
                                 bytes[i] = bytesPtr[i];
 
-                            var asciValue = Encoding.ASCII.GetString(bytes);
+                            var utf8alue = Encoding.UTF8.GetString(bytes);
 
-                            Log("CHATDATA", asciValue);
+                            Log("CHATDATA", utf8alue);
 
-                            if (asciValue.StartsWith("LOGIN"))
+                            if (utf8alue.StartsWith("LOGIN"))
                             {
-                                var nick = asciValue.Split(' ')[2];
+                                var nick = utf8alue.Split(' ')[2];
 
-                                _ircDaemon.RegisterNewUser(state.Socket, nick, state, SendToClient);
+                                IrcDaemon.RegisterNewUser(state.Socket, nick, state, SendToClient);
 
                                 var bytesToSend = $":s 707 sF|elamaunt 12345678 87654321\r\n".ToAssciiBytes();
                                
@@ -240,9 +237,11 @@ namespace GSMasterServer.Servers
                                 goto CONTINUE;
                             }
 
-                            if (asciValue.StartsWith("USRIP"))
+                            if (utf8alue.StartsWith("USRIP"))
                             {
-                                var bytesToSend = ":s 302 sF|elamaunt :sF|elamaunt=+@127.0.0.1\r\n".ToAssciiBytes();
+                                var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
+                                //var bytesToSend = ":s 302 sF|elamaunt :sF|elamaunt=+@127.0.0.1\r\n".ToAssciiBytes();
+                                var bytesToSend = $":s 302  :=+@{remoteEndPoint.Address}\r\n".ToAssciiBytes();
 
                                 fixed (byte* bytesToSendPtr = bytesToSend)
                                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
@@ -252,7 +251,7 @@ namespace GSMasterServer.Servers
                                 goto CONTINUE;
                             }
                             
-                            _ircDaemon.ProcessSocketMessage(state.Socket, asciValue);
+                            IrcDaemon.ProcessSocketMessage(state.Socket, utf8alue);
                         }
                     }
                 }
@@ -303,7 +302,7 @@ namespace GSMasterServer.Servers
 
             Log("CHATRESP", message);
 
-            var bytesToSend = message.ToAssciiBytes();
+            var bytesToSend = Encoding.UTF8.GetBytes(message);
 
             if (state.Encoded)
             {

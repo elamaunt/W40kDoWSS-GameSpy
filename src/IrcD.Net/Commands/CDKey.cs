@@ -8,7 +8,8 @@ namespace IrcD.Commands
     {
         public CDKey(IrcDaemon ircDaemon)
             : base(ircDaemon, "CDKey", "")
-        { }
+        {
+        }
 
         protected override void PrivateHandle(UserInfo info, List<string> args)
         {

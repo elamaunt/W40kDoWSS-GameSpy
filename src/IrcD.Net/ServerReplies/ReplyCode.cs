@@ -177,6 +177,9 @@ namespace IrcD.ServerReplies
         WhoIsLanguage =                  690,
 
         // Additional gamespy headers
+        GETCKEY =                     702,
+        CKEY =                           700,
+        GETCKEYEND =                     703,
         CRYPT =                          705,
         CDKey =                          706,
         USRIP =                          302,

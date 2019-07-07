@@ -210,6 +210,12 @@ namespace GSMasterServer.Servers
                         goto END;
                     }
 
+                    if (request.Url.EndsWith("homepage.php.htm"))
+                    {
+                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Pages/ComingSoon.html"));
+                        goto END;
+                    }
+                    
                     HttpHelper.WriteResponse(ms, HttpResponceBuilder.NotFound());
                     
                     END: // Завершение отправки

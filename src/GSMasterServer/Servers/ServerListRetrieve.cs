@@ -298,8 +298,8 @@ namespace GSMasterServer.Servers
 
             string[] data = message.Split(new char[] { '\x00' }, StringSplitOptions.RemoveEmptyEntries);
 
-            if (!data[2].Equals("whamdowfr", StringComparison.OrdinalIgnoreCase))
-                return false;
+            //if (!data[2].Equals("whamdowfr", StringComparison.OrdinalIgnoreCase))
+           //     return false;
 
             string validate = data[4];
             string filter = null;
@@ -365,19 +365,19 @@ namespace GSMasterServer.Servers
                     bytes.Add(0);
 
                     bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("1"));
+                    bytes.AddRange(DataFunctions.StringToBytes(ChatServer.IrcDaemon.GetChannelUsersCount("GPG!"+i).ToString()));
                     bytes.Add(0);
 
                     bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("200"));
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("1"));
+                    bytes.AddRange(DataFunctions.StringToBytes("1000"));
                     bytes.Add(0);
 
                     bytes.Add(255);
                     bytes.AddRange(DataFunctions.StringToBytes("1"));
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes("20"));
                     bytes.Add(0);
                 }
 
@@ -392,7 +392,7 @@ namespace GSMasterServer.Servers
                 // working with Room 1
                 //var array = DataFunctions.StringToBytes("\u007f\0\0\u0001\u0019d\u0001\0hostname\0\0Q\u007f\0\0\u0001\u0019dÿRoom 1\0\0ÿÿÿÿ");
 
-                byte[] enc = GSEncoding.Encode(DataFunctions.StringToBytes("pXL838"), DataFunctions.StringToBytes(validate), array, array.LongLength);
+                byte[] enc = GSEncoding.Encode(ChatServer.Gamekey, DataFunctions.StringToBytes(validate), array, array.LongLength);
 
                 SendToClient(state, enc);
                 return true;
@@ -442,7 +442,7 @@ namespace GSMasterServer.Servers
                 key = DataFunctions.StringToBytes("Xn221z");*/
 
             byte[] unencryptedServerList = PackServerList(state, servers, fields);
-            byte[] encryptedServerList = GSEncoding.Encode(DataFunctions.StringToBytes("pXL838"), DataFunctions.StringToBytes(validate), unencryptedServerList, unencryptedServerList.LongLength);
+            byte[] encryptedServerList = GSEncoding.Encode(ChatServer.Gamekey, DataFunctions.StringToBytes(validate), unencryptedServerList, unencryptedServerList.LongLength);
             SendToClient(state, encryptedServerList);
             return true;
         }

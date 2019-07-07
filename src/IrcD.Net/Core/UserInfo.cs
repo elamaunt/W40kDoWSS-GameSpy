@@ -181,6 +181,8 @@ namespace IrcD.Core
         public string ModeString => Modes.ToUserModeString();
 
         public DateTime Created { get; private set; }
+        public string UserFlags { get; set; }
+        public string UserStats { get; set; }
 
         public override string ToString()
         {

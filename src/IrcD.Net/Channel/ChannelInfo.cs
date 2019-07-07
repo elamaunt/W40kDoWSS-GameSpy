@@ -40,7 +40,7 @@ namespace IrcD.Channel
         public ChannelType ChannelType { get; }
 
         public string Name { get; }
-        public string Topic { get; set; } = "Wellcome!";
+        public string Topic { get; set; }
 
         public Dictionary<string, UserPerChannelInfo> UserPerChannelInfos { get; } = new Dictionary<string, UserPerChannelInfo>();
         public IEnumerable<UserInfo> Users => UserPerChannelInfos.Select(upci => upci.Value.UserInfo);
@@ -52,7 +52,8 @@ namespace IrcD.Channel
         {
             get
             {
-                if (Modes.IsPrivate())
+                return '*';
+               /* if (Modes.IsPrivate())
                 {
                     return '*';
                 }
@@ -61,7 +62,7 @@ namespace IrcD.Channel
                     return '@';
                 }
 
-                return '=';
+                return '=';*/
             }
         }
 

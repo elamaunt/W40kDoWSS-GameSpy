@@ -134,6 +134,9 @@ namespace IrcD.Core
             Commands.Add(new Admin(this));
             Commands.Add(new Away(this));
             Commands.Add(new CDKey(this));
+            Commands.Add(new GetCKey(this));
+            Commands.Add(new SetCKey(this));
+
             //Commands.Add(new Connect(this));
             //Commands.Add(new Die(this));
             Commands.Add(new Error(this));
@@ -381,6 +384,14 @@ namespace IrcD.Core
             Channels.Clear();
             Nicks.Clear();
             GC.Collect();*/
+        }
+
+        public int GetChannelUsersCount(string channelName)
+        {
+            if (Channels.TryGetValue(channelName, out ChannelInfo channel))
+                return channel.Users.Count();
+
+            return 0;
         }
 
         private void Parser(string line, UserInfo info)

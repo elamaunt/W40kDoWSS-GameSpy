@@ -498,10 +498,16 @@ namespace GSMasterServer.Servers
                         break;
 
                     case "status":
+
+                        var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
+
                         // \status\1\sesskey\17562\statstring\DXP\locstring\-1
 
+                        // userid\200000003\profileid\100000003\uniquenick\Bambochuk
+
                         //sendBuddies()
-                        SendToClient(ref state, $@"\bdy\2\list\100000001, 100000002\final\".ToAssciiBytes());
+                        //  SendToClient(ref state, $@"\bdy\2\list\100000003,100000001\final\".ToAssciiBytes());
+                        //SendToClient(ref state, $@"\bdy\0\list\\final\".ToAssciiBytes());
 
                         // TODO: sendAddRequests();
 
@@ -519,12 +525,13 @@ namespace GSMasterServer.Servers
 		                c->quietflags
                         */
 
-                        SendToClient(ref state, $@"\bm\100\f\100000001\msg\|s|{1}|ss|DXP{"|ls|"}{-1}|ip|{(uint)IPAddress.NetworkToHostOrder((int)IPAddress.Loopback.Address)}|p|{ReverseEndian16(6500)}|qm|{0}\final\".ToAssciiBytes());
+                        // SendToClient(ref state, $@"\bm\100\f\100000003\msg\|s|{2}|ss|DXP{"|ls|"}{-1}|ip|{(uint)IPAddress.NetworkToHostOrder((int)IPAddress.Loopback.Address)}|p|{ReverseEndian16(6500)}|qm|{0}\final\".ToAssciiBytes());
+                        //SendToClient(ref state, $@"\bm\100\f\100000002\msg\|s|0|ss|Offline\final\".ToAssciiBytes());
+                        // SendToClient(ref state, $@"\bm\100\f\100000001\msg\|s|{1}|ss|DXP{"|ls|"}{-1}|ip|{(uint)IPAddress.NetworkToHostOrder((int)remoteEndPoint.Address.Address)}|p|{ReverseEndian16(6500)}|qm|{0}\final\".ToAssciiBytes());
 
-                        
+
 
                         // send friend status
-                        SendToClient(ref state, $@"\bm\100\f\100000002\msg\|s|0|ss|Offline\final\".ToAssciiBytes());
 
 
 

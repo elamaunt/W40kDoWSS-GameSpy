@@ -226,7 +226,10 @@ namespace GSMasterServer.Servers
                 // there by a bunch of different message formats...
                 Log(Category, str);
 
-                if (str == "\t\0\0\0\0whamdowfr\0")
+                // \u0003\u0015?{?localip0\0192.168.159.1\0localip1\0192.168.58.1\0localip2\0192.168.97.2\0localip3\0192.168.56.1\0localip4\0192.168.1.21\0localport\06112\0natneg\01\0statechanged\02\0gamename\0whammer40kdcam\0\0
+                // ?{?localip0 192.168.159.1 localip1 192.168.58.1 localip2 192.168.97.2 localip3 192.168.56.1 localip4 192.168.1.21 localport 6112 natneg 1 statechanged 2 gamename whammer40kdcam
+
+                if (str == "\t\0\0\0\0whamdowfr\0" || str == "\t\0\0\0\0whammer40kdc\0")
                 {
                     // the initial message is basically the gamename, 0x09 0x00 0x00 0x00 0x00 whamdowfr
                     // reply back a good response

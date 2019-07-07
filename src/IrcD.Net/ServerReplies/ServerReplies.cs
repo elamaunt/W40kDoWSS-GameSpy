@@ -883,12 +883,14 @@ namespace IrcD.ServerReplies
         public void SendChannelModeIs(UserInfo info, ChannelInfo chan)
         {
             BuildMessageHeader(info, ReplyCode.ChannelModeIs);
-
+            _response.Append(" ");
+            _response.Append(info.Nick);
             _response.Append(" ");
             _response.Append(chan.Name);
             _response.Append(" ");
             _response.Append(chan.ModeString);
-
+            //_response.Append("+tnp");
+            
             info.WriteLine(_response);
         }
 
@@ -916,7 +918,8 @@ namespace IrcD.ServerReplies
         public void SendTopicReply(UserInfo info, ChannelInfo chan)
         {
             BuildMessageHeader(info, ReplyCode.Topic);
-
+            _response.Append(" ");
+            _response.Append(info.Nick);
             _response.Append(" ");
             _response.Append(chan.Name);
             _response.Append(" :");
@@ -1118,6 +1121,8 @@ namespace IrcD.ServerReplies
         {
             BuildMessageHeader(info, ReplyCode.NamesReply);
             _response.Append(" ");
+            _response.Append(info.Nick);
+            _response.Append(" ");
             _response.Append(chan.NamesPrefix);
             _response.Append(" ");
             _response.Append(chan.Name);
@@ -1134,7 +1139,8 @@ namespace IrcD.ServerReplies
         public void SendEndOfNamesReply(UserInfo info, ChannelInfo chan)
         {
             BuildMessageHeader(info, ReplyCode.EndOfNames);
-
+            _response.Append(" ");
+            _response.Append(info.Nick);
             _response.Append(" ");
             _response.Append(chan.Name);
             _response.Append(" :End of NAMES list");
@@ -1965,6 +1971,116 @@ namespace IrcD.ServerReplies
             _response.Append(who.Languages.Select(l => Languages.All[l]).Concatenate(", "));
 
             info.WriteLine(_response);
+        }
+        
+        public void SendSetKeyBroadcast(UserInfo info, ChannelInfo channel, List<string> args)
+        {
+            // SETCKEY #GPG!2 sF|elamaunt :\b_stats\87654321|1000|0|
+            // channel target setstr
+            foreach (var user in channel.Users)
+            {
+                user.WriteLine($@":s 702 {channel.Name} {channel.Name} {info.Nick} BCAST :{args[2]}");
+            }
+
+            /*BuildMessageHeader(info, ReplyCode.GETCKEY);
+            _response.Append(" ");
+            _response.Append(channelName);
+            _response.Append(" ");
+            _response.Append(info.Nick);
+            _response.Append(" ");
+            _response.Append("BCAST");
+            _response.Append(@" :" + valueChangeString);
+
+            info.WriteLine(_response);*/
+        }
+
+        public void SendAllUsersFlags(UserInfo info, ChannelInfo channel, List<string> args)
+        {
+            // GETCKEY #GPG!1 * 048 0 :\username\b_flags
+            // channel target cookie cookie2 :getstr
+
+            //:s 702 <target chan> <scope of flags (chan)> <nick> <request id or BCAST> :<flags>
+            //:s 702 Shinto #gsp!jbnightfire Falcon 0 :\falcon
+            //:s 702 Shinto #gsp!!test CHC 0 :\XFOWvpDvpX|0\\7557fac37091291343e9b28c0eb8e59f
+
+            // info.WriteLine($@":s 702 {info.Nick} {channelName} {info.Nick} {code} :\{info.UserFlags}");
+
+            //:s 702 0 1 2 3 :4
+            if (args[1] == "*")
+            {
+                foreach (var user in channel.Users)
+                {
+                    info.WriteLine($@":s 702 {info.Nick} {args[0]} {user.Nick} {args[2]} :\{user.User}\{user.UserFlags}");
+                }
+            }
+
+            info.WriteLine($@":s 703 {info.Nick} {args[0]} {args[2]} :End of GETCKEY");
+            
+
+            /*BuildMessageHeader(info, ReplyCode.GETCKEY);
+             _response.Append(" ");
+             _response.Append(channelName);
+             _response.Append(" ");
+             _response.Append(info.Nick);
+             _response.Append(" ");
+             _response.Append(code);
+             _response.Append($@" :\{info.Username}\{info.UserFlags}");
+
+             info.WriteLine(_response);
+
+             BuildMessageHeader(info, ReplyCode.GETCKEYEND);
+             _response.Append(" ");
+             _response.Append(channelName);
+             _response.Append(" ");
+             _response.Append(code);
+             _response.Append(" :End of GETCKEY");
+
+             info.WriteLine(_response);*/
+        }
+
+        public void SendUsersStats(UserInfo info, ChannelInfo channel, List<string> args)
+        {
+            // GETCKEY #GPG!1 * 049 0 :\b_stats
+
+            //:s 702 Sidonuke #GPG!2266 xomm 000 :\X11vl9vs4X|153600235\
+            //:s 702 #GPG!2266 #GPG!2266 Sidonuke BCAST :\b_clanName\
+            //:s 702 Sidonuke #GPG!2266 Sidonuke 001 :\\0\0\62\32\\\\\0
+            if (args[1] == "*")
+            {
+                foreach (var user in channel.Users)
+                {
+                    info.WriteLine($@":s 702 {info.Nick} {args[0]} {user.Nick} {args[2]} :\{user.UserStats}");
+                }
+            }
+
+            info.WriteLine($@":s 703 {info.Nick} {args[0]} {args[2]} :End of GETCKEY");
+
+
+            //info.WriteLine($@":s 702 {channelName} {channelName} {info.Nick} {code} :\{info.UserStats}");
+            //info.WriteLine($@":s 702 {info.Nick} {channelName} {info.Nick} {code} :\{info.UserStats}");
+            //info.WriteLine($@":s 703 {channelName} {code} :End of GETCKEY");
+
+            /*  BuildMessageHeader(info, ReplyCode.GETCKEY);
+              _response.Append(" ");
+              _response.Append(info.Nick);
+              _response.Append(" ");
+              _response.Append(channelName);
+              _response.Append(" ");
+              _response.Append(info.Nick);
+              _response.Append(" ");
+              _response.Append(code);
+              _response.Append($@" :\{info.UserStats}");
+
+               info.WriteLine(_response);
+
+               BuildMessageHeader(info, ReplyCode.GETCKEYEND);
+               _response.Append(" ");
+               _response.Append(channelName);
+               _response.Append(" ");
+               _response.Append(code);
+               _response.Append(" :End of GETCKEY");
+
+               info.WriteLine(_response);*/
         }
     }
 }

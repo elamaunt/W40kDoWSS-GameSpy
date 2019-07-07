@@ -3,6 +3,7 @@ using GSMasterServer.Utils;
 using IrcD.Core;
 using IrcD.Core.Utils;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -87,7 +88,7 @@ namespace GSMasterServer.Servers
                 Socket = socket
             };
             
-            socket.Send(XorBytes(@"\lc\1\challenge\KNDVKXFQWP\id\1\final\", XorKEY));
+            socket.Send(XorBytes(@"\lc\1\challenge\KNDVKXFQWP\id\1\final\", XorKEY, 7));
             WaitForData(state);
         }
 
@@ -135,7 +136,7 @@ namespace GSMasterServer.Servers
 
                 var buffer = state.Buffer;
 
-                var input = Encoding.ASCII.GetString(XorBytes(buffer, 0, received-7, XorKEY), 0, received);
+                var input = Encoding.ASCII.GetString(XorBytes(buffer, 0, received - 7, XorKEY), 0, received);
 
                 Log(Category, input);
 
@@ -148,18 +149,88 @@ namespace GSMasterServer.Servers
 
                 if (input.StartsWith(@"\authp\\pid\"))
                 {
+                    //var clientData = LoginDatabase.Instance.GetData(state.Name);
+
+
                     // \authp\\pid\87654321\resp\67512e365ba89497d60963caa4ce23d4\lid\1\final\
 
                     // \authp\\pid\87654321\resp\7e2270c581e8daf5a5321ff218953035\lid\1\final\
 
-                    SendToClient(state, @"\pauthr\87654321\lid\1\final\");
+                    var pid = input.Substring(12, 8);
+
+                    SendToClient(state, $@"\pauthr\{pid}\lid\1\final\");
                     //SendToClient(state, @"\pauthr\-3\lid\1\errmsg\helloworld\final\");
                     //SendToClient(state, @"\pauthr\100000004\lid\1\final\");
 
                     goto CONTINUE;
                 }
 
+                
+                if (input.StartsWith(@"\getpd\"))
+                {
+                    // \\getpd\\\\pid\\87654321\\ptype\\3\\dindex\\0\\keys\\\u0001points\u0001points2\u0001points3\u0001stars\u0001games\u0001wins\u0001disconn\u0001a_durat\u0001m_streak\u0001f_race\u0001SM_wins\u0001Chaos_wins\u0001Ork_wins\u0001Tau_wins\u0001SoB_wins\u0001DE_wins\u0001Eldar_wins\u0001IG_wins\u0001Necron_wins\u0001lsw\u0001rnkd_vics\u0001con_rnkd_vics\u0001team_vics\u0001mdls1\u0001mdls2\u0001rg\u0001pw\\lid\\1\\final\\
+                    // \getpd\\pid\87654321\ptype\3\dindex\0\keys\pointspoints2points3starsgameswinsdisconna_duratm_streakf_raceSM_winsChaos_winsOrk_winsTau_winsSoB_winsDE_winsEldar_winsIG_winsNecron_winslswrnkd_vicscon_rnkd_vicsteam_vicsmdls1mdls2rgpw\lid\1\final\
 
+                    var pid = input.Substring(12, 8);
+
+                    var keysIndex = input.IndexOf("keys") + 5;
+                    var keys = input.Substring(keysIndex);
+                    var keysList = keys.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "final", "\\", "lid" }, StringSplitOptions.RemoveEmptyEntries );
+
+                    var keysResult = new StringBuilder();
+
+
+                    //var ks = keysList.Aggregate((x, y) => x+" "+y);
+                    var timeInSeconds = (ulong)((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
+
+
+                    for (int i = 0; i < keysList.Length; i++)
+                    {
+                        var key = keysList[i];
+
+                        keysResult.Append("\\"+key+"\\");
+                        
+                        switch (key)
+                        {
+                            case "points": keysResult.Append("2500"); break;
+                            case "points2": keysResult.Append("2000"); break;
+                            case "points3": keysResult.Append("1500"); break;
+                            case "stars": keysResult.Append("5"); break;
+                            case "games": keysResult.Append("90"); break;
+                            case "wins": keysResult.Append("20"); break;
+                            case "disconn": keysResult.Append("10"); break;
+                            case "a_durat": keysResult.Append("200000"); break;
+                            case "m_streak": keysResult.Append("10"); break;
+                            case "f_race": keysResult.Append("ork_race"); break;
+                            case "SM_wins": keysResult.Append("5"); break;
+                            case "Chaos_wins": keysResult.Append("5"); break;
+                            case "Ork_wins": keysResult.Append("50"); break;
+                            case "Tau_wins": keysResult.Append("5"); break;
+                            case "SoB_wins": keysResult.Append("5"); break;
+                            case "DE_wins": keysResult.Append("5"); break;
+                            case "Eldar_wins": keysResult.Append("5"); break;
+                            case "IG_wins": keysResult.Append("5"); break;
+                            case "Necron_wins": keysResult.Append("5"); break;
+                            case "lsw": keysResult.Append("0"); break;
+                            case "rnkd_vics": keysResult.Append("50"); break;
+                            case "con_rnkd_vics": keysResult.Append("200"); break;
+                            case "team_vics": keysResult.Append("250"); break;
+                            case "mdls1": keysResult.Append("260"); break;
+                            case "mdls2": keysResult.Append("270"); break;
+                            case "rg": keysResult.Append("280"); break;
+                            case "pw": keysResult.Append("290"); break;
+                            default:
+                                keysResult.Append("0");
+                                break;
+                        }
+
+                    }
+
+                    SendToClient(state, $@"\getpdr\1\lid\1\pid\{pid}\mod\{timeInSeconds}\length\{keys.Length}\data\{keysResult}\final\");
+
+
+                    goto CONTINUE;
+                }
             }
             catch (ObjectDisposedException)
             {
@@ -206,8 +277,8 @@ namespace GSMasterServer.Servers
             var state = (SocketState)abstractState;
 
             Log("StatsRESP", message);
-
-            var bytesToSend = XorBytes(message, XorKEY);
+            
+            var bytesToSend = XorBytes(message, XorKEY, 7);
 
             SendToClient(ref state, bytesToSend);
             return bytesToSend.Length;
@@ -281,25 +352,23 @@ namespace GSMasterServer.Servers
             return data;
         }
 
-        byte[] XorBytes(string str, string keystr)
+        byte[] XorBytes(string str, string keystr, int lengthOffset = 0)
         {
             byte[] data = Encoding.ASCII.GetBytes(str);
             byte[] key = Encoding.ASCII.GetBytes(keystr);
 
-            for (int i = 0; i < data.Length; i++)
-                data[i] = (byte)(data[i] ^ key[i % key.Length]);
+            var length = data.Length - lengthOffset;
 
+            for (int i = 0; i < length; i++)
+                data[i] = (byte)(data[i] ^ key[i % key.Length]);
+            
             return data;
         }
 
         private class SocketState : IDisposable
         {
-            public bool Encoded;
             public Socket Socket = null;
             public byte[] Buffer = new byte[8192];
-
-            public ChatCrypt.GDCryptKey ClientKey;
-            public ChatCrypt.GDCryptKey ServerKey;
             
             public void Dispose()
             {
