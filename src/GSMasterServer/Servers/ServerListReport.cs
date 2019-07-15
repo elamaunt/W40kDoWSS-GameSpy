@@ -481,9 +481,11 @@ namespace GSMasterServer.Servers
             if (isAuto)
                 server.Valid = true;
 
+            var serverExists = Servers.ContainsKey(key);
+
             // if the server list doesn't contain this server, we need to return false in order to send a challenge
             // if the server replies back with the good challenge, it'll be added in AddValidServer
-            if (!isAuto && !Servers.ContainsKey(key))
+            if (!isAuto && !serverExists)
                 return false;
             
             if (server.Properties.TryGetValue("statechanged", out object value))
@@ -507,7 +509,7 @@ namespace GSMasterServer.Servers
                 return server;
             });
 
-            return true;
+            return serverExists;
         }
 
         private void AddValidServer(IPEndPoint remote)
