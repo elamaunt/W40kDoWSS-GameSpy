@@ -136,7 +136,7 @@ namespace GSMasterServer.Servers
 
                 var buffer = state.Buffer;
 
-                var input = Encoding.ASCII.GetString(XorBytes(buffer, 0, received - 7, XorKEY), 0, received);
+                var input = Encoding.UTF8.GetString(XorBytes(buffer, 0, received - 7, XorKEY), 0, received);
 
                 Log(Category, input);
 
@@ -228,6 +228,20 @@ namespace GSMasterServer.Servers
 
                     SendToClient(state, $@"\getpdr\1\lid\1\pid\{pid}\mod\{timeInSeconds}\length\{keys.Length}\data\{keysResult}\final\");
 
+
+                    goto CONTINUE;
+                }
+                
+                if (input.StartsWith(@"\setpd\"))
+                {
+                    var pid = input.Substring(12, 8);
+
+                    var lidIndex = input.IndexOf("\\lid\\", StringComparison.OrdinalIgnoreCase);
+                    var lid = input.Substring(lidIndex+5, 1);
+
+                    var timeInSeconds = (ulong)((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
+
+                    SendToClient(state, $@"\setpdr\1\lid\{lid}\pid\{pid}\mod\{timeInSeconds}\final\");
 
                     goto CONTINUE;
                 }
@@ -354,8 +368,8 @@ namespace GSMasterServer.Servers
 
         byte[] XorBytes(string str, string keystr, int lengthOffset = 0)
         {
-            byte[] data = Encoding.ASCII.GetBytes(str);
-            byte[] key = Encoding.ASCII.GetBytes(keystr);
+            byte[] data = Encoding.UTF8.GetBytes(str);
+            byte[] key = Encoding.UTF8.GetBytes(keystr);
 
             var length = data.Length - lengthOffset;
 

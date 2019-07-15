@@ -1,0 +1,8 @@
+Start1  #GSP!whammer40kdc!MJD13lhaPM
+Start2	#GSP!whammer40kdc!Mz0Jal1K9M
+
+Connect1to2 #GSP!whammer40kdc!Mqh1Pqzh1M
+Connect2to1 #GSP!whammer40kdc!Mqh1PqzhPM
+
+Start2 #GSP!whammer40kdc!Ml3PJl1K9M
+

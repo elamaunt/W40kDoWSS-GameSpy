@@ -8,7 +8,8 @@
         public const string ALT_NICK = "ChatMonitor-gs";
         public static readonly string[] CHAN = new string[]
         {
-            "#GPG!1",
+            "#GSP!whammer40kdc!MJD13lhaPM",
+           /* "#GPG!1",
             "#GPG!2",
             "#GPG!3",
             "#GPG!4",
@@ -17,7 +18,7 @@
             "#GPG!7",
             "#GPG!8",
             "#GPG!9",
-            "#GPG!10"
+            "#GPG!10"*/
         };
 
         public const string IDENTD = "XaaaaaaaaX|10008";

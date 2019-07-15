@@ -37,9 +37,8 @@ namespace IrcD.Commands
         [CheckParamCount(1)]
         protected override void PrivateHandle(UserInfo info, List<string> args)
         {
-          /*  var message = (args.Count > 1) ? args[1] : IrcDaemon.Options.StandardPartMessage;
-
-
+            var message = (args.Count > 1) ? args[1] : IrcDaemon.Options.StandardPartMessage;
+            
             foreach (string channelName in GetSubArgument(args[0]))
             {
                 if (IrcDaemon.Channels.ContainsKey(channelName))
@@ -60,7 +59,7 @@ namespace IrcD.Commands
                 {
                     IrcDaemon.Replies.SendNoSuchChannel(info, channelName);
                 }
-            }*/
+            }
         }
 
         protected override int PrivateSend(CommandArgument commandArgument)

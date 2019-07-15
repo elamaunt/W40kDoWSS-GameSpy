@@ -16,9 +16,9 @@ namespace IrcD.Commands
         {
             if (IrcDaemon.Channels.TryGetValue(args[0], out ChannelInfo channel))
             {
-                if (args[2].StartsWith(@"\username\b_flags"))
+                if (args[2].StartsWith(@"\b_flags"))
                 {
-                    info.UserFlags = args[2].Substring(18);
+                    info.UserFlags = args[2].Substring(9);
                 }
 
                 if (args[2].StartsWith(@"\b_stats"))

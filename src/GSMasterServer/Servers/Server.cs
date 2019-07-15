@@ -7,6 +7,9 @@ namespace GSMasterServer.Servers
     {
         public static void Log(string tag, string message)
         {
+          //  if (tag != Servers.ServerListReport.Category)
+          //      return;
+
             Log(tag +":"+ message);
         }
         public static void Log(string message)

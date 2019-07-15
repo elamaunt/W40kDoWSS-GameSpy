@@ -52,8 +52,7 @@ namespace IrcD.Channel
         {
             get
             {
-                return '*';
-               /* if (Modes.IsPrivate())
+                if (Modes.IsPrivate())
                 {
                     return '*';
                 }
@@ -62,7 +61,7 @@ namespace IrcD.Channel
                     return '@';
                 }
 
-                return '=';*/
+                return '=';
             }
         }
 

@@ -2,6 +2,7 @@
 using IrcD.Commands.Arguments;
 using IrcD.Core;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace IrcD.Commands
 {

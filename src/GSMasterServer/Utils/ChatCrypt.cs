@@ -24,14 +24,14 @@ namespace GSMasterServer.Utils
             /// </summary>
             public byte[] State = new byte[256];
         }
-        
+
         static void SwapByte(byte* array, int index1, int index2)
         {
             var t = array[index1];
             array[index1] = array[index2];
             array[index2] = t;
         }
-        
+
         // gs_peerchat same
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void GSEncodeDecode(GDCryptKey ctx, byte* data, int size)
@@ -57,7 +57,7 @@ namespace GSMasterServer.Utils
                 ctx.Y = num2;
             }
         }
-        
+
 
         // gs_peerchat init same
         [MethodImpl(MethodImplOptions.NoOptimization)]
@@ -88,15 +88,15 @@ namespace GSMasterServer.Utils
 
                 do
                 {
-                    if (counter == gameKeySize) 
+                    if (counter == gameKeySize)
                     {
                         p1 = gamekey;
                         counter = 0;
                     }
 
                     counter++;
-                    
-                    *(p++) = (byte)(*(chall++) ^ *(p1++)); 
+
+                    *(p++) = (byte)(*(chall++) ^ *(p1++));
                 }
                 while (p != l);
 
@@ -129,5 +129,113 @@ namespace GSMasterServer.Utils
                 while (p != l1);
             }
         }
+
+        /*static const char* piStagingRoomHash(unsigned int publicIP, unsigned int privateIP, unsigned short port, char * buffer)
+        {
+
+            unsigned int result;
+
+                publicIP = ntohl(publicIP);
+                privateIP = ntohl(privateIP);
+
+                result = (((privateIP >> 24) & 0xFF) | ((privateIP >> 8) & 0xFF00) | ((privateIP << 8) & 0xFF0000) | ((privateIP << 24) & 0xFF000000));
+	        result ^= publicIP;
+	        result ^= (port | (port << 16));
+
+	        return EncodeIP(result, buffer, PEERTrue);
+        }*/
+
+
+        //public static byte* EncodeIP(uint ip, byte* buffer, )
+
+
+        /*
+        static const char* EncodeIP(unsigned int ip, char * buffer, PEERBool newCrypt)
+        {
+
+            const char* crypt = newCrypt ? new_digits_crypt : digits_crypt;
+                int i;
+                char* str;
+                int digit_idx;
+
+                // XOR the IP address.
+                ip ^= ip_xormask;
+
+            // Print out the ip addr in hex form.
+            sprintf(cryptbuffer, "%08x", ip);
+
+            // Translate chars in positions 0 through 7 from hex digits to "crypt" digits.
+            for(i = 0 ; i< 8 ; i++)
+            {
+                str = strchr(digits_hex, cryptbuffer[i]);
+                digit_idx = (str - digits_hex);
+
+                if((digit_idx< 0) || (digit_idx > 15)) // sanity check
+                {
+                    strcpy(cryptbuffer, "14saFv19"); // equivalent to 0.0.0.0
+                    break;
+                }
+
+            cryptbuffer[i] = crypt[digit_idx];
+            }
+
+            if(buffer)
+            {
+                strcpy(buffer, cryptbuffer);
+                return buffer;
+            }
+
+            return cryptbuffer;
+        }*/
+
+        /*static const char* piStagingRoomHash(unsigned int publicIP, unsigned int privateIP, unsigned short port, char * buffer)
+        {
+
+            unsigned int result;
+
+            publicIP = ntohl(publicIP);
+            privateIP = ntohl(privateIP);
+
+            result = (((privateIP >> 24) & 0xFF) | ((privateIP >> 8) & 0xFF00) | ((privateIP << 8) & 0xFF0000) | ((privateIP << 24) & 0xFF000000));
+                        result ^= publicIP;
+                        result ^= (port | (port << 16));
+
+            return EncodeIP(result, buffer, PEERTrue);
+         }*/
+
+        /*static unsigned int DecodeIP(const char* buffer, PEERBool newCrypt)
+        {
+	        const char* crypt = newCrypt ? new_digits_crypt : digits_crypt;
+                unsigned int ip;
+                char* str;
+                int digit_idx;
+                int i;
+
+	        if(!buffer)
+		        return 0;
+	
+	        // Translate chars from hex digits to "crypt" digits.
+	        for(i = 0 ; i< 8 ; i++)
+	        {
+		        str = strchr(crypt, buffer[i]);
+                digit_idx = (str - crypt);
+
+		        if((digit_idx< 0) || (digit_idx > 15))
+			        return 0;
+
+		        cryptbuffer[i] = digits_hex[digit_idx];
+	        }
+
+            // Cap the buffer.
+            cryptbuffer[i] = '\0';
+
+	        // Convert the string to an unsigned long (the XORd ip addr).
+	        sscanf(cryptbuffer, "%x", &ip);
+
+            // re-XOR the IP address.
+            ip ^= ip_xormask;
+
+	        return ip;
+        }*/
     }
 }

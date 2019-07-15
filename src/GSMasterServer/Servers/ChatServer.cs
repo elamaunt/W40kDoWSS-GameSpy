@@ -225,10 +225,13 @@ namespace GSMasterServer.Servers
                             {
                                 var nick = utf8alue.Split(' ')[2];
 
-                                IrcDaemon.RegisterNewUser(state.Socket, nick, state, SendToClient);
+                                // Player id for testing purposes
+                                var pid = (Math.Abs(nick.GetHashCode() % 100000000)).ToString("00000000");  // 87654321
 
-                                var bytesToSend = $":s 707 sF|elamaunt 12345678 87654321\r\n".ToAssciiBytes();
-                               
+                                IrcDaemon.RegisterNewUser(state.Socket, nick, state, SendToClient);
+                                
+                                var bytesToSend = $":s 707 {nick} 12345678 {pid}\r\n".ToAssciiBytes();
+                                
                                 fixed (byte* bytesToSendPtr = bytesToSend)
                                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
 
@@ -240,8 +243,14 @@ namespace GSMasterServer.Servers
                             if (utf8alue.StartsWith("USRIP"))
                             {
                                 var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
+
+                                //var address = remoteEndPoint.Address;
+
+                                //if (remoteEndPoint.Address == IPAddress.Loopback)
+                                //    address = IPAddress.Parse("192.168.1.21");
+
                                 //var bytesToSend = ":s 302 sF|elamaunt :sF|elamaunt=+@127.0.0.1\r\n".ToAssciiBytes();
-                                var bytesToSend = $":s 302  :=+@{remoteEndPoint.Address}\r\n".ToAssciiBytes();
+                                var bytesToSend = $":s 302  :=+@{ remoteEndPoint.Address}\r\n".ToAssciiBytes();
 
                                 fixed (byte* bytesToSendPtr = bytesToSend)
                                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);

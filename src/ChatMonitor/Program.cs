@@ -86,7 +86,7 @@ namespace ChatMonitor
                 if (line.Contains("372"))
                 {
                     CONNECTED = true;
-                    OperArcade(OPER_NAME, OPER_EMAIL, OPER_PASSWORD);
+                   // OperArcade(OPER_NAME, OPER_EMAIL, OPER_PASSWORD);
                     Thread.Sleep(5);
                     LoadStartChannels(CHAN);
                 }

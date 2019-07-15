@@ -1,5 +1,7 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
+using IrcD.Channel;
+using Newtonsoft.Json;
 using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
 using System;
@@ -27,33 +29,7 @@ namespace GSMasterServer.Servers
         public ServerListRetrieve(IPAddress listen, ushort port, ServerListReport report)
         {
             _report = report;
-
-           /* _report.Servers.TryAdd("test",
-                new GameServer()
-                {
-                    Valid = true,
-                    IPAddress = "192.168.1.20",
-                    QueryPort = 29900,
-                    country = "RU",
-                    hostname = "sF|elamaunt",
-                    gamename = "whamdowfr",
-                    gamever = "1.1.120",
-                    mapname = "Battle Marshes (2)",
-                    gametype = "ranked",
-                    gamevariant = "pr",
-                    //numplayers = 100,
-                    //maxplayers = 100,
-                    gamemode = "dxp2",
-                    password = false,
-                    hostport = 16567,
-                    natneg = true,
-                    numplayersname = 1,
-                    maxwaiting = 2,
-                    numwaiting = 1,
-                    numservers = 2,
-                    statechanged = 1
-                });*/
-
+            
 			IQueryable<GameServer> servers = _report.Servers.Select(x => x.Value).AsQueryable();
 
             _thread = new Thread(StartServer)
@@ -296,6 +272,12 @@ namespace GSMasterServer.Servers
         {
             // \u0001\u0012\0\u0001\u0003\u0001\0\0\0whamdowfr\0whamdowfr\0.Ts,PRe`(groupid is null) AND (groupid > 0)\0\\hostname\\gamemode\\hostname\\hostport\\mapname\\password\\gamever\\numplayers\\maxplayers\\score_\\teamplay\\gametype\\gamevariant\\groupid\\numobservers\\maxobservers\\modname\\moddisplayname\\modversion\\devmode\0\0\0\0\u0004
 
+            // auto request
+            // \03\0\u0001\u0003\u0001\0\0\0whammer40kdcam\0whammer40kdc\0tMU`s.kv\0\0\0\0\0\u0004
+
+            // chat rooms request
+            // \0j\0\u0001\u0003\u0001\0\0\0whammer40kdc\0whammer40kdc\0}%D}s)<}\0\\hostname\\numwaiting\\maxwaiting\\numservers\\numplayersname\0\0\0\0
+
             string[] data = message.Split(new char[] { '\x00' }, StringSplitOptions.RemoveEmptyEntries);
 
             //if (!data[2].Equals("whamdowfr", StringComparison.OrdinalIgnoreCase))
@@ -307,96 +289,26 @@ namespace GSMasterServer.Servers
             if (validate.Length > 8)
             {
                 filter = validate.Substring(8);
-                validate = validate.Substring(0,8);
+                validate = validate.Substring(0, 8);
             }
             else
             {
-                // d    whamdowfr whamdowfr fkT>_2Cr \hostname\numwaiting\maxwaiting\numservers\numplayersname
-                //var bytes = @"\fieldcount\8\groupid\hostname\numplayers\maxwaiting\numwaiting\numservers\password\other\309\Europe\0\50\0\0\0\.maxplayers.0\408\Pros\0\50\0\0\0\.maxplayers.0\254\West Coast 2\0\50\0\0\0\.maxplayers.0\255\West Coast 3\0\50\0\0\0\.maxplayers.0\256\East Coast 1\0\50\0\0\0\.maxplayers.0\257\East Coast 2\0\50\0\0\0\.maxplayers.0\253\West Coast 1\0\50\0\0\0\.maxplayers.0\258\East Coast 3\0\50\0\0\0\.maxplayers.0\407\Newbies\0\50\0\0\0\.maxplayers.0\final\".ToAssciiBytes();
+                Log(Category, "ROOMS REQUEST - "+ data[2]);
 
-
-                //127 0 0 1 207 55
-
-                var bytes = new List<byte>();
-
-                // was ip
-                IPEndPoint remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
-                bytes.AddRange(remoteEndPoint.Address.GetAddressBytes());
-                
-                byte[] value2 = BitConverter.GetBytes((ushort)6500);
-
-                bytes.AddRange(BitConverter.IsLittleEndian ? value2.Reverse() : value2);
-
-                bytes.Add(5); // fields count
-                bytes.Add(0);
-                
-                bytes.AddRange(DataFunctions.StringToBytes("hostname"));
-                bytes.Add(0);
-                bytes.Add(0);
-                bytes.AddRange(DataFunctions.StringToBytes("numwaiting"));
-                bytes.Add(0);
-                bytes.Add(0);
-                bytes.AddRange(DataFunctions.StringToBytes("maxwaiting"));
-                bytes.Add(0);
-                bytes.Add(0);
-                bytes.AddRange(DataFunctions.StringToBytes("numservers"));
-                bytes.Add(0);
-                bytes.Add(0);
-                bytes.AddRange(DataFunctions.StringToBytes("numplayersname"));
-                bytes.Add(0);
-                bytes.Add(0);
-            
-                for (int i = 1; i <= 10; i++)
+                if (!data[2].EndsWith("am"))
                 {
-                    bytes.Add(81);
-                    
-                    var b2 = BitConverter.GetBytes((long)i);
-
-                    bytes.Add(b2[3]);
-                    bytes.Add(b2[2]);
-                    bytes.Add(b2[1]);
-                    bytes.Add(b2[0]);
-
-                    bytes.Add(0);
-                    bytes.Add(0);
-                    
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("Room "+i));
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes(ChatServer.IrcDaemon.GetChannelUsersCount("GPG!"+i).ToString()));
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("1000"));
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("1"));
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("20"));
-                    bytes.Add(0);
+                    SendRooms(state, validate);
+                    return true;
                 }
+                else
+                {
 
-                bytes.AddRange(new byte[] { 0, 255, 255, 255, 255 });
-
-                var array = bytes.ToArray();
-
-                 var str = DataFunctions.BytesToString(array);
-
-              //  var array = DataFunctions.StringToBytes("\u007f \0 \0 \u0001 \u0019 d \u0001 \0 hostname \0 \0 Q \u007f \0 \0 \u0001 \u0019 d ÿ Room 1 \0 \0 ÿÿÿÿ");
-
-                // working with Room 1
-                //var array = DataFunctions.StringToBytes("\u007f\0\0\u0001\u0019d\u0001\0hostname\0\0Q\u007f\0\0\u0001\u0019dÿRoom 1\0\0ÿÿÿÿ");
-
-                byte[] enc = GSEncoding.Encode(ChatServer.Gamekey, DataFunctions.StringToBytes(validate), array, array.LongLength);
-
-                SendToClient(state, enc);
-                return true;
+                    //SendAutomatchRooms(state, validate, ChatServer.IrcDaemon.GetAutoRooms());
+                    //return true;
+                }
             }
+
+            var servers =  _report.Servers.Values.Where(x => x.Valid).AsQueryable();
 
             string[] fields = data[5].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -415,7 +327,9 @@ namespace GSMasterServer.Servers
 
             //Log(Category, String.Format("Received client request: {0}:{1}", ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
 
-            IQueryable<GameServer> servers = _report.Servers.Values.Where(x => x.Valid).AsQueryable();
+
+           // var server = JsonConvert.SerializeObject((object)_report.Servers.Values.FirstOrDefault() ?? "");
+
             /*if (!String.IsNullOrWhiteSpace(filter))
             {
                 try
@@ -434,7 +348,6 @@ namespace GSMasterServer.Servers
 
             // http://aluigi.altervista.org/papers/gslist.cfg
             /*byte[] key;
-            if (gamename == "battlefield2")
                 key = DataFunctions.StringToBytes("hW6m9a");
             else if (gamename == "arma2oapc")
                 key = DataFunctions.StringToBytes("sGKWik");
@@ -447,6 +360,199 @@ namespace GSMasterServer.Servers
             return true;
         }
 
+        private void SendAutomatchRooms(SocketState state, string validate, ChannelInfo[] rooms)
+        {
+            var bytes = new List<byte>();
+
+            // was ip
+            IPEndPoint remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
+            bytes.AddRange(remoteEndPoint.Address.GetAddressBytes());
+
+            byte[] value2 = BitConverter.GetBytes((ushort)6500);
+
+            bytes.AddRange(BitConverter.IsLittleEndian ? value2.Reverse() : value2);
+            
+            bytes.Add(3); // fields count
+            bytes.Add(0);
+
+            bytes.AddRange(DataFunctions.StringToBytes("hostname"));
+            bytes.Add(0);
+            bytes.Add(0);
+            bytes.AddRange(DataFunctions.StringToBytes("numwaiting"));
+            bytes.Add(0);
+            bytes.Add(0);
+            bytes.AddRange(DataFunctions.StringToBytes("maxwaiting"));
+            bytes.Add(0);
+            bytes.Add(0);
+
+            // #GSP!<gamename>!X<encoded public IP><encoded public port><encoded private IP><encoded private port>X
+            // JOIN #GSP!whammer40kdc!MJD13lhaPM
+            // X<encoded public IP>X|<profile ID>
+
+            foreach (var room in rooms)
+            {
+                var encodedEndPoint = room.Name.Split('!')[2];
+
+
+
+                //var localip0 = server.Get<string>("localip0");
+                //var localip1 = server.Get<string>("localip1");
+                //var localport = ushort.Parse(server.Get<string>("localport") ?? "0");
+                var queryPort = (ushort)6112;//(ushort)server.Get<int>("QueryPort");
+                var iPAddress = "192.168.1.31";//server.Get<string>("localip4") ?? server.Get<string>("IPAddress");
+
+                bytes.Add(81);
+                bytes.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
+                bytes.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
+
+                bytes.Add(255);
+                bytes.AddRange(DataFunctions.StringToBytes(room.Name));
+                bytes.Add(0);
+
+                bytes.Add(255);
+                bytes.AddRange(DataFunctions.StringToBytes(room.Users.Count().ToString()));
+                bytes.Add(0);
+
+                bytes.Add(255);
+                bytes.AddRange(DataFunctions.StringToBytes("2"));
+                bytes.Add(0);
+            }
+
+            bytes.AddRange(new byte[] { 0, 255, 255, 255, 255 });
+
+            var array = bytes.ToArray();
+            byte[] enc = GSEncoding.Encode(ChatServer.Gamekey, DataFunctions.StringToBytes(validate), array, array.LongLength);
+            SendToClient(state, enc);
+        }
+
+        private void SendRooms(SocketState state, string validate)
+        {
+            // d    whamdowfr whamdowfr fkT>_2Cr \hostname\numwaiting\maxwaiting\numservers\numplayersname
+            //var bytes = @"\fieldcount\8\groupid\hostname\numplayers\maxwaiting\numwaiting\numservers\password\other\309\Europe\0\50\0\0\0\.maxplayers.0\408\Pros\0\50\0\0\0\.maxplayers.0\254\West Coast 2\0\50\0\0\0\.maxplayers.0\255\West Coast 3\0\50\0\0\0\.maxplayers.0\256\East Coast 1\0\50\0\0\0\.maxplayers.0\257\East Coast 2\0\50\0\0\0\.maxplayers.0\253\West Coast 1\0\50\0\0\0\.maxplayers.0\258\East Coast 3\0\50\0\0\0\.maxplayers.0\407\Newbies\0\50\0\0\0\.maxplayers.0\final\".ToAssciiBytes();
+
+
+            //127 0 0 1 207 55
+
+            var bytes = new List<byte>();
+
+            // was ip
+            IPEndPoint remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
+            bytes.AddRange(remoteEndPoint.Address.GetAddressBytes());
+
+            byte[] value2 = BitConverter.GetBytes((ushort)6500);
+
+            bytes.AddRange(BitConverter.IsLittleEndian ? value2.Reverse() : value2);
+
+            bytes.Add(5); // fields count
+            bytes.Add(0);
+
+            bytes.AddRange(DataFunctions.StringToBytes("hostname"));
+            bytes.Add(0);
+            bytes.Add(0);
+            bytes.AddRange(DataFunctions.StringToBytes("numwaiting"));
+            bytes.Add(0);
+            bytes.Add(0);
+            bytes.AddRange(DataFunctions.StringToBytes("maxwaiting"));
+            bytes.Add(0);
+            bytes.Add(0);
+            bytes.AddRange(DataFunctions.StringToBytes("numservers"));
+            bytes.Add(0);
+            bytes.Add(0);
+            bytes.AddRange(DataFunctions.StringToBytes("numplayersname"));
+            bytes.Add(0);
+            bytes.Add(0);
+
+           // if (rooms == null)
+           // {
+                for (int i = 1; i <= 10; i++)
+                {
+                    bytes.Add(81);
+
+                    var b2 = BitConverter.GetBytes((long)i);
+
+                    bytes.Add(b2[3]);
+                    bytes.Add(b2[2]);
+                    bytes.Add(b2[1]);
+                    bytes.Add(b2[0]);
+
+                    bytes.Add(0);
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes("Room " + i));
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes(ChatServer.IrcDaemon.GetChannelUsersCount("#GPG!" + i).ToString()));
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes("1000"));
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes("1"));
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes("20"));
+                    bytes.Add(0);
+                }
+            /*}
+            else
+            {
+                for (int i = 0; i < rooms.Length; i++)
+                {
+                    var room = rooms[i];
+
+                    bytes.Add(81);
+
+                    var b2 = BitConverter.GetBytes((long)i);
+
+                    bytes.Add(b2[3]);
+                    bytes.Add(b2[2]);
+                    bytes.Add(b2[1]);
+                    bytes.Add(b2[0]);
+
+                    bytes.Add(0);
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes(room.Name));
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes(room.Users.Count().ToString()));
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes("2"));
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes("1"));
+                    bytes.Add(0);
+
+                    bytes.Add(255);
+                    bytes.AddRange(DataFunctions.StringToBytes("20"));
+                    bytes.Add(0);
+                }
+            }*/
+
+            bytes.AddRange(new byte[] { 0, 255, 255, 255, 255 });
+
+            var array = bytes.ToArray();
+            
+            //  var array = DataFunctions.StringToBytes("\u007f \0 \0 \u0001 \u0019 d \u0001 \0 hostname \0 \0 Q \u007f \0 \0 \u0001 \u0019 d ÿ Room 1 \0 \0 ÿÿÿÿ");
+
+            // working with Room 1
+            //var array = DataFunctions.StringToBytes("\u007f\0\0\u0001\u0019d\u0001\0hostname\0\0Q\u007f\0\0\u0001\u0019dÿRoom 1\0\0ÿÿÿÿ");
+
+            byte[] enc = GSEncoding.Encode(ChatServer.Gamekey, DataFunctions.StringToBytes(validate), array, array.LongLength);
+
+            SendToClient(state, enc);
+        }
+
         private static byte[] PackServerList(SocketState state, IEnumerable<GameServer> servers, string[] fields)
         {
             IPEndPoint remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
@@ -457,12 +563,80 @@ namespace GSMasterServer.Servers
             byte[] value2 = BitConverter.GetBytes((ushort)remoteEndPoint.Port);
             data.AddRange(BitConverter.IsLittleEndian ? value2.Reverse() : value2);
 
+            if (fields.Length == 1 && fields[0] == "\u0004")
+                fields = new string[]
+                {
+                    "IPAddress",
+                    "QueryPort",
+                    "LastRefreshed",
+                    "statechanged",
+                    "LastPing",
+                    "country",
+                    "localip0",
+                    "localip1",
+                    "localip2",
+                    "localip3",
+                    "localip4",
+                    "localport",
+                    "natneg",
+                    "gamename",
+                    "numplayers",
+                    "maxplayers",
+                    "hostname",
+                    "hostport",
+                    "mapname",
+                    "password",
+                    "gamever",
+                    "score_",
+                    "teamplay",
+                    "gametype",
+                    "gamevariant",
+                    "groupid",
+                    "numobservers",
+                    "maxobservers",
+                    "modname",
+                    "moddisplayname",
+                    "modversion",
+                    "devmode",
+                    "CK_GameTypeOption0",
+                    "CK_GameTypeOption1",
+                    "CK_GameTypeOption2",
+                    "CK_GameTypeOption3",
+                    "CK_GameTypeOption4",
+                    "CK_GameTypeOption5",
+                    "CK_GameTypeOption6",
+                    "CK_GameTypeOption7",
+                    "CK_GameTypeOption8",
+                    "CK_GameTypeOption9",
+                    "CK_GameTypeOption10",
+                    "CK_GameTypeOption11",
+                    "CK_GameTypeOption12",
+                    "CK_GameTypeOption13",
+                    "CK_GameTypeOption14",
+                    "CK_GameTypeOption15",
+                    "CK_GameTypeOption16",
+                    "CK_GameTypeOption17",
+                    "CK_GameTypeOption18",
+                    "CK_GameTypeOption19",
+                    "CK_GameTypeOption20",
+                    "CK_GameTypeOption21",
+                    "CK_GameTypeOption22",
+                    "CK_GameTypeOption23",
+                    "CK_GameTypeOption24",
+                    "CK_GameTypeOption25",
+                    "CK_GameTypeOption26",
+                    "CK_GameTypeOption27",
+                    "CK_GameTypeOption28",
+                    "CK_GameTypeOption29",
+                    "CK_GameTypeOption30"
+                };
+
             data.Add((byte)fields.Length);
             data.Add(0);
 
             foreach (var field in fields)
             {
-                data.AddRange(DataFunctions.StringToBytes(field));
+                data.AddRange(Encoding.UTF8.GetBytes(field));
                 data.AddRange(new byte[] { 0, 0 });
             }
 
@@ -479,31 +653,50 @@ namespace GSMasterServer.Servers
 				Console.WriteLine(server.localip0);
 				Console.WriteLine(server.localip1);
 				Console.WriteLine(server.localport);
-				Console.WriteLine(server.natneg);
-				if (!String.IsNullOrWhiteSpace(server.localip0) && !String.IsNullOrWhiteSpace(server.localip1) && server.localport > 0) {
-					data.Add(126);
-					data.AddRange(IPAddress.Parse(server.IPAddress).GetAddressBytes());
-					data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)server.QueryPort).Reverse() : BitConverter.GetBytes((ushort)server.QueryPort));
-					data.AddRange(IPAddress.Parse(server.localip0).GetAddressBytes());
-					data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)server.localport).Reverse() : BitConverter.GetBytes((ushort)server.localport));
-					data.AddRange(IPAddress.Parse(server.localip1).GetAddressBytes());
-				} else if (!String.IsNullOrWhiteSpace(server.localip0) && server.localport > 0) {
-					data.Add(115);
-					data.AddRange(IPAddress.Parse(server.IPAddress).GetAddressBytes());
-					data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)server.QueryPort).Reverse() : BitConverter.GetBytes((ushort)server.QueryPort));
-					data.AddRange(IPAddress.Parse(server.localip0).GetAddressBytes());
-					data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)server.localport).Reverse() : BitConverter.GetBytes((ushort)server.localport));
-				} else {*/
-                data.Add(81); // it could be 85 as well, unsure of the difference, but 81 seems more common...
-                data.AddRange(IPAddress.Parse(server.IPAddress).GetAddressBytes());
-                data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)server.QueryPort).Reverse() : BitConverter.GetBytes((ushort)server.QueryPort));
-                //}
+				Console.WriteLine(server.natneg);*/
+
+
+                var localip0 = server.Get<string>("localip0");
+                var localip1 = server.Get<string>("localip1") ?? "0";
+                var localport = ushort.Parse(server.Get<string>("localport") ?? "6112");
+                var queryPort = (ushort)server.Get<int>("QueryPort");
+                var iPAddress = server.Get<string>("localip4") ?? server.Get<string>("IPAddress");
+
+                 /*if (!String.IsNullOrWhiteSpace(localip0) && !String.IsNullOrWhiteSpace(localip1) && localport > 0)
+                 {
+                     data.Add(126);
+                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
+                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
+                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
+                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport));
+                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
+                     //data.AddRange(IPAddress.Parse(localip0).GetAddressBytes());
+                     //data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport));
+                     //data.AddRange(IPAddress.Parse(localip1).GetAddressBytes());
+                 }
+                 else*/ if (!String.IsNullOrWhiteSpace(localip0) && localport > 0)
+                 {
+                     data.Add(115);
+                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
+                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
+                     data.AddRange(IPAddress.Parse(localip0).GetAddressBytes());
+                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport));
+                 }
+                 else
+                 {
+                    data.Add(81); // it could be 85 as well, unsure of the difference, but 81 seems more common...
+                    data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
+                    data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
+                }
 
                 data.Add(255);
 
                 for (int i = 0; i < fields.Length; i++)
                 {
-                    data.AddRange(GetField(server, fields[i]).ToAssciiBytes());
+                    var name = fields[i];
+                    var f = GetField(server, name);
+
+                    data.AddRange(Encoding.UTF8.GetBytes(f));
 
                     if (i < fields.Length - 1)
                         data.AddRange(new byte[] { 0, 255 });
@@ -511,7 +704,7 @@ namespace GSMasterServer.Servers
 
                 data.Add(0);
             }
-
+        
             data.AddRange(new byte[] { 0, 255, 255, 255, 255 });
 
             return data.ToArray();

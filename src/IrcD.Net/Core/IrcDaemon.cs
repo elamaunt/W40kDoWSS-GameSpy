@@ -136,7 +136,7 @@ namespace IrcD.Core
             Commands.Add(new CDKey(this));
             Commands.Add(new GetCKey(this));
             Commands.Add(new SetCKey(this));
-
+            Commands.Add(new Utm(this));
             //Commands.Add(new Connect(this));
             //Commands.Add(new Die(this));
             Commands.Add(new Error(this));
@@ -384,6 +384,11 @@ namespace IrcD.Core
             Channels.Clear();
             Nicks.Clear();
             GC.Collect();*/
+        }
+
+        public ChannelInfo[] GetAutoRooms()
+        {
+            return Channels.Where(x => x.Key.StartsWith("#GSP")).Select(x => x.Value).ToArray();
         }
 
         public int GetChannelUsersCount(string channelName)
