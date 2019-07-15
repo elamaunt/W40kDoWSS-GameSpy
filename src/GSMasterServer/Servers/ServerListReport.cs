@@ -475,11 +475,27 @@ namespace GSMasterServer.Servers
             {
                 server.Valid = true;
             }
+            
+            var isAuto = server.Get<string>("gamename").EndsWith("am");
+
+            if (isAuto)
+                server.Valid = true;
 
             // if the server list doesn't contain this server, we need to return false in order to send a challenge
             // if the server replies back with the good challenge, it'll be added in AddValidServer
-            if (!Servers.ContainsKey(key))
+            if (!isAuto && !Servers.ContainsKey(key))
                 return false;
+            
+            if (server.Properties.TryGetValue("statechanged", out object value))
+            {
+                var strValue = value?.ToString();
+
+                if (strValue == "2")
+                {
+                    Servers.TryRemove(key, out server);
+                    return true;
+                }
+            }
 
             Servers.AddOrUpdate(key, server, (k, old) =>
             {
@@ -487,7 +503,7 @@ namespace GSMasterServer.Servers
                 {
                     Log(Category, String.Format("Added new server at: {0}:{1} ({2}) ({3})", server.GetByName("IPAddress"), server.GetByName("QueryPort"), server.GetByName("country"), server.GetByName("gamevariant")));
                 }
-
+                
                 return server;
             });
 

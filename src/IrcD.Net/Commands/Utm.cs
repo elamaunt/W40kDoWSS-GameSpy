@@ -18,11 +18,13 @@ namespace IrcD.Commands
             // "GML "
 
             // list(channel.members)[i].message(":" + self.prefix + " UTM " + arguments[0] + " :" + arguments[1])
-            
+
             if (IrcDaemon.Channels.TryGetValue(args[0], out ChannelInfo channel))
             {
+                // elamaunt!Xv1sFqOa9X|17972147@192.168.1.31 UTM elamaunt :GML
+
                 foreach (var item in channel.Users)
-                    item.WriteLine($@":s UTM {args[0]} :{args[1]}");
+                    item.WriteLine($@":{info.Usermask} UTM {args[0]} :{args[1]}");
             }
         }
 

@@ -285,7 +285,7 @@ namespace GSMasterServer.Servers
 
             string validate = data[4];
             string filter = null;
-
+            
             if (validate.Length > 8)
             {
                 filter = validate.Substring(8);
@@ -302,7 +302,6 @@ namespace GSMasterServer.Servers
                 }
                 else
                 {
-
                     //SendAutomatchRooms(state, validate, ChatServer.IrcDaemon.GetAutoRooms());
                     //return true;
                 }
@@ -564,7 +563,8 @@ namespace GSMasterServer.Servers
             data.AddRange(BitConverter.IsLittleEndian ? value2.Reverse() : value2);
 
             if (fields.Length == 1 && fields[0] == "\u0004")
-                fields = new string[]
+                fields = new string[0];
+                /*fields = new string[]
                 {
                     "IPAddress",
                     "QueryPort",
@@ -629,7 +629,7 @@ namespace GSMasterServer.Servers
                     "CK_GameTypeOption28",
                     "CK_GameTypeOption29",
                     "CK_GameTypeOption30"
-                };
+                };*/
 
             data.Add((byte)fields.Length);
             data.Add(0);
@@ -659,22 +659,25 @@ namespace GSMasterServer.Servers
                 var localip0 = server.Get<string>("localip0");
                 var localip1 = server.Get<string>("localip1") ?? "0";
                 var localport = ushort.Parse(server.Get<string>("localport") ?? "6112");
-                var queryPort = (ushort)server.Get<int>("QueryPort");
+                var queryPort = (ushort)6500;// server.Get<int>("QueryPort");
                 var iPAddress = server.Get<string>("localip4") ?? server.Get<string>("IPAddress");
+                 
+                var publicIp = server.Get<string>("publicip");
+                var publicPort = server.Get<string>("publicport");
 
-                 /*if (!String.IsNullOrWhiteSpace(localip0) && !String.IsNullOrWhiteSpace(localip1) && localport > 0)
-                 {
-                     data.Add(126);
-                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
-                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
-                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
-                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport));
-                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
-                     //data.AddRange(IPAddress.Parse(localip0).GetAddressBytes());
-                     //data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport));
-                     //data.AddRange(IPAddress.Parse(localip1).GetAddressBytes());
-                 }
-                 else*/ if (!String.IsNullOrWhiteSpace(localip0) && localport > 0)
+               /* if (!String.IsNullOrWhiteSpace(localip0) && !String.IsNullOrWhiteSpace(localip1) && localport > 0)
+                {
+                    data.Add(126);
+                    data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
+                    data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)queryPort).Reverse() : BitConverter.GetBytes((ushort)queryPort));
+                    data.AddRange(IPAddress.Parse(localip0).GetAddressBytes());
+                    data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)localport).Reverse() : BitConverter.GetBytes((ushort)localport));
+                    data.AddRange(IPAddress.Parse(localip1).GetAddressBytes());
+
+                   
+                }
+                else */
+                if (!String.IsNullOrWhiteSpace(localip0) && localport > 0)
                  {
                      data.Add(115);
                      data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
@@ -687,7 +690,7 @@ namespace GSMasterServer.Servers
                     data.Add(81); // it could be 85 as well, unsure of the difference, but 81 seems more common...
                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
-                }
+                 }
 
                 data.Add(255);
 

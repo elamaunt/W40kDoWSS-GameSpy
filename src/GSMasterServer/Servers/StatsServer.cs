@@ -192,9 +192,16 @@ namespace GSMasterServer.Servers
                         
                         switch (key)
                         {
-                            case "points": keysResult.Append("2500"); break;
-                            case "points2": keysResult.Append("2000"); break;
-                            case "points3": keysResult.Append("1500"); break;
+                            case "points":
+                                {
+                                    if (pid == "39533614")
+                                        keysResult.Append("1500");
+                                    else
+                                        keysResult.Append("1000");
+                                    break;
+                                }
+                            case "points2": keysResult.Append("1000"); break;
+                            case "points3": keysResult.Append("1000"); break;
                             case "stars": keysResult.Append("5"); break;
                             case "games": keysResult.Append("90"); break;
                             case "wins": keysResult.Append("20"); break;
@@ -245,6 +252,10 @@ namespace GSMasterServer.Servers
 
                     goto CONTINUE;
                 }
+
+                // \newgame\\connid\1482017401\sesskey\43152578\final\
+                // \updgame\\sesskey\43152578\done\1\gamedata\PHuman_01SessionID-1909266334WinByANNIHILATEPHuman_11Ladder1player_0elamauntplayer_1sF|elamauntPTeam_00PTeam_11Players2Teams2Version1.2ctime_00ctime_10Scenario2P_TRANQUILITYS_ENDModdxp2PFnlState_03PTtlSc_0809PFnlState_15PRace_0necron_racePTtlSc_14310PRace_1tau_racePID_017972147ModVer1.0PID_135226254Duration409\final\
+
             }
             catch (ObjectDisposedException)
             {

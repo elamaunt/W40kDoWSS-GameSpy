@@ -62,7 +62,7 @@ namespace IrcD.Commands
                     {
                         return;
                     }
-
+                    
                     // Send Channel Message
                     Send(new PrivateMessageArgument(info, chan, chan.Name, args[1]));
                 }
