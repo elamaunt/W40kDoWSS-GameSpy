@@ -192,14 +192,7 @@ namespace GSMasterServer.Servers
                         
                         switch (key)
                         {
-                            case "points":
-                                {
-                                    if (pid == "39533614")
-                                        keysResult.Append("1500");
-                                    else
-                                        keysResult.Append("1000");
-                                    break;
-                                }
+                            case "points": keysResult.Append("1000"); break;
                             case "points2": keysResult.Append("1000"); break;
                             case "points3": keysResult.Append("1000"); break;
                             case "stars": keysResult.Append("5"); break;

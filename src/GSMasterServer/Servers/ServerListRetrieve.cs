@@ -659,7 +659,7 @@ namespace GSMasterServer.Servers
                 var localip0 = server.Get<string>("localip0");
                 var localip1 = server.Get<string>("localip1") ?? "0";
                 var localport = ushort.Parse(server.Get<string>("localport") ?? "6112");
-                var queryPort = (ushort)6500;// server.Get<int>("QueryPort");
+                var queryPort = (ushort)server.Get<int>("QueryPort");
                 var iPAddress = server.Get<string>("localip4") ?? server.Get<string>("IPAddress");
                  
                 var publicIp = server.Get<string>("publicip");
@@ -677,12 +677,12 @@ namespace GSMasterServer.Servers
                    
                 }
                 else */
-                if (!String.IsNullOrWhiteSpace(localip0) && localport > 0)
+                 if (!String.IsNullOrWhiteSpace(localip0) && localport > 0)
                  {
                      data.Add(115);
                      data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
                      data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
-                     data.AddRange(IPAddress.Parse(localip0).GetAddressBytes());
+                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
                      data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport));
                  }
                  else
