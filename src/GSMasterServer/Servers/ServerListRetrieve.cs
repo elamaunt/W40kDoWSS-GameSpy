@@ -660,37 +660,39 @@ namespace GSMasterServer.Servers
                 var localip1 = server.Get<string>("localip1") ?? "0";
                 var localport = ushort.Parse(server.Get<string>("localport") ?? "6112");
                 var queryPort = (ushort)server.Get<int>("QueryPort");
-                var iPAddress = server.Get<string>("localip4") ?? server.Get<string>("IPAddress");
+                var iPAddress = server.Get<string>("localip4") ?? server.Get<string>("localip3") ?? server.Get<string>("localip2") ?? server.Get<string>("localip1") ?? server.Get<string>("IPAddress");
                  
                 var publicIp = server.Get<string>("publicip");
                 var publicPort = server.Get<string>("publicport");
 
-               /* if (!String.IsNullOrWhiteSpace(localip0) && !String.IsNullOrWhiteSpace(localip1) && localport > 0)
-                {
-                    data.Add(126);
-                    data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
-                    data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)queryPort).Reverse() : BitConverter.GetBytes((ushort)queryPort));
-                    data.AddRange(IPAddress.Parse(localip0).GetAddressBytes());
-                    data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)localport).Reverse() : BitConverter.GetBytes((ushort)localport));
-                    data.AddRange(IPAddress.Parse(localip1).GetAddressBytes());
 
-                   
-                }
-                else */
-                 if (!String.IsNullOrWhiteSpace(localip0) && localport > 0)
+                // var iPAddress = server.Properties.Where(x => x.Key.StartsWith("localip") && x.Value.ToString().StartsWith("192.168.1.")).FirstOrDefault().Value.ToString();
+                /* if (!String.IsNullOrWhiteSpace(localip0) && !String.IsNullOrWhiteSpace(localip1) && localport > 0)
                  {
-                     data.Add(115);
+                     data.Add(126);
                      data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
-                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
-                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
-                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport));
+                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)queryPort).Reverse() : BitConverter.GetBytes((ushort)queryPort));
+                     data.AddRange(IPAddress.Parse(localip0).GetAddressBytes());
+                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)localport).Reverse() : BitConverter.GetBytes((ushort)localport));
+                     data.AddRange(IPAddress.Parse(localip1).GetAddressBytes());
+
+
                  }
-                 else
-                 {
+                 else */
+                if (!String.IsNullOrWhiteSpace(localip0) && localport > 0)
+                {
+                    data.Add(115);
+                    data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
+                    data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
+                    data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
+                    data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport));
+                }
+                else
+                {
                     data.Add(81); // it could be 85 as well, unsure of the difference, but 81 seems more common...
                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
-                 }
+                }
 
                 data.Add(255);
 
