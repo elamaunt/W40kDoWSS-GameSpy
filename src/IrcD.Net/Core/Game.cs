@@ -21,22 +21,40 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IrcD.Core
 {
     public class Game
     {
-        private readonly Dictionary<UserInfo, bool> Users = new Dictionary<UserInfo, bool>();
-        private readonly Action<Game> _cleanGame;
+        internal readonly Dictionary<UserInfo, bool> Users = new Dictionary<UserInfo, bool>();
+        
+        public IrcDaemon IrcDaemon { get; }
 
-        public Game(UserInfo[] users, Action<Game> cleanGame)
+        public Game(IrcDaemon daemon, UserInfo[] users)
         {
+            IrcDaemon = daemon;
+
             for (int i = 0; i < users.Length; i++)
-                Users.Add(users[i], true);
-            
-            _cleanGame = cleanGame;
+            {
+                var user = users[i];
+                user.Game = this;
+                Users.Add(user, true);
+            }
         }
 
-        public void Clean() => _cleanGame(this);
+        public bool Clean()
+        {
+            Users.Clear();
+            return IrcDaemon.CleanGame(this);
+        }
+
+        internal void SetPlayerAsLeft(UserInfo info)
+        {
+            Users[info] = false;
+
+            if (Users.All(x => !x.Value))
+                IrcDaemon.CleanGameWithoutWinners(this);
+        }
     }
 }

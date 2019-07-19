@@ -200,7 +200,13 @@ namespace GSMasterServer.Servers
 
             try
             {
-                _socket.ReceiveFromAsync(_socketReadEvent);
+                if (_socket.ReceiveFromAsync(_socketReadEvent))
+                {
+                }
+                else
+                {
+
+                }
             }
             catch (SocketException e)
             {

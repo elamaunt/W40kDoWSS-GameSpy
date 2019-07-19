@@ -3,6 +3,8 @@ using GSMasterServer.Utils;
 using IrcD.Core;
 using IrcD.Core.Utils;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -21,6 +23,8 @@ namespace GSMasterServer.Servers
         Socket _newPeerAceptingsocket;
         readonly ManualResetEvent _reset = new ManualResetEvent(false);
         readonly IrcDaemon _ircDaemon;
+
+        Dictionary<long, SocketState> PlayerEndPoints = new Dictionary<long, SocketState>();
 
         public StatsServer(IPAddress address, ushort port)
         {
@@ -157,6 +161,8 @@ namespace GSMasterServer.Servers
                     // \authp\\pid\87654321\resp\7e2270c581e8daf5a5321ff218953035\lid\1\final\
 
                     var pid = input.Substring(12, 9);
+                    
+                    state.PlayerId = long.Parse(pid);
 
                     SendToClient(state, $@"\pauthr\{pid}\lid\1\final\");
                     //SendToClient(state, @"\pauthr\-3\lid\1\errmsg\helloworld\final\");
@@ -258,116 +264,252 @@ namespace GSMasterServer.Servers
 
                     var valuesList = gameDataString.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "final", "\\", "lid" }, StringSplitOptions.RemoveEmptyEntries);
 
-// Custom game
-/*
-    [0]: "PHuman_0"
-    [1]: "1"
-    [2]: "SessionID"
-    [3]: "-94568309"
-    [4]: "WinBy"
-    [5]: "ANNIHILATE"
-    [6]: "PHuman_1"
-    [7]: "1"
-    [8]: "Ladder"
-    [9]: "0"
-    [10]: "player_0"
-    [11]: "sF|elamaunt"
-    [12]: "player_1"
-    [13]: "Bambochuk"
-    [14]: "PTeam_0"
-    [15]: "1"
-    [16]: "PTeam_1"
-    [17]: "0"
-    [18]: "Players"
-    [19]: "2"
-    [20]: "Teams"
-    [21]: "2"
-    [22]: "Version"
-    [23]: "1.2.120"
-    [24]: "ctime_0"
-    [25]: "0"
-    [26]: "ctime_1"
-    [27]: "0"
-    [28]: "Scenario"
-    [29]: "2P_BATTLE_MARSHES"
-    [30]: "Mod"
-    [31]: "dxp2"
-    [32]: "PFnlState_0"
-    [33]: "5"
-    [34]: "PTtlSc_0"
-    [35]: "8"
-    [36]: "PFnlState_1"
-    [37]: "0"
-    [38]: "PRace_0"
-    [39]: "sisters_race"
-    [40]: "PTtlSc_1"
-    [41]: "8"
-    [42]: "PRace_1"
-    [43]: "ork_race"
-    [44]: "PID_0"
-    [45]: "100000001"
-    [46]: "ModVer"
-    [47]: "1.0"
-    [48]: "PID_1"
-    [49]: "100000002"
-    [50]: "Duration"
-    [51]: "4"
-    */
+                    var dictionary = new Dictionary<string, string>();
 
-  // Ladder
-  /*[0]: "PHuman_0"
-    [1]: "1"
-    [2]: "SessionID"
-    [3]: "-248966396"
-    [4]: "WinBy"
-    [5]: "ANNIHILATE"
-    [6]: "PHuman_1"
-    [7]: "1"
-    [8]: "Ladder"
-    [9]: "0"
-    [10]: "player_0"
-    [11]: "Bambochuk"
-    [12]: "player_1"
-    [13]: "sF|elamaunt"
-    [14]: "PTeam_0"
-    [15]: "0"
-    [16]: "PTeam_1"
-    [17]: "1"
-    [18]: "Players"
-    [19]: "2"
-    [20]: "Teams"
-    [21]: "2"
-    [22]: "Version"
-    [23]: "1.2.120"
-    [24]: "ctime_0"
-    [25]: "0"
-    [26]: "ctime_1"
-    [27]: "0"
-    [28]: "Scenario"
-    [29]: "2P_TITAN_FALL"
-    [30]: "Mod"
-    [31]: "dxp2"
-    [32]: "PFnlState_0"
-    [33]: "0"
-    [34]: "PTtlSc_0"
-    [35]: "657"
-    [36]: "PFnlState_1"
-    [37]: "5"
-    [38]: "PRace_0"
-    [39]: "ork_race"
-    [40]: "PTtlSc_1"
-    [41]: "658"
-    [42]: "PRace_1"
-    [43]: "dark_eldar_race"
-    [44]: "PID_0"
-    [45]: "100000002"
-    [46]: "ModVer"
-    [47]: "1.0"
-    [48]: "PID_1"
-    [49]: "100000001"
-    [50]: "Duration"
-    [51]: "329"
-    */
+                    for (int i = 0; i < valuesList.Length; i+=2)
+                        dictionary[valuesList[i]] = valuesList[i + 1];
+
+                    var playersCount = int.Parse(dictionary["Players"]);
+
+                    for (int i = 0; i < playersCount; i++)
+                    {
+                        // Dont process games with AI
+                        if (dictionary["PHuman_" + i] != "1")
+                            goto CONTINUE;
+                    }
+
+                    var teamsCount = int.Parse(dictionary["Teams"]);
+                    var version = dictionary["Version"];
+                    var mod = dictionary["Mod"];
+                    var modVersion = dictionary["ModVer"];
+                    
+                    var usersGameInfos = new GameUserInfo[playersCount];
+
+                    GameUserInfo winnerInfo = null;
+
+                    for (int i = 0; i < playersCount; i++)
+                    {
+                        //var nick = dictionary["player_"+i];
+                        var pid = long.Parse(dictionary["PID_" + i]);
+
+                        var info = new GameUserInfo()
+                        {
+                            Stats = UsersDatabase.Instance.GetStatsDataByProfileId(pid),
+                            Race = Enum.Parse<Race>(dictionary["PRace_" + i], true),
+                            Team = int.Parse(dictionary["PTeam_" + i])
+                        };
+
+                        usersGameInfos[i] = info;
+                        if (pid == state.PlayerId)
+                            winnerInfo = info;
+                    }
+                    
+                    var teams = usersGameInfos.GroupBy(x => x.Team).ToDictionary(x => x.Key, x => x.ToArray());
+                    var winnerTeam = teams[winnerInfo.Team];
+                    
+                    foreach (var team in teams)
+                    {
+                        for (int i = 0; i < team.Value.Length; i++)
+                        {
+                            var info = team.Value[i];
+
+                            switch (info.Race)
+                            {
+                                case Race.space_marine_race:
+                                    info.Stats.Smgamescount++;
+                                    break;
+                                case Race.chaos_space_marine_race:
+                                    info.Stats.Csmgamescount++;
+                                    break;
+                                case Race.ork_race:
+                                    info.Stats.Orkgamescount++;
+                                    break;
+                                case Race.eldar_race:
+                                    info.Stats.Eldargamescount++;
+                                    break;
+                                case Race.imperial_guard_race:
+                                    info.Stats.Iggamescount++;
+                                    break;
+                                case Race.necron_race:
+                                    info.Stats.Necrgamescount++;
+                                    break;
+                                case Race.tau_race:
+                                    info.Stats.Taugamescount++;
+                                    break;
+                                case Race.dark_eldar_race:
+                                    info.Stats.Degamescount++;
+                                    break;
+                                case Race.sisters_race:
+                                    info.Stats.Sobgamescount++;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+
+                    for (int i = 0; i < winnerTeam.Length; i++)
+                    {
+                        var info = winnerTeam[i];
+
+                        switch (info.Race)
+                        {
+                            case Race.space_marine_race:
+                                info.Stats.Smwincount++;
+                                break;
+                            case Race.chaos_space_marine_race:
+                                info.Stats.Csmwincount++;
+                                break;
+                            case Race.ork_race:
+                                info.Stats.Orkwincount++;
+                                break;
+                            case Race.eldar_race:
+                                info.Stats.Eldarwincount++;
+                                break;
+                            case Race.imperial_guard_race:
+                                info.Stats.Igwincount++;
+                                break;
+                            case Race.necron_race:
+                                info.Stats.Necrwincount++;
+                                break;
+                            case Race.tau_race:
+                                info.Stats.Tauwincount++;
+                                break;
+                            case Race.dark_eldar_race:
+                                info.Stats.Dewincount++;
+                                break;
+                            case Race.sisters_race:
+                                info.Stats.Sobwincount++;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
+                    var chatUserInfo = ChatServer.IrcDaemon.Users[state.PlayerId];
+                    var game = chatUserInfo.Game;
+                    // For rated games
+                    if (game != null && game.Clean())
+                    {
+                        //var ratingGameType = 
+
+                        //var teamsAverageRatings = usersGameInfos.GroupBy(x => x.Team).ToDictionary(x => x.First().Team, x => x.Average(y => y.Stats.Score1v1));
+
+                    }
+
+                    for (int i = 0; i < usersGameInfos.Length; i++)
+                        UsersDatabase.Instance.UpdateUserStats(usersGameInfos[i].Stats);
+
+                    // Custom game
+                    /*
+                        [0]: "PHuman_0"
+                        [1]: "1"
+                        [2]: "SessionID"
+                        [3]: "-94568309"
+                        [4]: "WinBy"
+                        [5]: "ANNIHILATE"
+                        [6]: "PHuman_1"
+                        [7]: "1"
+                        [8]: "Ladder"
+                        [9]: "0"
+                        [10]: "player_0"
+                        [11]: "sF|elamaunt"
+                        [12]: "player_1"
+                        [13]: "Bambochuk"
+                        [14]: "PTeam_0"
+                        [15]: "1"
+                        [16]: "PTeam_1"
+                        [17]: "0"
+                        [18]: "Players"
+                        [19]: "2"
+                        [20]: "Teams"
+                        [21]: "2"
+                        [22]: "Version"
+                        [23]: "1.2.120"
+                        [24]: "ctime_0"
+                        [25]: "0"
+                        [26]: "ctime_1"
+                        [27]: "0"
+                        [28]: "Scenario"
+                        [29]: "2P_BATTLE_MARSHES"
+                        [30]: "Mod"
+                        [31]: "dxp2"
+                        [32]: "PFnlState_0"
+                        [33]: "5"
+                        [34]: "PTtlSc_0"
+                        [35]: "8"
+                        [36]: "PFnlState_1"
+                        [37]: "0"
+                        [38]: "PRace_0"
+                        [39]: "sisters_race"
+                        [40]: "PTtlSc_1"
+                        [41]: "8"
+                        [42]: "PRace_1"
+                        [43]: "ork_race"
+                        [44]: "PID_0"
+                        [45]: "100000001"
+                        [46]: "ModVer"
+                        [47]: "1.0"
+                        [48]: "PID_1"
+                        [49]: "100000002"
+                        [50]: "Duration"
+                        [51]: "4"
+                        */
+
+                    // Ladder
+                    /*[0]: "PHuman_0"
+                      [1]: "1"
+                      [2]: "SessionID"
+                      [3]: "-248966396"
+                      [4]: "WinBy"
+                      [5]: "ANNIHILATE"
+                      [6]: "PHuman_1"
+                      [7]: "1"
+                      [8]: "Ladder"
+                      [9]: "0"
+                      [10]: "player_0"
+                      [11]: "Bambochuk"
+                      [12]: "player_1"
+                      [13]: "sF|elamaunt"
+                      [14]: "PTeam_0"
+                      [15]: "0"
+                      [16]: "PTeam_1"
+                      [17]: "1"
+                      [18]: "Players"
+                      [19]: "2"
+                      [20]: "Teams"
+                      [21]: "2"
+                      [22]: "Version"
+                      [23]: "1.2.120"
+                      [24]: "ctime_0"
+                      [25]: "0"
+                      [26]: "ctime_1"
+                      [27]: "0"
+                      [28]: "Scenario"
+                      [29]: "2P_TITAN_FALL"
+                      [30]: "Mod"
+                      [31]: "dxp2"
+                      [32]: "PFnlState_0"
+                      [33]: "0"
+                      [34]: "PTtlSc_0"
+                      [35]: "657"
+                      [36]: "PFnlState_1"
+                      [37]: "5"
+                      [38]: "PRace_0"
+                      [39]: "ork_race"
+                      [40]: "PTtlSc_1"
+                      [41]: "658"
+                      [42]: "PRace_1"
+                      [43]: "dark_eldar_race"
+                      [44]: "PID_0"
+                      [45]: "100000002"
+                      [46]: "ModVer"
+                      [47]: "1.0"
+                      [48]: "PID_1"
+                      [49]: "100000001"
+                      [50]: "Duration"
+                      [51]: "329"
+                      */
 
                 }
 
@@ -513,7 +655,8 @@ namespace GSMasterServer.Servers
         {
             public Socket Socket = null;
             public byte[] Buffer = new byte[8192];
-            
+            public long PlayerId;
+
             public void Dispose()
             {
                 Dispose(true);
@@ -552,6 +695,13 @@ namespace GSMasterServer.Servers
             {
                 Dispose(false);
             }
+        }
+
+        private class GameUserInfo
+        {
+            public StatsData Stats;
+            public Race Race;
+            public int Team;
         }
     }
 }

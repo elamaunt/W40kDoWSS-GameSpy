@@ -46,7 +46,7 @@ namespace IrcD.Core
         {
             get
             {
-                return _ircDaemon.Sockets.Count(s => s.Value.IsService);
+                return _ircDaemon.Users.Count(s => s.Value.IsService);
             }
         }
 
@@ -56,7 +56,7 @@ namespace IrcD.Core
         {
             get
             {
-                return _ircDaemon.Sockets.Count(s => s.Value.Modes.Exist<ModeOperator>());
+                return _ircDaemon.Users.Count(s => s.Value.Modes.Exist<ModeOperator>());
             }
         }
 
@@ -64,7 +64,7 @@ namespace IrcD.Core
         {
             get
             {
-                return _ircDaemon.Sockets.Count(s => s.Value.Modes.Exist<ModeLocalOperator>());
+                return _ircDaemon.Users.Count(s => s.Value.Modes.Exist<ModeLocalOperator>());
             }
         }
 
@@ -72,7 +72,7 @@ namespace IrcD.Core
         {
             get
             {
-                return _ircDaemon.Sockets.Count(s => !s.Value.IsAcceptSocket);
+                return _ircDaemon.Users.Count(s => !s.Value.IsAcceptSocket);
             }
         }
 

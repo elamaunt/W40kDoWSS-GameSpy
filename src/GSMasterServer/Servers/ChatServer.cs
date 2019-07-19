@@ -191,7 +191,7 @@ namespace GSMasterServer.Servers
                             }
                             else
                             {
-                                IrcDaemon.ProcessSocketMessage(state.Socket, asciValue, 0, state, SendToClient);
+                                IrcDaemon.ProcessSocketMessage(state.UserInfo, asciValue);
                             }
                         }
                     }
@@ -249,7 +249,7 @@ namespace GSMasterServer.Servers
                                 goto CONTINUE;
                             }
                             
-                            IrcDaemon.ProcessSocketMessage(state.Socket, utf8alue);
+                            IrcDaemon.ProcessSocketMessage(state.UserInfo, utf8alue);
                         }
                     }
                 }
@@ -383,6 +383,7 @@ namespace GSMasterServer.Servers
             public ChatCrypt.GDCryptKey ClientKey;
             public ChatCrypt.GDCryptKey ServerKey;
             public UserInfo UserInfo;
+            public long ProfileId;
 
             public void Dispose()
             {

@@ -38,65 +38,65 @@
         public long GamesCount => Smgamescount + Csmgamescount + Orkgamescount + Eldargamescount + Iggamescount + Necrgamescount + Taugamescount + Degamescount + Sobgamescount;
         public long WinsCount => Smwincount + Csmwincount + Orkwincount + Eldarwincount + Igwincount + Necrwincount + Tauwincount + Dewincount + Sobwincount;
 
-        public string FavouriteRace
+        public Race FavouriteRace
         {
             get
             {
-                string race = string.Empty;
-                long count = 0l;
+                Race race = Race.unknown;
+                long count = 0L;
 
                 if (Smgamescount > count)
                 {
                     count = Smgamescount;
-                    race = "space_marine_race";
+                    race = Race.space_marine_race;
                 }
 
                 if (Csmgamescount > count)
                 {
                     count = Csmgamescount;
-                    race = "chaos_space_marine_race";
+                    race = Race.chaos_space_marine_race;
                 }
 
                 if (Orkgamescount > count)
                 {
                     count = Orkgamescount;
-                    race = "ork_race";
+                    race = Race.ork_race;
                 }
 
                 if (Eldargamescount > count)
                 {
                     count = Eldargamescount;
-                    race = "eldar_race";
+                    race = Race.eldar_race;
                 }
 
                 if (Iggamescount > count)
                 {
                     count = Iggamescount;
-                    race = "imperial_guard_race";
+                    race = Race.imperial_guard_race;
                 }
 
                 if (Necrgamescount > count)
                 {
                     count = Necrgamescount;
-                    race = "necron_race";
+                    race = Race.necron_race;
                 }
 
                 if (Taugamescount > count)
                 {
                     count = Taugamescount;
-                    race = "tau_race";
+                    race = Race.tau_race;
                 }
 
                 if (Degamescount > count)
                 {
                     count = Degamescount;
-                    race = "dark_eldar_race";
+                    race = Race.dark_eldar_race;
                 }
 
                 if (Sobgamescount > count)
                 {
                     count = Sobgamescount;
-                    race = "sisters_of_battle_race";
+                    race = Race.sisters_race;
                 }
 
                 return race;

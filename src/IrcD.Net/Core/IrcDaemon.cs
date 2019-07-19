@@ -50,7 +50,7 @@ namespace IrcD.Core
         public List<Game> Games { get; } = new List<Game>();
 
         // Main Datastructures
-        public Dictionary<Socket, UserInfo> Sockets { get; } = new Dictionary<Socket, UserInfo>();
+        public Dictionary<long, UserInfo> Users { get; } = new Dictionary<long, UserInfo>();
 
         public Dictionary<string, ChannelInfo> Channels { get; } = new Dictionary<string, ChannelInfo>();
 
@@ -100,6 +100,8 @@ namespace IrcD.Core
         }
 
         #endregion
+
+        public Action<Game> GameNoWinnersHandler { get; set; }
 
         public IrcDaemon(IrcMode ircMode = IrcMode.Rfc1459)
         {
@@ -273,7 +275,7 @@ namespace IrcD.Core
             var info = new UserInfo(this, socket, profileId, ((IPEndPoint)socket.RemoteEndPoint).Address.ToString(), false, String.IsNullOrEmpty(Options.ServerPass), state, send);
             Nicks[nick] = info;
             info.InitNick(nick);
-            Sockets[socket] = info;
+            Users[profileId] = info;
             
             Task.Delay(1000).ContinueWith(t =>
             {
@@ -298,14 +300,11 @@ namespace IrcD.Core
             return info;
         }
 
-        public void ProcessSocketMessage(Socket socket, string message, long profileId = 0, object state = null, Func<object, string, int> send = null)
+        public void ProcessSocketMessage(UserInfo userInfo, string message)
         {
             // USER X14saFv19X| 87654321 127.0.0.1 peerchat.gamespy.com :c7923ffb345487895fd66e20ca24ca00
             // NICK *
             
-            if (!Sockets.TryGetValue(socket, out UserInfo userInfo))
-                userInfo = Sockets[socket] = new UserInfo(this, socket, profileId, ((IPEndPoint)socket.RemoteEndPoint).Address.ToString(), false, String.IsNullOrEmpty(Options.ServerPass), state, send);
-
             try
             {
                 var commands = message.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -313,107 +312,17 @@ namespace IrcD.Core
                 for (int i = 0; i < commands.Length; i++)
                     Parser(commands[i], userInfo);
             }
-            catch (SocketException e)
-            {
-                Logger.Log("ERROR:  (Socket reset) " + e.Message + "(CODE:" + e.ErrorCode + ")", 4, "E1" + userInfo.Nick);
-                userInfo.Remove("Socket reset by peer (" + e.ErrorCode + ")");
-            }
             catch (Exception e)
             {
                 Logger.Log("Unknown ERROR: " + e.Message, 4, "E2" + userInfo.Nick);
                 Logger.Log("Trace: " + e.StackTrace);
             }
-
-            /*while (_connected)
-            {
-                try
-                {
-                    var activeSockets = new List<Socket>(Sockets.Keys);
-
-                    Socket.Select(activeSockets, null, null, 2000000);
-
-                    foreach (Socket s in activeSockets)
-                    {
-                        try
-                        {
-                            if (Sockets[s].IsAcceptSocket)
-                            {
-                                Socket temp = s.Accept();
-                                Sockets.Add(temp, new UserInfo(this, temp, ((IPEndPoint)temp.RemoteEndPoint).Address.ToString(), false, String.IsNullOrEmpty(Options.ServerPass)));
-                                Logger.Log("New Client connected!", 4, "MainLoop");
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    _buffer.Initialize();
-                                    int numBytes = s.ReceiveFrom(_buffer, ref _ep);
-                                    foreach (string line in Encoding.UTF8.GetString(_buffer, 0, numBytes).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
-                                    {
-                                        Parser(line, Sockets[s]);
-                                    }
-                                }
-                                catch (SocketException e)
-                                {
-                                    Logger.Log("ERROR:  (Socket reset) " + e.Message + "(CODE:" + e.ErrorCode + ")", 4, "E1" + Sockets[s].Nick);
-                                    Sockets[s].Remove("Socket reset by peer (" + e.ErrorCode + ")");
-
-                                }
-                            }
-                        }
-                        catch (Exception e)
-                        {
-                            Logger.Log("Unknown ERROR: " + e.Message, 4, "E2" + Sockets[s].Nick);
-                            Logger.Log("Trace: " + e.StackTrace);
-                        }
-                    }
-
-                    // Pinger : we only ping if necessary
-                    foreach (var user in from user in Sockets.Where(s => s.Value.Registered)
-                                         let interval = DateTime.Now.AddMinutes(-1)
-                                         where user.Value.LastAction < interval && user.Value.LastAlive < interval
-                                         select user.Value)
-                    {
-                        if (user.LastAlive < DateTime.Now.AddMinutes(-5))
-                        {
-                            // Ping Timeout (5 Minutes without any life sign)
-                            user.Remove("Ping Timeout");
-                        }
-                        else if (user.LastAlive < DateTime.Now.AddMinutes(-1) && user.LastPing < DateTime.Now.AddMinutes(-1))
-                        {
-                            user.LastPing = DateTime.Now;
-                            Commands.Send(new PingArgument(user));
-                        }
-                    }
-                }
-                catch (Exception e)
-                {
-                    Logger.Log("Unknown ERROR: " + e.Message);
-                    Logger.Log("Trace: " + e.StackTrace);
-                }
-
-            }
-
-            // QUIT Server
-            foreach (var user in Sockets.Values.Where(u => !u.IsAcceptSocket).ToArray())
-            {
-                user.Remove("Server Shutdown");
-            }
-
-            foreach (var serverSocket in Sockets.Values)
-            {
-                serverSocket.Socket.Close(5);
-            }
-
-            Sockets.Clear();
-            Channels.Clear();
-            Nicks.Clear();
-            GC.Collect();*/
+           
         }
 
         public void RemoveUserFromAllChannels(UserInfo userInfo)
         {
-            ProcessSocketMessage(userInfo.Socket, "QUIT :Later!");
+            ProcessSocketMessage(userInfo, "QUIT :Later!");
         }
 
         public ChannelInfo[] GetAutoRooms()
@@ -586,12 +495,20 @@ namespace IrcD.Core
 
         internal void RegisterRatingGame(UserInfo[] users)
         {
-            //Games.Add(new Game(users, CleanGame));
+            Games.Add(new Game(this, users));
         }
 
-        void CleanGame(Game game)
+        internal bool CleanGame(Game game)
         {
+            return Games.Remove(game);
+        }
 
+        internal void CleanGameWithoutWinners(Game game)
+        {
+            if (Games.Remove(game))
+            {
+                GameNoWinnersHandler?.Invoke(game);
+            }
         }
     }
 }

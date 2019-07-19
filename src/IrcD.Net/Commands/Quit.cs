@@ -31,13 +31,19 @@ namespace IrcD.Commands
     {
         public Quit(IrcDaemon ircDaemon)
             : base(ircDaemon, "QUIT", "Q")
-        { }
+        {
+        }
 
         [CheckRegistered]
         protected override void PrivateHandle(UserInfo info, List<string> args)
         {
             var message = args.Count > 0 ? args.First() : IrcDaemon.Options.StandardQuitMessage;
             info.Remove(message);
+
+            if (info.Game != null)
+            {
+                info.Game.SetPlayerAsLeft(info);
+            }
         }
 
         protected override int PrivateSend(CommandArgument commandArgument)

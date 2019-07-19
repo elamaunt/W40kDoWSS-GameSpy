@@ -23,6 +23,7 @@ namespace GSMasterServer.Data
 
         private SQLiteCommand _getUsersByProfileId;
         private SQLiteCommand _getUserStatsByProfileId;
+        private SQLiteCommand _getUserStatsByNick;
         private SQLiteCommand _getUsersByName;
         private SQLiteCommand _getUsersByEmail;
         private SQLiteCommand _updateUser;
@@ -31,7 +32,7 @@ namespace GSMasterServer.Data
         private SQLiteCommand _logUser;
         private SQLiteCommand _logUserUpdateCountry;
         private SQLiteCommand _updateUserStats;
-
+        
         // we're not going to have 100 million users using this login database
         private const int UserIdOffset = 200000000;
         private const int ProfileIdOffset = 100000000;
@@ -153,6 +154,37 @@ sobwincount INTEGER NULL DEFAULT '0'
         {
             _getUsersByProfileId = new SQLiteCommand("SELECT id, password, email, country, session FROM users WHERE id=@id COLLATE NOCASE", _db);
             _getUsersByProfileId.Parameters.Add("@id", DbType.Int32);
+
+            _getUserStatsByNick = new SQLiteCommand(@"SELECT id,
+score1v1,
+score2v2,
+score3v3, 
+disconnects,
+averagedurticks,
+winstreak,
+modified,
+
+smgamescount, 
+csmgamescount, 
+orkgamescount, 
+eldargamescount,
+iggamescount,
+necrgamescount,
+taugamescount,
+degamescount,
+sobgamescount,
+
+smwincount, 
+csmwincount, 
+orkwincount, 
+eldarwincount,
+igwincount,
+necrwincount,
+tauwincount,
+dewincount,
+sobwincount
+FROM users WHERE name=@name COLLATE NOCASE", _db);
+            _getUserStatsByNick.Parameters.Add("@name", DbType.String);
 
             _getUserStatsByProfileId = new SQLiteCommand(@"SELECT id,
 score1v1,
@@ -348,6 +380,22 @@ WHERE id=@id COLLATE NOCASE", _db);
                         _logUserUpdateCountry.Dispose();
                         _logUserUpdateCountry = null;
                     }
+                    if (_updateUserStats != null)
+                    {
+                        _updateUserStats.Dispose();
+                        _updateUserStats = null;
+                    }
+                    if (_getUserStatsByProfileId != null)
+                    {
+                        _getUserStatsByProfileId.Dispose();
+                        _getUserStatsByProfileId = null;
+                    }
+                    if (_getUserStatsByNick != null)
+                    {
+                        _getUserStatsByNick.Dispose();
+                        _getUserStatsByNick = null;
+                    }
+
                     if (_db != null)
                     {
                         _db.Close();
@@ -422,6 +470,104 @@ WHERE id=@id COLLATE NOCASE", _db);
             }
 
             return null;
+        }
+
+        public StatsData GetStatsDataByNick(string nick)
+        {
+            if (_db == null)
+                return null;
+
+            lock (_dbLock)
+            {
+                _getUserStatsByNick.Parameters["@name"].Value = nick;
+
+                using (SQLiteDataReader reader = _getUserStatsByNick.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        var data = new StatsData();
+
+                        data.Id = reader["id"];
+                        data.UserId = (Int64)reader["id"] + UserIdOffset;
+                        data.ProfileId = (Int64)reader["id"] + ProfileIdOffset;
+
+                        data.Score1v1 = (Int64)reader["score1v1"];
+                        data.Score2v2 = (Int64)reader["score2v2"];
+                        data.Score3v3 = (Int64)reader["score3v3"];
+
+                        data.Disconnects = (Int32)(Int64)reader["disconnects"];
+                        data.AverageDurationTicks = (Int64)reader["averagedurticks"];
+                        data.Winstreak = (Int32)(Int64)reader["winstreak"];
+                        data.Modified = (Int64)reader["modified"];
+
+                        data.Smgamescount = (Int64)reader["smgamescount"];
+                        data.Csmgamescount = (Int64)reader["csmgamescount"];
+                        data.Orkgamescount = (Int64)reader["orkgamescount"];
+                        data.Eldargamescount = (Int64)reader["eldargamescount"];
+                        data.Iggamescount = (Int64)reader["iggamescount"];
+                        data.Necrgamescount = (Int64)reader["necrgamescount"];
+                        data.Taugamescount = (Int64)reader["taugamescount"];
+                        data.Degamescount = (Int64)reader["degamescount"];
+                        data.Sobgamescount = (Int64)reader["sobgamescount"];
+
+                        data.Smwincount = (Int64)reader["smwincount"];
+                        data.Csmwincount = (Int64)reader["csmwincount"];
+                        data.Orkwincount = (Int64)reader["orkwincount"];
+                        data.Eldarwincount = (Int64)reader["eldarwincount"];
+                        data.Igwincount = (Int64)reader["igwincount"];
+                        data.Necrwincount = (Int64)reader["necrwincount"];
+                        data.Tauwincount = (Int64)reader["tauwincount"];
+                        data.Dewincount = (Int64)reader["dewincount"];
+                        data.Sobwincount = (Int64)reader["sobwincount"];
+
+                        return data;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public void UpdateUserStats(StatsData stats)
+        {
+            if (_db == null)
+                return;
+
+            lock (_dbLock)
+            {
+                _updateUserStats.Parameters["@id"].Value = stats.Id;
+
+                _updateUserStats.Parameters["@score1v1"].Value = stats.Score1v1;
+                _updateUserStats.Parameters["@score2v2"].Value = stats.Score2v2;
+                _updateUserStats.Parameters["@score3v3"].Value = stats.Score3v3;
+
+                _updateUserStats.Parameters["@disconnects"].Value = stats.Disconnects;
+                _updateUserStats.Parameters["@averagedurticks"].Value = stats.AverageDurationTicks;
+                _updateUserStats.Parameters["@winstreak"].Value = stats.Winstreak;
+                _updateUserStats.Parameters["@modified"].Value = stats.Modified;
+
+                _updateUserStats.Parameters["@smgamescount"].Value = stats.Smgamescount;
+                _updateUserStats.Parameters["@csmgamescount"].Value = stats.Csmgamescount;
+                _updateUserStats.Parameters["@orkgamescount"].Value = stats.Orkgamescount;
+                _updateUserStats.Parameters["@eldargamescount"].Value = stats.Eldargamescount;
+                _updateUserStats.Parameters["@iggamescount"].Value = stats.Iggamescount;
+                _updateUserStats.Parameters["@necrgamescount"].Value = stats.Necrgamescount;
+                _updateUserStats.Parameters["@taugamescount"].Value = stats.Taugamescount;
+                _updateUserStats.Parameters["@degamescount"].Value = stats.Degamescount;
+                _updateUserStats.Parameters["@sobgamescount"].Value = stats.Sobgamescount;
+
+                _updateUserStats.Parameters["@smwincount"].Value = stats.Smwincount;
+                _updateUserStats.Parameters["@csmwincount"].Value = stats.Csmwincount;
+                _updateUserStats.Parameters["@orkwincount"].Value = stats.Orkwincount;
+                _updateUserStats.Parameters["@eldarwincount"].Value = stats.Eldarwincount;
+                _updateUserStats.Parameters["@igwincount"].Value = stats.Igwincount;
+                _updateUserStats.Parameters["@necrwincount"].Value = stats.Necrwincount;
+                _updateUserStats.Parameters["@tauwincount"].Value = stats.Tauwincount;
+                _updateUserStats.Parameters["@dewincount"].Value = stats.Dewincount;
+                _updateUserStats.Parameters["@sobwincount"].Value = stats.Sobwincount;
+
+                _updateUser.ExecuteNonQuery();
+            }
         }
 
         public StatsData GetStatsDataByProfileId(long profileId)
