@@ -282,10 +282,12 @@ namespace GSMasterServer.Servers
 
             //if (!data[2].Equals("whamdowfr", StringComparison.OrdinalIgnoreCase))
            //     return false;
-
+           
             string validate = data[4];
             string filter = null;
-            
+
+            bool isAutomatch = false;
+
             if (validate.Length > 8)
             {
                 filter = validate.Substring(8);
@@ -293,17 +295,14 @@ namespace GSMasterServer.Servers
             }
             else
             {
-                Log(Category, "ROOMS REQUEST - "+ data[2]);
+                //Log(Category, "ROOMS REQUEST - "+ data[2]);
 
-                if (!data[2].EndsWith("am"))
+                isAutomatch = data[2].EndsWith("am");
+
+                if (!isAutomatch)
                 {
                     SendRooms(state, validate);
                     return true;
-                }
-                else
-                {
-                    //SendAutomatchRooms(state, validate, ChatServer.IrcDaemon.GetAutoRooms());
-                    //return true;
                 }
             }
 
@@ -353,7 +352,7 @@ namespace GSMasterServer.Servers
             else
                 key = DataFunctions.StringToBytes("Xn221z");*/
 
-            byte[] unencryptedServerList = PackServerList(state, servers, fields);
+            byte[] unencryptedServerList = PackServerList(state, servers, fields, isAutomatch);
             byte[] encryptedServerList = GSEncoding.Encode(ChatServer.Gamekey, DataFunctions.StringToBytes(validate), unencryptedServerList, unencryptedServerList.LongLength);
             SendToClient(state, encryptedServerList);
             return true;
@@ -552,7 +551,7 @@ namespace GSMasterServer.Servers
             SendToClient(state, enc);
         }
 
-        private static byte[] PackServerList(SocketState state, IEnumerable<GameServer> servers, string[] fields)
+        private static byte[] PackServerList(SocketState state, IEnumerable<GameServer> servers, string[] fields, bool isAutomatch)
         {
             IPEndPoint remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
             List<byte> data = new List<byte>();
@@ -564,72 +563,6 @@ namespace GSMasterServer.Servers
 
             if (fields.Length == 1 && fields[0] == "\u0004")
                 fields = new string[0];
-                /*fields = new string[]
-                {
-                    "IPAddress",
-                    "QueryPort",
-                    "LastRefreshed",
-                    "statechanged",
-                    "LastPing",
-                    "country",
-                    "localip0",
-                    "localip1",
-                    "localip2",
-                    "localip3",
-                    "localip4",
-                    "localport",
-                    "natneg",
-                    "gamename",
-                    "numplayers",
-                    "maxplayers",
-                    "hostname",
-                    "hostport",
-                    "mapname",
-                    "password",
-                    "gamever",
-                    "score_",
-                    "teamplay",
-                    "gametype",
-                    "gamevariant",
-                    "groupid",
-                    "numobservers",
-                    "maxobservers",
-                    "modname",
-                    "moddisplayname",
-                    "modversion",
-                    "devmode",
-                    "CK_GameTypeOption0",
-                    "CK_GameTypeOption1",
-                    "CK_GameTypeOption2",
-                    "CK_GameTypeOption3",
-                    "CK_GameTypeOption4",
-                    "CK_GameTypeOption5",
-                    "CK_GameTypeOption6",
-                    "CK_GameTypeOption7",
-                    "CK_GameTypeOption8",
-                    "CK_GameTypeOption9",
-                    "CK_GameTypeOption10",
-                    "CK_GameTypeOption11",
-                    "CK_GameTypeOption12",
-                    "CK_GameTypeOption13",
-                    "CK_GameTypeOption14",
-                    "CK_GameTypeOption15",
-                    "CK_GameTypeOption16",
-                    "CK_GameTypeOption17",
-                    "CK_GameTypeOption18",
-                    "CK_GameTypeOption19",
-                    "CK_GameTypeOption20",
-                    "CK_GameTypeOption21",
-                    "CK_GameTypeOption22",
-                    "CK_GameTypeOption23",
-                    "CK_GameTypeOption24",
-                    "CK_GameTypeOption25",
-                    "CK_GameTypeOption26",
-                    "CK_GameTypeOption27",
-                    "CK_GameTypeOption28",
-                    "CK_GameTypeOption29",
-                    "CK_GameTypeOption30"
-                };*/
 
             data.Add((byte)fields.Length);
             data.Add(0);
@@ -648,24 +581,12 @@ namespace GSMasterServer.Servers
                 // 115 (\x73)	= public ip / public port / private ip / private port
                 // 85 (\x55)	= public ip / public port
                 // 81 (\x51)	= public ip / public port
-                /*Console.WriteLine(server.IPAddress);
-				Console.WriteLine(server.QueryPort);
-				Console.WriteLine(server.localip0);
-				Console.WriteLine(server.localip1);
-				Console.WriteLine(server.localport);
-				Console.WriteLine(server.natneg);*/
-
 
                 var localip0 = server.Get<string>("localip0");
-                var localip1 = server.Get<string>("localip1") ?? "0";
-                var localport = ushort.Parse(server.Get<string>("localport") ?? "6112");
+                var localport = ushort.Parse(server.Get<string>("localport") ?? "0");
                 var queryPort = (ushort)server.Get<int>("QueryPort");
                 var iPAddress = server.Get<string>("localip4") ?? server.Get<string>("localip3") ?? server.Get<string>("localip2") ?? server.Get<string>("localip1") ?? server.Get<string>("IPAddress");
                  
-                var publicIp = server.Get<string>("publicip");
-                var publicPort = server.Get<string>("publicport");
-
-
                 // var iPAddress = server.Properties.Where(x => x.Key.StartsWith("localip") && x.Value.ToString().StartsWith("192.168.1.")).FirstOrDefault().Value.ToString();
                 /* if (!String.IsNullOrWhiteSpace(localip0) && !String.IsNullOrWhiteSpace(localip1) && localport > 0)
                  {
@@ -704,14 +625,21 @@ namespace GSMasterServer.Servers
                     data.AddRange(Encoding.UTF8.GetBytes(f));
 
                     if (i < fields.Length - 1)
-                        data.AddRange(new byte[] { 0, 255 });
+                    {
+                        data.Add(0);
+                        data.Add(255);
+                    }
                 }
 
                 data.Add(0);
             }
-        
-            data.AddRange(new byte[] { 0, 255, 255, 255, 255 });
 
+            data.Add(0);
+            data.Add(255);
+            data.Add(255);
+            data.Add(255);
+            data.Add(255);
+            
             return data.ToArray();
         }
 

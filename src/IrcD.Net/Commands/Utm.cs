@@ -2,6 +2,7 @@
 using IrcD.Commands.Arguments;
 using IrcD.Core;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace IrcD.Commands
 {
@@ -23,8 +24,17 @@ namespace IrcD.Commands
             {
                 // elamaunt!Xv1sFqOa9X|17972147@192.168.1.31 UTM elamaunt :GML
 
-                foreach (var item in channel.Users)
+                // This code only for warhammer
+
+                var usersInGame = channel.Users.ToArray();
+
+                IrcDaemon.RegisterRatingGame(usersInGame);
+
+                for (int i = 0; i < usersInGame.Length; i++)
+                {
+                    var item = usersInGame[i];
                     item.WriteLine($@":{info.Usermask} UTM {args[0]} :{args[1]}");
+                }
             }
         }
 

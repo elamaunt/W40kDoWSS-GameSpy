@@ -34,6 +34,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using Mode = IrcD.Commands.Mode;
 using Version = IrcD.Commands.Version;
 
@@ -45,6 +46,8 @@ namespace IrcD.Core
         public const string ServerCrLf = "\r\n";
         const char PrefixCharacter = ':';
         const int MaxBufferSize = 2048;
+
+        public List<Game> Games { get; } = new List<Game>();
 
         // Main Datastructures
         public Dictionary<Socket, UserInfo> Sockets { get; } = new Dictionary<Socket, UserInfo>();
@@ -74,12 +77,12 @@ namespace IrcD.Core
 
         public List<string> Capabilities { get; private set; }
 
-        private bool _connected;
-        private bool _restart;
+        //private bool _connected;
+        //private bool _restart;
 
         private readonly byte[] _buffer = new byte[MaxBufferSize];
         private EndPoint _ep = new IPEndPoint(0, 0);
-        private EndPoint _localEndPoint;
+        //private EndPoint _localEndPoint;
 
         public ServerOptions Options { get; }
 
@@ -234,7 +237,7 @@ namespace IrcD.Core
             SupportedChannelTypes.Add(chan.Prefix, chan);
         }
 
-        public void Start()
+       /* public void Start()
         {
             _connected = true;
         }
@@ -242,7 +245,7 @@ namespace IrcD.Core
         public void Stop()
         {
             _connected = false;
-        }
+        }*/
 
         /// <summary>
         /// Start a IRC Server to Server Connection
@@ -265,21 +268,43 @@ namespace IrcD.Core
 
         }
 
-        public void RegisterNewUser(Socket socket, string nick, object state, Func<object, string, int> send)
+        public UserInfo RegisterNewUser(Socket socket, string nick, long profileId, object state, Func<object, string, int> send)
         {
-            var info = new UserInfo(this, socket, ((IPEndPoint)socket.RemoteEndPoint).Address.ToString(), false, String.IsNullOrEmpty(Options.ServerPass), state, send);
+            var info = new UserInfo(this, socket, profileId, ((IPEndPoint)socket.RemoteEndPoint).Address.ToString(), false, String.IsNullOrEmpty(Options.ServerPass), state, send);
             Nicks[nick] = info;
             info.InitNick(nick);
             Sockets[socket] = info;
+            
+            Task.Delay(1000).ContinueWith(t =>
+            {
+                var rooms = Channels.Where(x => x.Key.StartsWith("#GSP")).ToArray();
+
+                info.WriteServerPrivateMessage($"Wellcome to server, {info.Nick}!");
+                info.WriteServerPrivateMessage($"To play RATING games in auto you should leave rated checkbox in UNCHECKED state.");
+                info.WriteServerPrivateMessage($"Opened Automatchmaking rooms now {rooms.Length} with players {rooms.Sum(x => x.Value.Users.Count())}");
+
+                //.:sF|elamaunt!X1lsaFvqsX|35226254@127.0.0.1 PRIVMSG Bambochuk :1234
+
+                //lutinblanc!*@*PRIVMSG #GPG!2266 :What with a "Please wait for Refresh NAT to be completed" error?
+                // info.WriteLine($@"{info.Nick} PRIVMSG {info.User} :Wellcome to server, {info.Nick}!\nTo play RATING games in auto you should leave rated checkbox in UNCKECHED state.");
+                //info
+                // new PrivateMessageArgument(info, chan, chan.Name, args[1])
+                //info.WriteLine($@"sF|elamaunt!X1lsaFvqsX|35226254@127.0.0.1 PRIVMSG {info.Usermask} :Hello");
+                //info.WriteLine($@"PRIVMSG #GPG!8 :Hello");
+                //info.WriteLine($@"sF|elamaunt!X1lsaFvqsX|35226254@127.0.0.1 PRIVMSG #GPG!8 :Hello");
+                //info.WriteLine($@"PRIVMSG {info.User} :Wellcome to server, {info.Nick}!\nTo play RATING games in auto you should leave rated checkbox in UNCKECHED state.");
+            });
+
+            return info;
         }
 
-        public void ProcessSocketMessage(Socket socket, string message, object state = null, Func<object, string, int> send = null)
+        public void ProcessSocketMessage(Socket socket, string message, long profileId = 0, object state = null, Func<object, string, int> send = null)
         {
             // USER X14saFv19X| 87654321 127.0.0.1 peerchat.gamespy.com :c7923ffb345487895fd66e20ca24ca00
             // NICK *
             
             if (!Sockets.TryGetValue(socket, out UserInfo userInfo))
-                userInfo = Sockets[socket] = new UserInfo(this, socket, ((IPEndPoint)socket.RemoteEndPoint).Address.ToString(), false, String.IsNullOrEmpty(Options.ServerPass), state, send);
+                userInfo = Sockets[socket] = new UserInfo(this, socket, profileId, ((IPEndPoint)socket.RemoteEndPoint).Address.ToString(), false, String.IsNullOrEmpty(Options.ServerPass), state, send);
 
             try
             {
@@ -386,9 +411,19 @@ namespace IrcD.Core
             GC.Collect();*/
         }
 
+        public void RemoveUserFromAllChannels(UserInfo userInfo)
+        {
+            ProcessSocketMessage(userInfo.Socket, "QUIT :Later!");
+        }
+
         public ChannelInfo[] GetAutoRooms()
         {
             return Channels.Where(x => x.Key.StartsWith("#GSP")).Select(x => x.Value).ToArray();
+        }
+
+        public ChannelInfo[] GetMainRooms()
+        {
+            return Channels.Where(x => x.Key.StartsWith("#GPG")).Select(x => x.Value).ToArray();
         }
 
         public int GetChannelUsersCount(string channelName)
@@ -496,8 +531,7 @@ namespace IrcD.Core
                 Commands.Handle(info, prefix, replyCode, args, line.Length);
             }
         }
-
-
+        
         private static void FilterArgs(List<string> args)
         {
             args.RemoveAll(s => string.IsNullOrEmpty(s.Trim()));
@@ -550,5 +584,14 @@ namespace IrcD.Core
             //
         }
 
+        internal void RegisterRatingGame(UserInfo[] users)
+        {
+            //Games.Add(new Game(users, CleanGame));
+        }
+
+        void CleanGame(Game game)
+        {
+
+        }
     }
 }

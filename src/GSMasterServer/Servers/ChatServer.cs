@@ -116,9 +116,7 @@ namespace GSMasterServer.Servers
                 return;
             }
         }
-
-
-
+        
         private unsafe void OnDataReceived(IAsyncResult async)
         {
             SocketState state = (SocketState)async.AsyncState;
@@ -193,7 +191,7 @@ namespace GSMasterServer.Servers
                             }
                             else
                             {
-                                IrcDaemon.ProcessSocketMessage(state.Socket, asciValue, state, SendToClient);
+                                IrcDaemon.ProcessSocketMessage(state.Socket, asciValue, 0, state, SendToClient);
                             }
                         }
                     }
@@ -204,8 +202,6 @@ namespace GSMasterServer.Servers
                             var start = ms.Position;
 
                             var bytes = reader.ReadBytes((int)(ms.Length - ms.Position));
-
-                            var asciValueInput = Encoding.ASCII.GetString(bytes);
                             
                             byte* bytesPtr = stackalloc byte[bytes.Length];
 
@@ -225,12 +221,11 @@ namespace GSMasterServer.Servers
                             {
                                 var nick = utf8alue.Split(' ')[2];
 
-                                // Player id for testing purposes
-                                var pid = (Math.Abs(nick.GetHashCode() % 100000000)).ToString("00000000");  // 87654321
+                                var userData = UsersDatabase.Instance.GetUserData(nick);
 
-                                IrcDaemon.RegisterNewUser(state.Socket, nick, state, SendToClient);
+                                state.UserInfo = IrcDaemon.RegisterNewUser(state.Socket, nick, userData.ProfileId, state, SendToClient);
                                 
-                                var bytesToSend = $":s 707 {nick} 12345678 {pid}\r\n".ToAssciiBytes();
+                                var bytesToSend = $":s 707 {nick} 12345678 {userData.ProfileId}\r\n".ToAssciiBytes();
                                 
                                 fixed (byte* bytesToSendPtr = bytesToSend)
                                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
@@ -244,13 +239,7 @@ namespace GSMasterServer.Servers
                             {
                                 var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
 
-                                //var address = remoteEndPoint.Address;
-
-                                //if (remoteEndPoint.Address == IPAddress.Loopback)
-                                //    address = IPAddress.Parse("192.168.1.21");
-
-                                //var bytesToSend = ":s 302 sF|elamaunt :sF|elamaunt=+@127.0.0.1\r\n".ToAssciiBytes();
-                                var bytesToSend = $":s 302  :=+@{ remoteEndPoint.Address}\r\n".ToAssciiBytes();
+                                var bytesToSend = $":s 302  :=+@{remoteEndPoint.Address}\r\n".ToAssciiBytes();
 
                                 fixed (byte* bytesToSendPtr = bytesToSend)
                                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
@@ -308,6 +297,9 @@ namespace GSMasterServer.Servers
         private unsafe int SendToClient(object abstractState, string message)
         {
             var state = (SocketState)abstractState;
+
+            if (state.Disposing)
+                return 0;
 
             Log("CHATRESP", message);
 
@@ -383,13 +375,15 @@ namespace GSMasterServer.Servers
 
         private class SocketState : IDisposable
         {
+            public bool Disposing;
             public bool Encoded;
             public Socket Socket = null;
             public byte[] Buffer = new byte[8192];
 
             public ChatCrypt.GDCryptKey ClientKey;
             public ChatCrypt.GDCryptKey ServerKey;
-            
+            public UserInfo UserInfo;
+
             public void Dispose()
             {
                 Dispose(true);
@@ -398,6 +392,7 @@ namespace GSMasterServer.Servers
 
             protected virtual void Dispose(bool disposing)
             {
+                Disposing = true;
                 try
                 {
                     if (disposing)
@@ -407,6 +402,7 @@ namespace GSMasterServer.Servers
                             try
                             {
                                 Socket.Shutdown(SocketShutdown.Both);
+                                IrcDaemon.RemoveUserFromAllChannels(UserInfo);
                             }
                             catch (Exception)
                             {

@@ -34,13 +34,13 @@ namespace GSMasterServer
                         }
                         else
                         {
-                            LoginDatabase.Initialize(args[i + 1], Server.Log, Server.LogError);
+                            UsersDatabase.Initialize(args[i + 1]);
                         }
                     }
                 }
             }
 
-            if (!LoginDatabase.IsInitialized())
+            if (!UsersDatabase.IsInitialized())
             {
                 Server.LogError("Error initializing database, please confirm parameter +db is valid");
                 Server.LogError("Press any key to continue");

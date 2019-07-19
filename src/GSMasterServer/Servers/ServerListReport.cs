@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GSMasterServer.Servers
 {
@@ -476,16 +477,11 @@ namespace GSMasterServer.Servers
                 server.Valid = true;
             }
             
-            var isAuto = server.Get<string>("gamename").EndsWith("am");
-
-            if (isAuto)
-                server.Valid = true;
-
             var serverExists = Servers.ContainsKey(key);
 
             // if the server list doesn't contain this server, we need to return false in order to send a challenge
             // if the server replies back with the good challenge, it'll be added in AddValidServer
-            if (!isAuto && !serverExists)
+            if (!serverExists)
                 return false;
             
             if (server.Properties.TryGetValue("statechanged", out object value))
@@ -504,12 +500,38 @@ namespace GSMasterServer.Servers
                 if (!old.Valid && server.Valid)
                 {
                     Log(Category, String.Format("Added new server at: {0}:{1} ({2}) ({3})", server.GetByName("IPAddress"), server.GetByName("QueryPort"), server.GetByName("country"), server.GetByName("gamevariant")));
+
+                    var gametype = server.Get<string>("gametype");
+
+                    if (server.Get<string>("maxplayers") == "2" && gametype == "unranked")
+                        Task.Factory.StartNew(WhisperNewGameToPlayers, server);
                 }
                 
                 return server;
             });
 
-            return serverExists;
+            return true;
+        }
+
+        private void WhisperNewGameToPlayers(object abstractServer)
+        {
+            var server = (GameServer)abstractServer;
+            var hostName = server.Get<string>("hostname");
+
+            var mainRooms = ChatServer.IrcDaemon.GetMainRooms();
+
+            for (int i = 0; i < mainRooms.Length; i++)
+            {
+                var room = mainRooms[i];
+
+                foreach (var item in room.Users)
+                {
+                    if (item.Nick == hostName)
+                        continue;
+
+                    item.WriteServerPrivateMessage("Эй, большой Босс! Вааа какой-то старшак начал игру в авто. Говорят, его дакка такая же как у вас. Но мы то знаем, что это вы у нас скрага. Вы определенно должны забрать его зубы! Вааргх!");
+                }
+            }
         }
 
         private void AddValidServer(IPEndPoint remote)

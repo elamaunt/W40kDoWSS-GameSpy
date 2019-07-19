@@ -41,12 +41,14 @@ namespace IrcD.Core
         readonly Func<object, string, int> _send;
         readonly object _state;
 
-        public UserInfo(IrcDaemon ircDaemon, Socket socket, string host, bool isAcceptSocket, bool passAccepted, object state, Func<object, string, int> send)
+        public long ProfileId { get; }
+
+        public UserInfo(IrcDaemon ircDaemon, Socket socket, long profileId, string host, bool isAcceptSocket, bool passAccepted, object state, Func<object, string, int> send)
             : base(ircDaemon)
         {
             _send = send;
             _state = state;
-
+            ProfileId = profileId;
             IsService = false;
             Registered = false;
             PassAccepted = passAccepted;
@@ -281,6 +283,11 @@ namespace IrcD.Core
             }
 
             return parameter;
+        }
+
+        public void WriteServerPrivateMessage(string message)
+        {
+            WriteLine($@":SERVER!XaaaaaaaaX|10008@127.0.0.1 PRIVMSG {Nick} :{message}");
         }
     }
 }

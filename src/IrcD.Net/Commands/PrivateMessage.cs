@@ -49,6 +49,10 @@ namespace IrcD.Commands
                 return;
             }
 
+            // Костыль для работы личных сообщений в игре
+            if (args[0].EndsWith("-thq"))
+                args[0] = args[0].Substring(0, args[0].Length - 4);
+
             // Only Private Messages set this
             info.LastAction = DateTime.Now;
 

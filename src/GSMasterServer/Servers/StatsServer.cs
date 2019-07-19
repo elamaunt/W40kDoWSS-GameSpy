@@ -156,7 +156,7 @@ namespace GSMasterServer.Servers
 
                     // \authp\\pid\87654321\resp\7e2270c581e8daf5a5321ff218953035\lid\1\final\
 
-                    var pid = input.Substring(12, 8);
+                    var pid = input.Substring(12, 9);
 
                     SendToClient(state, $@"\pauthr\{pid}\lid\1\final\");
                     //SendToClient(state, @"\pauthr\-3\lid\1\errmsg\helloworld\final\");
@@ -170,18 +170,18 @@ namespace GSMasterServer.Servers
                 {
                     // \\getpd\\\\pid\\87654321\\ptype\\3\\dindex\\0\\keys\\\u0001points\u0001points2\u0001points3\u0001stars\u0001games\u0001wins\u0001disconn\u0001a_durat\u0001m_streak\u0001f_race\u0001SM_wins\u0001Chaos_wins\u0001Ork_wins\u0001Tau_wins\u0001SoB_wins\u0001DE_wins\u0001Eldar_wins\u0001IG_wins\u0001Necron_wins\u0001lsw\u0001rnkd_vics\u0001con_rnkd_vics\u0001team_vics\u0001mdls1\u0001mdls2\u0001rg\u0001pw\\lid\\1\\final\\
                     // \getpd\\pid\87654321\ptype\3\dindex\0\keys\pointspoints2points3starsgameswinsdisconna_duratm_streakf_raceSM_winsChaos_winsOrk_winsTau_winsSoB_winsDE_winsEldar_winsIG_winsNecron_winslswrnkd_vicscon_rnkd_vicsteam_vicsmdls1mdls2rgpw\lid\1\final\
-
-                    var pid = input.Substring(12, 8);
+                    var pid = input.Substring(12, 9);
 
                     var keysIndex = input.IndexOf("keys") + 5;
                     var keys = input.Substring(keysIndex);
                     var keysList = keys.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "final", "\\", "lid" }, StringSplitOptions.RemoveEmptyEntries );
 
                     var keysResult = new StringBuilder();
+                    var stats = UsersDatabase.Instance.GetStatsDataByProfileId(long.Parse(pid));
 
+                    var gamesCount = stats.GamesCount;
+                    var stars = Math.Min(5, gamesCount);
 
-                    //var ks = keysList.Aggregate((x, y) => x+" "+y);
-                    var timeInSeconds = (ulong)((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
 
 
                     for (int i = 0; i < keysList.Length; i++)
@@ -192,33 +192,37 @@ namespace GSMasterServer.Servers
                         
                         switch (key)
                         {
-                            case "points": keysResult.Append("1000"); break;
-                            case "points2": keysResult.Append("1000"); break;
-                            case "points3": keysResult.Append("1000"); break;
-                            case "stars": keysResult.Append("5"); break;
-                            case "games": keysResult.Append("90"); break;
-                            case "wins": keysResult.Append("20"); break;
-                            case "disconn": keysResult.Append("10"); break;
-                            case "a_durat": keysResult.Append("200000"); break;
-                            case "m_streak": keysResult.Append("10"); break;
-                            case "f_race": keysResult.Append("ork_race"); break;
-                            case "SM_wins": keysResult.Append("5"); break;
-                            case "Chaos_wins": keysResult.Append("5"); break;
-                            case "Ork_wins": keysResult.Append("50"); break;
-                            case "Tau_wins": keysResult.Append("5"); break;
-                            case "SoB_wins": keysResult.Append("5"); break;
-                            case "DE_wins": keysResult.Append("5"); break;
-                            case "Eldar_wins": keysResult.Append("5"); break;
-                            case "IG_wins": keysResult.Append("5"); break;
-                            case "Necron_wins": keysResult.Append("5"); break;
-                            case "lsw": keysResult.Append("0"); break;
+                            case "points": keysResult.Append(stats.Score1v1); break;
+                            case "points2": keysResult.Append(stats.Score2v2); break;
+                            case "points3": keysResult.Append(stats.Score3v3); break;
+
+                            case "stars": keysResult.Append(stars); break;
+
+                            case "games": keysResult.Append(gamesCount); break;
+                            case "wins": keysResult.Append(stats.WinsCount); break;
+                            case "disconn": keysResult.Append(stats.Disconnects); break;
+                            case "a_durat": keysResult.Append(stats.AverageDurationTicks); break;
+                            case "m_streak": keysResult.Append(stats.Winstreak); break;
+
+                            case "f_race": keysResult.Append(stats.FavouriteRace); break;
+
+                            case "SM_wins": keysResult.Append(stats.Smwincount); break;
+                            case "Chaos_wins": keysResult.Append(stats.Csmwincount); break;
+                            case "Ork_wins": keysResult.Append(stats.Orkwincount); break;
+                            case "Tau_wins": keysResult.Append(stats.Tauwincount); break;
+                            case "SoB_wins": keysResult.Append(stats.Sobwincount); break;
+                            case "DE_wins": keysResult.Append(stats.Dewincount); break;
+                            case "Eldar_wins": keysResult.Append(stats.Eldarwincount); break;
+                            case "IG_wins": keysResult.Append(stats.Igwincount); break;
+                            case "Necron_wins": keysResult.Append(stats.Necrwincount); break;
+                            /*case "lsw": keysResult.Append("123"); break;
                             case "rnkd_vics": keysResult.Append("50"); break;
                             case "con_rnkd_vics": keysResult.Append("200"); break;
                             case "team_vics": keysResult.Append("250"); break;
                             case "mdls1": keysResult.Append("260"); break;
                             case "mdls2": keysResult.Append("270"); break;
                             case "rg": keysResult.Append("280"); break;
-                            case "pw": keysResult.Append("290"); break;
+                            case "pw": keysResult.Append("290"); break;*/
                             default:
                                 keysResult.Append("0");
                                 break;
@@ -226,15 +230,14 @@ namespace GSMasterServer.Servers
 
                     }
 
-                    SendToClient(state, $@"\getpdr\1\lid\1\pid\{pid}\mod\{timeInSeconds}\length\{keys.Length}\data\{keysResult}\final\");
-
-
+                    SendToClient(state, $@"\getpdr\1\lid\1\pid\{pid}\mod\{stats.Modified}\length\{keys.Length}\data\{keysResult}\final\");
+                    
                     goto CONTINUE;
                 }
                 
                 if (input.StartsWith(@"\setpd\"))
                 {
-                    var pid = input.Substring(12, 8);
+                    var pid = input.Substring(12, 9);
 
                     var lidIndex = input.IndexOf("\\lid\\", StringComparison.OrdinalIgnoreCase);
                     var lid = input.Substring(lidIndex+5, 1);
@@ -246,9 +249,132 @@ namespace GSMasterServer.Servers
                     goto CONTINUE;
                 }
 
+                if (input.StartsWith(@"\updgame\"))
+                {
+                    var gamedataIndex = input.IndexOf("gamedata");
+                    var finalIndex = input.IndexOf("final");
+
+                    var gameDataString = input.Substring(gamedataIndex + 9, finalIndex - gamedataIndex - 10);
+
+                    var valuesList = gameDataString.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "final", "\\", "lid" }, StringSplitOptions.RemoveEmptyEntries);
+
+// Custom game
+/*
+    [0]: "PHuman_0"
+    [1]: "1"
+    [2]: "SessionID"
+    [3]: "-94568309"
+    [4]: "WinBy"
+    [5]: "ANNIHILATE"
+    [6]: "PHuman_1"
+    [7]: "1"
+    [8]: "Ladder"
+    [9]: "0"
+    [10]: "player_0"
+    [11]: "sF|elamaunt"
+    [12]: "player_1"
+    [13]: "Bambochuk"
+    [14]: "PTeam_0"
+    [15]: "1"
+    [16]: "PTeam_1"
+    [17]: "0"
+    [18]: "Players"
+    [19]: "2"
+    [20]: "Teams"
+    [21]: "2"
+    [22]: "Version"
+    [23]: "1.2.120"
+    [24]: "ctime_0"
+    [25]: "0"
+    [26]: "ctime_1"
+    [27]: "0"
+    [28]: "Scenario"
+    [29]: "2P_BATTLE_MARSHES"
+    [30]: "Mod"
+    [31]: "dxp2"
+    [32]: "PFnlState_0"
+    [33]: "5"
+    [34]: "PTtlSc_0"
+    [35]: "8"
+    [36]: "PFnlState_1"
+    [37]: "0"
+    [38]: "PRace_0"
+    [39]: "sisters_race"
+    [40]: "PTtlSc_1"
+    [41]: "8"
+    [42]: "PRace_1"
+    [43]: "ork_race"
+    [44]: "PID_0"
+    [45]: "100000001"
+    [46]: "ModVer"
+    [47]: "1.0"
+    [48]: "PID_1"
+    [49]: "100000002"
+    [50]: "Duration"
+    [51]: "4"
+    */
+
+  // Ladder
+  /*[0]: "PHuman_0"
+    [1]: "1"
+    [2]: "SessionID"
+    [3]: "-248966396"
+    [4]: "WinBy"
+    [5]: "ANNIHILATE"
+    [6]: "PHuman_1"
+    [7]: "1"
+    [8]: "Ladder"
+    [9]: "0"
+    [10]: "player_0"
+    [11]: "Bambochuk"
+    [12]: "player_1"
+    [13]: "sF|elamaunt"
+    [14]: "PTeam_0"
+    [15]: "0"
+    [16]: "PTeam_1"
+    [17]: "1"
+    [18]: "Players"
+    [19]: "2"
+    [20]: "Teams"
+    [21]: "2"
+    [22]: "Version"
+    [23]: "1.2.120"
+    [24]: "ctime_0"
+    [25]: "0"
+    [26]: "ctime_1"
+    [27]: "0"
+    [28]: "Scenario"
+    [29]: "2P_TITAN_FALL"
+    [30]: "Mod"
+    [31]: "dxp2"
+    [32]: "PFnlState_0"
+    [33]: "0"
+    [34]: "PTtlSc_0"
+    [35]: "657"
+    [36]: "PFnlState_1"
+    [37]: "5"
+    [38]: "PRace_0"
+    [39]: "ork_race"
+    [40]: "PTtlSc_1"
+    [41]: "658"
+    [42]: "PRace_1"
+    [43]: "dark_eldar_race"
+    [44]: "PID_0"
+    [45]: "100000002"
+    [46]: "ModVer"
+    [47]: "1.0"
+    [48]: "PID_1"
+    [49]: "100000001"
+    [50]: "Duration"
+    [51]: "329"
+    */
+
+                }
+
                 // \newgame\\connid\1482017401\sesskey\43152578\final\
                 // \updgame\\sesskey\43152578\done\1\gamedata\PHuman_01SessionID-1909266334WinByANNIHILATEPHuman_11Ladder1player_0elamauntplayer_1sF|elamauntPTeam_00PTeam_11Players2Teams2Version1.2ctime_00ctime_10Scenario2P_TRANQUILITYS_ENDModdxp2PFnlState_03PTtlSc_0809PFnlState_15PRace_0necron_racePTtlSc_14310PRace_1tau_racePID_017972147ModVer1.0PID_135226254Duration409\final\
-
+                // \\newgame\\\\connid\\1482017401\\sesskey\\147427625\\final\\
+                // \\updgame\\\\sesskey\\147427625\\connid\\1482017401\\done\\1\\gamedata\\\u0001PHuman_0\u00011\u0001SessionID\u00011101289433\u0001WinBy\u0001ANNIHILATE\u0001PHuman_1\u00011\u0001Ladder\u00010\u0001player_0\u0001sF|elamaunt\u0001player_1\u0001Bambochuk\u0001PTeam_0\u00011\u0001PTeam_1\u00010\u0001Players\u00012\u0001Teams\u00012\u0001Version\u00011.2.120\u0001ctime_0\u00010\u0001ctime_1\u00010\u0001Scenario\u00012P_MEETING_OF_MINDS\u0001Mod\u0001dxp2\u0001PFnlState_0\u00010\u0001PTtlSc_0\u000173\u0001PFnlState_1\u00015\u0001PRace_0\u0001dark_eldar_race\u0001PTtlSc_1\u000173\u0001PRace_1\u0001ork_race\u0001PID_0\u0001100000001\u0001ModVer\u00011.0\u0001PID_1\u0001100000002\u0001Duration\u000136\\final\\
             }
             catch (ObjectDisposedException)
             {

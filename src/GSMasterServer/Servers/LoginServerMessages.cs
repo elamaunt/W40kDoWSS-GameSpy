@@ -49,11 +49,11 @@ namespace GSMasterServer.Servers
            // if (requiredValues != 3)
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
 
-            var clientData = LoginDatabase.Instance.GetData(state.Name);
+            var clientData = UsersDatabase.Instance.GetUserData(state.Name);
 
             if (clientData != null)
             {
-                state.PasswordEncrypted = (string)clientData["passwordenc"];
+                state.PasswordEncrypted = clientData.Passwordenc;
 
                 var value = GenerateResponseValue(ref state);
                 var valueWithEmail = GenerateResponseValueWithEmail(ref state, ref clientData);
@@ -65,7 +65,7 @@ namespace GSMasterServer.Servers
                     if (response == value)
                         session = GenerateSession(state.Name);
                     else
-                        session = GenerateSession(state.Name + "@" + (state.Email ?? clientData["email"]));
+                        session = GenerateSession(state.Name + "@" + (state.Email ?? clientData.Email));
 
                     string proofValue;
 
@@ -77,8 +77,8 @@ namespace GSMasterServer.Servers
                     string proof = String.Format(@"\lc\2\sesskey\{0}\proof\{1}\userid\{2}\profileid\{3}\uniquenick\{4}\lt\{5}\id\1\final\",
                         session,
                         proofValue,
-                        clientData["userid"],
-                        clientData["profileid"],
+                        clientData.UserId,
+                        clientData.ProfileId,
                         state.Name,
                         _random.GetString(22, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") + "__");
 
@@ -88,7 +88,7 @@ namespace GSMasterServer.Servers
 					};
 					LoginDatabase.Instance.SetData(state.Name, updateClientData);*/
 
-                    LoginDatabase.Instance.LogLogin(state.Name, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
+                    UsersDatabase.Instance.LogLogin(state.Name, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
 
                     state.State++;
                     return DataFunctions.StringToBytes(proof);
@@ -106,7 +106,7 @@ namespace GSMasterServer.Servers
 
         public static byte[] SendProfile(ref LoginSocketState state, Dictionary<string, string> keyValues, bool retrieve)
         {
-            var clientData = LoginDatabase.Instance.GetData(state.Name);
+            var clientData = UsersDatabase.Instance.GetUserData(state.Name);
 
             if (clientData == null)
             {
@@ -116,14 +116,14 @@ namespace GSMasterServer.Servers
             string message = String.Format(
                 @"\pi\\profileid\{0}\nick\{1}\userid\{2}\email\{3}\sig\{4}\uniquenick\{5}\pid\{6}" +
                 @"\firstname\lastname\countrycode\{7}\birthday\{8}\lon\{9}\lat\{10}\loc\id\{11}\final\",
-                clientData["profileid"],
+                clientData.ProfileId,
                 state.Name,
-                clientData["userid"],
-                clientData["email"],
+                clientData.UserId,
+                clientData.Email,
                 _random.GetString(32, "0123456789abcdef"),
                 state.Name,
                 0,
-                clientData["country"],
+                clientData.Country,
                 16844722,
                 "0.000000",
                 "0.000000",
@@ -149,7 +149,7 @@ namespace GSMasterServer.Servers
                 { "country", country }
             };
 
-            LoginDatabase.Instance.SetData(state.Name, clientData);
+            UsersDatabase.Instance.SetUserData(state.Name, clientData);
             state.State++;
         }
 
@@ -195,7 +195,7 @@ namespace GSMasterServer.Servers
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
             }
 
-            if (LoginDatabase.Instance.UserExists(state.Name))
+            if (UsersDatabase.Instance.UserExists(state.Name))
             {
                 return DataFunctions.StringToBytes(@"\error\\err\516\fatal\\errmsg\This account name is already in use!\id\1\final\");
             }
@@ -203,16 +203,16 @@ namespace GSMasterServer.Servers
             {
                 string password = DecryptPassword(state.PasswordEncrypted);
 
-                LoginDatabase.Instance.CreateUser(state.Name, password.ToMD5(), state.Email, "??", ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
+                UsersDatabase.Instance.CreateUser(state.Name, password.ToMD5(), state.Email, "??", ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
 
-                var clientData = LoginDatabase.Instance.GetData(state.Name);
+                var clientData = UsersDatabase.Instance.GetUserData(state.Name);
 
                 if (clientData == null)
                 {
                     return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Error creating account!\id\1\final\");
                 }
 
-                message = String.Format(@"\nur\\userid\{0}\profileid\{1}\id\1\final\", clientData["userid"], clientData["profileid"]);
+                message = String.Format(@"\nur\\userid\{0}\profileid\{1}\id\1\final\", clientData.UserId, clientData.ProfileId);
             }
 
             return DataFunctions.StringToBytes(message);
@@ -247,7 +247,7 @@ namespace GSMasterServer.Servers
 
             password = password.ToMD5();
 
-            var clientData = LoginDatabase.Instance.GetData(keyValues["email"], password);
+            var clientData = UsersDatabase.Instance.GetAllUserDatas(keyValues["email"], password);
 
             if (clientData == null)
             {
@@ -257,7 +257,7 @@ namespace GSMasterServer.Servers
             List<string> nicks = new List<string>();
             foreach (var client in clientData)
             {
-                nicks.Add((string)client["name"]);
+                nicks.Add(client.Name);
             }
 
             if (nicks.Count == 0)
@@ -303,14 +303,14 @@ namespace GSMasterServer.Servers
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
             }
 
-            var clientData = LoginDatabase.Instance.GetData(name);
+            var clientData = UsersDatabase.Instance.GetUserData(name);
 
             if (clientData == null)
             {
                 return DataFunctions.StringToBytes(String.Format(@"\error\\err\265\fatal\\errmsg\Username [{0}] doesn't exist!\id\1\final\", name));
             }
 
-            string message = String.Format(@"\cur\0\pid\{0}\final\", clientData["profileid"]);
+            string message = String.Format(@"\cur\0\pid\{0}\final\", clientData.ProfileId);
 
             return DataFunctions.StringToBytes(message);
         }
@@ -350,11 +350,11 @@ namespace GSMasterServer.Servers
             return value.ToMD5();
         }
 
-        private static string GenerateResponseValueWithEmail(ref LoginSocketState state, ref Dictionary<string, object> clientData)
+        private static string GenerateResponseValueWithEmail(ref LoginSocketState state, ref UserData clientData)
         {
             string value = state.PasswordEncrypted;
             value += new String(' ', 48);
-            value += state.Name + "@" + (state.Email ?? clientData["email"]);
+            value += state.Name + "@" + (state.Email ?? clientData.Email);
             value += state.ClientChallenge;
             value += state.ServerChallenge;
             value += state.PasswordEncrypted;
