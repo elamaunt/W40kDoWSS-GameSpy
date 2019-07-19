@@ -206,13 +206,13 @@ namespace System.Linq.Dynamic
 		}
 	}
 
-	internal class DynamicOrdering
+	public class DynamicOrdering
 	{
 		public Expression Selector;
 		public bool Ascending;
 	}
 
-	internal class Signature : IEquatable<Signature>
+	public class Signature : IEquatable<Signature>
 	{
 		public DynamicProperty[] properties;
 		public int hashCode;
@@ -247,7 +247,7 @@ namespace System.Linq.Dynamic
 		}
 	}
 
-	internal class ClassFactory
+	public class ClassFactory
 	{
 		public static readonly ClassFactory Instance = new ClassFactory();
 
@@ -426,7 +426,7 @@ namespace System.Linq.Dynamic
 		}
 	}
 
-	internal class ExpressionParser
+	public class ExpressionParser
 	{
 		struct Token
 		{

@@ -591,13 +591,13 @@ WHERE id=@id COLLATE NOCASE", _db);
             string country = "??";
             if (GeoIP.Instance != null && GeoIP.Instance.Reader != null)
             {
-                try
+               /* try
                 {
                     country = GeoIP.Instance.Reader.Omni(address.ToString()).Country.IsoCode.ToUpperInvariant();
                 }
                 catch (Exception)
                 {
-                }
+                }*/
             }
 
             if (country != "??" && !data.Country.ToString().Equals(country, StringComparison.InvariantCultureIgnoreCase))

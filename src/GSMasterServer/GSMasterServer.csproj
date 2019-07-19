@@ -1,129 +1,47 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{64BC01A8-FCD2-4AB7-8811-3200F83AE124}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GSMasterServer</RootNamespace>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
     <AssemblyName>GSMasterServer</AssemblyName>
-    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <RootNamespace>GSMasterServer</RootNamespace>
+    <ApplicationIcon />
+    <StartupObject>GSMasterServer.Program</StartupObject>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>$(SolutionDir)\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Optimize>false</Optimize>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>$(SolutionDir)\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationIcon>Images\search.ico</ApplicationIcon>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\packages\EntityFramework.6.0.0\lib\net40\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="MaxMind.Db">
-      <HintPath>..\packages\MaxMind.Db.0.2.3.0\lib\net40\MaxMind.Db.dll</HintPath>
-    </Reference>
-    <Reference Include="MaxMind.GeoIP2">
-      <HintPath>..\packages\MaxMind.GeoIP2.0.3.2.0\lib\net40\MaxMind.GeoIP2.dll</HintPath>
-    </Reference>
-    <Reference Include="RestSharp">
-      <HintPath>..\packages\RestSharp.104.4.0\lib\net4\RestSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite">
-      <HintPath>..\packages\System.Data.SQLite.Core.1.0.92.0\lib\net40\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.EF6">
-      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.92.0\lib\net40\System.Data.SQLite.EF6.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Data.SQLite.Linq">
-      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.92.0\lib\net40\System.Data.SQLite.Linq.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Compile Remove="Utils\DynamicLinq.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="..\.version\GlobalAssemblyInfo.cs">
-      <Link>GlobalAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Data\AddressInfo.cs" />
-    <Compile Include="Data\GeoIP.cs" />
-    <Compile Include="Data\StatsData.cs" />
-    <Compile Include="Data\UserData.cs" />
-    <Compile Include="Data\UsersDatabase.cs" />
-    <Compile Include="Data\NatNegMessage.cs" />
-    <Compile Include="Data\NatNegPeer.cs" />
-    <Compile Include="Http\HttpResponceBuilder.cs" />
-    <Compile Include="Http\HttpRequest.cs" />
-    <Compile Include="Http\HttpResponse.cs" />
-    <Compile Include="Http\HttpHelper.cs" />
-    <Compile Include="Http\QuickMimeTypeMapper.cs" />
-    <Compile Include="Http\Route.cs" />
-    <Compile Include="Servers\ChatServer.cs" />
-    <Compile Include="Servers\HttpServer.cs" />
-    <Compile Include="Servers\LoginServer.cs" />
-    <Compile Include="Servers\CDKeyServer.cs" />
-    <Compile Include="Servers\LoginServerMessages.cs" />
-    <Compile Include="Servers\Server.cs" />
-    <Compile Include="Servers\ServerNatNeg.cs" />
-    <Compile Include="Servers\StatsServer.cs" />
-    <Compile Include="Utils\ByteHelpers.cs" />
-    <Compile Include="Utils\ChatCrypt.cs" />
-    <Compile Include="Utils\DynamicLinq.cs" />
-    <Compile Include="Data\GameServer.cs" />
-    <Compile Include="Servers\ServerListRetrieve.cs" />
-    <Compile Include="Servers\ServerListReport.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\Log.cs" />
-    <Compile Include="Utils\SQLMethods.cs" />
+    <None Remove="External\Reality.Net.dll" />
+    <None Remove="Resources\Files\AutomatchDefaults.lua" />
+    <None Remove="Resources\Files\LobbyRooms.lua" />
+    <None Remove="Resources\Files\Russiandow_news.txt" />
+    <None Remove="Resources\Pages\404.html" />
+    <None Remove="Resources\Pages\500.html" />
+    <None Remove="Resources\Pages\ComingSoon.html" />
+    <None Remove="x64\SQLite.Interop.dll" />
+    <None Remove="x86\SQLite.Interop.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Reality.Net, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>External\Reality.Net.dll</HintPath>
-    </Reference>
-  </ItemGroup>
+
   <ItemGroup>
     <Content Include="External\Reality.Net.dll" />
-    <Content Include="Images\search.ico" />
-    <Content Include="Resources\Files\Russiandow_news.txt">
+    <Content Include="Resources\Files\AutomatchDefaults.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Pages\ComingSoon.html">
+    <Content Include="Resources\Files\LobbyRooms.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Files\Russiandow_news.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Pages\404.html">
@@ -132,36 +50,33 @@
     <Content Include="Resources\Pages\500.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\Pages\ComingSoon.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="x64\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="x86\SQLite.Interop.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="app.manifest">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config" />
-    <Content Include="Resources\Files\AutomatchDefaults.lua">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Files\LobbyRooms.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\IrcD.Net\IrcD.Net.csproj">
-      <Project>{cb90e04f-4b75-47c5-bea3-c3ace3a98a79}</Project>
-      <Name>IrcD.Net</Name>
-    </ProjectReference>
+    <PackageReference Include="MaxMind.Db" Version="2.4.0" />
+    <PackageReference Include="MaxMind.GeoIP2" Version="3.0.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.111" />
+    <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.111" />
+    <PackageReference Include="System.Data.SQLite.Linq" Version="1.0.111" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="..\IrcD.Net\IrcD.Net.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Reality.Net">
+      <HintPath>External\Reality.Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

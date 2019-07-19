@@ -373,15 +373,15 @@ namespace GSMasterServer.Servers
             }
             else
             {
-                try
+               /* try
                 {
                     server["country"] = GeoIP.Instance.Reader.Omni(server.Get<string>("IPAddress")).Country.IsoCode.ToUpperInvariant();
                 }
                 catch (Exception e)
                 {
-                    LogError(Category, e.ToString());
+                    LogError(Category, e.ToString());*/
                     server["country"] = "??";
-                }
+                //}
             }
 
             for (int i = 0; i < serverVarsSplit.Length - 1; i += 2)
