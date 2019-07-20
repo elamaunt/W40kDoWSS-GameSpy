@@ -28,7 +28,9 @@ namespace IrcD.Core
     public class Game
     {
         internal readonly Dictionary<UserInfo, bool> Users = new Dictionary<UserInfo, bool>();
-        
+
+        public long[] UsersInGame => Users.Keys.Select(x => x.ProfileId).ToArray();
+
         public IrcDaemon IrcDaemon { get; }
 
         public Game(IrcDaemon daemon, UserInfo[] users)
@@ -45,7 +47,6 @@ namespace IrcD.Core
 
         public bool Clean()
         {
-            Users.Clear();
             return IrcDaemon.CleanGame(this);
         }
 

@@ -11,8 +11,9 @@
         public long Score3v3;
 
         public long Disconnects;
-        public long AverageDurationTicks;
-        public long Winstreak;
+        public long AllInGameTicks;
+        public long Current1v1Winstreak;
+        public long Best1v1Winstreak;
         public long Modified;
 
         public long Smgamescount;
@@ -38,11 +39,21 @@
         public long GamesCount => Smgamescount + Csmgamescount + Orkgamescount + Eldargamescount + Iggamescount + Necrgamescount + Taugamescount + Degamescount + Sobgamescount;
         public long WinsCount => Smwincount + Csmwincount + Orkwincount + Eldarwincount + Igwincount + Necrwincount + Tauwincount + Dewincount + Sobwincount;
 
+        public long AverageDuractionTicks
+        {
+            get
+            {
+                if (GamesCount == 0)
+                    return 0;
+                return AllInGameTicks / GamesCount;
+            }
+        }
+
         public Race FavouriteRace
         {
             get
             {
-                Race race = Race.unknown;
+                Race race = Race.random;
                 long count = 0L;
 
                 if (Smgamescount > count)
@@ -54,7 +65,7 @@
                 if (Csmgamescount > count)
                 {
                     count = Csmgamescount;
-                    race = Race.chaos_space_marine_race;
+                    race = Race.chaos_marine_race;
                 }
 
                 if (Orkgamescount > count)
@@ -72,7 +83,7 @@
                 if (Iggamescount > count)
                 {
                     count = Iggamescount;
-                    race = Race.imperial_guard_race;
+                    race = Race.guard_race;
                 }
 
                 if (Necrgamescount > count)

@@ -29,6 +29,7 @@ using IrcD.Modes.UserModes;
 using IrcD.ServerReplies;
 using IrcD.Tools;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -47,7 +48,7 @@ namespace IrcD.Core
         const char PrefixCharacter = ':';
         const int MaxBufferSize = 2048;
 
-        public List<Game> Games { get; } = new List<Game>();
+        public ConcurrentDictionary<Game, DateTime> Games { get; } = new ConcurrentDictionary<Game, DateTime>();
 
         // Main Datastructures
         public Dictionary<long, UserInfo> Users { get; } = new Dictionary<long, UserInfo>();
@@ -495,20 +496,18 @@ namespace IrcD.Core
 
         internal void RegisterRatingGame(UserInfo[] users)
         {
-            Games.Add(new Game(this, users));
+            Games.TryAdd(new Game(this, users), DateTime.Now);
         }
 
         internal bool CleanGame(Game game)
         {
-            return Games.Remove(game);
+            return Games.TryRemove(game, out DateTime time);
         }
 
         internal void CleanGameWithoutWinners(Game game)
         {
-            if (Games.Remove(game))
-            {
+            if (Games.TryRemove(game, out DateTime time))
                 GameNoWinnersHandler?.Invoke(game);
-            }
         }
     }
 }

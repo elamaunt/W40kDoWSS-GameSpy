@@ -104,8 +104,9 @@ score2v2 INTEGER NULL DEFAULT 1000,
 score3v3 INTEGER NULL DEFAULT 1000,
 
 disconnects INTEGER NULL DEFAULT '0',
-averagedurticks INTEGER NULL DEFAULT '0',
-winstreak INTEGER NULL DEFAULT '0',
+allingameticks INTEGER NULL DEFAULT '0',
+best1v1winstreak INTEGER NULL DEFAULT '0',
+current1v1winstreak INTEGER NULL DEFAULT '0',
 modified INTEGER NULL DEFAULT '0',
 
 smgamescount INTEGER NULL DEFAULT '0', 
@@ -160,8 +161,9 @@ score1v1,
 score2v2,
 score3v3, 
 disconnects,
-averagedurticks,
-winstreak,
+allingameticks,
+best1v1winstreak,
+current1v1winstreak,
 modified,
 
 smgamescount, 
@@ -191,8 +193,9 @@ score1v1,
 score2v2,
 score3v3, 
 disconnects,
-averagedurticks,
-winstreak,
+allingameticks,
+best1v1winstreak,
+current1v1winstreak,
 modified,
 
 smgamescount, 
@@ -260,8 +263,9 @@ score2v2=@score2v2,
 score3v3=@score3v3,
 
 disconnects=@disconnects,
-averagedurticks=@averagedurticks,
-winstreak=@winstreak,
+allingameticks=@allingameticks,
+current1v1winstreak=@current1v1winstreak,
+best1v1winstreak=@best1v1winstreak,
 modified=@modified,
 
 smgamescount=@smgamescount, 
@@ -282,7 +286,7 @@ igwincount=@igwincount,
 necrwincount=@necrwincount,
 tauwincount=@tauwincount,
 dewincount=@dewincount,
-sobwincount=@sobwincount,
+sobwincount=@sobwincount
 
 WHERE id=@id COLLATE NOCASE", _db);
             _updateUserStats.Parameters.Add("@score1v1", DbType.Int64);
@@ -290,8 +294,10 @@ WHERE id=@id COLLATE NOCASE", _db);
             _updateUserStats.Parameters.Add("@score3v3", DbType.Int64);
 
             _updateUserStats.Parameters.Add("@disconnects", DbType.Int64);
-            _updateUserStats.Parameters.Add("@averagedurticks", DbType.Int64);
-            _updateUserStats.Parameters.Add("@winstreak", DbType.Int64);
+            _updateUserStats.Parameters.Add("@allingameticks", DbType.Int64);
+            _updateUserStats.Parameters.Add("@best1v1winstreak", DbType.Int64);
+            _updateUserStats.Parameters.Add("@current1v1winstreak", DbType.Int64);
+            
             _updateUserStats.Parameters.Add("@modified", DbType.Int64);
 
             _updateUserStats.Parameters.Add("@smgamescount", DbType.Int64);
@@ -496,8 +502,9 @@ WHERE id=@id COLLATE NOCASE", _db);
                         data.Score3v3 = (Int64)reader["score3v3"];
 
                         data.Disconnects = (Int32)(Int64)reader["disconnects"];
-                        data.AverageDurationTicks = (Int64)reader["averagedurticks"];
-                        data.Winstreak = (Int32)(Int64)reader["winstreak"];
+                        data.AllInGameTicks = (Int64)reader["allingameticks"];
+                        data.Best1v1Winstreak = (Int32)(Int64)reader["best1v1winstreak"];
+                        data.Current1v1Winstreak = (Int32)(Int64)reader["current1v1winstreak"];
                         data.Modified = (Int64)reader["modified"];
 
                         data.Smgamescount = (Int64)reader["smgamescount"];
@@ -542,8 +549,9 @@ WHERE id=@id COLLATE NOCASE", _db);
                 _updateUserStats.Parameters["@score3v3"].Value = stats.Score3v3;
 
                 _updateUserStats.Parameters["@disconnects"].Value = stats.Disconnects;
-                _updateUserStats.Parameters["@averagedurticks"].Value = stats.AverageDurationTicks;
-                _updateUserStats.Parameters["@winstreak"].Value = stats.Winstreak;
+                _updateUserStats.Parameters["@allingameticks"].Value = stats.AllInGameTicks;
+                _updateUserStats.Parameters["@current1v1winstreak"].Value = stats.Current1v1Winstreak;
+                _updateUserStats.Parameters["@best1v1winstreak"].Value = stats.Best1v1Winstreak;
                 _updateUserStats.Parameters["@modified"].Value = stats.Modified;
 
                 _updateUserStats.Parameters["@smgamescount"].Value = stats.Smgamescount;
@@ -566,7 +574,7 @@ WHERE id=@id COLLATE NOCASE", _db);
                 _updateUserStats.Parameters["@dewincount"].Value = stats.Dewincount;
                 _updateUserStats.Parameters["@sobwincount"].Value = stats.Sobwincount;
 
-                _updateUser.ExecuteNonQuery();
+                _updateUserStats.ExecuteNonQuery();
             }
         }
 
@@ -594,8 +602,10 @@ WHERE id=@id COLLATE NOCASE", _db);
                         data.Score3v3 = (Int64)reader["score3v3"];
 
                         data.Disconnects = (Int32)(Int64)reader["disconnects"];
-                        data.AverageDurationTicks = (Int64)reader["averagedurticks"];
-                        data.Winstreak = (Int32)(Int64)reader["winstreak"];
+                        data.AllInGameTicks = (Int64)reader["allingameticks"];
+                        data.Best1v1Winstreak = (Int32)(Int64)reader["best1v1winstreak"];
+                        data.Current1v1Winstreak = (Int32)(Int64)reader["current1v1winstreak"];
+
                         data.Modified = (Int64)reader["modified"];
 
                         data.Smgamescount = (Int64)reader["smgamescount"];

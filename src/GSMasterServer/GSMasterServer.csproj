@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>GSMasterServer</AssemblyName>
     <RootNamespace>GSMasterServer</RootNamespace>
     <ApplicationIcon />
@@ -65,8 +65,7 @@
     <PackageReference Include="MaxMind.Db" Version="2.4.0" />
     <PackageReference Include="MaxMind.GeoIP2" Version="3.0.0" />
     <PackageReference Include="System.Data.SQLite" Version="1.0.111" />
-    <PackageReference Include="System.Data.SQLite.EF6" Version="1.0.111" />
-    <PackageReference Include="System.Data.SQLite.Linq" Version="1.0.111" />
+    <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>

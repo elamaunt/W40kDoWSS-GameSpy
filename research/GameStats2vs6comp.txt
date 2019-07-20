@@ -1,0 +1,72 @@
+PHuman_0  1  
+PID_4  0  
+PRace_6  space_marine_race  
+PTtlSc_7  70  
+SessionID  1083079177  
+WinBy  ANNIHILATE  
+PHuman_1  1  
+PID_5  0  
+PRace_7  tau_race  
+PHuman_2  0  
+PID_6  0  
+PHuman_3  0  
+PID_7  0  
+Ladder  0  
+player_0  Bambochuk  
+PHuman_4  0  
+player_1  sF|elamaunt  
+PHuman_5  0  
+PTeam_0  0  
+player_2  Компьютер 1  
+PHuman_6  0  
+PTeam_1  0  
+player_3  Компьютер 2  
+PHuman_7  0  
+Players  8  
+PTeam_2  1  
+player_4  Компьютер 3  
+PTeam_3  1  
+player_5  Компьютер 4  
+Teams  2  PTeam_4  1  
+player_6  Компьютер 5  
+PTeam_5  1  
+player_7  Компьютер 6  
+PTeam_6  1  
+PTeam_7  1  
+Version  1.2.120  
+ctime_0  0  
+ctime_1  0  
+ctime_2  0  
+Scenario  8P_OASIS_OF_SHARR  
+ctime_3  0  
+ctime_4  0  
+ctime_5  0  
+ctime_6  0  
+Mod  dxp2  
+PFnlState_0  0  
+ctime_7  0  
+PTtlSc_0  0  
+PFnlState_1  3  
+PRace_0  chaos_marine_race  
+PTtlSc_1  47  
+PFnlState_2  5  
+PRace_1  sisters_race  
+PTtlSc_2  90  
+PFnlState_3  5  
+PID_0  100000001  
+PRace_2  eldar_race  
+PTtlSc_3  80  
+PFnlState_4  5  
+ModVer  1.0  
+PID_1  100000002  
+PRace_3  eldar_race  
+PTtlSc_4  70  
+PFnlState_5  5  
+Duration  25  
+PID_2  0  
+PRace_4  necron_race  
+PTtlSc_5  75  
+PFnlState_6  5  PID_3  0  
+PRace_5  guard_race  
+PTtlSc_6  80  
+PFnlState_7  5

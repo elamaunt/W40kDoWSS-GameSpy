@@ -200,13 +200,8 @@ namespace GSMasterServer.Servers
 
             try
             {
-                if (_socket.ReceiveFromAsync(_socketReadEvent))
-                {
-                }
-                else
-                {
-
-                }
+                if (!_socket.ReceiveFromAsync(_socketReadEvent))
+                    OnDataReceived(this, _socketReadEvent);
             }
             catch (SocketException e)
             {
@@ -264,6 +259,9 @@ namespace GSMasterServer.Servers
 
                     byte[] uniqueId = new byte[4];
                     Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
+
+                    Log(Category, "UNIQUEID:" + BitConverter.ToInt32(uniqueId));
+                    Log(Category, "UNIQUEID_INVERTED:" + BitConverter.ToInt32(uniqueId.Reverse().ToArray()));
 
                     if (!ParseServerDetails(remote, receivedBytes.Skip(5).ToArray()))
                     {

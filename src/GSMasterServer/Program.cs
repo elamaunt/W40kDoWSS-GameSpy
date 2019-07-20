@@ -50,7 +50,7 @@ namespace GSMasterServer
 
             CDKeyServer cdKeyServer = new CDKeyServer(bind, 29910);
             ServerListReport serverListReport = new ServerListReport(bind, 27900);
-            ServerNatNeg serverNatNeg = new ServerNatNeg(bind, 27901);
+            //ServerNatNeg serverNatNeg = new ServerNatNeg(bind, 27901);
             ServerListRetrieve serverListRetrieve = new ServerListRetrieve(bind, 28910, serverListReport);
             LoginServer loginServer = new LoginServer(bind, 29900, 29901);
             ChatServer chatServer = new ChatServer(bind, 6667);
