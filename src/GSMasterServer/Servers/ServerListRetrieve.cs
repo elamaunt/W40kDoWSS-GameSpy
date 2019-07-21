@@ -597,7 +597,7 @@ namespace GSMasterServer.Servers
 
                  }
                  else */
-                /*if (!String.IsNullOrWhiteSpace(localip0) && localport > 0)
+                if (!String.IsNullOrWhiteSpace(localip0) && localport > 0)
                 {
                     data.Add(115);
                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
@@ -606,11 +606,11 @@ namespace GSMasterServer.Servers
                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport));
                 }
                 else
-                {*/
+                {
                     data.Add(81); // it could be 85 as well, unsure of the difference, but 81 seems more common...
                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
-                //}
+                }
 
                 data.Add(255);
 
