@@ -582,7 +582,7 @@ namespace GSMasterServer.Servers
                 var localip0 = server.Get<string>("localip0");
                 var localport = ushort.Parse(server.Get<string>("localport") ?? "0");
                 var queryPort = (ushort)server.Get<int>("QueryPort");
-                var iPAddress = server.Get<string>("localip4") ?? server.Get<string>("localip3") ?? server.Get<string>("localip2") ?? server.Get<string>("localip1") ?? server.Get<string>("IPAddress");
+                var iPAddress = server.Get<string>("IPAddress");
                  
                 // var iPAddress = server.Properties.Where(x => x.Key.StartsWith("localip") && x.Value.ToString().StartsWith("192.168.1.")).FirstOrDefault().Value.ToString();
                 /* if (!String.IsNullOrWhiteSpace(localip0) && !String.IsNullOrWhiteSpace(localip1) && localport > 0)
