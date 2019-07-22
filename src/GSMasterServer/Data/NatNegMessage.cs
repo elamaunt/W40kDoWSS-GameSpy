@@ -41,24 +41,39 @@ namespace GSMasterServer.Data
 
         public override string ToString()
         {
-            if (RecordType == 0) return "INIT CLIENT " + ClientId + " SEQUENCE " + SequenceId + " HOSTSTATE " + Hoststate + " USEGAMEPORT " + UseGamePort + " PRIVATEIP " + PrivateIPAddress + " LOCALPORT " + LocalPort + " GAMENAME " + GameName;
-            if (RecordType == 1) return "INIT_ACK CLIENT " + ClientId + " SEQUENCE " + SequenceId + " HOSTSTATE " + Hoststate;
-            if (RecordType == 5) return "CONNECT CLIENT " + ClientId + " CLIENTPUBLICIP " + ClientPublicIPAddress + " CLIENTPUBLICPORT " + ClientPublicPort + " GOTDATA " + GotData + " ERROR " + Error;
-            if (RecordType == 6) return "CONNECT_ACK " + ClientId + " PORTTYPE " + PortType + " REPLYFLAG " + ReplyFlag + " UNKNOWN2 " + ConnectAckUnknown2 + " UNKNOWN3 " + ConnectAckUnknown3 + " UNKNOWN4 " + ConnectAckUnknown4;
-            if (RecordType == 13) return "REPORT " + ClientId + " PORTTYPE " + PortType + " HOSTSTATE " + Hoststate + " NATNEGRESULT " + NatNegResult + " NATTYPE " + NatType + " NATMAPPINGSCHEME " + NatMappingScheme + " GAMENAME " + GameName;
-            if (RecordType == 14) return "REPORT_ACK " + ClientId + " PORTTYPE " + PortType + " UNKNOWN1 " + ReportAckUnknown1 + " UNKNOWN2 " + ReportAckUnknown2 + " NATTYPE " + NatType + " UNKNOWN3 " + ReportAckUnknown3;
+            if (RecordType == 0)
+                return "INIT CLIENT " + ClientId + " SEQUENCE " + SequenceId + " HOSTSTATE " + Hoststate + " USEGAMEPORT " + UseGamePort + " PRIVATEIP " + PrivateIPAddress + " LOCALPORT " + LocalPort + " GAMENAME " + GameName;
+            if (RecordType == 1)
+                return "INIT_ACK CLIENT " + ClientId + " SEQUENCE " + SequenceId + " HOSTSTATE " + Hoststate;
+            if (RecordType == 5)
+                return "CONNECT CLIENT " + ClientId + " CLIENTPUBLICIP " + ClientPublicIPAddress + " CLIENTPUBLICPORT " + ClientPublicPort + " GOTDATA " + GotData + " ERROR " + Error;
+            if (RecordType == 6)
+                return "CONNECT_ACK " + ClientId + " PORTTYPE " + PortType + " REPLYFLAG " + ReplyFlag + " UNKNOWN2 " + ConnectAckUnknown2 + " UNKNOWN3 " + ConnectAckUnknown3 + " UNKNOWN4 " + ConnectAckUnknown4;
+            if (RecordType == 13)
+                return "REPORT " + ClientId + " PORTTYPE " + PortType + " HOSTSTATE " + Hoststate + " NATNEGRESULT " + NatNegResult + " NATTYPE " + NatType + " NATMAPPINGSCHEME " + NatMappingScheme + " GAMENAME " + GameName;
+            if (RecordType == 14)
+                return "REPORT_ACK " + ClientId + " PORTTYPE " + PortType + " UNKNOWN1 " + ReportAckUnknown1 + " UNKNOWN2 " + ReportAckUnknown2 + " NATTYPE " + NatType + " UNKNOWN3 " + ReportAckUnknown3;
+
             return "RECORDTYPE: " + RecordType;
         }
 
         public static NatNegMessage ParseData(byte[] bytes)
         {
-            if (bytes.Length < 8) return null;
-            if (bytes[0] != 0xFD || bytes[1] != 0xFC) return null;
+            if (bytes.Length < 8)
+                return null;
+
+            if (bytes[0] != 0xFD || bytes[1] != 0xFC)
+                return null;
+
             NatNegMessage msg = new NatNegMessage();
+
             msg.Constant = _toInt(_getBytes(bytes, 2, 4));
             msg.ProtocolVersion = bytes[6];
             msg.RecordType = bytes[7];
-            if (bytes.Length > 8) msg.RecordSpecificData = _getBytes(bytes, 8, bytes.Length - 8);
+
+            if (bytes.Length > 8)
+                msg.RecordSpecificData = _getBytes(bytes, 8, bytes.Length - 8);
+
             if (msg.RecordType == 0)
             {
                 // INIT
@@ -91,6 +106,7 @@ namespace GSMasterServer.Data
                 msg.NatMappingScheme = _toIntBigEndian(_getBytes(msg.RecordSpecificData, 11, 4));
                 msg.GameName = _toString(_getBytes(msg.RecordSpecificData, 15, msg.RecordSpecificData.Length - 15));
             }
+
             return msg;
         }
 
@@ -106,6 +122,7 @@ namespace GSMasterServer.Data
             bytes.Add(ProtocolVersion);
             bytes.Add(RecordType);
             _addInt(bytes, ClientId);
+
             if (RecordType == 1)
             {
                 // INIT_ACK (0x01)
@@ -137,8 +154,10 @@ namespace GSMasterServer.Data
         private static string _toString(byte[] bytes)
         {
             List<byte> bs = new List<byte>();
+
             for (int i = 0; i < bytes.Length && bytes[i] > 0; i++)
                 bs.Add(bytes[i]);
+
             return Encoding.ASCII.GetString(bs.ToArray());
         }
 

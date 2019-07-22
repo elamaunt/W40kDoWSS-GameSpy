@@ -18,7 +18,7 @@ namespace GSMasterServer.Servers
         private Socket _socket;
         private SocketAsyncEventArgs _socketReadEvent;
         private byte[] _socketReceivedBuffer;
-        private ConcurrentDictionary<int, NatNegClient> _Clients = new ConcurrentDictionary<int, NatNegClient>();
+        private ConcurrentDictionary<int, NatNegClient> _clients = new ConcurrentDictionary<int, NatNegClient>();
 
         public ServerNatNeg(IPAddress listen, ushort port)
         {
@@ -186,8 +186,8 @@ namespace GSMasterServer.Servers
                         else
                         {
                             // Collect data and send CONNECT messages if you have two peers initialized with all necessary data
-                            if (!_Clients.ContainsKey(message.ClientId)) _Clients[message.ClientId] = new NatNegClient();
-                            NatNegClient client = _Clients[message.ClientId];
+                            if (!_clients.ContainsKey(message.ClientId)) _clients[message.ClientId] = new NatNegClient();
+                            NatNegClient client = _clients[message.ClientId];
                             client.ClientId = message.ClientId;
                             bool isHost = message.Hoststate > 0;
                             NatNegPeer peer = isHost ? client.Host : client.Guest;
@@ -211,7 +211,7 @@ namespace GSMasterServer.Servers
 
                                 // Remove client from dictionary
                                 NatNegClient removed = null;
-                                _Clients.TryRemove(client.ClientId, out removed);
+                                _clients.TryRemove(client.ClientId, out removed);
 
                                 message.RecordType = 5;
                                 message.Error = 0;

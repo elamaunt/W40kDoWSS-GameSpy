@@ -229,7 +229,7 @@ namespace GSMasterServer.Servers
                 byte[] receivedBytes = new byte[e.BytesTransferred];
                 Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
 
-                var str = Encoding.ASCII.GetString(receivedBytes);
+                var str = Encoding.UTF8.GetString(receivedBytes);
 
                 // there by a bunch of different message formats...
                 Log(Category, str);
@@ -364,7 +364,7 @@ namespace GSMasterServer.Servers
             string[] serverVarsSplit = serverVars.Split(new string[] { "\x00" }, StringSplitOptions.None);
 
             var server = new GameServer();
-
+            
             server["IPAddress"] = remote.Address.ToString();
             server["QueryPort"] = remote.Port;
             server["LastRefreshed"] = DateTime.UtcNow;
@@ -504,7 +504,7 @@ namespace GSMasterServer.Servers
                 if (!old.Valid && server.Valid)
                 {
                     Log(Category, String.Format("Added new server at: {0}:{1} ({2}) ({3})", server.GetByName("IPAddress"), server.GetByName("QueryPort"), server.GetByName("country"), server.GetByName("gamevariant")));
-
+                    
                     var gametype = server.Get<string>("gametype");
 
                     if (server.Get<string>("maxplayers") == "2" && gametype == "unranked")
