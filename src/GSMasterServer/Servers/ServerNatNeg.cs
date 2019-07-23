@@ -186,7 +186,9 @@ namespace GSMasterServer.Servers
                         else
                         {
                             // Collect data and send CONNECT messages if you have two peers initialized with all necessary data
-                            if (!_clients.ContainsKey(message.ClientId)) _clients[message.ClientId] = new NatNegClient();
+                            if (!_clients.ContainsKey(message.ClientId))
+                                _clients[message.ClientId] = new NatNegClient();
+                            
                             NatNegClient client = _clients[message.ClientId];
                             client.ClientId = message.ClientId;
                             bool isHost = message.Hoststate > 0;

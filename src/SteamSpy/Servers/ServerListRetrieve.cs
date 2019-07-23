@@ -2,10 +2,9 @@
 using GSMasterServer.Utils;
 using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
+using SteamSpy.Data;
 using SteamSpy.Utils;
-using Steamworks;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -568,12 +567,21 @@ namespace GSMasterServer.Servers
                 //var localportBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport);
                 var retranslationPortBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(retranslationPort).Reverse() : BitConverter.GetBytes(retranslationPort);
 
-                data.Add(115);
 
+                server["hostport"] = retranslationPort.ToString();
+                server["localport"] = retranslationPort.ToString();
+
+                var flags = (ServerFlags)115;
+
+                data.Add(115);
                 data.AddRange(loopbackIpBytes);
                 data.AddRange(retranslationPortBytes);
                 data.AddRange(loopbackIpBytes);
                 data.AddRange(retranslationPortBytes);
+
+                // data.Add(81); // it could be 85 as well, unsure of the difference, but 81 seems more common...
+                // data.AddRange(loopbackIpBytes);
+                // data.AddRange(retranslationPortBytes);
 
                 /*data.AddRange(ip);
                 data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
@@ -607,7 +615,7 @@ namespace GSMasterServer.Servers
             data.Add(255);
             data.Add(255);
             data.Add(255);
-            
+
             return data.ToArray();
         }
 

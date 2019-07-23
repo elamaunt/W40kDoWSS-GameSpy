@@ -583,13 +583,13 @@ namespace GSMasterServer.Servers
                 var localip0 = server.Get<string>("localip0");
                 var localport = ushort.Parse(server.Get<string>("localport") ?? "0");
                 var queryPort = (ushort)server.Get<int>("QueryPort");
-                //var iPAddress = server.Get<string>("IPAddress");
+                var iPAddress = server.Get<string>("IPAddress");
                 var publicIp = server.Get<string>("publicip");
                 var bytes = Encoding.UTF8.GetBytes(publicIp);*/
 
                 // 1388419870 1294854161
-
-                var localIp = server.Properties.Where(x => x.Key.StartsWith("localip") && x.Value.ToString().StartsWith("192.168.1.")).FirstOrDefault().Value.ToString();
+                var iPAddress = server.Get<string>("IPAddress");
+                //var localIp = server.Properties.Where(x => x.Key.StartsWith("localip") && x.Value.ToString().StartsWith("192.168.1.")).FirstOrDefault().Value.ToString();
                 var localport = ushort.Parse(server.Get<string>("localport") ?? "0");
                 var queryPort = (ushort)server.Get<int>("QueryPort");
                 var privateIp = server.Get<string>("localip0");
@@ -605,9 +605,9 @@ namespace GSMasterServer.Servers
 
                   }
                   else*/
-                if (!String.IsNullOrWhiteSpace(privateIp) && localport > 0)
-                {
-                    var bytesIp = IPAddress.Parse(localIp).GetAddressBytes();
+               // if (!String.IsNullOrWhiteSpace(privateIp) && localport > 0)
+               // {
+                    var bytesIp = IPAddress.Parse(iPAddress).GetAddressBytes();
                     var portBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse().ToArray() : BitConverter.GetBytes(queryPort);
                     var bytesLocalIp0 = IPAddress.Parse(privateIp).GetAddressBytes();
                     var localPortBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse().ToArray() : BitConverter.GetBytes(localport);
@@ -617,13 +617,13 @@ namespace GSMasterServer.Servers
                     data.AddRange(portBytes);
                     data.AddRange(bytesLocalIp0);
                     data.AddRange(localPortBytes);
-                }
+               /* }
                 else
                 {
                     data.Add(81); // it could be 85 as well, unsure of the difference, but 81 seems more common...
                     data.AddRange(IPAddress.Parse(localIp).GetAddressBytes());
                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
-                }
+                }*/
 
                 data.Add(255);
 

@@ -3,6 +3,7 @@ using Steamworks;
 using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 
 namespace GSMasterServer.Servers
@@ -31,7 +32,7 @@ namespace GSMasterServer.Servers
             GeoIP.Initialize(Log, Category);
             StartServer();
         }
-
+        
         public void Dispose()
         {
             Dispose(true);
@@ -46,6 +47,10 @@ namespace GSMasterServer.Servers
                 {
                     if (_socket != null)
                     {
+                        _socketReadEvent.Completed -= OnDataReceived;
+                        _socketReadEvent.Dispose();
+                        _socketReadEvent = null;
+
                         _socket.Close();
                         _socket.Dispose();
                         _socket = null;
@@ -55,6 +60,11 @@ namespace GSMasterServer.Servers
             catch (Exception)
             {
             }
+        }
+
+        public void Clear()
+        {
+            LocalPoint = null;
         }
 
         ~ServerRetranslator()
@@ -130,9 +140,17 @@ namespace GSMasterServer.Servers
             {
                 LocalPoint = e.RemoteEndPoint as IPEndPoint;
 
-                Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
+                byte[] receivedBytes = new byte[e.BytesTransferred];
+                Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
+
+                var str = Encoding.UTF8.GetString(receivedBytes);
+
+                // there by a bunch of different message formats...
+                Log(Category, ">> "+str);
+
+                //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
-                SteamNetworking.SendP2PPacket(_userId, e.Buffer, (uint)e.BytesTransferred, EP2PSend.k_EP2PSendReliable);
+                SteamNetworking.SendP2PPacket(_userId, e.Buffer, (uint)e.BytesTransferred, EP2PSend.k_EP2PSendUnreliableNoDelay);
             }
             catch (Exception ex)
             {
@@ -146,7 +164,12 @@ namespace GSMasterServer.Servers
         {
             try
             {
-                 Console.WriteLine("ReceivedFromUser "+ _userId.m_SteamID+" "+ size);
+                var str = Encoding.UTF8.GetString(buffer, 0, (int)size);
+
+                // there by a bunch of different message formats...
+                Log(Category,"<= "+ str);
+
+                // Console.WriteLine("ReceivedFromUser "+ _userId.m_SteamID+" "+ size);
 
                 if (_socket == null)
                     Console.WriteLine("RECEIVE SOCKET NULL");

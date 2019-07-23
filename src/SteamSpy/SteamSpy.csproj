@@ -72,6 +72,7 @@
     <Compile Include="Data\NatNegPeer.cs" />
     <Compile Include="Data\PlayerFinalState.cs" />
     <Compile Include="Data\Race.cs" />
+    <Compile Include="Data\ServerFlags.cs" />
     <Compile Include="Data\StatsData.cs" />
     <Compile Include="Data\StatsDelegates.cs" />
     <Compile Include="Data\UserData.cs" />

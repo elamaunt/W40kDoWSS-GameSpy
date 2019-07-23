@@ -30,10 +30,8 @@ namespace SteamSpy.Utils
 
         public static void ClearPortBindings()
         {
-            /*foreach (var item in PortBindings)
-                item.Value.Dispose();
-
-            PortBindings.Clear();*/
+            foreach (var item in PortBindings)
+                item.Value.Clear();
         }
 
         public static ushort AddPortBinding(CSteamID id, IPEndPoint localPoint = null)
