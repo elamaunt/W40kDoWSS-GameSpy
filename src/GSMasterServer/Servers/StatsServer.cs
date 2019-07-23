@@ -67,7 +67,7 @@ namespace GSMasterServer.Servers
                 };
 
                 _newPeerAceptingsocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _newPeerAceptingsocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                //_newPeerAceptingsocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
 
                 _newPeerAceptingsocket.Bind(new IPEndPoint(info.Address, info.Port));
                 _newPeerAceptingsocket.Listen(10);

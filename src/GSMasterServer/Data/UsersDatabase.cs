@@ -44,7 +44,8 @@ namespace GSMasterServer.Data
             // we need to safely dispose of the database when the application closes
             // this is a console app, so we need to hook into the console ctrl signal
             _closeHandler += CloseHandler;
-            SetConsoleCtrlHandler(_closeHandler, true);
+
+            //SetConsoleCtrlHandler(_closeHandler, true);
             
             _instance = new UsersDatabase();
 
@@ -830,8 +831,8 @@ WHERE id=@id COLLATE NOCASE", _db);
             return existing;
         }
 
-        [DllImport("Kernel32")]
-        private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
+       // [DllImport("Kernel32")]
+       // private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
 
         private enum CtrlType
         {
