@@ -524,7 +524,7 @@ namespace GSMasterServer.Servers
                 // 81 (\x51)	= public ip / public port
 
                 var localip0 = server.Get<string>("localip0");
-                var localport = ushort.Parse(server.Get<string>("localport") ?? "0");
+                ushort localport = 23456; //ushort.Parse(server.Get<string>("localport") ?? "0");
                 var queryPort = (ushort)server.Get<int>("QueryPort");
                 var iPAddress = server.Get<string>("IPAddress");
 
@@ -567,13 +567,26 @@ namespace GSMasterServer.Servers
                 //var localportBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport);
                 var retranslationPortBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(retranslationPort).Reverse() : BitConverter.GetBytes(retranslationPort);
 
-
+                var localPortBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse().ToArray() : BitConverter.GetBytes(localport);
+               
                 server["hostport"] = retranslationPort.ToString();
-                server["localport"] = retranslationPort.ToString();
+                server["localport"] = queryPort.ToString();
 
-                var flags = (ServerFlags)115;
+                //var flags = (ServerFlags)115;
 
-                data.Add(115);
+               /* var flags = ServerFlags.UNSOLICITED_UDP_FLAG | 
+                    ServerFlags.PRIVATE_IP_FLAG | 
+                    ServerFlags.NONSTANDARD_PORT_FLAG | 
+                    ServerFlags.NONSTANDARD_PRIVATE_PORT_FLAG | 
+                    ServerFlags.HAS_KEYS_FLAG;*/
+
+                var flags = ServerFlags.UNSOLICITED_UDP_FLAG |
+                    ServerFlags.PRIVATE_IP_FLAG |
+                    ServerFlags.NONSTANDARD_PORT_FLAG |
+                    ServerFlags.NONSTANDARD_PRIVATE_PORT_FLAG |
+                    ServerFlags.HAS_KEYS_FLAG;
+
+                data.Add((byte)flags);
                 data.AddRange(loopbackIpBytes);
                 data.AddRange(retranslationPortBytes);
                 data.AddRange(loopbackIpBytes);

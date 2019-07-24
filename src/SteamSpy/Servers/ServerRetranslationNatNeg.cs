@@ -335,7 +335,7 @@ namespace GSMasterServer.Servers
                                         writer.Write(message.ClientId);
                                         writer.Write(isHost);
                                         
-                                        SendByServerSocket(new IPEndPoint(IPAddress.Loopback, 27902), ms.ToArray());
+                                        SendByServerSocket(new IPEndPoint(IPAddress.Parse("134.209.198.2"), 27902), ms.ToArray());
                                     }
                                 }
                             }

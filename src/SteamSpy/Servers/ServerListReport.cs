@@ -425,6 +425,8 @@ namespace GSMasterServer.Servers
                 }*/
             }
 
+            server["hostport"] = remote.Port.ToString();
+            server["localport"] = remote.Port.ToString();
             // whammer40kdcam
 
             //if (String.IsNullOrWhiteSpace(server.gamename) || !server.gamename.Equals("whamdowfr", StringComparison.InvariantCultureIgnoreCase))
@@ -514,6 +516,9 @@ namespace GSMasterServer.Servers
             server["QueryPort"] = remote.Port.ToString();
             server["LastRefreshed"] =  DateTime.UtcNow.ToString();
             server["LastPing"] = DateTime.UtcNow.ToString();
+
+            server["hostport"] = remote.Port.ToString();
+            server["localport"] = remote.Port.ToString();
 
             SteamLobbyManager.CreatePublicLobby(server, CancellationToken.None);
         }

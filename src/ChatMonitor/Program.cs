@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -14,31 +15,71 @@ namespace ChatMonitor
 
         static void Main(string[] args)
         {
-            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-            {
-                SendTimeout = 5000,
-                ReceiveTimeout = 5000,
-                SendBufferSize = 65535,
-                ReceiveBufferSize = 65535
-            };
+            var str = "??   &   {f29e528f-2461-4387-9443-84db458a8592}    B a m b o c h u k                   K04W        B a m b o c h u k     ?????      ?     ??BK04W   g i g a m o k       ???      ?       dxp2   1.0    :~?";
 
-            _socket.Connect(new IPEndPoint(Dns.GetHostEntry(NETWORK).AddressList[0], PORT));
+            var bytesString = @"254 254 0 0 2 0 2 4 1 38 0 0 0 123 102 50 57 101 53 50 56 102 45 50 52 54 49 45 52 51 56 55 45 57 52 52 51 45 56 52 100 98 52 53 56 97 56 53 57 50 125 9 0 0 0 66 0 97 0 109 0 98 0 111 0 99 0 104 0 117 0 107 0 0 0 0 0 2 0 0 0 4 0 0 0 0 0 0 0 0 2 0 0 0 2 75 48 52 87 9 0 0 0 66 0 97 0 109 0 98 0 111 0 99 0 104 0 117 0 107 0 1 1 0 0 0 0 192 168 159 128 224 23 0 0 0 0 127 0 0 1 224 23 0 0 0 0 0 216 1 233 66 75 48 52 87 7 0 0 0 103 0 105 0 103 0 97 0 109 0 111 0 107 0 0 0 0 0 0 0 192 168 1 31 224 23 0 0 0 0 127 0 0 1 224 23 20 0 0 0 20 0 4 0 0 0 100 120 112 50 3 0 0 0 49 46 48 0 0 0 0 19 58 126 222";
+            var bytes = bytesString.Split(" ").Select(x => byte.Parse(x)).ToArray();
+
+            var c = (byte)'}';
+            var b = (byte)'B';
+
+            var index = Array.IndexOf(bytes, c);
+
+            index++;
+
+            var length = bytes[index++];
+            var nickEnd = index + 3 + length * 2;
             
-            _socket.Send($"NICK {NICK}\r\n".ToAssciiBytes());
-            _socket.Send($"USER {IDENTD} {NETWORK} bla :{REALNAME}\r\n".ToAssciiBytes());
-            
-            _readbuffer = new byte[8096];
+            var nick = BetweenAsChars(bytes, index + 3, nickEnd);
 
-            Console.WriteLine("START MAIN LOOP");
+            var index2 = Array.IndexOf(bytes, (byte)'K', nickEnd);
 
-            BeginReceive();
+            Console.WriteLine(nick);
 
-            while (true)
-            {
-                Console.WriteLine("Enter STOP to break the loop");
-                if ("STOP" == Console.ReadLine())
-                    break;
-            }
+            Console.WriteLine(Between(bytes, nickEnd +1, index2));
+
+
+            //var index2 = Array.IndexOf(bytes, b, index);
+
+
+
+            //Console.WriteLine(Between(bytes, index, index2));
+            int t = 0;
+            /* _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+             {
+                 SendTimeout = 5000,
+                 ReceiveTimeout = 5000,
+                 SendBufferSize = 65535,
+                 ReceiveBufferSize = 65535
+             };
+
+             _socket.Connect(new IPEndPoint(Dns.GetHostEntry(NETWORK).AddressList[0], PORT));
+
+             _socket.Send($"NICK {NICK}\r\n".ToAssciiBytes());
+             _socket.Send($"USER {IDENTD} {NETWORK} bla :{REALNAME}\r\n".ToAssciiBytes());
+
+             _readbuffer = new byte[8096];
+
+             Console.WriteLine("START MAIN LOOP");
+
+             BeginReceive();
+
+             while (true)
+             {
+                 Console.WriteLine("Enter STOP to break the loop");
+                 if ("STOP" == Console.ReadLine())
+                     break;
+             }*/
+        }
+
+        private static string BetweenAsChars(byte[] bytes, int index, int index2)
+        {
+            return string.Join("", bytes.Skip(index).Take(index2 - index).Select(x => ((char)x).ToString())) + "END";
+        }
+
+        private static string Between(byte[] bytes, int index, int index2)
+        {
+            return string.Join(" ", bytes.Skip(index).Take(index2 - index).Select(x => x.ToString()));
         }
 
         private static void BeginReceive()
