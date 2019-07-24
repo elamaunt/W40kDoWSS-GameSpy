@@ -1,7 +1,9 @@
-﻿using Steamworks;
+﻿using GSMasterServer.Data;
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GameServer = GSMasterServer.Data.GameServer;
@@ -165,7 +167,7 @@ namespace SteamSpy.Utils
 
             return lobbies.ToArray();
         }
-
+        
         static class LobbyDataKeys
         {
             public const string STEAM_SPY_INDICATOR = "gameVersion";

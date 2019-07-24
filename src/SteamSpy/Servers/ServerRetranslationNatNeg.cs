@@ -1,6 +1,10 @@
 ﻿using GSMasterServer.Data;
+using SteamSpy.Utils;
+using Steamworks;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -8,26 +12,33 @@ using System.Threading;
 
 namespace GSMasterServer.Servers
 {
-    internal class ServerNatNeg : Server
+    internal class ServerRetranslationNatNeg : Server
     {
-        private const string Category = "NatNegotiation";
+        private const string Category = "NatNegotiation Retranslation";
         
         public Thread Thread;
 
         private const int BufferSize = 65535;
-        private Socket _socket;
-        private SocketAsyncEventArgs _socketReadEvent;
-        private byte[] _socketReceivedBuffer;
-        private ConcurrentDictionary<int, NatNegClient> _Clients = new ConcurrentDictionary<int, NatNegClient>();
 
-        public ServerNatNeg(IPAddress listen, ushort port)
+        private Socket _serverSocket;
+        private byte[] _serverReceivedBuffer;
+        private SocketAsyncEventArgs _serverSocketReadEvent;
+
+        private Socket _clientSocket;
+        private SocketAsyncEventArgs _clientSocketReadEvent;
+        private byte[] _clientReceivedBuffer;
+
+        private ConcurrentDictionary<int, NatNegConnection> _сonnections = new ConcurrentDictionary<int, NatNegConnection>();
+
+        public ServerRetranslationNatNeg(IPAddress listen, ushort port)
         {
             GeoIP.Initialize(Log, Category);
 
             Thread = new Thread(StartServer)
             {
-                Name = "Server NatNeg Socket Thread"
+                Name = "Server NatNeg Retranslation Thread"
             };
+
             Thread.Start(new AddressInfo()
             {
                 Address = listen,
@@ -47,11 +58,18 @@ namespace GSMasterServer.Servers
             {
                 if (disposing)
                 {
-                    if (_socket != null)
+                    if (_clientSocket != null)
                     {
-                        _socket.Close();
-                        _socket.Dispose();
-                        _socket = null;
+                        _clientSocket.Close();
+                        _clientSocket.Dispose();
+                        _clientSocket = null;
+                    }
+                    
+                    if (_serverSocket != null)
+                    {
+                        _serverSocket.Close();
+                        _serverSocket.Dispose();
+                        _serverSocket = null;
                     }
                 }
             }
@@ -60,7 +78,7 @@ namespace GSMasterServer.Servers
             }
         }
 
-        ~ServerNatNeg()
+        ~ServerRetranslationNatNeg()
         {
             Dispose(false);
         }
@@ -69,26 +87,11 @@ namespace GSMasterServer.Servers
         {
             AddressInfo info = (AddressInfo)parameter;
             Log(Category, "Starting Nat Neg Listener");
+
             try
             {
-                _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
-                {
-                    SendTimeout = 5000,
-                    ReceiveTimeout = 5000,
-                    SendBufferSize = BufferSize,
-                    ReceiveBufferSize = BufferSize
-                };
-
-                _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _socket.Bind(new IPEndPoint(info.Address, info.Port));
-
-                _socketReadEvent = new SocketAsyncEventArgs()
-                {
-                    RemoteEndPoint = new IPEndPoint(IPAddress.Any, 0)
-                };
-                _socketReceivedBuffer = new byte[BufferSize];
-                _socketReadEvent.SetBuffer(_socketReceivedBuffer, 0, BufferSize);
-                _socketReadEvent.Completed += OnDataReceived;
+                StartSocket(ref _clientSocket, new IPEndPoint(info.Address, info.Port), OnClientDataReceived, out _clientSocketReadEvent, out _clientReceivedBuffer);
+                StartSocket(ref _serverSocket, new IPEndPoint(info.Address, 0), OnServerDataReceived, out _serverSocketReadEvent, out _serverReceivedBuffer);
             }
             catch (Exception e)
             {
@@ -97,28 +100,107 @@ namespace GSMasterServer.Servers
                 return;
             }
 
-            WaitForData();
+            WaitForClientData();
+            WaitForServerData();
+        }
+        
+        private void StartSocket(ref Socket socket, IPEndPoint point, EventHandler<SocketAsyncEventArgs> handler, out SocketAsyncEventArgs @event, out byte[] buffer)
+        {
+            socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
+            {
+                SendTimeout = 5000,
+                ReceiveTimeout = 5000,
+                SendBufferSize = BufferSize,
+                ReceiveBufferSize = BufferSize
+            };
+
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+            socket.Bind(point);
+
+            @event = new SocketAsyncEventArgs()
+            {
+                RemoteEndPoint = new IPEndPoint(IPAddress.Any, 0)
+            };
+
+            buffer = new byte[BufferSize];
+            @event.SetBuffer(buffer, 0, BufferSize);
+            @event.Completed += handler;
         }
 
-        private void WaitForData()
+        private void WaitForServerData()
         {
-            Thread.Sleep(10);
-            GC.Collect();
-
             try
             {
-                if (!_socket.ReceiveFromAsync(_socketReadEvent))
-                    OnDataReceived(this, _socketReadEvent);
+                if (!_serverSocket.ReceiveFromAsync(_serverSocketReadEvent))
+                    OnServerDataReceived(this, _serverSocketReadEvent);
             }
             catch (SocketException e)
             {
-                LogError(Category, "Error receiving data");
+                LogError(Category, "Error receiving server data");
                 LogError(Category, e.ToString());
                 return;
             }
         }
 
-        private void OnDataReceived(object sender, SocketAsyncEventArgs e)
+        private void WaitForClientData()
+        {
+            try
+            {
+                if (!_clientSocket.ReceiveFromAsync(_clientSocketReadEvent))
+                    OnClientDataReceived(this, _clientSocketReadEvent);
+            }
+            catch (SocketException e)
+            {
+                LogError(Category, "Error receiving client data");
+                LogError(Category, e.ToString());
+                return;
+            }
+        }
+
+        private void OnServerDataReceived(object sender, SocketAsyncEventArgs e)
+        {
+            try
+            {
+                IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
+
+                using (var ms = new MemoryStream(e.Buffer, e.Offset, e.BytesTransferred))
+                {
+                    using (var reader = new BinaryReader(ms))
+                    {
+                        var steamId = new CSteamID(reader.ReadUInt64());
+                        var connectionId = reader.ReadInt32();
+                        var isHost = reader.ReadBoolean();
+
+                        Log(Category, "Server NAT received "+ steamId.m_SteamID);
+
+                        if (_сonnections.TryGetValue(connectionId, out NatNegConnection connection))
+                        {
+                            var port = PortBindingManager.AddOrUpdatePortBinding(steamId).Port;
+
+                            var peer = new NatNegPeer()
+                            {
+                                IsHost = isHost,
+                                CommunicationAddress = new IPEndPoint(IPAddress.Loopback, port),
+                                PublicAddress = new IPEndPoint(IPAddress.Loopback, port)
+                            };
+
+                            if (isHost)
+                                connection.Host = peer;
+                            else
+                                connection.Guest = peer;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LogError(Category, ex.ToString());
+            }
+
+            WaitForServerData();
+        }
+
+        private void OnClientDataReceived(object sender, SocketAsyncEventArgs e)
         {
             /*
              * Connection Protocol
@@ -177,7 +259,7 @@ namespace GSMasterServer.Servers
                     {
                         // INIT, return INIT_ACK
                         message.RecordType = 1;
-                        SendResponse(remote, message);
+                        SendByClientSocket(remote, message);
 
                         if (message.SequenceId > 1)
                         {
@@ -186,12 +268,14 @@ namespace GSMasterServer.Servers
                         else
                         {
                             // Collect data and send CONNECT messages if you have two peers initialized with all necessary data
-                            if (!_Clients.ContainsKey(message.ClientId))
-                                _Clients[message.ClientId] = new NatNegClient();
+                            if (!_сonnections.ContainsKey(message.ClientId))
+                                _сonnections[message.ClientId] = new NatNegConnection();
+                           
+                            var client = _сonnections[message.ClientId];
+                            
+                            client.ConnectionId = message.ClientId;
 
-                            NatNegClient client = _Clients[message.ClientId];
-                            client.ClientId = message.ClientId;
-                            bool isHost = message.Hoststate > 0;
+                            bool isHost = message.IsHost;
 
                             NatNegPeer peer = isHost ? client.Host : client.Guest;
 
@@ -204,12 +288,14 @@ namespace GSMasterServer.Servers
                                 else
                                     client.Guest = peer;
                             }
+
                             peer.IsHost = isHost;
+
                             if (message.SequenceId == 0)
                                 peer.PublicAddress = remote;
                             else
                                 peer.CommunicationAddress = remote;
-
+                            
                             if (client.Guest != null && client.Guest.CommunicationAddress != null && client.Guest.PublicAddress != null && client.Host != null && client.Host.CommunicationAddress != null && client.Host.PublicAddress != null)
                             {
                                 /* If server NATNEG1 have received all 4 INIT packets with sequence numbers 0 and 1 (same natneg-id), then it sends 2 CONNECT packets:
@@ -218,22 +304,40 @@ namespace GSMasterServer.Servers
                                  */
 
                                 // Remove client from dictionary
-                                NatNegClient removed = null;
-                                _Clients.TryRemove(client.ClientId, out removed);
+                                //NatNegClient removed = null;
+                                //_Clients.TryRemove(client.ClientId, out removed);
 
                                 message.RecordType = 5;
                                 message.Error = 0;
                                 message.GotData = 0x42;
 
-                                message.ClientPublicIPAddress = NatNegMessage._toIpAddress(client.Host.PublicAddress.Address.GetAddressBytes());
-                                message.ClientPublicPort = (ushort)client.Host.PublicAddress.Port;
-                                SendResponse(client.Guest.CommunicationAddress, message);
-
-                                message.ClientPublicIPAddress = NatNegMessage._toIpAddress(client.Guest.PublicAddress.Address.GetAddressBytes());
-                                message.ClientPublicPort = (ushort)client.Guest.PublicAddress.Port;
-                                SendResponse(client.Host.CommunicationAddress, message);
-
+                                if (isHost)
+                                {
+                                    message.ClientPublicIPAddress = NatNegMessage._toIpAddress(client.Guest.PublicAddress.Address.GetAddressBytes());
+                                    message.ClientPublicPort = (ushort)client.Guest.PublicAddress.Port;
+                                    SendByClientSocket(client.Host.CommunicationAddress, message);
+                                }
+                                else
+                                {
+                                    message.ClientPublicIPAddress = NatNegMessage._toIpAddress(client.Host.PublicAddress.Address.GetAddressBytes());
+                                    message.ClientPublicPort = (ushort)client.Host.PublicAddress.Port;
+                                    SendByClientSocket(client.Guest.CommunicationAddress, message);
+                                }
                                 //Log(Category, "Sent connect messages to peers with clientId " + client.ClientId + " connecting host " + client.Host.PublicAddress.ToString() + " and guest " + client.Guest.PublicAddress.ToString());
+                            }
+                            else
+                            {
+                                using (var ms = new MemoryStream())
+                                {
+                                    using (var writer = new BinaryWriter(ms))
+                                    {
+                                        writer.Write(SteamUser.GetSteamID().m_SteamID);
+                                        writer.Write(message.ClientId);
+                                        writer.Write(isHost);
+                                        
+                                        SendByServerSocket(new IPEndPoint(IPAddress.Loopback, 27902), ms.ToArray());
+                                    }
+                                }
                             }
                         }
                     }
@@ -241,7 +345,7 @@ namespace GSMasterServer.Servers
                     {
                         // REPORT, return REPORT_ACK
                         message.RecordType = 14;
-                        SendResponse(remote, message);
+                        SendByClientSocket(remote, message);
                         //Console.WriteLine("somon natnegd in servernatneg.cs 'else if (message.RecordType == 13)'");
                     }
                 }
@@ -251,16 +355,18 @@ namespace GSMasterServer.Servers
                 LogError(Category, ex.ToString());
             }
 
-            WaitForData();
+            WaitForClientData();
         }
 
-        private void SendResponse(IPEndPoint remote, NatNegMessage message)
+        private void SendByClientSocket(IPEndPoint remote, NatNegMessage message)
         {
             byte[] response = message.ToBytes();
-            //Log(Category, "Sending response " + message.ToString() + " to " + remote.ToString());
-            //Log(Category, "(Response bytes: " + string.Join(" ", response.Select((b) => { return b.ToString("X2"); }).ToArray()) + ")");
-            _socket.SendTo(response, remote);
+            _clientSocket.SendTo(response, remote);
         }
 
+        private void SendByServerSocket(IPEndPoint remote, byte[] bytes)
+        {
+            _serverSocket.SendTo(bytes, remote);
+        }
     }
 }

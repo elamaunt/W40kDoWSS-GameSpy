@@ -87,7 +87,7 @@
     <Compile Include="Servers\ServerRetranslator.cs" />
     <Compile Include="Servers\ServerListReport.cs" />
     <Compile Include="Servers\ServerListRetrieve.cs" />
-    <Compile Include="Servers\ServerNatNeg.cs" />
+    <Compile Include="Servers\ServerRetranslationNatNeg.cs" />
     <Compile Include="Utils\ByteHelpers.cs" />
     <Compile Include="Utils\ChatCrypt.cs" />
     <Compile Include="Utils\DynamicLinq.cs" />

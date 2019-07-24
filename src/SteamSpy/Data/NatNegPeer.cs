@@ -9,9 +9,9 @@ namespace GSMasterServer.Data
         public bool IsHost;
     }
 
-    public class NatNegClient
+    public class NatNegConnection
     {
-        public int ClientId;
+        public int ConnectionId;
         public NatNegPeer Host;
         public NatNegPeer Guest;
     }

@@ -558,7 +558,7 @@ namespace GSMasterServer.Servers
 
                 //var endPoint = (IPEndPoint)state.Socket.RemoteEndPoint;
 
-                ushort retranslationPort = PortBindingManager.AddPortBinding(server.HostSteamId);
+                ushort retranslationPort = PortBindingManager.AddOrUpdatePortBinding(server.HostSteamId).Port;
 
                 var loopbackIpBytes = IPAddress.Loopback.GetAddressBytes(); //IPAddress.Loopback.GetAddressBytes();
                 //var ipBytes = IPAddress.Parse(iPAddress).GetAddressBytes();

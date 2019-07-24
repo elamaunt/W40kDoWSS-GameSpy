@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace GSMasterServer.Servers
 {
-    internal class Server
+    public class Server
     {
         public static void Log(string tag, string message)
         {

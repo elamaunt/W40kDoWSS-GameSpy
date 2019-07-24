@@ -39,6 +39,8 @@ namespace GSMasterServer.Data
         public byte ReportAckUnknown2;
         public ushort ReportAckUnknown3;
 
+        public bool IsHost => Hoststate > 0;
+
         public override string ToString()
         {
             if (RecordType == 0) return "INIT CLIENT " + ClientId + " SEQUENCE " + SequenceId + " HOSTSTATE " + Hoststate + " USEGAMEPORT " + UseGamePort + " PRIVATEIP " + PrivateIPAddress + " LOCALPORT " + LocalPort + " GAMENAME " + GameName;

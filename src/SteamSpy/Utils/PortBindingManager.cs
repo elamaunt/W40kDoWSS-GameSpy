@@ -33,10 +33,10 @@ namespace SteamSpy.Utils
             foreach (var item in PortBindings)
                 item.Value.Clear();
         }
-
-        public static ushort AddPortBinding(CSteamID id, IPEndPoint localPoint = null)
+        
+        public static ServerRetranslator AddOrUpdatePortBinding(CSteamID id)
         {
-            return PortBindings.GetOrAdd(id, steamId => new ServerRetranslator(steamId, localPoint)).Port; 
+            return PortBindings.GetOrAdd(id, steamId => new ServerRetranslator(steamId)); 
         }
 
         public static void UpdateFrame()

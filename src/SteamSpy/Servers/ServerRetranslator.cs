@@ -8,12 +8,12 @@ using System.Threading;
 
 namespace GSMasterServer.Servers
 {
-    internal class ServerRetranslator : Server
+    public class ServerRetranslator : Server
     {
         public const string Category = "ServerRetranslator";
         const int BufferSize = 65535;
 
-        CSteamID _userId;
+        public CSteamID RemoteUserSteamId { get; set; }
 
         Socket _socket;
         SocketAsyncEventArgs _socketReadEvent;
@@ -24,15 +24,18 @@ namespace GSMasterServer.Servers
         public ushort Port { get; private set; }
         public IPEndPoint LocalPoint { get; set; }
 
-        public ServerRetranslator(CSteamID userId, IPEndPoint point = null)
+        public ServerRetranslator(CSteamID userId)
+            : this()
         {
-            _userId = userId;
-            LocalPoint = point;
+            RemoteUserSteamId = userId;
+        }
 
+        public ServerRetranslator()
+        {
             GeoIP.Initialize(Log, Category);
             StartServer();
         }
-        
+
         public void Dispose()
         {
             Dispose(true);
@@ -136,6 +139,9 @@ namespace GSMasterServer.Servers
 
         private void OnDataReceived(object sender, SocketAsyncEventArgs e)
         {
+            if (RemoteUserSteamId == CSteamID.Nil)
+                return;
+
             try
             {
                 LocalPoint = e.RemoteEndPoint as IPEndPoint;
@@ -143,14 +149,14 @@ namespace GSMasterServer.Servers
                 byte[] receivedBytes = new byte[e.BytesTransferred];
                 Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
 
-                var str = Encoding.UTF8.GetString(receivedBytes);
+                //var str = Encoding.UTF8.GetString(receivedBytes);
 
                 // there by a bunch of different message formats...
-                Log(Category, ">> "+str);
+               // Log(Category, ">> "+str);
 
                 //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
-                SteamNetworking.SendP2PPacket(_userId, e.Buffer, (uint)e.BytesTransferred, EP2PSend.k_EP2PSendUnreliableNoDelay);
+                SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, (uint)e.BytesTransferred, EP2PSend.k_EP2PSendUnreliableNoDelay);
             }
             catch (Exception ex)
             {
@@ -164,10 +170,10 @@ namespace GSMasterServer.Servers
         {
             try
             {
-                var str = Encoding.UTF8.GetString(buffer, 0, (int)size);
+               //var str = Encoding.UTF8.GetString(buffer, 0, (int)size);
 
                 // there by a bunch of different message formats...
-                Log(Category,"<= "+ str);
+                //Log(Category,"<= "+ str);
 
                 // Console.WriteLine("ReceivedFromUser "+ _userId.m_SteamID+" "+ size);
 

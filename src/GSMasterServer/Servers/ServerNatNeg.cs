@@ -120,6 +120,8 @@ namespace GSMasterServer.Servers
 
         private void OnDataReceived(object sender, SocketAsyncEventArgs e)
         {
+
+
             /*
              * Connection Protocol
              * 
@@ -127,12 +129,19 @@ namespace GSMasterServer.Servers
              * 
              * The NATNEG communication to enable a peer to peer communication is is done in the following steps:
              * 
-             * Both clients (called guest and host to distinguish them) exchange an unique natneg-id. In all observed Wii games this communication is done using Server MS and Server MASTER.
-             * Both clients sends independent of each other a sequence of 4 INIT packets to the NATNEG servers. The sequence number goes from 0 to 3. The guest sets the host_flag to 0 and the host to 1. The natneg-id must be the same for all packets.
+             * Both clients (called guest and host to distinguish them) exchange an unique natneg-id. 
+             * In all observed Wii games this communication is done using Server MS and Server MASTER.
+             * Both clients sends independent of each other a sequence of 4 INIT packets to the NATNEG servers. 
+             * 
+             * The sequence number goes from 0 to 3. 
+             * The guest sets the host_flag to 0 and the host to 1.
+             * The natneg-id must be the same for all packets.
+             * 
              * Packet 0 (sequence number 0) is send from the public address to server NATNEG1. This public address is later used for the peer to peer communication.
              * Packet 1 (sequence number 1) is send from the communication address (usually an other port than the public address) to server NATNEG1.
              * Packet 2 (sequence number 2) is send from the communication address to server NATNEG2 (any kind of fallback?).
              * Packet 3 (sequence number 3) is send from the communication address to server NATNEG3 (any kind of fallback?).
+             * 
              * Each INIT packet is answered by an INIT_ACK packet as acknowledge to the original sender.
              * If server NATNEG1 have received all 4 INIT packets with sequence numbers 0 and 1 (same natneg-id), then it sends 2 CONNECT packets:
              * One packet is send to the communication address of the guest. The packet contains the public address of the host as data.
@@ -164,12 +173,15 @@ namespace GSMasterServer.Servers
                 {
                     LogError(Category, ex.ToString());
                 }
+
                 if (message == null)
                 {
                     Log(Category, "Received unknown data " + string.Join(" ", receivedBytes.Select((b) => { return b.ToString("X2"); }).ToArray()) + " from " + remote.ToString());
                 }
                 else
                 {
+                    Log(Category, message.ToString());
+
                     //commented out 10.10
                     //Program.LogError('['+ Category+']' + "Received message " + message.ToString() + " from " + remote.ToString());
                     //Log(Category, "(Message bytes: " + string.Join(" ", receivedBytes.Select((b) => { return b.ToString("X2"); }).ToArray()) + ")");
@@ -191,14 +203,23 @@ namespace GSMasterServer.Servers
                             
                             NatNegClient client = _clients[message.ClientId];
                             client.ClientId = message.ClientId;
+
                             bool isHost = message.Hoststate > 0;
+
                             NatNegPeer peer = isHost ? client.Host : client.Guest;
+
                             if (peer == null)
                             {
                                 peer = new NatNegPeer();
-                                if (isHost) client.Host = peer; else client.Guest = peer;
+
+                                if (isHost)
+                                    client.Host = peer;
+                                else
+                                    client.Guest = peer;
                             }
+
                             peer.IsHost = isHost;
+
                             if (message.SequenceId == 0)
                                 peer.PublicAddress = remote;
                             else
@@ -250,11 +271,12 @@ namespace GSMasterServer.Servers
 
         private void SendResponse(IPEndPoint remote, NatNegMessage message)
         {
+            Log("RESP:"+message.ToString());
+
             byte[] response = message.ToBytes();
             //Log(Category, "Sending response " + message.ToString() + " to " + remote.ToString());
             //Log(Category, "(Response bytes: " + string.Join(" ", response.Select((b) => { return b.ToString("X2"); }).ToArray()) + ")");
             _socket.SendTo(response, remote);
         }
-
     }
 }

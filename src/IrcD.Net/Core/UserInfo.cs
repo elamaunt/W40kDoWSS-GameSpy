@@ -196,7 +196,7 @@ namespace IrcD.Core
         public int WriteLine(string line)
         {
 #if DEBUG
-            Logger.Log(line.ToString(), location: "OUT:" + Nick);
+            //Logger.Log(line.ToString(), location: "OUT:" + Nick);
 #endif
             // Костыль дла переопределения отправки
             return _send(_state, line + IrcDaemon.ServerCrLf);

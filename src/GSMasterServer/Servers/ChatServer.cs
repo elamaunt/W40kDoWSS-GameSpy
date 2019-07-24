@@ -301,7 +301,7 @@ namespace GSMasterServer.Servers
             if (state.Disposing)
                 return 0;
 
-            Log("CHATRESP", message);
+            //Log("CHATRESP", message);
 
             var bytesToSend = Encoding.UTF8.GetBytes(message);
 
@@ -334,8 +334,8 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode != SocketError.ConnectionAborted &&
                     e.SocketErrorCode != SocketError.ConnectionReset)
                 {
-                    LogError(Category, "Error sending data");
-                    LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                    //LogError(Category, "Error sending data");
+                    //LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
                 }
                 
                 return false;
