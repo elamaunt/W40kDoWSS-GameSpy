@@ -307,7 +307,7 @@ namespace GSMasterServer.Servers
 
                 var client = _idsRetrievingClient = new UdpClient();
 
-                var endPoint = new IPEndPoint(IPAddress.Parse("134.209.198.2"), 27902);
+                var endPoint = new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), GameConstants.IDS_REQUEST_PORT);
 
                 await client.SendAsync(buffer, buffer.Length, endPoint);
                 var result = await client.ReceiveAsync();

@@ -1,6 +1,7 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
 using Reality.Net.GameSpy.Servers;
+using SteamSpy.Utils;
 using Steamworks;
 using System;
 using System.Collections.Generic;
@@ -253,8 +254,8 @@ namespace GSMasterServer.Servers
                     state.ServerSocket = _clientManagerServerSocket;
                     if (_clientManagerServerSocket.Connected)
                         _clientManagerServerSocket.Disconnect(true);
-                    //_clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse("134.209.198.2"), 29900), OnConnect, state);
-                    _clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 29902), OnConnect, state);
+                    _clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), GameConstants.CLIENT_LOGIN_TCP_PORT), OnConnect, state);
+                    //_clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 29902), OnConnect, state);
 
                 }
                 else if (state.Type == LoginSocketState.SocketType.Search)
@@ -262,8 +263,8 @@ namespace GSMasterServer.Servers
                     state.ServerSocket = _searchManagerServerSocket;
                     if (_searchManagerServerSocket.Connected)
                         _searchManagerServerSocket.Disconnect(true);
-                   // _searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse("134.209.198.2"), 29901), OnConnect, state);
-                    _searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 29903), OnConnect, state);
+                    _searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), GameConstants.SEARCH_LOGIN_TCP_PORT), OnConnect, state);
+                    //_searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 29903), OnConnect, state);
                 }
             }
             catch (NullReferenceException)
