@@ -173,8 +173,12 @@ namespace GSMasterServer.Servers
                 //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
 
+                var count = (uint)e.BytesTransferred;
 
-                SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, (uint)e.BytesTransferred, EP2PSend.k_EP2PSendReliable);
+                if (count < 1000)
+                    SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliableNoDelay);
+                else
+                    SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendReliable);
             }
             catch (Exception ex)
             {

@@ -87,7 +87,7 @@ namespace GSMasterServer.Servers
                     ReceiveBufferSize = 65535
                 };
                 _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-               // _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
 
                 _socket.Bind(new IPEndPoint(info.Address, info.Port));
                 _socket.Listen(10);

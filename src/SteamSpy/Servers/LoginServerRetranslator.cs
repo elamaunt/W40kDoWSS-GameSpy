@@ -126,7 +126,7 @@ namespace GSMasterServer.Servers
                 };
 
                 _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(true, 1));
                 _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
                 _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
@@ -141,7 +141,7 @@ namespace GSMasterServer.Servers
 
                 _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
                 _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+                _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(true, 1));
                 _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
                 _clientManagerGameSocket.Bind(new IPEndPoint(info.Address, info.Port));
