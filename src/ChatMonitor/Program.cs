@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using static ChatMonitor.Constants;
 
 namespace ChatMonitor
@@ -15,7 +18,9 @@ namespace ChatMonitor
 
         static void Main(string[] args)
         {
-            var str = "??   &   {f29e528f-2461-4387-9443-84db458a8592}    B a m b o c h u k                   K04W        B a m b o c h u k     ?????      ?     ??BK04W   g i g a m o k       ???      ?       dxp2   1.0    :~?";
+           var ids = LoadSteamIds(new List<string>() { "elamaunt" }).Result;
+
+          /* var str = "??   &   {f29e528f-2461-4387-9443-84db458a8592}    B a m b o c h u k                   K04W        B a m b o c h u k     ?????      ?     ??BK04W   g i g a m o k       ???      ?       dxp2   1.0    :~?";
 
             var bytesString = @"254 254 0 0 2 0 2 4 1 38 0 0 0 123 102 50 57 101 53 50 56 102 45 50 52 54 49 45 52 51 56 55 45 57 52 52 51 45 56 52 100 98 52 53 56 97 56 53 57 50 125 9 0 0 0 66 0 97 0 109 0 98 0 111 0 99 0 104 0 117 0 107 0 0 0 0 0 2 0 0 0 4 0 0 0 0 0 0 0 0 2 0 0 0 2 75 48 52 87 9 0 0 0 66 0 97 0 109 0 98 0 111 0 99 0 104 0 117 0 107 0 1 1 0 0 0 0 192 168 159 128 224 23 0 0 0 0 127 0 0 1 224 23 0 0 0 0 0 216 1 233 66 75 48 52 87 7 0 0 0 103 0 105 0 103 0 97 0 109 0 111 0 107 0 0 0 0 0 0 0 192 168 1 31 224 23 0 0 0 0 127 0 0 1 224 23 20 0 0 0 20 0 4 0 0 0 100 120 112 50 3 0 0 0 49 46 48 0 0 0 0 19 58 126 222";
             var bytes = bytesString.Split(" ").Select(x => byte.Parse(x)).ToArray();
@@ -50,7 +55,7 @@ namespace ChatMonitor
                     Console.WriteLine(ipEndPoint);
                     // Console.WriteLine(Between(bytes, i + 4, i + 4 + 57));
                 }
-            }
+            }*/
 
             //K04W
 
@@ -196,6 +201,35 @@ namespace ChatMonitor
             catch (Exception)
             {
             }
+        }
+
+        private static async Task<Dictionary<string, ulong>> LoadSteamIds(List<string> nicks)
+        {
+            var ms = new MemoryStream();
+            var writer = new BinaryWriter(ms);
+
+            for (int i = 0; i < nicks.Count; i++)
+                writer.Write(nicks[i]);
+
+            var buffer = ms.GetBuffer();
+
+            var client = new UdpClient();
+
+           // var endPoint = new IPEndPoint(IPAddress.Parse("134.209.198.2"), 27902);
+            var endPoint = new IPEndPoint(IPAddress.Loopback, 27902);
+
+            await client.SendAsync(buffer, buffer.Length, endPoint);
+            var result = await client.ReceiveAsync();
+
+            ms = new MemoryStream(result.Buffer);
+            var reader = new BinaryReader(ms);
+
+            var ids = new Dictionary<string, ulong>();
+
+            while (ms.Position + 1 < ms.Length)
+                ids[reader.ReadString()] = reader.ReadUInt64();
+
+            return ids;
         }
     }
 }

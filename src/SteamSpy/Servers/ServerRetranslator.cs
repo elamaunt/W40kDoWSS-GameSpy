@@ -314,9 +314,7 @@ namespace GSMasterServer.Servers
 
                 ms = new MemoryStream(result.Buffer);
                 var reader = new BinaryReader(ms);
-
-                var ids = new Dictionary<string, CSteamID>();
-
+                
                 while (ms.Position < ms.Length)
                     IdByNicksCache.TryAdd(reader.ReadString(), new CSteamID(reader.ReadUInt64()));
             }

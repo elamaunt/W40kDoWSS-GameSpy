@@ -179,7 +179,12 @@ namespace GSMasterServer.Servers
 
         private ulong GetSteamIdByNick(string nick)
         {
-            return UsersDatabase.Instance.GetUserData(nick).SteamId;
+            var userData = UsersDatabase.Instance.GetUserData(nick);
+
+            if (userData == null)
+                return 0;
+
+            return userData.SteamId;
         }
 
         private void SendResponse(IPEndPoint remote, byte[] bytes)
