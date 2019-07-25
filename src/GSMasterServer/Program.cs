@@ -11,7 +11,7 @@ namespace GSMasterServer
 
         static void Main(string[] args)
         {
-            args = new string[] { "+db", @"..\..\test.db" };
+            args = new string[] { "+db", @"test.db" };
             
             IPAddress bind = IPAddress.Any;
 
