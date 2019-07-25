@@ -205,16 +205,17 @@ namespace GSMasterServer.Servers
                 {
                     var clone = new byte[s];
 
-                    buffer.CopyTo(clone, 0);
+                    Array.Copy(buffer, clone, s);
 
                     HandleGamelobbyRequest(clone)
                         .ContinueWith(task =>
                         {
-
+                            if (task.Status == TaskStatus.RanToCompletion)
+                                _socket?.SendTo(task.Result, s, SocketFlags.None, LocalPoint ?? GameEndPoint);
+                            else
+                                _socket?.SendTo(buffer, s, SocketFlags.None, LocalPoint ?? GameEndPoint);
                         });
-
-
-
+                    
                     return;
                 }
                 
@@ -279,6 +280,7 @@ namespace GSMasterServer.Servers
                         bytes[pointStart++] = 0;
                         bytes[pointStart++] = 0;
                         bytes[pointStart++] = 1;
+
                         var port = PortBindingManager.AddOrUpdatePortBinding(id).Port;
                         var portBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(port).Reverse().ToArray() : BitConverter.GetBytes(port);
 
@@ -315,12 +317,12 @@ namespace GSMasterServer.Servers
                 ms = new MemoryStream(result.Buffer);
                 var reader = new BinaryReader(ms);
                 
-                while (ms.Position < ms.Length)
+                while (ms.Position + 1 < ms.Length)
                     IdByNicksCache.TryAdd(reader.ReadString(), new CSteamID(reader.ReadUInt64()));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                Console.WriteLine("Erro on loading steam ids");
+                Console.WriteLine("ERROR on loading steam ids "+ex);
             }
         }
 
