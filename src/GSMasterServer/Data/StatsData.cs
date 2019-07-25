@@ -5,7 +5,8 @@
         public object Id;
         public long UserId;
         public long ProfileId;
-
+        public ulong SteamId;
+        
         public long Score1v1;
         public long Score2v2;
         public long Score3v3;

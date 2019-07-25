@@ -195,6 +195,15 @@ namespace GSMasterServer.Servers
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
             }
 
+            if (keyValues.ContainsKey("steamid") && ulong.TryParse(keyValues["steamid"], out ulong id))
+            {
+                state.SteamId = id;
+            }
+            else
+            {
+                return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
+            }
+
             if (UsersDatabase.Instance.UserExists(state.Name))
             {
                 return DataFunctions.StringToBytes(@"\error\\err\516\fatal\\errmsg\This account name is already in use!\id\1\final\");
@@ -203,7 +212,7 @@ namespace GSMasterServer.Servers
             {
                 string password = DecryptPassword(state.PasswordEncrypted);
 
-                UsersDatabase.Instance.CreateUser(state.Name, password.ToMD5(), state.Email, "??", ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
+                UsersDatabase.Instance.CreateUser(state.Name, password.ToMD5(), state.SteamId, state.Email, "??", ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
 
                 var clientData = UsersDatabase.Instance.GetUserData(state.Name);
 

@@ -27,7 +27,34 @@ namespace ChatMonitor
 
             index++;
 
-            var length = bytes[index++];
+            for (int i = index; i < bytes.Length-4; i++)
+            {
+                if (bytes[i] == 'K' &&
+                    bytes[i+1] == '0' &&
+                    bytes[i+2] == '4' &&
+                    bytes[i+3] == 'W')
+                {
+                    var nickLength = bytes[i+4];
+
+                    var nickStart = i + 4 + 3;
+                    var nickEnd = nickStart + (nickLength << 1);
+                    
+                    var nick = BetweenAsChars(bytes, nickStart, nickEnd);
+
+                    var pointStart = nickEnd + 7;
+                    var pointEnd = pointStart + 6;
+
+                    var ipEndPoint = Between(bytes, pointStart, pointEnd);
+
+                    Console.WriteLine(nick);
+                    Console.WriteLine(ipEndPoint);
+                    // Console.WriteLine(Between(bytes, i + 4, i + 4 + 57));
+                }
+            }
+
+            //K04W
+
+            /*var length = bytes[index++];
             var nickEnd = index + 3 + length * 2;
             
             var nick = BetweenAsChars(bytes, index + 3, nickEnd);
@@ -36,7 +63,7 @@ namespace ChatMonitor
 
             Console.WriteLine(nick);
 
-            Console.WriteLine(Between(bytes, nickEnd +1, index2));
+            Console.WriteLine(Between(bytes, nickEnd +1, index2));*/
 
 
             //var index2 = Array.IndexOf(bytes, b, index);
@@ -74,7 +101,17 @@ namespace ChatMonitor
 
         private static string BetweenAsChars(byte[] bytes, int index, int index2)
         {
-            return string.Join("", bytes.Skip(index).Take(index2 - index).Select(x => ((char)x).ToString())) + "END";
+            var bytesClone = new byte[index2 - index];
+
+            for (int i = 0; i < index2 - index; i+=2)
+            {
+                bytesClone[i] = bytes[index + i + 1];
+                bytesClone[i + 1] = bytes[index + i];
+            }
+
+            return Encoding.Unicode.GetString(bytesClone);
+
+           // return string.Join("", bytes.Skip(index).Take(index2 - index).Select(x => ((char)x).ToString())) + "END";
         }
 
         private static string Between(byte[] bytes, int index, int index2)

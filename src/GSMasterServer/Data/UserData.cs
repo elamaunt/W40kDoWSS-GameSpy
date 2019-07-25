@@ -9,6 +9,8 @@
         public string Country;
         public long UserId;
         public long ProfileId;
+        public ulong SteamId;
         public long Session;
+
     }
 }

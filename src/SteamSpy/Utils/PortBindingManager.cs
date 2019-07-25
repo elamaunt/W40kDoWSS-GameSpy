@@ -3,6 +3,7 @@ using Steamworks;
 using System;
 using System.Collections.Concurrent;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace SteamSpy.Utils
 {
@@ -13,7 +14,7 @@ namespace SteamSpy.Utils
         static Callback<P2PSessionConnectFail_t> _sessionConnectFailedCallback = Callback<P2PSessionConnectFail_t>.Create(OnSessionConnectFailReceived);
         
         static readonly ConcurrentDictionary<CSteamID, ServerRetranslator> PortBindings = new ConcurrentDictionary<CSteamID, ServerRetranslator>();
-
+        
         private static void OnSessionCallbackReceived(P2PSessionRequest_t param)
         {
             Console.WriteLine($"AcceptP2PSessionWithUser {param.m_steamIDRemote}");

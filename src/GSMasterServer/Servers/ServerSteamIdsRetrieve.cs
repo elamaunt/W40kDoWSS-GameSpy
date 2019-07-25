@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace GSMasterServer.Servers
 {
-    internal class ServerSteamNatNeg : Server
+    internal class ServerSteamIdsRetrieve : Server
     {
         private const string Category = "NatNegotiation";
         
@@ -18,10 +18,11 @@ namespace GSMasterServer.Servers
         private Socket _socket;
         private SocketAsyncEventArgs _socketReadEvent;
         private byte[] _socketReceivedBuffer;
+        private byte[] _socketSendBuffer;
 
-        private MemoryCache _bindingsCache = new MemoryCache("Steam Bindings");
+        private MemoryCache _steamIdsCache = new MemoryCache("Steam ids Cache");
 
-        public ServerSteamNatNeg(IPAddress listen, ushort port)
+        public ServerSteamIdsRetrieve(IPAddress listen, ushort port)
         {
             GeoIP.Initialize(Log, Category);
 
@@ -61,7 +62,7 @@ namespace GSMasterServer.Servers
             }
         }
 
-        ~ServerSteamNatNeg()
+        ~ServerSteamIdsRetrieve()
         {
             Dispose(false);
         }
@@ -87,7 +88,10 @@ namespace GSMasterServer.Servers
                 {
                     RemoteEndPoint = new IPEndPoint(IPAddress.Any, 0)
                 };
+
                 _socketReceivedBuffer = new byte[BufferSize];
+                _socketSendBuffer = new byte[BufferSize];
+
                 _socketReadEvent.SetBuffer(_socketReceivedBuffer, 0, BufferSize);
                 _socketReadEvent.Completed += OnDataReceived;
             }
@@ -129,45 +133,37 @@ namespace GSMasterServer.Servers
                 {
                     using (var reader = new BinaryReader(ms))
                     {
-                        var steamId = reader.ReadUInt64();
-                        var bindingId = reader.ReadInt32();
-                        var isHost = reader.ReadBoolean();
-
-                        var client = (NatNegSteamClient)_bindingsCache.AddOrGetExisting(new CacheItem(bindingId.ToString(), new NatNegSteamClient(bindingId)), new CacheItemPolicy()
+                        using (var sendStream = new MemoryStream(_socketSendBuffer))
                         {
-                            SlidingExpiration = TimeSpan.FromMinutes(15)
-                        }).Value;
+                            using (var writer = new BinaryWriter(sendStream))
+                            {
+                                while (ms.Position < ms.Length)
+                                {
+                                    var nick = reader.ReadString();
 
-                        if (isHost)
-                        {
-                            client.HostPoint = remote;
-                            client.Host = new NatNegSteamPeer()
-                            {
-                                ConnectionId = bindingId,
-                                IsHost = isHost,
-                                SteamId = steamId
-                            };
+                                    writer.Write(nick);
 
-                            if (client.Guest.HasValue && client.Host.HasValue)
-                            {
-                                SendResponse(client.HostPoint, client.Guest.Value.Bytes);
-                                SendResponse(client.GuestPoint, client.Host.Value.Bytes);
-                            }
-                        }
-                        else
-                        {
-                            client.GuestPoint = remote;
-                            client.Guest = new NatNegSteamPeer()
-                            {
-                                ConnectionId = bindingId,
-                                IsHost = isHost,
-                                SteamId = steamId
-                            };
+                                    ulong steamId = 0;
 
-                            if (client.Guest.HasValue && client.Host.HasValue)
-                            {
-                                SendResponse(client.HostPoint, client.Guest.Value.Bytes);
-                                SendResponse(client.GuestPoint, client.Host.Value.Bytes);
+                                    if (_steamIdsCache.Contains(nick))
+                                        steamId = (ulong)_steamIdsCache.Get(nick);
+                                    else
+                                    {
+                                        steamId = GetSteamIdByNick(nick);
+
+                                        if (steamId == 0)
+                                            goto CONTINUE;
+
+                                        _steamIdsCache.Add(new CacheItem(nick, steamId), new CacheItemPolicy()
+                                        {
+                                            SlidingExpiration = TimeSpan.FromMinutes(5)
+                                        });
+                                    }
+
+                                    writer.Write(steamId);
+                                }
+
+                                CONTINUE: _socket.SendTo(_socketSendBuffer, (int)sendStream.Position, SocketFlags.None, remote);
                             }
                         }
                     }
@@ -179,6 +175,11 @@ namespace GSMasterServer.Servers
             }
 
             WaitForData();
+        }
+
+        private ulong GetSteamIdByNick(string nick)
+        {
+            return UsersDatabase.Instance.GetUserData(nick).SteamId;
         }
 
         private void SendResponse(IPEndPoint remote, byte[] bytes)

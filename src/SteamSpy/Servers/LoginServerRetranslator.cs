@@ -10,9 +10,9 @@ using System.Threading;
 
 namespace GSMasterServer.Servers
 {
-    internal class LoginServer : Server
+    internal class LoginServerRetranslator : Server
     {
-        public const string Category = "Login";
+        public const string Category = "Login Server Retranslator";
         
         Thread _clientManagerThread;
         Thread _searchManagerThread;
@@ -20,10 +20,13 @@ namespace GSMasterServer.Servers
         private static Socket _clientManagerSocket;
         private static Socket _searchManagerSocket;
 
+        private static Socket _clientManagerServerSocket;
+        private static Socket _searchManagerServerSocket;
+
         private readonly ManualResetEvent _clientManagerReset = new ManualResetEvent(false);
         private readonly ManualResetEvent _searchManagerReset = new ManualResetEvent(false);
-
-        public LoginServer(IPAddress listen, ushort clientManagerPort, ushort searchManagerPort)
+        
+        public LoginServerRetranslator(IPAddress listen, ushort clientManagerPort, ushort searchManagerPort)
         {
             ServicePointManager.SetTcpKeepAlive(true, 60 * 1000 * 10, 1000);
             
@@ -62,17 +65,34 @@ namespace GSMasterServer.Servers
             {
                 if (disposing)
                 {
+                    Log(Category, "DISPOSING");
+
                     if (_clientManagerSocket != null)
                     {
                         _clientManagerSocket.Close();
                         _clientManagerSocket.Dispose();
                         _clientManagerSocket = null;
                     }
+
                     if (_searchManagerSocket != null)
                     {
                         _searchManagerSocket.Close();
                         _searchManagerSocket.Dispose();
                         _searchManagerSocket = null;
+                    }
+
+                    if (_searchManagerServerSocket != null)
+                    {
+                        _searchManagerServerSocket.Close();
+                        _searchManagerServerSocket.Dispose();
+                        _searchManagerServerSocket = null;
+                    }
+                    
+                    if (_clientManagerServerSocket != null)
+                    {
+                        _clientManagerServerSocket.Close();
+                        _clientManagerServerSocket.Dispose();
+                        _clientManagerServerSocket = null;
                     }
                 }
             }
@@ -81,7 +101,7 @@ namespace GSMasterServer.Servers
             }
         }
 
-        ~LoginServer()
+        ~LoginServerRetranslator()
         {
             Dispose(false);
         }
@@ -108,7 +128,22 @@ namespace GSMasterServer.Servers
                 _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
                 _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
+                _clientManagerServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    SendTimeout = 30000,
+                    ReceiveTimeout = 30000,
+                    SendBufferSize = 8192,
+                    ReceiveBufferSize = 8192,
+                    Blocking = false
+                };
+
+                _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+                _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+                _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
                 _clientManagerSocket.Bind(new IPEndPoint(info.Address, info.Port));
+                _clientManagerServerSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
                 _clientManagerSocket.Listen(10);
             }
             catch (Exception e)
@@ -125,7 +160,7 @@ namespace GSMasterServer.Servers
                 LoginSocketState state = new LoginSocketState()
                 {
                     Type = LoginSocketState.SocketType.Client,
-                    Socket = _clientManagerSocket
+                    GameSocket = _clientManagerSocket
                 };
 
                 _clientManagerSocket.BeginAccept(AcceptCallback, state);
@@ -149,13 +184,28 @@ namespace GSMasterServer.Servers
                     ReceiveBufferSize = 8192,
                     Blocking = false
                 };
-
                 _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
                 _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
                 _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
                 _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
+                _searchManagerServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    SendTimeout = 5000,
+                    ReceiveTimeout = 5000,
+                    SendBufferSize = 8192,
+                    ReceiveBufferSize = 8192,
+                    Blocking = false
+                };
+                _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+                _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+                _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+
                 _searchManagerSocket.Bind(new IPEndPoint(info.Address, info.Port));
+                _searchManagerServerSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
+
                 _searchManagerSocket.Listen(10);
             }
             catch (Exception e)
@@ -172,7 +222,7 @@ namespace GSMasterServer.Servers
                 LoginSocketState state = new LoginSocketState()
                 {
                     Type = LoginSocketState.SocketType.Search,
-                    Socket = _searchManagerSocket
+                    GameSocket = _searchManagerSocket
                 };
 
                 _searchManagerSocket.BeginAccept(AcceptCallback, state);
@@ -186,7 +236,7 @@ namespace GSMasterServer.Servers
 
             try
             {
-                Socket client = state.Socket.EndAccept(ar);
+                Socket client = state.GameSocket.EndAccept(ar);
 
                 Thread.Sleep(1);
 
@@ -195,23 +245,21 @@ namespace GSMasterServer.Servers
                 else if (state.Type == LoginSocketState.SocketType.Search)
                     _searchManagerReset.Set();
 
-                state.Socket = client;
-
-                Log(Category, String.Format("[{0}] New Client: {1}:{2}", state.Type, ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
-
+                state.GameSocket = client;
+                
                 if (state.Type == LoginSocketState.SocketType.Client)
                 {
+                    state.ServerSocket = _clientManagerServerSocket;
+                    _clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse("134.209.198.2"), 29900), OnConnect, state);
                     // ClientManager server sends data first
-                    byte[] buffer = LoginServerMessages.GenerateServerChallenge(ref state);
-                    SendToClient(ref state, buffer);
-
-                    if (state != null)
-                    {
-                        state.State++;
-                    }
+                   // byte[] buffer = LoginServerMessages.GenerateServerChallenge(ref state);
+                   // SendToClient(ref state, buffer);
+                   
                 }
                 else if (state.Type == LoginSocketState.SocketType.Search)
                 {
+                    state.ServerSocket = _searchManagerServerSocket;
+                    _searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse("134.209.198.2"), 29901), OnConnect, state);
                     // SearchManager server waits for data first
                 }
             }
@@ -230,20 +278,28 @@ namespace GSMasterServer.Servers
                 state = null;
                 return;
             }
+        }
 
+        private void OnConnect(IAsyncResult ar)
+        {
+            var state = (LoginSocketState)ar.AsyncState;
+
+            state.ServerSocket.EndConnect(ar);
+
+            WaitForServerData(ref state);
             WaitForData(ref state);
         }
 
-        public bool SendToClient(ref LoginSocketState state, byte[] data)
+        public bool SendToServer(ref LoginSocketState state, byte[] data, int count)
         {
-            if (data == null || state == null || state.Socket == null)
+            if (data == null || state == null || state.ServerSocket == null)
                 return false;
 
-            Log("RESP", DataFunctions.BytesToString(data));
+            //Log("RESP", DataFunctions.BytesToString(data));
 
             try
             {
-                state.Socket.BeginSend(data, 0, data.Length, SocketFlags.None, OnSent, state);
+                state.ServerSocket.BeginSend(data, 0, count, SocketFlags.None, OnToServerSent, state);
                 return true;
             }
             catch (NullReferenceException)
@@ -268,17 +324,51 @@ namespace GSMasterServer.Servers
             }
         }
 
-        private void OnSent(IAsyncResult async)
+        public bool SendToGame(ref LoginSocketState state, byte[] data, int count)
+        {
+            if (data == null || state == null || state.GameSocket == null)
+                return false;
+
+            Log("RESP", DataFunctions.BytesToString(data));
+
+            try
+            {
+                state.GameSocket.BeginSend(data, 0, count, SocketFlags.None, OnToGameSent, state);
+                return true;
+            }
+            catch (NullReferenceException)
+            {
+                if (state != null)
+                    state.Dispose();
+                state = null;
+                return false;
+            }
+            catch (SocketException e)
+            {
+                if (e.SocketErrorCode != SocketError.ConnectionAborted &&
+                    e.SocketErrorCode != SocketError.ConnectionReset)
+                {
+                    LogError(Category, "Error sending data");
+                    LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                }
+                if (state != null)
+                    state.Dispose();
+                state = null;
+                return false;
+            }
+        }
+
+        private void OnToServerSent(IAsyncResult async)
         {
             LoginSocketState state = (LoginSocketState)async.AsyncState;
 
-            if (state == null || state.Socket == null)
+            if (state == null || state.ServerSocket == null)
                 return;
 
             try
             {
-                int sent = state.Socket.EndSend(async);
-                Log(Category, String.Format("[{0}] Sent {1} byte response to: {2}:{3}", state.Type, sent, ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
+                int sent = state.ServerSocket.EndSend(async);
+                //Log(Category, String.Format("[{0}] Sent {1} byte response to: {2}:{3}", state.Type, sent, ((IPEndPoint)state.GameSocket.RemoteEndPoint).Address, ((IPEndPoint)state.GameSocket.RemoteEndPoint).Port));
             }
             catch (NullReferenceException)
             {
@@ -307,13 +397,52 @@ namespace GSMasterServer.Servers
             }
         }
 
-        private void WaitForData(ref LoginSocketState state)
+        private void OnToGameSent(IAsyncResult async)
+        {
+            LoginSocketState state = (LoginSocketState)async.AsyncState;
+
+            if (state == null || state.GameSocket == null)
+                return;
+
+            try
+            {
+                int sent = state.GameSocket.EndSend(async);
+                //Log(Category, String.Format("[{0}] Sent {1} byte response to: {2}:{3}", state.Type, sent, ((IPEndPoint)state.GameSocket.RemoteEndPoint).Address, ((IPEndPoint)state.GameSocket.RemoteEndPoint).Port));
+            }
+            catch (NullReferenceException)
+            {
+                if (state != null)
+                    state.Dispose();
+                state = null;
+            }
+            catch (SocketException e)
+            {
+                switch (e.SocketErrorCode)
+                {
+                    case SocketError.ConnectionReset:
+                    case SocketError.Disconnecting:
+                        if (state != null)
+                            state.Dispose();
+                        state = null;
+                        return;
+                    default:
+                        LogError(Category, "Error sending data");
+                        LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                        if (state != null)
+                            state.Dispose();
+                        state = null;
+                        return;
+                }
+            }
+        }
+        
+        private void WaitForServerData(ref LoginSocketState state)
         {
             Thread.Sleep(10);
 
             try
             {
-                state.Socket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, OnDataReceived, state);
+                state.ServerSocket.BeginReceive(state.ServerBuffer, 0, state.ServerBuffer.Length, SocketFlags.None, OnServerDataReceived, state);
             }
             catch (NullReferenceException)
             {
@@ -349,31 +478,83 @@ namespace GSMasterServer.Servers
                 return;
             }
         }
-        private void OnDataReceived(IAsyncResult async)
+
+        private void WaitForData(ref LoginSocketState state)
+        {
+            Thread.Sleep(10);
+
+            try
+            {
+                state.GameSocket.BeginReceive(state.Buffer, 0, state.Buffer.Length, SocketFlags.None, OnGameDataReceived, state);
+            }
+            catch (NullReferenceException)
+            {
+                if (state != null)
+                    state.Dispose();
+                state = null;
+            }
+            catch (ObjectDisposedException)
+            {
+                if (state != null)
+                    state.Dispose();
+                state = null;
+            }
+            catch (SocketException e)
+            {
+                if (e.SocketErrorCode == SocketError.NotConnected)
+                {
+                    if (state != null)
+                        state.Dispose();
+                    state = null;
+                    return;
+                }
+
+                if (e.SocketErrorCode != SocketError.ConnectionAborted &&
+                    e.SocketErrorCode != SocketError.ConnectionReset)
+                {
+                    LogError(Category, "Error receiving data");
+                    LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                }
+
+                if (state != null)
+                    state.Dispose();
+                state = null;
+                return;
+            }
+        }
+
+        private void OnServerDataReceived(IAsyncResult async)
         {
             LoginSocketState state = (LoginSocketState)async.AsyncState;
 
-            if (state == null || state.Socket == null)
+            if (state == null || state.ServerSocket == null)
                 return;
 
             try
             {
                 // receive data from the socket
-                int received = state.Socket.EndReceive(async);
+                int received = state.ServerSocket.EndReceive(async);
                 if (received == 0)
                 {
                     // when EndReceive returns 0, it means the socket on the other end has been shut down.
                     return;
                 }
 
+                //var str = Encoding.UTF8.GetString(state.Buffer, 0, received);
+
                 // take what we received, and append it to the received data buffer
-                state.ReceivedData.Append(Encoding.UTF8.GetString(state.Buffer, 0, received));
-                string receivedData = state.ReceivedData.ToString();
+                //state.ReceivedData.Append(Encoding.UTF8.GetString(state.Buffer, 0, received));
+                //string receivedData = state.ReceivedData.ToString();
+
+                SendToGame(ref state, state.ServerBuffer, received);
+                //SendToServer(ref state, state.Buffer);
+
 
                 // does what we received contain the \final\ delimiter?
-                if (receivedData.LastIndexOf(@"\final\") > -1)
+                /*if (str.LastIndexOf(@"\final\") > -1)
                 {
                     state.ReceivedData.Clear();
+
 
                     // lets split up the message based on the delimiter
                     string[] messages = receivedData.Split(new string[] { @"\final\" }, StringSplitOptions.RemoveEmptyEntries);
@@ -382,7 +563,86 @@ namespace GSMasterServer.Servers
                     {
                         ParseMessage(ref state, messages[i]);
                     }
+                }*/
+            }
+            catch (ObjectDisposedException)
+            {
+                if (state != null)
+                    state.Dispose();
+                state = null;
+                return;
+            }
+            catch (SocketException e)
+            {
+                switch (e.SocketErrorCode)
+                {
+                    case SocketError.ConnectionReset:
+                    case SocketError.Disconnecting:
+                    case SocketError.NotConnected:
+                    case SocketError.TimedOut:
+                        if (state != null)
+                            state.Dispose();
+                        state = null;
+                        return;
+                    default:
+                        LogError(Category, "Error receiving data");
+                        LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                        if (state != null)
+                            state.Dispose();
+                        state = null;
+                        return;
                 }
+            }
+            catch (Exception e)
+            {
+                LogError(Category, "Error receiving data");
+                LogError(Category, e.ToString());
+            }
+
+            // and we wait for more data...
+            WaitForServerData(ref state);
+        }
+
+        private void OnGameDataReceived(IAsyncResult async)
+        {
+            LoginSocketState state = (LoginSocketState)async.AsyncState;
+
+            if (state == null || state.GameSocket == null)
+                return;
+
+            try
+            {
+                // receive data from the socket
+                int received = state.GameSocket.EndReceive(async);
+                if (received == 0)
+                {
+                    // when EndReceive returns 0, it means the socket on the other end has been shut down.
+                    return;
+                }
+
+                //var str = Encoding.UTF8.GetString(state.Buffer, 0, received);
+
+                // take what we received, and append it to the received data buffer
+                //state.ReceivedData.Append(Encoding.UTF8.GetString(state.Buffer, 0, received));
+                //string receivedData = state.ReceivedData.ToString();
+
+                SendToServer(ref state, state.Buffer, received);
+
+
+                // does what we received contain the \final\ delimiter?
+                /*if (str.LastIndexOf(@"\final\") > -1)
+                {
+                    state.ReceivedData.Clear();
+
+
+                    // lets split up the message based on the delimiter
+                    string[] messages = receivedData.Split(new string[] { @"\final\" }, StringSplitOptions.RemoveEmptyEntries);
+
+                    for (int i = 0; i < messages.Length; i++)
+                    {
+                        ParseMessage(ref state, messages[i]);
+                    }
+                }*/
             }
             catch (ObjectDisposedException)
             {
@@ -422,7 +682,7 @@ namespace GSMasterServer.Servers
             WaitForData(ref state);
         }
 
-        private void ParseMessage(ref LoginSocketState state, string message)
+        /*private void ParseMessage(ref LoginSocketState state, string message)
         {
             string query;
             Log("MESSAGE", message);
@@ -445,14 +705,8 @@ namespace GSMasterServer.Servers
                 }
             }
 
-            Log(Category, String.Format("[{0}] Received {1} query from: {2}:{3}", state.Type, query, ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
-
-            /*if (!keyValues.ContainsKey("ka"))
-            {
-				// say no to those not using bf2... Begone evil demon, bf2 for life!
-				return;
-			}*/
-
+            //Log(Category, String.Format("[{0}] Received {1} query from: {2}:{3}", state.Type, query, ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
+            
             switch (state.Type)
             {
                 case LoginSocketState.SocketType.Client:
@@ -462,9 +716,9 @@ namespace GSMasterServer.Servers
                     HandleSearchManager(ref state, query, keyValues);
                     break;
             }
-        }
+        }*/
 
-        private void HandleClientManager(ref LoginSocketState state, string query, Dictionary<string, string> keyValues)
+       /* private void HandleClientManager(ref LoginSocketState state, string query, Dictionary<string, string> keyValues)
         {
             if (state == null || String.IsNullOrWhiteSpace(query) || keyValues == null)
             {
@@ -480,103 +734,30 @@ namespace GSMasterServer.Servers
                 switch (query)
                 {
                     case "login":
-                        SendToClient(ref state, LoginServerMessages.SendProof(ref state, keyValues));
-                        state.StartKeepAlive(this);
+                        //SendToClient(ref state, LoginServerMessages.SendProof(ref state, keyValues));
+                        //state.StartKeepAlive(this);
 
-                        break;
-
-                    case "newuser":
-                        SendToClient(ref state, LoginServerMessages.NewUser(ref state, keyValues));
-                        break;
-
-                    case "getprofile":
-                        SendToClient(ref state, LoginServerMessages.SendProfile(ref state, keyValues, false));
-                        break;
-
-                    case "updatepro":
-                        LoginServerMessages.UpdateProfile(ref state, keyValues);
-                        break;
-
-                    case "status":
-
-                        var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
-
-                        // \status\1\sesskey\17562\statstring\DXP\locstring\-1
-
-                        // userid\200000003\profileid\100000003\uniquenick\Bambochuk
-
-                        //sendBuddies()
-                         // SendToClient(ref state, $@"\bdy\1\list\100000003\final\".ToAssciiBytes());
-                        //SendToClient(ref state, $@"\bdy\0\list\\final\".ToAssciiBytes());
-
-                        // TODO: sendAddRequests();
-
-                        //sendStatusUpdateToBuddies(this);
-
-                        // send self status
-                        // |s|%d|ss|%s%s%s|ip|%d|p|%d|qm|%d
-                        /*
-                        c->status,
-		                c->statusstr,
-		                c->locstr[0] != 0 ? "|ls|" : "",
-		                c->locstr,
-		                reverse_endian32(c->ip),
-		                reverse_endian16(c->port),
-		                c->quietflags
-                        */
-
-                        // SendToClient(ref state, $@"\bm\100\f\100000003\msg\|s|{2}|ss|DXP{"|ls|"}{-1}|ip|{(uint)IPAddress.NetworkToHostOrder((int)IPAddress.Loopback.Address)}|p|{ReverseEndian16(6500)}|qm|{0}\final\".ToAssciiBytes());
-                        //SendToClient(ref state, $@"\bm\100\f\100000002\msg\|s|0|ss|Offline\final\".ToAssciiBytes());
-                         //SendToClient(ref state, $@"\bm\100\f\100000001\msg\|s|{1}|ss|DXP{"|ls|"}{-1}|ip|{(uint)IPAddress.NetworkToHostOrder((int)remoteEndPoint.Address.Address)}|p|{ReverseEndian16(6500)}|qm|{0}\final\".ToAssciiBytes());
-
-
-
-                        // send friend status
-
-
-
-                        break;
-
-                    case "logout":
-                        LoginServerMessages.Logout(ref state, keyValues);
-                        break;
-                    case "registernick":
-                        SendToClient(ref state, DataFunctions.StringToBytes(string.Format(@"\rn\{0}\id\{1}\final\", keyValues["uniquenick"], keyValues["id"])));
-                        break;
-
-                    case "ka":
-                        SendToClient(ref state, $@"\ka\\final\".ToAssciiBytes());
                         break;
 
                     default:
                         break;
                 }
             }
-        }
+        }*/
 
-        UInt32 ReverseEndian32(UInt32 x)
-        { 
-            //little to big or vice versa
-            return (UInt32)(x << 24 | (x << 8 & 0x00ff0000) | x >> 8 & 0x0000ff00 | x >> 24 & 0x000000ff);
-        }
-
-        UInt16 ReverseEndian16(UInt16 x)
-        { 
-            //little to big or vice versa
-            return (UInt16)((x & 0xff00) >> 8 | (x & 0x00ff) << 8);
-        }
-
-        private void HandleSearchManager(ref LoginSocketState state, string query, Dictionary<string, string> keyValues)
+        /*private void HandleSearchManager(ref LoginSocketState state, string query, Dictionary<string, string> keyValues)
         {
             if (state.State == 0)
             {
+                //SendToServer();
+
                 if (query.Equals("nicks", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    SendToClient(ref state, LoginServerMessages.SendNicks(ref state, keyValues));
+                    //SendToClient(ref state, LoginServerMessages.SendNicks(ref state, keyValues));
                 }
                 else if (query.Equals("check", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    SendToClient(ref state, LoginServerMessages.SendCheck(ref state, keyValues));
+                    //SendToClient(ref state, LoginServerMessages.SendCheck(ref state, keyValues));
                 }
             }
             else if (state.State == 1)
@@ -587,7 +768,8 @@ namespace GSMasterServer.Servers
             {
                 state.Dispose();
             }
-        }
+        }*/
+
 
         private static Dictionary<string, string> GetKeyValue(string message, out string query)
         {
@@ -630,74 +812,11 @@ namespace GSMasterServer.Servers
         }
         
         public SocketType Type;
-
-        public Socket Socket = null;
+        
+        public Socket ServerSocket = null;
+        public Socket GameSocket = null;
+        public byte[] ServerBuffer = new byte[8192];
         public byte[] Buffer = new byte[8192];
-        public StringBuilder ReceivedData = new StringBuilder(8192);
-
-        public int State = 0;
-        public int HeartbeatState = 0;
-        public string Session = "";
-
-        public string ServerChallenge;
-        public string ClientChallenge;
-        public string Name;
-        public string Email;
-        public string PasswordEncrypted;
-
-        private Timer _keepAliveTimer;
-
-        public void StartKeepAlive(LoginServer server)
-        {
-            if (_keepAliveTimer != null)
-            {
-                // if the timer already exists, destroy it so we can start a new one...
-                _keepAliveTimer.Dispose();
-            }
-
-            // send a keep alive request every 2 minutes
-            _keepAliveTimer = new Timer(KeepAliveCallback, server, TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(2));
-        }
-
-        private void KeepAliveCallback(object s)
-        {
-            LoginServer server = (LoginServer)s;
-
-            try
-            {
-                if (_keepAliveTimer == null)
-                {
-                    Dispose();
-                    return;
-                }
-
-                LoginSocketState state = this;
-                HeartbeatState++;
-
-                Console.WriteLine("sending keep alive");
-                if (!server.SendToClient(ref state, LoginServerMessages.SendKeepAlive()))
-                {
-                    Dispose();
-                    return;
-                }
-
-                // every 2nd keep alive request, we send an additional heartbeat
-                if (HeartbeatState % 2 == 0)
-                {
-                    Console.WriteLine("sending heartbeat");
-                    if (!server.SendToClient(ref state, LoginServerMessages.SendHeartbeat()))
-                    {
-                        Dispose();
-                        return;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                Server.LogError(LoginServer.Category, "Error running keep alive: " + e);
-                Dispose();
-            }
-        }
 
         public void Dispose()
         {
@@ -711,18 +830,20 @@ namespace GSMasterServer.Servers
             {
                 if (disposing)
                 {
-                    if (Socket != null)
+                    if (GameSocket != null)
                     {
-                        Socket.Shutdown(SocketShutdown.Both);
-                        Socket.Close();
-                        Socket.Dispose();
-                        Socket = null;
+                        GameSocket.Shutdown(SocketShutdown.Both);
+                        GameSocket.Close();
+                        GameSocket.Dispose();
+                        GameSocket = null;
                     }
 
-                    if (_keepAliveTimer != null)
+                    if (ServerSocket != null)
                     {
-                        _keepAliveTimer.Dispose();
-                        _keepAliveTimer = null;
+                        ServerSocket.Shutdown(SocketShutdown.Both);
+                        ServerSocket.Close();
+                        ServerSocket.Dispose();
+                        ServerSocket = null;
                     }
                 }
 

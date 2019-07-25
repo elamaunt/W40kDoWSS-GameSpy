@@ -83,11 +83,11 @@
     <Compile Include="Http\HttpResponse.cs" />
     <Compile Include="Http\QuickMimeTypeMapper.cs" />
     <Compile Include="Http\Route.cs" />
+    <Compile Include="Servers\LoginServerRetranslator.cs" />
     <Compile Include="Servers\Server.cs" />
     <Compile Include="Servers\ServerRetranslator.cs" />
     <Compile Include="Servers\ServerListReport.cs" />
     <Compile Include="Servers\ServerListRetrieve.cs" />
-    <Compile Include="Servers\ServerRetranslationNatNeg.cs" />
     <Compile Include="Utils\ByteHelpers.cs" />
     <Compile Include="Utils\ChatCrypt.cs" />
     <Compile Include="Utils\DynamicLinq.cs" />

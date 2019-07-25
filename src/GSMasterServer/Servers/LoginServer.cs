@@ -641,6 +641,7 @@ namespace GSMasterServer.Servers
 
         public string ServerChallenge;
         public string ClientChallenge;
+        public ulong SteamId;
         public string Name;
         public string Email;
         public string PasswordEncrypted;
