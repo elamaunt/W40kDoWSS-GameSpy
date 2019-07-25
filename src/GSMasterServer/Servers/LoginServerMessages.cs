@@ -45,6 +45,15 @@ namespace GSMasterServer.Servers
                 requiredValues++;
             }
 
+            if (keyValues.ContainsKey("steamid") && ulong.TryParse(keyValues["steamid"], out ulong id))
+            {
+                state.SteamId = id;
+            }
+            else
+            {
+                return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
+            }
+
             if (requiredValues != 2)
            // if (requiredValues != 3)
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
@@ -88,7 +97,7 @@ namespace GSMasterServer.Servers
 					};
 					LoginDatabase.Instance.SetData(state.Name, updateClientData);*/
 
-                    UsersDatabase.Instance.LogLogin(state.Name, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
+                    UsersDatabase.Instance.LogLogin(state.Name, state.SteamId, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
 
                     state.State++;
                     return DataFunctions.StringToBytes(proof);

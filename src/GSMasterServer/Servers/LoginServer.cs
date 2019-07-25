@@ -362,8 +362,7 @@ namespace GSMasterServer.Servers
                 int received = state.Socket.EndReceive(async);
                 if (received == 0)
                 {
-                    // when EndReceive returns 0, it means the socket on the other end has been shut down.
-                    return;
+                    goto CONTINUE;
                 }
 
                 // take what we received, and append it to the received data buffer
@@ -419,7 +418,7 @@ namespace GSMasterServer.Servers
             }
 
             // and we wait for more data...
-            WaitForData(ref state);
+            CONTINUE: WaitForData(ref state);
         }
 
         private void ParseMessage(ref LoginSocketState state, string message)

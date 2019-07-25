@@ -6,7 +6,6 @@ using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using System.Net;
-using System.Runtime.InteropServices;
 
 namespace GSMasterServer.Data
 {
@@ -227,7 +226,7 @@ FROM users WHERE id=@id COLLATE NOCASE", _db);
             _getUsersByName = new SQLiteCommand("SELECT id, steamid, password, email, country, session FROM users WHERE name=@name COLLATE NOCASE", _db);
             _getUsersByName.Parameters.Add("@name", DbType.String);
 
-            _getUsersByEmail = new SQLiteCommand("SELECT id, steamid, name, country, session FROM users WHERE email=@email AND password=@password", _db);
+            _getUsersByEmail = new SQLiteCommand("SELECT id, steamid, name, country, email, password, session FROM users WHERE email=@email AND password=@password", _db);
             _getUsersByEmail.Parameters.Add("@email", DbType.String);
             _getUsersByEmail.Parameters.Add("@password", DbType.String);
 
@@ -238,7 +237,7 @@ FROM users WHERE id=@id COLLATE NOCASE", _db);
             _updateUser.Parameters.Add("@session", DbType.Int64);
             _updateUser.Parameters.Add("@name", DbType.String);
 
-            _createUser = new SQLiteCommand("INSERT INTO users (name, steamid, password, email, country, lastip) VALUES ( @name, @pass, @email, @country, @ip )", _db);
+            _createUser = new SQLiteCommand("INSERT INTO users (name, steamid, password, email, country, lastip) VALUES ( @name, @steamid, @pass, @email, @country, @ip )", _db);
             _createUser.Parameters.Add("@name", DbType.String);
             _createUser.Parameters.Add("@steamid", DbType.UInt64);
             _createUser.Parameters.Add("@pass", DbType.String);
@@ -249,12 +248,14 @@ FROM users WHERE id=@id COLLATE NOCASE", _db);
             _countUsers = new SQLiteCommand("SELECT COUNT(*) FROM users WHERE name=@name COLLATE NOCASE", _db);
             _countUsers.Parameters.Add("@name", DbType.String);
 
-            _logUser = new SQLiteCommand("UPDATE users SET lastip=@ip, lasttime=@time WHERE name=@name COLLATE NOCASE", _db);
+            _logUser = new SQLiteCommand("UPDATE users SET steamid=@steamid, lastip=@ip, lasttime=@time WHERE name=@name COLLATE NOCASE", _db);
+            _logUser.Parameters.Add("@steamid", DbType.UInt64);
             _logUser.Parameters.Add("@ip", DbType.String);
             _logUser.Parameters.Add("@time", DbType.Int64);
             _logUser.Parameters.Add("@name", DbType.String);
 
-            _logUserUpdateCountry = new SQLiteCommand("UPDATE users SET country=@country, lastip=@ip, lasttime=@time WHERE name=@name COLLATE NOCASE", _db);
+            _logUserUpdateCountry = new SQLiteCommand("UPDATE users SET steamid=@steamid country=@country, lastip=@ip, lasttime=@time WHERE name=@name COLLATE NOCASE", _db);
+            _logUserUpdateCountry.Parameters.Add("@steamid", DbType.UInt64);
             _logUserUpdateCountry.Parameters.Add("@country", DbType.String);
             _logUserUpdateCountry.Parameters.Add("@ip", DbType.String);
             _logUserUpdateCountry.Parameters.Add("@time", DbType.Int64);
@@ -472,7 +473,7 @@ WHERE id=@id COLLATE NOCASE", _db);
                             Country = (string)reader["country"],
                             UserId = (Int64)reader["id"] + UserIdOffset,
                             ProfileId =  (Int64)reader["id"] + ProfileIdOffset,
-                            SteamId = (UInt64)reader["steamid"],
+                            SteamId = (UInt64)(Int64)reader["steamid"],
                             Session = (Int64)reader["session"]
                         };
                         
@@ -502,7 +503,7 @@ WHERE id=@id COLLATE NOCASE", _db);
                         data.Id = reader["id"];
                         data.UserId = (Int64)reader["id"] + UserIdOffset;
                         data.ProfileId = (Int64)reader["id"] + ProfileIdOffset;
-                        data.SteamId = (UInt64)reader["steamid"];
+                        data.SteamId = (UInt64)(Int64)reader["steamid"];
 
                         data.Score1v1 = (Int64)reader["score1v1"];
                         data.Score2v2 = (Int64)reader["score2v2"];
@@ -603,7 +604,7 @@ WHERE id=@id COLLATE NOCASE", _db);
                         data.Id = reader["id"];
                         data.UserId = (Int64)reader["id"] + UserIdOffset;
                         data.ProfileId = (Int64)reader["id"] + ProfileIdOffset;
-                        data.SteamId = (UInt64)reader["steamid"];
+                        data.SteamId = (UInt64)(Int64)reader["steamid"];
 
                         data.Score1v1 = (Int64)reader["score1v1"];
                         data.Score2v2 = (Int64)reader["score2v2"];
@@ -669,7 +670,7 @@ WHERE id=@id COLLATE NOCASE", _db);
                             Country = (string)reader["country"],
                             UserId = (Int64)reader["id"] + UserIdOffset,
                             ProfileId = (Int64)reader["id"] + ProfileIdOffset,
-                            SteamId = (UInt64)reader["steamid"],
+                            SteamId = (UInt64)(Int64)reader["steamid"],
                             Session = (Int64)reader["session"]
                         };
 
@@ -699,18 +700,18 @@ WHERE id=@id COLLATE NOCASE", _db);
                     {
                         // loop through all nicks associated with that email/pass combo
 
-                        var data = new UserData()
-                        {
-                            Id = reader["id"],
-                            Name = (string)reader["name"],
-                            Passwordenc = (string)reader["password"],
-                            Email = (string)reader["email"],
-                            Country = (string)reader["country"],
-                            UserId = (Int64)reader["id"] + UserIdOffset,
-                            ProfileId = (Int64)reader["id"] + ProfileIdOffset,
-                            SteamId = (UInt64)reader["steamid"],
-                            Session = (Int64)reader["session"]
-                        };
+                        var data = new UserData();
+
+                        data.Id = reader["id"];
+                        data.SteamId = (UInt64)(Int64)reader["steamid"];
+                        data.Name = (string)reader["name"];
+                        data.Passwordenc = (string)reader["password"];
+                        data.Email = (string)reader["email"];
+                        data.Country = (string)reader["country"];
+                        data.UserId = (Int64)reader["id"] + UserIdOffset;
+                        data.ProfileId = (Int64)reader["id"] + ProfileIdOffset;
+                        data.Session = (Int64)reader["session"];
+                        
                         
                         values.Add(data);
                     }
@@ -739,7 +740,7 @@ WHERE id=@id COLLATE NOCASE", _db);
             }
         }
 
-        public void LogLogin(string name, IPAddress address)
+        public void LogLogin(string name, ulong steamId, IPAddress address)
         {
             if (_db == null)
                 return;
@@ -770,7 +771,7 @@ WHERE id=@id COLLATE NOCASE", _db);
             {
                 lock (_dbLock)
                 {
-
+                    _logUserUpdateCountry.Parameters["@steamid"].Value = (Int64)steamId;
                     _logUserUpdateCountry.Parameters["@country"].Value = country;
                     _logUserUpdateCountry.Parameters["@ip"].Value = address.ToString();
                     _logUserUpdateCountry.Parameters["@time"].Value = DateTime.UtcNow.ToEpochInt();
@@ -783,6 +784,7 @@ WHERE id=@id COLLATE NOCASE", _db);
             {
                 lock (_dbLock)
                 {
+                    _logUser.Parameters["@steamid"].Value = (Int64)steamId;
                     _logUser.Parameters["@ip"].Value = address.ToString();
                     _logUser.Parameters["@time"].Value = DateTime.UtcNow.ToEpochInt();
                     _logUser.Parameters["@name"].Value = name;
@@ -803,7 +805,7 @@ WHERE id=@id COLLATE NOCASE", _db);
             lock (_dbLock)
             {
                 _createUser.Parameters["@name"].Value = username;
-                _createUser.Parameters["@steamid"].Value = steamId;
+                _createUser.Parameters["@steamid"].Value = (Int64)steamId;
                 _createUser.Parameters["@pass"].Value = passwordEncrypted;
                 _createUser.Parameters["@email"].Value = email.ToLowerInvariant();
                 _createUser.Parameters["@country"].Value = country.ToUpperInvariant();

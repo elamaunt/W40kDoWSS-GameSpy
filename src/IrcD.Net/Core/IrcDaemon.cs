@@ -278,7 +278,7 @@ namespace IrcD.Core
             info.InitNick(nick);
             Users[profileId] = info;
             
-            Task.Delay(1000).ContinueWith(t =>
+            Task.Delay(2000).ContinueWith(t =>
             {
                 var rooms = Channels.Where(x => x.Key.StartsWith("#GSP")).ToArray();
 

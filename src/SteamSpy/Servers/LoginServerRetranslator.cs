@@ -1,6 +1,7 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
 using Reality.Net.GameSpy.Servers;
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -17,8 +18,8 @@ namespace GSMasterServer.Servers
         Thread _clientManagerThread;
         Thread _searchManagerThread;
 
-        private static Socket _clientManagerSocket;
-        private static Socket _searchManagerSocket;
+        private static Socket _clientManagerGameSocket;
+        private static Socket _searchManagerGameSocket;
 
         private static Socket _clientManagerServerSocket;
         private static Socket _searchManagerServerSocket;
@@ -67,18 +68,18 @@ namespace GSMasterServer.Servers
                 {
                     Log(Category, "DISPOSING");
 
-                    if (_clientManagerSocket != null)
+                    if (_clientManagerGameSocket != null)
                     {
-                        _clientManagerSocket.Close();
-                        _clientManagerSocket.Dispose();
-                        _clientManagerSocket = null;
+                        _clientManagerGameSocket.Close();
+                        _clientManagerGameSocket.Dispose();
+                        _clientManagerGameSocket = null;
                     }
 
-                    if (_searchManagerSocket != null)
+                    if (_searchManagerGameSocket != null)
                     {
-                        _searchManagerSocket.Close();
-                        _searchManagerSocket.Dispose();
-                        _searchManagerSocket = null;
+                        _searchManagerGameSocket.Close();
+                        _searchManagerGameSocket.Dispose();
+                        _searchManagerGameSocket = null;
                     }
 
                     if (_searchManagerServerSocket != null)
@@ -114,7 +115,7 @@ namespace GSMasterServer.Servers
 
             try
             {
-                _clientManagerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                _clientManagerGameSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
                 {
                     SendTimeout = 30000,
                     ReceiveTimeout = 30000,
@@ -123,10 +124,10 @@ namespace GSMasterServer.Servers
                     Blocking = false
                 };
 
-                _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
-                _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+                _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+                _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
                 _clientManagerServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
                 {
@@ -142,9 +143,9 @@ namespace GSMasterServer.Servers
                 _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
                 _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
-                _clientManagerSocket.Bind(new IPEndPoint(info.Address, info.Port));
+                _clientManagerGameSocket.Bind(new IPEndPoint(info.Address, info.Port));
                 _clientManagerServerSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
-                _clientManagerSocket.Listen(10);
+                _clientManagerGameSocket.Listen(10);
             }
             catch (Exception e)
             {
@@ -160,10 +161,10 @@ namespace GSMasterServer.Servers
                 LoginSocketState state = new LoginSocketState()
                 {
                     Type = LoginSocketState.SocketType.Client,
-                    GameSocket = _clientManagerSocket
+                    GameSocket = _clientManagerGameSocket
                 };
 
-                _clientManagerSocket.BeginAccept(AcceptCallback, state);
+                _clientManagerGameSocket.BeginAccept(AcceptCallback, state);
                 _clientManagerReset.WaitOne();
             }
         }
@@ -176,7 +177,7 @@ namespace GSMasterServer.Servers
 
             try
             {
-                _searchManagerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                _searchManagerGameSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
                 {
                     SendTimeout = 5000,
                     ReceiveTimeout = 5000,
@@ -184,10 +185,10 @@ namespace GSMasterServer.Servers
                     ReceiveBufferSize = 8192,
                     Blocking = false
                 };
-                _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
-                _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+                _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+                _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
                 _searchManagerServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
                 {
@@ -203,10 +204,10 @@ namespace GSMasterServer.Servers
                 _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
 
-                _searchManagerSocket.Bind(new IPEndPoint(info.Address, info.Port));
+                _searchManagerGameSocket.Bind(new IPEndPoint(info.Address, info.Port));
                 _searchManagerServerSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
 
-                _searchManagerSocket.Listen(10);
+                _searchManagerGameSocket.Listen(10);
             }
             catch (Exception e)
             {
@@ -222,10 +223,10 @@ namespace GSMasterServer.Servers
                 LoginSocketState state = new LoginSocketState()
                 {
                     Type = LoginSocketState.SocketType.Search,
-                    GameSocket = _searchManagerSocket
+                    GameSocket = _searchManagerGameSocket
                 };
 
-                _searchManagerSocket.BeginAccept(AcceptCallback, state);
+                _searchManagerGameSocket.BeginAccept(AcceptCallback, state);
                 _searchManagerReset.WaitOne();
             }
         }
@@ -250,17 +251,19 @@ namespace GSMasterServer.Servers
                 if (state.Type == LoginSocketState.SocketType.Client)
                 {
                     state.ServerSocket = _clientManagerServerSocket;
-                    _clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse("134.209.198.2"), 29900), OnConnect, state);
-                    // ClientManager server sends data first
-                   // byte[] buffer = LoginServerMessages.GenerateServerChallenge(ref state);
-                   // SendToClient(ref state, buffer);
-                   
+                    if (_clientManagerServerSocket.Connected)
+                        _clientManagerServerSocket.Disconnect(true);
+                    //_clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse("134.209.198.2"), 29900), OnConnect, state);
+                    _clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 29902), OnConnect, state);
+
                 }
                 else if (state.Type == LoginSocketState.SocketType.Search)
                 {
                     state.ServerSocket = _searchManagerServerSocket;
-                    _searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse("134.209.198.2"), 29901), OnConnect, state);
-                    // SearchManager server waits for data first
+                    if (_searchManagerServerSocket.Connected)
+                        _searchManagerServerSocket.Disconnect(true);
+                   // _searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse("134.209.198.2"), 29901), OnConnect, state);
+                    _searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 29903), OnConnect, state);
                 }
             }
             catch (NullReferenceException)
@@ -295,7 +298,19 @@ namespace GSMasterServer.Servers
             if (data == null || state == null || state.ServerSocket == null)
                 return false;
 
-            //Log("RESP", DataFunctions.BytesToString(data));
+            var bytes = new byte[count];
+            Array.Copy(data, bytes, count);
+
+            var str = DataFunctions.BytesToString(bytes);
+            Log(Category, "RETR >> " + str);
+
+            if (str.StartsWith("\\login\\") || str.StartsWith("\\newuser\\"))
+            {
+                str = AddSteamIdBeforeFinal(str, "\\final\\");
+                data = DataFunctions.StringToBytes(str);
+                count = data.Length;
+                Log(Category, "RETRCHANGED >> " + str);
+            }
 
             try
             {
@@ -324,12 +339,17 @@ namespace GSMasterServer.Servers
             }
         }
 
+        private string AddSteamIdBeforeFinal(string str, string key)
+        {
+            return str.Insert(str.IndexOf(key), $@"\steamid\{SteamUser.GetSteamID().m_SteamID}");
+        }
+
         public bool SendToGame(ref LoginSocketState state, byte[] data, int count)
         {
             if (data == null || state == null || state.GameSocket == null)
                 return false;
 
-            Log("RESP", DataFunctions.BytesToString(data));
+            //Log("RESP", DataFunctions.BytesToString(data));
 
             try
             {
@@ -536,8 +556,7 @@ namespace GSMasterServer.Servers
                 int received = state.ServerSocket.EndReceive(async);
                 if (received == 0)
                 {
-                    // when EndReceive returns 0, it means the socket on the other end has been shut down.
-                    return;
+                    goto CONTINUE;
                 }
 
                 //var str = Encoding.UTF8.GetString(state.Buffer, 0, received);
@@ -600,7 +619,7 @@ namespace GSMasterServer.Servers
             }
 
             // and we wait for more data...
-            WaitForServerData(ref state);
+            CONTINUE: WaitForServerData(ref state);
         }
 
         private void OnGameDataReceived(IAsyncResult async)
@@ -616,8 +635,7 @@ namespace GSMasterServer.Servers
                 int received = state.GameSocket.EndReceive(async);
                 if (received == 0)
                 {
-                    // when EndReceive returns 0, it means the socket on the other end has been shut down.
-                    return;
+                    goto CONTINUE;
                 }
 
                 //var str = Encoding.UTF8.GetString(state.Buffer, 0, received);
@@ -678,8 +696,8 @@ namespace GSMasterServer.Servers
                 LogError(Category, e.ToString());
             }
 
-            // and we wait for more data...
-            WaitForData(ref state);
+        // and we wait for more data...
+        CONTINUE: WaitForData(ref state);
         }
 
         /*private void ParseMessage(ref LoginSocketState state, string message)
