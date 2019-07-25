@@ -45,6 +45,9 @@ namespace IrcD.Commands
                 return;
             }
 
+            // Тестовый вывод подключения в авто
+            info.WriteServerPrivateMessage($@"{info.Nick} {args[0]}");
+
             foreach (var channel in from temp in GetSubArgument(args[0])
                                     where info.UserPerChannelInfos.All(upci => upci.ChannelInfo.Name != temp)
                                     select temp)
