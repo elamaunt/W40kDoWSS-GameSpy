@@ -1,5 +1,6 @@
 ﻿using GSMasterServer.Servers;
 using Steamworks;
+using System;
 using System.Collections.Concurrent;
 using System.Net;
 
@@ -15,12 +16,15 @@ namespace SteamSpy.Utils
 
         private static void OnSessionCallbackReceived(P2PSessionRequest_t param)
         {
+            Console.WriteLine($"AcceptP2PSessionWithUser {param.m_steamIDRemote}");
             SteamNetworking.AcceptP2PSessionWithUser(param.m_steamIDRemote);
         }
 
         private static void OnSessionConnectFailReceived(P2PSessionConnectFail_t param)
         {
-            //var error = (EP2PSessionError)param.m_eP2PSessionError;
+            var error = (EP2PSessionError)param.m_eP2PSessionError;
+
+            Console.WriteLine($"OnSessionConnectFailReceived {param.m_steamIDRemote} {error}");
 
             if (PortBindings.TryRemove(param.m_steamIDRemote, out ServerRetranslator retranslator))
             {
@@ -56,15 +60,15 @@ namespace SteamSpy.Utils
 
                 if (SteamNetworking.ReadP2PPacket(_receiveBuffer, size, out bytesReaded, out remoteSteamId))
                 {
-                    if (SteamNetworking.GetP2PSessionState(remoteSteamId, out state))
-                    {
-                        if (state.m_bConnectionActive == 1)
-                        {
+                   // if (SteamNetworking.GetP2PSessionState(remoteSteamId, out state))
+                   // {
+                   //     if (state.m_bConnectionActive == 1)
+                   //     {
                             var retranslator = PortBindings.GetOrAdd(remoteSteamId, steamId => new ServerRetranslator(steamId));
 
                             retranslator.Send(_receiveBuffer, size);
-                        }
-                    }
+                   //     }
+                   // }
                 }
             }
         }

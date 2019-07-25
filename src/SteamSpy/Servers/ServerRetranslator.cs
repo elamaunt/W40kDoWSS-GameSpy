@@ -1,4 +1,5 @@
 ﻿using GSMasterServer.Data;
+using SteamSpy.Utils;
 using Steamworks;
 using System;
 using System.Linq;
@@ -147,17 +148,19 @@ namespace GSMasterServer.Servers
             {
                 LocalPoint = e.RemoteEndPoint as IPEndPoint;
 
-                byte[] receivedBytes = new byte[e.BytesTransferred];
-                Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
+                //byte[] receivedBytes = new byte[e.BytesTransferred];
+                //Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
 
-                var str = Encoding.UTF8.GetString(receivedBytes);
+                //var str = Encoding.UTF8.GetString(receivedBytes);
 
                 // there by a bunch of different message formats...
-                //Log(Category, ">> "+str);
+                //Log(Category, $">> {RemoteUserSteamId} "+str);
 
                 //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
-                SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, (uint)e.BytesTransferred, EP2PSend.k_EP2PSendUnreliableNoDelay);
+
+
+                SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, (uint)e.BytesTransferred, EP2PSend.k_EP2PSendReliable);
             }
             catch (Exception ex)
             {
@@ -172,12 +175,12 @@ namespace GSMasterServer.Servers
             try
             {
                 var s = (int)size;
-                var str = Encoding.UTF8.GetString(buffer, 0, s);
+                //var str = Encoding.UTF8.GetString(buffer, 0, s);
                 
-                Log(Category, "<= " + str);
+                //Log(Category, $"<= {RemoteUserSteamId} :: " + str);
 
                 // there by a bunch of different message formats...
-                Log(Category,"<= BYTES:"+ string.Join(" ", buffer.Where((b,i) => i< size).Select(x => x.ToString())));
+                //Log(Category,"<= BYTES:"+ string.Join(" ", buffer.Where((b,i) => i< size).Select(x => x.ToString())));
 
                 int m = 0;
                 if (size > 4 &&
@@ -195,11 +198,17 @@ namespace GSMasterServer.Servers
                             buffer[k+3] == 52 
                             )
                         {
-                            buffer[k] = 82;
-                            buffer[k + 1] = 193;
-                            buffer[k + 2] = 155;
-                            buffer[k + 3] = 2;
-                            buffer[k + 4] = (byte)(buffer[k + 4] + 1);
+                            buffer[k] = 127;
+                            buffer[k + 1] = 0;
+                            buffer[k + 2] = 0;
+                            buffer[k + 3] = 1;
+
+                            var port = PortBindingManager.AddOrUpdatePortBinding(new CSteamID(76561198159080624)).Port;
+                            var portBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(port).Reverse().ToArray() : BitConverter.GetBytes(port);
+
+                            buffer[k + 4] = portBytes[1];
+                            buffer[k + 5] = portBytes[0];
+
                             break;
                         }
                     }
