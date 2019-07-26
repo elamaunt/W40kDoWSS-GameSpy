@@ -27,3 +27,6 @@ GameSpy emulation and other services to play Warhammer 40k DoW through the Inter
 127.0.0.1 www.gamespyarcade.com<br />
 127.0.0.1 chat.master.gamespy.com<br />
 127.0.0.1 thq.vo.llnwd.net<br />
+
+## Dowstats integration
+To setup custom dowstats server add to server environment variable "dowstatsServer" (someAnotherDowstats.ru) and "dowstatsVersion" (108).  Without environment paramethers game stats will send to dowstats.ru. 
