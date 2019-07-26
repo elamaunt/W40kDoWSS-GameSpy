@@ -45,8 +45,8 @@ namespace IrcD.Commands
                 return;
             }
 
-            // Тестовый вывод подключения в авто
-            info.WriteServerPrivateMessage($@"{info.Nick} {args[0]}");
+            // Тестовый вывод подключения к чату
+            info.WriteServerPrivateMessage($@"{info.Nick} {string.Join(" подключение ", args)}");
 
             foreach (var channel in from temp in GetSubArgument(args[0])
                                     where info.UserPerChannelInfos.All(upci => upci.ChannelInfo.Name != temp)

@@ -24,6 +24,7 @@ namespace SteamSpy
             ServerListRetrieve serverListRetrieve = new ServerListRetrieve(bind, 28910);
 
             LoginServerRetranslator loginMasterServer = new LoginServerRetranslator(bind, 29900, 29901);
+            ChatServerRetranslator chatServer = new ChatServerRetranslator(bind, 6667);
             /*
              ChatServer chatServer = new ChatServer(bind, 6667);
              HttpServer httpServer = new HttpServer(bind, 80);
