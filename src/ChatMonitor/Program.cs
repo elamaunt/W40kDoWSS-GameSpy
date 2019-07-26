@@ -16,46 +16,100 @@ namespace ChatMonitor
         static Socket _socket;
         static byte[] _readbuffer;
 
+        public static uint ConvertFromIpAddressToInteger(string ipAddress)
+        {
+            var address = IPAddress.Parse(ipAddress);
+            byte[] bytes = address.GetAddressBytes();
+
+            // flip big-endian(network order) to little-endian
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
+
+            return BitConverter.ToUInt32(bytes, 0);
+        }
+
+        public static string ConvertFromIntegerToIpAddress(uint ipAddress)
+        {
+            byte[] bytes = BitConverter.GetBytes(ipAddress);
+
+            // flip little-endian to big-endian(network order)
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
+
+            return new IPAddress(bytes).ToString();
+        }
+
         static void Main(string[] args)
         {
-           var ids = LoadSteamIds(new List<string>() { "elamaunt" }).Result;
+            // 127.0.0.1:6112
+            //  Mllaal1K9M
 
-          /* var str = "??   &   {f29e528f-2461-4387-9443-84db458a8592}    B a m b o c h u k                   K04W        B a m b o c h u k     ?????      ?     ??BK04W   g i g a m o k       ???      ?       dxp2   1.0    :~?";
+            /*var loopbackBytes = IPAddress.Loopback.GetAddressBytes();
+            var ip1 = BitConverter.ToInt32(loopbackBytes, 0);
+            var ip2 = BitConverter.ToInt32(loopbackBytes.Reverse().ToArray(), 0);
 
-            var bytesString = @"254 254 0 0 2 0 2 4 1 38 0 0 0 123 102 50 57 101 53 50 56 102 45 50 52 54 49 45 52 51 56 55 45 57 52 52 51 45 56 52 100 98 52 53 56 97 56 53 57 50 125 9 0 0 0 66 0 97 0 109 0 98 0 111 0 99 0 104 0 117 0 107 0 0 0 0 0 2 0 0 0 4 0 0 0 0 0 0 0 0 2 0 0 0 2 75 48 52 87 9 0 0 0 66 0 97 0 109 0 98 0 111 0 99 0 104 0 117 0 107 0 1 1 0 0 0 0 192 168 159 128 224 23 0 0 0 0 127 0 0 1 224 23 0 0 0 0 0 216 1 233 66 75 48 52 87 7 0 0 0 103 0 105 0 103 0 97 0 109 0 111 0 107 0 0 0 0 0 0 0 192 168 1 31 224 23 0 0 0 0 127 0 0 1 224 23 20 0 0 0 20 0 4 0 0 0 100 120 112 50 3 0 0 0 49 46 48 0 0 0 0 19 58 126 222";
-            var bytes = bytesString.Split(" ").Select(x => byte.Parse(x)).ToArray();
+            var buffer = new byte[32];
 
-            var c = (byte)'}';
-            var b = (byte)'B';
+            buffer = ChatCrypt.PiStagingRoomHash(ip1, ip1, 6112, buffer);*/
 
-            var index = Array.IndexOf(bytes, c);
+            var ip = ConvertFromIpAddressToInteger("127.0.0.1");
 
-            index++;
+            var buffer = new byte[32];
+            var val = Encoding.ASCII.GetString(ChatCrypt.PiStagingRoomHash(ip, ip, 6112, buffer, true));
+            var val2 = Encoding.ASCII.GetString(ChatCrypt.PiStagingRoomHash(ip, ip, 6112, buffer, false));
 
-            for (int i = index; i < bytes.Length-4; i++)
-            {
-                if (bytes[i] == 'K' &&
-                    bytes[i+1] == '0' &&
-                    bytes[i+2] == '4' &&
-                    bytes[i+3] == 'W')
-                {
-                    var nickLength = bytes[i+4];
+            // var bytes1 = "Mllaal1K9M".ToAssciiBytes();
+            // var bytes2 = Encoding.UTF8.GetBytes("Mllaal1K9M");
 
-                    var nickStart = i + 4 + 3;
-                    var nickEnd = nickStart + (nickLength << 1);
-                    
-                    var nick = BetweenAsChars(bytes, nickStart, nickEnd);
+            /*  var ip1 = ConvertFromIntegerToIpAddress(ChatCrypt.DecodeIP(bytes1, true));
+              var ip2 = ChatCrypt.DecodeIP(bytes1, false);
+              var ip3 = ChatCrypt.DecodeIP(bytes2, true);
+              var ip4 = ChatCrypt.DecodeIP(bytes2, false);*/
 
-                    var pointStart = nickEnd + 7;
-                    var pointEnd = pointStart + 6;
+            int i = 0;
 
-                    var ipEndPoint = Between(bytes, pointStart, pointEnd);
+           //var ids = LoadSteamIds(new List<string>() { "elamaunt" }).Result;
 
-                    Console.WriteLine(nick);
-                    Console.WriteLine(ipEndPoint);
-                    // Console.WriteLine(Between(bytes, i + 4, i + 4 + 57));
-                }
-            }*/
+            /* var str = "??   &   {f29e528f-2461-4387-9443-84db458a8592}    B a m b o c h u k                   K04W        B a m b o c h u k     ?????      ?     ??BK04W   g i g a m o k       ???      ?       dxp2   1.0    :~?";
+
+              var bytesString = @"254 254 0 0 2 0 2 4 1 38 0 0 0 123 102 50 57 101 53 50 56 102 45 50 52 54 49 45 52 51 56 55 45 57 52 52 51 45 56 52 100 98 52 53 56 97 56 53 57 50 125 9 0 0 0 66 0 97 0 109 0 98 0 111 0 99 0 104 0 117 0 107 0 0 0 0 0 2 0 0 0 4 0 0 0 0 0 0 0 0 2 0 0 0 2 75 48 52 87 9 0 0 0 66 0 97 0 109 0 98 0 111 0 99 0 104 0 117 0 107 0 1 1 0 0 0 0 192 168 159 128 224 23 0 0 0 0 127 0 0 1 224 23 0 0 0 0 0 216 1 233 66 75 48 52 87 7 0 0 0 103 0 105 0 103 0 97 0 109 0 111 0 107 0 0 0 0 0 0 0 192 168 1 31 224 23 0 0 0 0 127 0 0 1 224 23 20 0 0 0 20 0 4 0 0 0 100 120 112 50 3 0 0 0 49 46 48 0 0 0 0 19 58 126 222";
+              var bytes = bytesString.Split(" ").Select(x => byte.Parse(x)).ToArray();
+
+              var c = (byte)'}';
+              var b = (byte)'B';
+
+              var index = Array.IndexOf(bytes, c);
+
+              index++;
+
+              for (int i = index; i < bytes.Length-4; i++)
+              {
+                  if (bytes[i] == 'K' &&
+                      bytes[i+1] == '0' &&
+                      bytes[i+2] == '4' &&
+                      bytes[i+3] == 'W')
+                  {
+                      var nickLength = bytes[i+4];
+
+                      var nickStart = i + 4 + 3;
+                      var nickEnd = nickStart + (nickLength << 1);
+
+                      var nick = BetweenAsChars(bytes, nickStart, nickEnd);
+
+                      var pointStart = nickEnd + 7;
+                      var pointEnd = pointStart + 6;
+
+                      var ipEndPoint = Between(bytes, pointStart, pointEnd);
+
+                      Console.WriteLine(nick);
+                      Console.WriteLine(ipEndPoint);
+                      // Console.WriteLine(Between(bytes, i + 4, i + 4 + 57));
+                  }
+              }*/
 
             //K04W
 

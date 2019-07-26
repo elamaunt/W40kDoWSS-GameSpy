@@ -175,7 +175,7 @@ namespace GSMasterServer.Servers
 
                 var count = (uint)e.BytesTransferred;
 
-                if (count < 1000)
+                if (count < 900)
                     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliableNoDelay);
                 else
                     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendReliable);

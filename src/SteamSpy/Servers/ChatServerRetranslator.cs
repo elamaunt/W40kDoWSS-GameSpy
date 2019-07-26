@@ -1,6 +1,5 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
-using Reality.Net.GameSpy.Servers;
 using SteamSpy.Utils;
 using System;
 using System.IO;
@@ -20,7 +19,8 @@ namespace GSMasterServer.Servers
         Socket _serverSocket;
         Socket _newPeerAceptingsocket;
         readonly ManualResetEvent _reset = new ManualResetEvent(false);
-        // public readonly static IrcDaemon IrcDaemon = new IrcDaemon(IrcMode.Modern);
+
+        public string ChatNick { get; private set; }
 
         public static byte[] Gamename;
         public static byte[] Gamekey = null;
@@ -203,11 +203,11 @@ namespace GSMasterServer.Servers
                     return;
 
                 var buffer = state.GameBuffer;
-                
-                 using (var ms = new MemoryStream(buffer, 0, received))
-                 {
-                     if (!state.Encoded)
-                     {
+
+                using (var ms = new MemoryStream(buffer, 0, received))
+                {
+                    if (!state.Encoded)
+                    {
                         using (var reader = new StreamReader(ms))
                         {
                             var asciValue = reader.ReadToEnd();
@@ -267,40 +267,41 @@ namespace GSMasterServer.Servers
 
                             }
                         }
-                     }
-                     else
-                     {
-                         using (var reader = new BinaryReader(ms, Encoding.ASCII))
-                         {
-                             var start = ms.Position;
+                    }
+                    else
+                    {
+                        using (var reader = new BinaryReader(ms, Encoding.ASCII))
+                        {
+                            var start = ms.Position;
 
-                             var bytes = reader.ReadBytes((int)(ms.Length - ms.Position));
+                            var bytes = reader.ReadBytes((int)(ms.Length - ms.Position));
 
-                             byte* bytesPtr = stackalloc byte[bytes.Length];
+                            byte* bytesPtr = stackalloc byte[bytes.Length];
 
-                             for (int i = 0; i < bytes.Length; i++)
-                                 bytesPtr[i] = bytes[i];
+                            for (int i = 0; i < bytes.Length; i++)
+                                bytesPtr[i] = bytes[i];
 
-                             ChatCrypt.GSEncodeDecode(state.ClientKey, bytesPtr, bytes.Length);
+                            ChatCrypt.GSEncodeDecode(state.ClientKey, bytesPtr, bytes.Length);
 
-                             for (int i = 0; i < bytes.Length; i++)
-                                 bytes[i] = bytesPtr[i];
+                            for (int i = 0; i < bytes.Length; i++)
+                                bytes[i] = bytesPtr[i];
 
-                             var utf8alue = Encoding.UTF8.GetString(bytes);
+                            var utf8alue = Encoding.UTF8.GetString(bytes);
 
-                             Log("CHATDATA", utf8alue);
+                            Log("CHATDATA", utf8alue);
 
-                             if (utf8alue.StartsWith("LOGIN"))
-                             {
-                                 var nick = utf8alue.Split(' ')[2];
+                            if (utf8alue.StartsWith("LOGIN"))
+                            {
+                                var nick = utf8alue.Split(' ')[2];
 
-                                 //var userData = UsersDatabase.Instance.GetUserData(nick);
+                                ChatNick = nick;
+                                //var userData = UsersDatabase.Instance.GetUserData(nick);
 
                                 // state.UserInfo = IrcDaemon.RegisterNewUser(state.Socket, nick, userData.ProfileId, state, SendToClient);
 
-                                 //var bytesToSend = $":s 707 {nick} 12345678 {userData.ProfileId}\r\n".ToAssciiBytes();
+                                //var bytesToSend = $":s 707 {nick} 12345678 {userData.ProfileId}\r\n".ToAssciiBytes();
 
-                                 //fixed (byte* bytesToSendPtr = bytesToSend)
+                                //fixed (byte* bytesToSendPtr = bytesToSend)
                                 //     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
 
                                 _serverSocket.Send(buffer, received, SocketFlags.None);
@@ -308,30 +309,52 @@ namespace GSMasterServer.Servers
                                 // SendToClient(ref state, bytesToSend);
 
                                 goto CONTINUE;
-                             }
+                            }
 
-                             if (utf8alue.StartsWith("USRIP"))
-                             {
-                                 var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
+                            if (utf8alue.StartsWith("USRIP"))
+                            {
+                                /*var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
 
-                                 var bytesToSend = $":s 302  :=+@{remoteEndPoint.Address}\r\n".ToAssciiBytes();
+                                var bytesToSend = $":s 302  :=+@{remoteEndPoint.Address}\r\n".ToAssciiBytes();
 
-                                 fixed (byte* bytesToSendPtr = bytesToSend)
-                                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
+                                fixed (byte* bytesToSendPtr = bytesToSend)
+                                    ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);*/
 
                                 _serverSocket.Send(buffer, received, SocketFlags.None);
 
                                 // SendToClient(ref state, bytesToSend);
 
                                 goto CONTINUE;
-                             }
+                            }
+
+                            if (utf8alue.StartsWith("JOIN"))
+                            {
+                                // JOIN #GPG!1
+                                //JOIN #GSP!whamdowfr!Mllaal1K9M \n\r
+
+                                var channelName = utf8alue.Split(new string[] { " ", "\n\r" }, StringSplitOptions.RemoveEmptyEntries)[1];
+
+                                if (channelName.StartsWith("#GSP!whamdowfr!", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    if (channelName.Length == 25)
+                                    {
+                                        var encodedEndPoint = channelName.Substring(15, 10);
+
+                                        // TODO: decode endpoint
+                                    }
+                                }
+
+
+                                _serverSocket.Send(buffer, received, SocketFlags.None);
+                                goto CONTINUE;
+                            }
 
                             _serverSocket.Send(buffer, received, SocketFlags.None);
-                            
+
                             //IrcDaemon.ProcessSocketMessage(state.UserInfo, utf8alue);
                         }
                     }
-                 }
+                }
             }
             catch (ObjectDisposedException)
             {
