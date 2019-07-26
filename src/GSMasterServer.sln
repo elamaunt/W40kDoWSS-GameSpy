@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChatMonitor", "ChatMonitor\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GSMasterServer", "GSMasterServer\GSMasterServer.csproj", "{92AF1B33-20B9-45A2-9333-DEEB59969B0C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Installer", "Installer\Installer.csproj", "{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{92AF1B33-20B9-45A2-9333-DEEB59969B0C}.Release|x64.Build.0 = Release|Any CPU
 		{92AF1B33-20B9-45A2-9333-DEEB59969B0C}.Release|x86.ActiveCfg = Release|Any CPU
 		{92AF1B33-20B9-45A2-9333-DEEB59969B0C}.Release|x86.Build.0 = Release|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Debug|x64.Build.0 = Debug|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Debug|x86.Build.0 = Debug|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Release|x64.ActiveCfg = Release|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Release|x64.Build.0 = Release|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Release|x86.ActiveCfg = Release|Any CPU
+		{ADC66CF9-CB3E-4628-88D8-C2D35A71621B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
