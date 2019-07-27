@@ -66,7 +66,7 @@ namespace SteamSpy.Utils
                    //     {
                             var retranslator = PortBindings.GetOrAdd(remoteSteamId, steamId => new ServerRetranslator(steamId));
 
-                            retranslator.Send(_receiveBuffer, size);
+                            retranslator.SendToGame(_receiveBuffer, size);
                    //     }
                    // }
                 }

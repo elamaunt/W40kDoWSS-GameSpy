@@ -558,10 +558,10 @@ namespace GSMasterServer.Servers
                 //var localportBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport);
                 var retranslationPortBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(retranslationPort).Reverse() : BitConverter.GetBytes(retranslationPort);
 
-                var localPortBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse().ToArray() : BitConverter.GetBytes(localport);
+                //var localPortBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse().ToArray() : BitConverter.GetBytes(localport);
                
                 server["hostport"] = retranslationPort.ToString();
-                server["localport"] = queryPort.ToString();
+                server["localport"] = retranslationPort.ToString();
 
                 var flags = ServerFlags.UNSOLICITED_UDP_FLAG |
                     ServerFlags.PRIVATE_IP_FLAG |

@@ -188,7 +188,7 @@ namespace GSMasterServer.Servers
             WaitForData();
         }
 
-        public void Send(byte[] buffer, uint size)
+        public void SendToGame(byte[] buffer, uint size)
         {
             try
             {
@@ -220,6 +220,17 @@ namespace GSMasterServer.Servers
                                 _socket?.SendTo(buffer, s, SocketFlags.None, LocalPoint ?? GameEndPoint);
                         });
                     
+                    return;
+                }
+
+                var index = str.IndexOf("hostport", StringComparison.Ordinal);
+
+                if (index != -1)
+                {
+                    var bytes = Encoding.UTF8.GetBytes(str.Replace("6112", Port.ToString()));
+
+                    _socket?.SendTo(bytes, bytes.Length, SocketFlags.None, LocalPoint ?? GameEndPoint);
+
                     return;
                 }
                 
