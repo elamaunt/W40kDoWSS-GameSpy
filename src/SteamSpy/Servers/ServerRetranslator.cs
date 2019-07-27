@@ -168,7 +168,7 @@ namespace GSMasterServer.Servers
                 var str = Encoding.UTF8.GetString(receivedBytes);
 
                 // there by a bunch of different message formats...
-                Log(Category, $">> {RemoteUserSteamId} "+str);
+                //Log(Category, $">> {RemoteUserSteamId} "+str);
 
                 //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
@@ -195,7 +195,7 @@ namespace GSMasterServer.Servers
                 var s = (int)size;
                 var str = Encoding.UTF8.GetString(buffer, 0, s);
                 
-                Log(Category, $"<= {RemoteUserSteamId} :: " + str);
+                //Log(Category, $"<= {RemoteUserSteamId} :: " + str);
 
                 // there by a bunch of different message formats...
                 //Log(Category,"<= BYTES:"+ string.Join(" ", buffer.Where((b,i) => i< size).Select(x => x.ToString())));
