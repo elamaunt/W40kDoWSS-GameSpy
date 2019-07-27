@@ -39,6 +39,9 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>SteamSpy.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Reality.Net, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -142,6 +145,7 @@
     </None>
     <None Include="Resources\Files\AutomatchDefaults.lua" />
     <None Include="Resources\Files\LobbyRooms.lua" />
+    <None Include="SteamSpy.manifest" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
