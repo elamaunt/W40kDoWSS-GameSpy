@@ -49,8 +49,7 @@ namespace SteamSpy.Utils
             uint size, bytesReaded;
             CSteamID remoteSteamId;
             P2PSessionState_t state;
-
-
+            
             while (SteamNetworking.IsP2PPacketAvailable(out size))
             {
                 if (size == 0)

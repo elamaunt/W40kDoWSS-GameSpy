@@ -148,7 +148,7 @@ namespace GSMasterServer.Servers
 
                              var line = reader.ReadLine();
 
-                            if (line.StartsWith("CRYPT"))
+                            if (line.StartsWith("CRYPT", StringComparison.OrdinalIgnoreCase))
                             {
                                 state.Encoded = true;
                                 
@@ -174,6 +174,7 @@ namespace GSMasterServer.Servers
 
                                 var clientKey = new ChatCrypt.GDCryptKey();
                                 var serverKey = new ChatCrypt.GDCryptKey();
+                                var serverKeyClone = new ChatCrypt.GDCryptKey();
 
                                 fixed (byte* challPtr = chall)
                                 {
@@ -181,11 +182,13 @@ namespace GSMasterServer.Servers
                                     {
                                         ChatCrypt.GSCryptKeyInit(clientKey, challPtr, gamekeyPtr, Gamekey.Length);
                                         ChatCrypt.GSCryptKeyInit(serverKey, challPtr, gamekeyPtr, Gamekey.Length);
+                                        ChatCrypt.GSCryptKeyInit(serverKeyClone, challPtr, gamekeyPtr, Gamekey.Length);
                                     }
                                 }
 
                                 state.ClientKey = clientKey;
                                 state.ServerKey = serverKey;
+                                state.ServerKeyClone = serverKeyClone;
 
                                 SendToClient(ref state, DataFunctions.StringToBytes(":s 705 * 0000000000000000 0000000000000000\r\n"));
                             }
@@ -217,7 +220,7 @@ namespace GSMasterServer.Servers
 
                             Log("CHATDATA", utf8alue);
 
-                            if (utf8alue.StartsWith("LOGIN"))
+                            if (utf8alue.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase))
                             {
                                 var nick = utf8alue.Split(' ')[2];
 
@@ -235,7 +238,7 @@ namespace GSMasterServer.Servers
                                 goto CONTINUE;
                             }
 
-                            if (utf8alue.StartsWith("USRIP"))
+                            if (utf8alue.StartsWith("USRIP", StringComparison.OrdinalIgnoreCase))
                             {
                                 var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
 
@@ -301,14 +304,29 @@ namespace GSMasterServer.Servers
             if (state.Disposing)
                 return 0;
 
-            //Log("CHATRESP", message);
+            Log("CHATRESP", message);
 
             var bytesToSend = Encoding.UTF8.GetBytes(message);
+
 
             if (state.Encoded)
             {
                 fixed (byte* bytesToSendPtr = bytesToSend)
+                {
                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
+                }
+
+               /* var clone = new byte[bytesToSend.Length];
+
+                for (int i = 0; i < bytesToSend.Length; i++)
+                    clone[i] = bytesToSend[i];
+                
+                fixed (byte* bytesToSendPtr = clone)
+                {
+                    ChatCrypt.GSEncodeDecode(state.ServerKeyClone, bytesToSendPtr, bytesToSend.Length);
+                }
+
+                var val = Encoding.UTF8.GetString(clone);*/
             }
 
             SendToClient(ref state, bytesToSend);
@@ -382,6 +400,7 @@ namespace GSMasterServer.Servers
 
             public ChatCrypt.GDCryptKey ClientKey;
             public ChatCrypt.GDCryptKey ServerKey;
+            public ChatCrypt.GDCryptKey ServerKeyClone;
             public UserInfo UserInfo;
             public long ProfileId;
 

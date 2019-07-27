@@ -16,35 +16,39 @@ namespace ChatMonitor
         static Socket _socket;
         static byte[] _readbuffer;
 
-        public static uint ConvertFromIpAddressToInteger(string ipAddress)
-        {
-            var address = IPAddress.Parse(ipAddress);
-            byte[] bytes = address.GetAddressBytes();
 
-            // flip big-endian(network order) to little-endian
-            if (BitConverter.IsLittleEndian)
+
+        static unsafe void Main(string[] args)
+        {
+           /* var Gamekey = "pXL838".ToAssciiBytes();
+
+            var chall = "0000000000000000".ToAssciiBytes();
+
+            var serverKey = new ChatCrypt.GDCryptKey();
+            var serverKeyClone = new ChatCrypt.GDCryptKey();
+
+            fixed (byte* challPtr = chall)
             {
-                Array.Reverse(bytes);
+                fixed (byte* gamekeyPtr = Gamekey)
+                {
+                    ChatCrypt.GSCryptKeyInit(serverKey, challPtr, gamekeyPtr, Gamekey.Length);
+                    ChatCrypt.GSCryptKeyInit(serverKeyClone, challPtr, gamekeyPtr, Gamekey.Length);
+                }
             }
 
-            return BitConverter.ToUInt32(bytes, 0);
-        }
-
-        public static string ConvertFromIntegerToIpAddress(uint ipAddress)
-        {
-            byte[] bytes = BitConverter.GetBytes(ipAddress);
-
-            // flip little-endian to big-endian(network order)
-            if (BitConverter.IsLittleEndian)
+            var bytes = new byte[] { 1, 2, 3 };
+            
+            fixed (byte* bytesToSendPtr = bytes)
             {
-                Array.Reverse(bytes);
+                ChatCrypt.GSEncodeDecode(serverKey, bytesToSendPtr, bytes.Length);
+
+                ChatCrypt.GSEncodeDecode(serverKeyClone, bytesToSendPtr, bytes.Length);
             }
 
-            return new IPAddress(bytes).ToString();
-        }
+            int i = 0;*/
+            // int a = 1234;
+            // int b = 8768;
 
-        static void Main(string[] args)
-        {
             // 127.0.0.1:6112
             //  Mllaal1K9M
 
@@ -56,11 +60,26 @@ namespace ChatMonitor
 
             buffer = ChatCrypt.PiStagingRoomHash(ip1, ip1, 6112, buffer);*/
 
-            var ip = ConvertFromIpAddressToInteger("127.0.0.1");
 
-            var buffer = new byte[32];
-            var val = Encoding.ASCII.GetString(ChatCrypt.PiStagingRoomHash(ip, ip, 6112, buffer, true));
-            var val2 = Encoding.ASCII.GetString(ChatCrypt.PiStagingRoomHash(ip, ip, 6112, buffer, false));
+            //var ip = ChatCrypt.ConvertFromIpAddressToInteger("127.0.0.1");
+            //var ip2 = ChatCrypt.ConvertFromIpAddressToInteger("192.168.159.1");
+
+            //ip = BitConverter.ToUInt32(BitConverter.GetBytes(ip).Reverse().ToArray(), 0);
+            //ip2 = BitConverter.ToUInt32(BitConverter.GetBytes(ip2).Reverse().ToArray(), 0);
+            //var val = Encoding.ASCII.GetString(ChatCrypt.PiStagingRoomHash(ip, ip2, 6112));
+
+
+            //ChatCrypt.DecodeStagingRoomHash("llaal1K9", ip, 6112);
+
+            /* var pb = BitConverter.GetBytes((ushort)6112);
+
+             pb = pb.Reverse().ToArray();
+
+             var port = BitConverter.ToUInt16(pb, 0);
+
+             var buffer = new byte[32];*/
+
+
 
             // var bytes1 = "Mllaal1K9M".ToAssciiBytes();
             // var bytes2 = Encoding.UTF8.GetBytes("Mllaal1K9M");
@@ -70,9 +89,8 @@ namespace ChatMonitor
               var ip3 = ChatCrypt.DecodeIP(bytes2, true);
               var ip4 = ChatCrypt.DecodeIP(bytes2, false);*/
 
-            int i = 0;
 
-           //var ids = LoadSteamIds(new List<string>() { "elamaunt" }).Result;
+            //var ids = LoadSteamIds(new List<string>() { "elamaunt" }).Result;
 
             /* var str = "??   &   {f29e528f-2461-4387-9443-84db458a8592}    B a m b o c h u k                   K04W        B a m b o c h u k     ?????      ?     ??BK04W   g i g a m o k       ???      ?       dxp2   1.0    :~?";
 

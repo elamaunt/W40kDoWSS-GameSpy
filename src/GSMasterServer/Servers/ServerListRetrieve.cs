@@ -589,10 +589,10 @@ namespace GSMasterServer.Servers
 
                 // 1388419870 1294854161
                 var iPAddress = server.Get<string>("IPAddress");
-                //var localIp = server.Properties.Where(x => x.Key.StartsWith("localip") && x.Value.ToString().StartsWith("192.168.1.")).FirstOrDefault().Value.ToString();
                 var localport = ushort.Parse(server.Get<string>("localport") ?? "0");
                 var queryPort = (ushort)server.Get<int>("QueryPort");
                 var privateIp = server.Get<string>("localip0");
+
                 /*  if (!String.IsNullOrWhiteSpace(localip0) && !String.IsNullOrWhiteSpace(localip1) && localport > 0)
                   {
                       data.Add(126);

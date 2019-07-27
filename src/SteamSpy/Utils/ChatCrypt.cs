@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace GSMasterServer.Utils
 {
@@ -137,25 +139,67 @@ namespace GSMasterServer.Utils
         static readonly byte[] digits_crypt = "aFl4uOD9sfWq1vGp".ToAssciiBytes();
         static readonly byte[] new_digits_crypt = "qJ1h4N9cP3lzD0Ka".ToAssciiBytes();
         const uint ip_xormask = 0xc3801dc7;
-        static byte[] cryptbuffer = new byte[32];
+        static byte[] cryptbuffer = new byte[8];
 
-        static byte[] piStagingRoomHash(long publicIP, long privateIP, ushort port, byte[] buffer)
+        public static string PiStagingRoomHash(string publicIP, string privateIP, ushort port)
         {
-            long result;
+            var ip = ConvertFromIpAddressToInteger(publicIP);
+            var ip2 = ConvertFromIpAddressToInteger(privateIP);
 
-            publicIP = IPAddress.NetworkToHostOrder(publicIP);
-            privateIP = IPAddress.NetworkToHostOrder(privateIP);
+            return $"M{Encoding.ASCII.GetString(PiStagingRoomHash(ip, ip2, port))}M";
+        }
+
+        public static byte[] PiStagingRoomHash(uint publicIP, uint privateIP, ushort port)
+        {
+            uint result;
+
+            publicIP = (uint)IPAddress.NetworkToHostOrder((int)publicIP);
+            privateIP = (uint)IPAddress.NetworkToHostOrder((int)privateIP);
 
             result = (((privateIP >> 24) & 0xFF) | ((privateIP >> 8) & 0xFF00) | ((privateIP << 8) & 0xFF0000) | ((privateIP << 24) & 0xFF000000));
             result ^= publicIP;
-            result ^= (port | ((long)port << 16));
-            
-            return EncodeIP(result, buffer, true);
+            result ^= (port | ((uint)port << 16));
+
+            return EncodeIP(result, true);
         }
 
-        static byte[] EncodeIP(long ip, byte[] buffer, bool newCrypt)
+        public static uint DecodeIP(byte[] buffer, bool newCrypt)
         {
+            byte[] crypt = newCrypt ? new_digits_crypt : digits_crypt;
+            uint ip = 0;
+            int digit_idx;
+            int i;
 
+            for (i = 0; i < 8; i++)
+            {
+                digit_idx = Array.IndexOf(crypt, buffer[i]);
+
+                if ((digit_idx < 0) || (digit_idx > 15))
+                    return 0;
+
+                cryptbuffer[i] = digits_hex[digit_idx];
+            }
+
+            // Cap the buffer.
+            cryptbuffer[i] = (byte)'\0';
+
+            var array = cryptbuffer.Where(x => x != 0).Select(x => Convert.ToByte(Encoding.ASCII.GetString(new byte[] { x }), 16)).ToArray();
+
+            ip = BitConverter.ToUInt32(array, 0);
+
+            // Convert the string to an unsigned long (the XORd ip addr).
+            // sscanf(cryptbuffer, "%x", &ip);
+
+            //ip = 
+
+            // re-XOR the IP address.
+            ip ^= ip_xormask;
+
+            return ip;
+        }
+
+        public static byte[] EncodeIP(long ip, bool newCrypt)
+        {
             byte[] crypt = newCrypt ? new_digits_crypt : digits_crypt;
             int i;
             int digit_idx;
@@ -164,6 +208,11 @@ namespace GSMasterServer.Utils
             ip ^= ip_xormask;
 
             // Print out the ip addr in hex form.
+
+            var hex = ip.ToString("X").ToLowerInvariant();
+            var hexBytes = hex.ToAssciiBytes();
+
+            Array.Copy(hexBytes, cryptbuffer, hexBytes.Length);
             //sprintf(cryptbuffer, "%08x", ip);
 
             // Translate chars in positions 0 through 7 from hex digits to "crypt" digits.
@@ -172,77 +221,45 @@ namespace GSMasterServer.Utils
                 //str = Array.IndexOf(digits_hex, cryptbuffer[i]);
                 //digit_idx = (str - digits_hex);
                 digit_idx = Array.IndexOf(digits_hex, cryptbuffer[i]);
-                
+
                 if ((digit_idx < 0) || (digit_idx > 15)) // sanity check
                 {
-                    Array.Copy("14saFv19".ToAssciiBytes(), cryptbuffer, cryptbuffer.Length);
+                    var b = "14saFv19".ToAssciiBytes();
+                    Array.Copy(b, cryptbuffer, b.Length);
                     break;
                 }
 
                 cryptbuffer[i] = crypt[digit_idx];
             }
-            
-            Array.Copy(cryptbuffer, buffer, cryptbuffer.Length);
 
-            return buffer;
-
-            /*if (buffer)
-            {
-                strcpy(buffer, cryptbuffer);
-                return buffer;
-            }*/
-
-            //return cryptbuffer;
+            return (byte[])cryptbuffer.Clone();
         }
 
-        /*static const char* piStagingRoomHash(unsigned int publicIP, unsigned int privateIP, unsigned short port, char * buffer)
+        public static uint ConvertFromIpAddressToInteger(string ipAddress)
         {
+            var address = IPAddress.Parse(ipAddress);
+            byte[] bytes = address.GetAddressBytes().ToArray();
 
-            unsigned int result;
+            // flip big-endian(network order) to little-endian
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
 
-            publicIP = ntohl(publicIP);
-            privateIP = ntohl(privateIP);
+            return BitConverter.ToUInt32(bytes, 0);
+        }
 
-            result = (((privateIP >> 24) & 0xFF) | ((privateIP >> 8) & 0xFF00) | ((privateIP << 8) & 0xFF0000) | ((privateIP << 24) & 0xFF000000));
-                        result ^= publicIP;
-                        result ^= (port | (port << 16));
-
-            return EncodeIP(result, buffer, PEERTrue);
-         }*/
-
-        /*static unsigned int DecodeIP(const char* buffer, PEERBool newCrypt)
+        public static string ConvertFromIntegerToIpAddress(uint ipAddress)
         {
-	        const char* crypt = newCrypt ? new_digits_crypt : digits_crypt;
-                unsigned int ip;
-                char* str;
-                int digit_idx;
-                int i;
+            byte[] bytes = BitConverter.GetBytes(ipAddress);
 
-	        if(!buffer)
-		        return 0;
-	
-	        // Translate chars from hex digits to "crypt" digits.
-	        for(i = 0 ; i< 8 ; i++)
-	        {
-		        str = strchr(crypt, buffer[i]);
-                digit_idx = (str - crypt);
+            // flip little-endian to big-endian(network order)
+            if (!BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(bytes);
+            }
 
-		        if((digit_idx< 0) || (digit_idx > 15))
-			        return 0;
-
-		        cryptbuffer[i] = digits_hex[digit_idx];
-	        }
-
-            // Cap the buffer.
-            cryptbuffer[i] = '\0';
-
-	        // Convert the string to an unsigned long (the XORd ip addr).
-	        sscanf(cryptbuffer, "%x", &ip);
-
-            // re-XOR the IP address.
-            ip ^= ip_xormask;
-
-	        return ip;
-        }*/
+            return new IPAddress(bytes).ToString();
+        }
     }
 }

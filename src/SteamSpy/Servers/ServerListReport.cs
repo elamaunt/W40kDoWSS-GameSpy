@@ -1,4 +1,5 @@
 ﻿using GSMasterServer.Data;
+using GSMasterServer.Utils;
 using SteamSpy.Utils;
 using System;
 using System.IO;
@@ -24,6 +25,8 @@ namespace GSMasterServer.Servers
         Socket _socket;
         SocketAsyncEventArgs _socketReadEvent;
         byte[] _socketReceivedBuffer;
+
+        public static string CurrentUserRoomHash { get; set; }
 
         public ServerListReport(IPAddress listen, ushort port)
         {
@@ -337,6 +340,8 @@ namespace GSMasterServer.Servers
             server["LastRefreshed"] = DateTime.UtcNow.ToString();
             server["LastPing"] = DateTime.UtcNow.ToString();
 
+
+
             // set the country based off ip address
             if (GeoIP.Instance == null || GeoIP.Instance.Reader == null)
             {
@@ -425,6 +430,8 @@ namespace GSMasterServer.Servers
                 }*/
             }
 
+            CurrentUserRoomHash = ChatCrypt.PiStagingRoomHash(server["IPAddress"], server["localip0"], 6112);
+
             server["hostport"] = remote.Port.ToString();
             server["localport"] = remote.Port.ToString();
             // whammer40kdcam
@@ -465,7 +472,7 @@ namespace GSMasterServer.Servers
                     return true;
                 }
             }
-
+            
             SteamLobbyManager.UpdateCurrentLobby(server);
             
             /*Servers.AddOrUpdate(key, server, (k, old) =>
@@ -519,7 +526,7 @@ namespace GSMasterServer.Servers
 
             server["hostport"] = remote.Port.ToString();
             server["localport"] = remote.Port.ToString();
-
+            
             SteamLobbyManager.CreatePublicLobby(server, CancellationToken.None);
         }
     }

@@ -1,7 +1,7 @@
-﻿using SteamSpy.Utils;
+﻿using GSMasterServer.Servers;
+using SteamSpy.Utils;
 using Steamworks;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
 
@@ -9,7 +9,7 @@ namespace SteamSpy
 {
     public partial class MainWindow : Window
     {
-        Process _soulstormProcess;
+        //Process _soulstormProcess;
 
         public MainWindow()
         {
@@ -26,7 +26,9 @@ namespace SteamSpy
             if (SteamAPI.Init())
                 Console.WriteLine("Steam inited");
             else
-                throw new Exception("Не удалось запустить игру. Клиент Steam не запущен");
+                throw new Exception("Клиент Steam не запущен");
+
+            ServerListRetrieve.WarmingUpTheGameList();
 
            // _soulstormProcess = Process.Start(@"F:\Games\Soulstorm 1.2\Soulstorm.exe");
         }

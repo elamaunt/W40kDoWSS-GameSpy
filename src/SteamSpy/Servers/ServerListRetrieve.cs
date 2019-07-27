@@ -4,7 +4,9 @@ using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
 using SteamSpy.Data;
 using SteamSpy.Utils;
+using Steamworks;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -24,6 +26,10 @@ namespace GSMasterServer.Servers
 
         Thread _thread;
         Socket _socket;
+
+        public static ConcurrentDictionary<string, CSteamID> IDByChannelCache { get; } = new ConcurrentDictionary<string, CSteamID>();
+        public static ConcurrentDictionary<CSteamID, string> ChannelByIDCache { get; } = new ConcurrentDictionary<CSteamID, string>();
+
 
         readonly ManualResetEvent _reset = new ManualResetEvent(false);
         
@@ -99,13 +105,32 @@ namespace GSMasterServer.Servers
                 LogError(Category, e.ToString());
                 return;
             }
-
+            
             while (true)
             {
                 _reset.Reset();
                 _socket.BeginAccept(AcceptCallback, _socket);
                 _reset.WaitOne();
             }
+        }
+
+        public static void WarmingUpTheGameList()
+        {
+            SteamLobbyManager.LoadLobbies()
+               .ContinueWith(task =>
+               {
+                   if (task.Status != TaskStatus.RanToCompletion)
+                       return;
+
+                   var servers = task.Result;
+
+                   for (int i = 0; i < servers.Length; i++)
+                   {
+                       var server = servers[i];
+                       // start connection establishment
+                       SteamNetworking.SendP2PPacket(server.HostSteamId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendUnreliableNoDelay, 1);
+                   }
+               });
         }
 
         private void AcceptCallback(IAsyncResult ar)
@@ -311,52 +336,9 @@ namespace GSMasterServer.Servers
                        return;
 
                    var servers = task.Result;
-
-
+                   
                    string[] fields = data[5].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-
-                   // May be real chat rooms:
-
-                   /*for (int i = 1; i <= 10; i++)
-                   {
-                       SendToClient(state, $@"\{i}\Room {i}\1\200\0\0\password\other\final\".ToAssciiBytes());
-                   }*/
-
-                   // From bf2 server
-                   /*string gamename = data[1].ToLowerInvariant();
-                   string validate = data[2].Substring(0, 8);
-                   string filter = FixFilter(data[2].Substring(8));
-                   string[] fields = data[3].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);*/
-
-                   //Log(Category, String.Format("Received client request: {0}:{1}", ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
-
-
-                   // var server = JsonConvert.SerializeObject((object)_report.Servers.Values.FirstOrDefault() ?? "");
-
-                   /*if (!String.IsNullOrWhiteSpace(filter))
-                   {
-                       try
-                       {
-                           //Console.WriteLine(filter);
-                           servers = servers.Where(filter);
-                           //Console.WriteLine(servers.Count());
-                       }
-                       catch (Exception e)
-                       {
-                           LogError(Category, "Error parsing filter");
-                           LogError(Category, filter);
-                           LogError(Category, e.ToString());
-                       }
-                   }*/
-
-                   // http://aluigi.altervista.org/papers/gslist.cfg
-                   /*byte[] key;
-                       key = DataFunctions.StringToBytes("hW6m9a");
-                   else if (gamename == "arma2oapc")
-                       key = DataFunctions.StringToBytes("sGKWik");
-                   else
-                       key = DataFunctions.StringToBytes("Xn221z");*/
-
+                   
                    byte[] unencryptedServerList = PackServerList(state, servers, fields, isAutomatch);
                    byte[] encryptedServerList = GSEncoding.Encode(/*ChatServer.Gamekey,*/ "pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedServerList, unencryptedServerList.LongLength);
                    SendToClient(state, encryptedServerList);
@@ -561,6 +543,14 @@ namespace GSMasterServer.Servers
 
                 ushort retranslationPort = PortBindingManager.AddOrUpdatePortBinding(server.HostSteamId).Port;
 
+                var channelHash = ChatCrypt.PiStagingRoomHash("127.0.0.1", "127.0.0.1", retranslationPort);
+
+                // start connection establishment
+                SteamNetworking.SendP2PPacket(server.HostSteamId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
+
+                IDByChannelCache[channelHash] = server.HostSteamId;
+                ChannelByIDCache[server.HostSteamId] = channelHash;
+
                 var loopbackIpBytes = IPAddress.Loopback.GetAddressBytes(); //IPAddress.Loopback.GetAddressBytes();
                 //var ipBytes = IPAddress.Parse(iPAddress).GetAddressBytes();
 
@@ -572,14 +562,6 @@ namespace GSMasterServer.Servers
                
                 server["hostport"] = retranslationPort.ToString();
                 server["localport"] = queryPort.ToString();
-
-                //var flags = (ServerFlags)115;
-
-               /* var flags = ServerFlags.UNSOLICITED_UDP_FLAG | 
-                    ServerFlags.PRIVATE_IP_FLAG | 
-                    ServerFlags.NONSTANDARD_PORT_FLAG | 
-                    ServerFlags.NONSTANDARD_PRIVATE_PORT_FLAG | 
-                    ServerFlags.HAS_KEYS_FLAG;*/
 
                 var flags = ServerFlags.UNSOLICITED_UDP_FLAG |
                     ServerFlags.PRIVATE_IP_FLAG |

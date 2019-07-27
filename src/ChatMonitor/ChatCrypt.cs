@@ -1,5 +1,5 @@
 ﻿using ChatMonitor;
-using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -40,6 +40,31 @@ namespace System
         // gs_peerchat same
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void GSEncodeDecode(GDCryptKey ctx, byte* data, int size)
+        {
+            byte num1, num2, t;
+
+            fixed (byte* crypt = ctx.State)
+            {
+                num1 = ctx.X;
+                num2 = ctx.Y;
+
+                while (size-- > 0)
+                {
+                    t = crypt[++num1];
+                    num2 += t;
+                    crypt[num1] = crypt[num2];
+                    crypt[num2] = t;
+                    t += crypt[num1];
+                    *data++ ^= crypt[t];
+                }
+
+                ctx.X = num1;
+                ctx.Y = num2;
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.NoOptimization)]
+        public static void GSDecode(GDCryptKey ctx, byte* data, int size)
         {
             byte num1, num2, t;
 
@@ -135,112 +160,63 @@ namespace System
             }
         }
 
-        const bool piOldMangleStagingRooms = true;
-        static readonly byte[] digits_hex = "0123456789abcdef".ToAssciiBytes();
-        static readonly byte[] digits_crypt = "aFl4uOD9sfWq1vGp".ToAssciiBytes();
-        static readonly byte[] new_digits_crypt = "qJ1h4N9cP3lzD0Ka".ToAssciiBytes();
-        const uint ip_xormask = 0xc3801dc7;
-        static byte[] cryptbuffer = new byte[32];
-
-        public static byte[] PiStagingRoomHash(uint publicIP, uint privateIP, ushort port, byte[] buffer, bool newCrypt)
+        /*static const char* piStagingRoomHash(unsigned int publicIP, unsigned int privateIP, unsigned short port, char * buffer)
         {
-            uint result;
 
-            publicIP = (uint)IPAddress.NetworkToHostOrder((int)publicIP);
-            privateIP = (uint)IPAddress.NetworkToHostOrder((int)privateIP);
+            unsigned int result;
 
-            result = (((privateIP >> 24) & 0xFF) | ((privateIP >> 8) & 0xFF00) | ((privateIP << 8) & 0xFF0000) | ((privateIP << 24) & 0xFF000000));
-            result ^= publicIP;
-            result ^= (port | ((uint)port << 16));
+                publicIP = ntohl(publicIP);
+                privateIP = ntohl(privateIP);
 
-            return EncodeIP(result, buffer, newCrypt);
-        }
+                result = (((privateIP >> 24) & 0xFF) | ((privateIP >> 8) & 0xFF00) | ((privateIP << 8) & 0xFF0000) | ((privateIP << 24) & 0xFF000000));
+	        result ^= publicIP;
+	        result ^= (port | (port << 16));
 
-        public static uint DecodeIP(byte[] buffer, bool newCrypt)
+	        return EncodeIP(result, buffer, PEERTrue);
+        }*/
+
+
+        //public static byte* EncodeIP(uint ip, byte* buffer, )
+
+
+        /*
+        static const char* EncodeIP(unsigned int ip, char * buffer, PEERBool newCrypt)
         {
-            byte[] crypt = newCrypt ? new_digits_crypt : digits_crypt;
-            uint ip = 0;
-            int digit_idx;
-            int i;
-            
-            // Translate chars from hex digits to "crypt" digits.
-            for (i = 0; i < 8; i++)
-            {
-                //str = strchr(crypt, buffer[i]);
-                //digit_idx = (str - crypt);
 
-                digit_idx = Array.IndexOf(crypt, buffer[i]);
+            const char* crypt = newCrypt ? new_digits_crypt : digits_crypt;
+                int i;
+                char* str;
+                int digit_idx;
 
-                if ((digit_idx < 0) || (digit_idx > 15))
-                    return 0;
-
-                cryptbuffer[i] = digits_hex[digit_idx];
-            }
-
-            // Cap the buffer.
-            cryptbuffer[i] = (byte)'\0';
-
-            var array = cryptbuffer.Where(x => x != 0).Select(x => Convert.ToByte(Encoding.ASCII.GetString(new byte[] { x }), 16)).ToArray();
-
-            ip = BitConverter.ToUInt32(array, 0);
-
-            // Convert the string to an unsigned long (the XORd ip addr).
-            // sscanf(cryptbuffer, "%x", &ip);
-
-            //ip = 
-
-            // re-XOR the IP address.
-            ip ^= ip_xormask;
-
-            return ip;
-        }
-
-public static byte[] EncodeIP(long ip, byte[] buffer, bool newCrypt)
-        {
-            byte[] crypt = newCrypt ? new_digits_crypt : digits_crypt;
-            int i;
-            int digit_idx;
-
-            // XOR the IP address.
-            ip ^= ip_xormask;
+                // XOR the IP address.
+                ip ^= ip_xormask;
 
             // Print out the ip addr in hex form.
-
-            var hex = ip.ToString("X").ToLowerInvariant();
-            var hexBytes = hex.ToAssciiBytes();
-
-            Array.Copy(hexBytes, cryptbuffer, hexBytes.Length);
-            //sprintf(cryptbuffer, "%08x", ip);
+            sprintf(cryptbuffer, "%08x", ip);
 
             // Translate chars in positions 0 through 7 from hex digits to "crypt" digits.
-            for (i = 0; i < 8; i++)
+            for(i = 0 ; i< 8 ; i++)
             {
-                //str = Array.IndexOf(digits_hex, cryptbuffer[i]);
-                //digit_idx = (str - digits_hex);
-                digit_idx = Array.IndexOf(digits_hex, cryptbuffer[i]);
+                str = strchr(digits_hex, cryptbuffer[i]);
+                digit_idx = (str - digits_hex);
 
-                if ((digit_idx < 0) || (digit_idx > 15)) // sanity check
+                if((digit_idx< 0) || (digit_idx > 15)) // sanity check
                 {
-                    var b = "14saFv19".ToAssciiBytes();
-                    Array.Copy(b, cryptbuffer, b.Length);
+                    strcpy(cryptbuffer, "14saFv19"); // equivalent to 0.0.0.0
                     break;
                 }
 
-                cryptbuffer[i] = crypt[digit_idx];
+            cryptbuffer[i] = crypt[digit_idx];
             }
 
-            Array.Copy(cryptbuffer, buffer, cryptbuffer.Length);
-
-            return buffer;
-
-            /*if (buffer)
+            if(buffer)
             {
                 strcpy(buffer, cryptbuffer);
                 return buffer;
-            }*/
+            }
 
-            //return cryptbuffer;
-        }
+            return cryptbuffer;
+        }*/
 
         /*static const char* piStagingRoomHash(unsigned int publicIP, unsigned int privateIP, unsigned short port, char * buffer)
         {

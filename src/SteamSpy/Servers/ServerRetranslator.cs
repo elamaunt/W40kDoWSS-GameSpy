@@ -162,22 +162,22 @@ namespace GSMasterServer.Servers
             {
                 LocalPoint = e.RemoteEndPoint as IPEndPoint;
 
-                //byte[] receivedBytes = new byte[e.BytesTransferred];
-                //Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
+                byte[] receivedBytes = new byte[e.BytesTransferred];
+                Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
 
-                //var str = Encoding.UTF8.GetString(receivedBytes);
+                var str = Encoding.UTF8.GetString(receivedBytes);
 
                 // there by a bunch of different message formats...
-                //Log(Category, $">> {RemoteUserSteamId} "+str);
+                Log(Category, $">> {RemoteUserSteamId} "+str);
 
                 //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
 
                 var count = (uint)e.BytesTransferred;
 
-                if (count < 900)
-                    SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliableNoDelay);
-                else
+               // if (count < 900)
+               //     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliableNoDelay);
+               // else
                     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendReliable);
             }
             catch (Exception ex)
@@ -193,9 +193,9 @@ namespace GSMasterServer.Servers
             try
             {
                 var s = (int)size;
-                //var str = Encoding.UTF8.GetString(buffer, 0, s);
+                var str = Encoding.UTF8.GetString(buffer, 0, s);
                 
-                //Log(Category, $"<= {RemoteUserSteamId} :: " + str);
+                Log(Category, $"<= {RemoteUserSteamId} :: " + str);
 
                 // there by a bunch of different message formats...
                 //Log(Category,"<= BYTES:"+ string.Join(" ", buffer.Where((b,i) => i< size).Select(x => x.ToString())));

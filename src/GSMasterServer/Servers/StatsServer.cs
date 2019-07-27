@@ -150,7 +150,7 @@ namespace GSMasterServer.Servers
 
                 var input = Encoding.UTF8.GetString(XorBytes(buffer, 0, received - 7, XorKEY), 0, received);
 
-                Log(Category, input);
+               // Log(Category, input);
 
                 if (input.StartsWith(@"\auth\\gamename\"))
                 {
@@ -544,7 +544,7 @@ namespace GSMasterServer.Servers
         {
             var state = (SocketState)abstractState;
 
-            Log("StatsRESP", message);
+           // Log("StatsRESP", message);
             
             var bytesToSend = XorBytes(message, XorKEY, 7);
 

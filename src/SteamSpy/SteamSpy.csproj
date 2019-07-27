@@ -93,7 +93,7 @@
     <Compile Include="Utils\ChatCrypt.cs" />
     <Compile Include="Utils\DynamicLinq.cs" />
     <Compile Include="Utils\EloRating.cs" />
-    <Compile Include="Utils\GameConstants.cs" />
+    <Compile Include="GameConstants.cs" />
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\NetworkHelper.cs" />
     <Compile Include="Utils\PortBindingManager.cs" />

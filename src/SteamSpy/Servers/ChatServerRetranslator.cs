@@ -1,6 +1,7 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
 using SteamSpy.Utils;
+using Steamworks;
 using System;
 using System.IO;
 using System.Net;
@@ -98,7 +99,7 @@ namespace GSMasterServer.Servers
 
             SocketState state = new SocketState()
             {
-                Socket = handler
+                GameSocket = handler
             };
 
             _serverSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), 6668), OnServerConnect, state);
@@ -117,16 +118,16 @@ namespace GSMasterServer.Servers
         private void WaitForGameData(SocketState state)
         {
             Thread.Sleep(10);
-            if (state == null || state.Socket == null || !state.Socket.Connected)
+            if (state == null || state.GameSocket == null || !state.GameSocket.Connected)
                 return;
 
             try
             {
-                state.Socket.BeginReceive(state.GameBuffer, 0, state.GameBuffer.Length, SocketFlags.None, OnGameDataReceived, state);
+                state.GameSocket.BeginReceive(state.GameBuffer, 0, state.GameBuffer.Length, SocketFlags.None, OnGameDataReceived, state);
             }
             catch (ObjectDisposedException)
             {
-                state.Socket = null;
+                state.GameSocket = null;
             }
             catch (SocketException e)
             {
@@ -159,11 +160,11 @@ namespace GSMasterServer.Servers
             }
         }
 
-        private void OnServerDataReceived(IAsyncResult async)
+        private unsafe void OnServerDataReceived(IAsyncResult async)
         {
             SocketState state = (SocketState)async.AsyncState;
 
-            if (state == null || _serverSocket == null || !_serverSocket.Connected || state.Socket == null || !state.Socket.Connected)
+            if (state == null || _serverSocket == null || !_serverSocket.Connected || state.GameSocket == null || !state.GameSocket.Connected)
                 return;
 
             try
@@ -173,8 +174,57 @@ namespace GSMasterServer.Servers
 
                 if (received == 0)
                     return;
+                
+                var bytes = new byte[received];
 
-                state.Socket.Send(state.ServerBuffer, received, SocketFlags.None);
+                for (int i = 0; i < received; i++)
+                    bytes[i] = state.ServerBuffer[i];
+                
+                if (state.ReceivingEncoded)
+                {
+                    fixed (byte* bytesToSendPtr = bytes)
+                        ChatCrypt.GSEncodeDecode(state.ReceivingServerKey, bytesToSendPtr, received);
+                }
+                
+                var utf8value = Encoding.UTF8.GetString(bytes);
+
+                if (utf8value.StartsWith(":s 705", StringComparison.OrdinalIgnoreCase))
+                {
+                    SendToGameSocket(ref state, bytes);
+                    state.ReceivingEncoded = true;
+                    goto CONTINUE;
+                }
+
+                var index = utf8value.IndexOf("#GSP!whamdowfr!", StringComparison.OrdinalIgnoreCase);
+
+                if (index != -1)
+                {
+                    int endIndex = index + 15;
+                    for (; endIndex < utf8value.Length; endIndex++)
+                    {
+                        if (!char.IsDigit(utf8value[endIndex]))
+                            break;
+                    }
+
+                    var stringSteamId = utf8value.Substring(index + 15, endIndex - index - 15);
+                    var steamId = new CSteamID(ulong.Parse(stringSteamId));
+
+                    if (steamId != SteamUser.GetSteamID())
+                    {
+                        if (ServerListRetrieve.ChannelByIDCache.TryGetValue(steamId, out string roomHash))
+                            utf8value = utf8value.Replace(stringSteamId, ServerListRetrieve.ChannelByIDCache[steamId]);
+                        else
+                            utf8value = utf8value.Replace(stringSteamId, ServerListReport.CurrentUserRoomHash);
+                    }
+                    else
+                        utf8value = utf8value.Replace(stringSteamId, ServerListReport.CurrentUserRoomHash);
+                    
+                    SendToGameSocket(ref state, Encoding.UTF8.GetBytes(utf8value));
+
+                    goto CONTINUE;
+                }
+
+                SendToGameSocket(ref state, bytes);
             }
 
             catch (Exception e)
@@ -186,18 +236,18 @@ namespace GSMasterServer.Servers
             // and we wait for more data...
             CONTINUE: WaitForServerData(state);
         }
-
+        
         private unsafe void OnGameDataReceived(IAsyncResult async)
         {
             SocketState state = (SocketState)async.AsyncState;
 
-            if (state == null || state.Socket == null || !state.Socket.Connected)
+            if (state == null || state.GameSocket == null || !state.GameSocket.Connected)
                 return;
 
             try
             {
                 // receive data from the socket
-                int received = state.Socket.EndReceive(async);
+                int received = state.GameSocket.EndReceive(async);
 
                 if (received == 0)
                     return;
@@ -206,7 +256,7 @@ namespace GSMasterServer.Servers
 
                 using (var ms = new MemoryStream(buffer, 0, received))
                 {
-                    if (!state.Encoded)
+                    if (!state.SendingEncoded)
                     {
                         using (var reader = new StreamReader(ms))
                         {
@@ -220,13 +270,13 @@ namespace GSMasterServer.Servers
 
                             if (line.StartsWith("CRYPT"))
                             {
-                                state.Encoded = true;
+                                state.SendingEncoded = true;
 
-                                if (line.Contains("whammer40kdc"))
+                                /*if (line.Contains("whammer40kdc"))
                                 {
                                     Gamename = "whammer40kdc".ToAssciiBytes();
                                     Gamekey = "Ue9v3H".ToAssciiBytes();
-                                }
+                                }*/
 
                                 if (line.Contains("whamdowfr"))
                                 {
@@ -242,29 +292,34 @@ namespace GSMasterServer.Servers
 
                                 var chall = "0000000000000000".ToAssciiBytes();
 
-                                var clientKey = new ChatCrypt.GDCryptKey();
-                                var serverKey = new ChatCrypt.GDCryptKey();
+                                var receivingGameKey = new ChatCrypt.GDCryptKey();
+                                var sendingGameKey = new ChatCrypt.GDCryptKey();
+                                var receivingServerKey = new ChatCrypt.GDCryptKey();
+                                var sendingServerKey = new ChatCrypt.GDCryptKey();
 
                                 fixed (byte* challPtr = chall)
                                 {
                                     fixed (byte* gamekeyPtr = Gamekey)
                                     {
-                                        ChatCrypt.GSCryptKeyInit(clientKey, challPtr, gamekeyPtr, Gamekey.Length);
-                                        ChatCrypt.GSCryptKeyInit(serverKey, challPtr, gamekeyPtr, Gamekey.Length);
+                                        ChatCrypt.GSCryptKeyInit(receivingGameKey, challPtr, gamekeyPtr, Gamekey.Length);
+                                        ChatCrypt.GSCryptKeyInit(sendingGameKey, challPtr, gamekeyPtr, Gamekey.Length);
+                                        ChatCrypt.GSCryptKeyInit(receivingServerKey, challPtr, gamekeyPtr, Gamekey.Length);
+                                        ChatCrypt.GSCryptKeyInit(sendingServerKey, challPtr, gamekeyPtr, Gamekey.Length);
                                     }
                                 }
 
-                                state.ClientKey = clientKey;
-                                state.ServerKey = serverKey;
+                                state.ReceivingGameKey = receivingGameKey;
+                                state.SendingGameKey = sendingGameKey;
+                                state.ReceivingServerKey = receivingServerKey;
+                                state.SendingServerKey = sendingServerKey;
 
+                                // Send to server without encoding
                                 _serverSocket.Send(buffer, received, SocketFlags.None);
-
-                                // SendToClient(ref state, DataFunctions.StringToBytes(":s 705 * 0000000000000000 0000000000000000\r\n"));
                             }
                             else
                             {
+                                // Send to server without encoding
                                 _serverSocket.Send(buffer, received, SocketFlags.None);
-
                             }
                         }
                     }
@@ -276,82 +331,70 @@ namespace GSMasterServer.Servers
 
                             var bytes = reader.ReadBytes((int)(ms.Length - ms.Position));
 
-                            byte* bytesPtr = stackalloc byte[bytes.Length];
-
-                            for (int i = 0; i < bytes.Length; i++)
-                                bytesPtr[i] = bytes[i];
-
-                            ChatCrypt.GSEncodeDecode(state.ClientKey, bytesPtr, bytes.Length);
-
-                            for (int i = 0; i < bytes.Length; i++)
-                                bytes[i] = bytesPtr[i];
-
-                            var utf8alue = Encoding.UTF8.GetString(bytes);
-
-                            Log("CHATDATA", utf8alue);
-
-                            if (utf8alue.StartsWith("LOGIN"))
+                            if (state.SendingEncoded)
                             {
-                                var nick = utf8alue.Split(' ')[2];
+                                byte* bytesPtr = stackalloc byte[bytes.Length];
+
+                                for (int i = 0; i < bytes.Length; i++)
+                                    bytesPtr[i] = bytes[i];
+
+                                ChatCrypt.GSEncodeDecode(state.ReceivingGameKey, bytesPtr, bytes.Length);
+
+                                for (int i = 0; i < bytes.Length; i++)
+                                    bytes[i] = bytesPtr[i];
+                            }
+
+                            var utf8value = Encoding.UTF8.GetString(bytes);
+
+                            Log("CHATDATA", utf8value);
+
+                            if (utf8value.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var nick = utf8value.Split(' ')[2];
 
                                 ChatNick = nick;
-                                //var userData = UsersDatabase.Instance.GetUserData(nick);
 
-                                // state.UserInfo = IrcDaemon.RegisterNewUser(state.Socket, nick, userData.ProfileId, state, SendToClient);
-
-                                //var bytesToSend = $":s 707 {nick} 12345678 {userData.ProfileId}\r\n".ToAssciiBytes();
-
-                                //fixed (byte* bytesToSendPtr = bytesToSend)
-                                //     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
-
-                                _serverSocket.Send(buffer, received, SocketFlags.None);
-
-                                // SendToClient(ref state, bytesToSend);
+                                SendToServerSocket(ref state, bytes);
 
                                 goto CONTINUE;
                             }
 
-                            if (utf8alue.StartsWith("USRIP"))
+                            if (utf8value.StartsWith("USRIP", StringComparison.OrdinalIgnoreCase))
                             {
-                                /*var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
-
-                                var bytesToSend = $":s 302  :=+@{remoteEndPoint.Address}\r\n".ToAssciiBytes();
-
-                                fixed (byte* bytesToSendPtr = bytesToSend)
-                                    ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);*/
-
-                                _serverSocket.Send(buffer, received, SocketFlags.None);
-
-                                // SendToClient(ref state, bytesToSend);
+                                SendToServerSocket(ref state, bytes);
 
                                 goto CONTINUE;
                             }
 
-                            if (utf8alue.StartsWith("JOIN"))
+                            var index = utf8value.IndexOf("#GSP!whamdowfr!", StringComparison.OrdinalIgnoreCase);
+
+                            if (index != -1)
                             {
-                                // JOIN #GPG!1
-                                //JOIN #GSP!whamdowfr!Mllaal1K9M \n\r
+                                var encodedEndPoint = utf8value.Substring(index + 15, 10);
 
-                                var channelName = utf8alue.Split(new string[] { " ", "\n\r" }, StringSplitOptions.RemoveEmptyEntries)[1];
+                                CSteamID steamId;
 
-                                if (channelName.StartsWith("#GSP!whamdowfr!", StringComparison.OrdinalIgnoreCase))
+                                if (ServerListReport.CurrentUserRoomHash == encodedEndPoint)
                                 {
-                                    if (channelName.Length == 25)
+                                    steamId = SteamUser.GetSteamID();
+                                }
+                                else
+                                {
+                                    if (!ServerListRetrieve.IDByChannelCache.TryGetValue(encodedEndPoint, out steamId))
                                     {
-                                        var encodedEndPoint = channelName.Substring(15, 10);
-
-                                        // TODO: decode endpoint
+                                        ServerListReport.CurrentUserRoomHash = encodedEndPoint;
+                                        steamId = SteamUser.GetSteamID();
                                     }
                                 }
 
+                                utf8value = utf8value.Replace(encodedEndPoint, steamId.m_SteamID.ToString());
+                                
+                                SendToServerSocket(ref state, Encoding.UTF8.GetBytes(utf8value));
 
-                                _serverSocket.Send(buffer, received, SocketFlags.None);
                                 goto CONTINUE;
                             }
-
-                            _serverSocket.Send(buffer, received, SocketFlags.None);
-
-                            //IrcDaemon.ProcessSocketMessage(state.UserInfo, utf8alue);
+                            
+                            SendToServerSocket(ref state, bytes);
                         }
                     }
                 }
@@ -396,65 +439,48 @@ namespace GSMasterServer.Servers
             CONTINUE: WaitForGameData(state);
         }
 
-       /* private unsafe int SendToClient(object abstractState, string message)
+        private unsafe void SendToServerSocket(ref SocketState state, byte[] bytes, bool skipEncoding = false)
         {
-            var state = (SocketState)abstractState;
-
             if (state.Disposing)
-                return 0;
+                return;
 
-            //Log("CHATRESP", message);
-
-            var bytesToSend = Encoding.UTF8.GetBytes(message);
-
-            if (state.Encoded)
+            if (!skipEncoding && state.SendingEncoded)
             {
-                fixed (byte* bytesToSendPtr = bytesToSend)
-                    ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
+                fixed (byte* bytesToSendPtr = bytes)
+                    ChatCrypt.GSEncodeDecode(state.SendingServerKey, bytesToSendPtr, bytes.Length);
             }
 
-            SendToClient(ref state, bytesToSend);
-            return bytesToSend.Length;
+            _serverSocket.Send(bytes, bytes.Length, SocketFlags.None);
         }
 
-        bool SendToClient(ref SocketState state, byte[] data)
+        private unsafe void SendToGameSocket(ref SocketState state, byte[] bytes)
         {
-            if (data == null)
-                return false;
+            if (state.Disposing)
+                return;
 
-            try
-            {
-                var res = state.Socket.BeginSend(data, 0, data.Length, SocketFlags.None, OnSent, state);
-                return true;
-            }
-            catch (NullReferenceException)
-            {
-                return false;
-            }
-            catch (SocketException e)
-            {
-                if (e.SocketErrorCode != SocketError.ConnectionAborted &&
-                    e.SocketErrorCode != SocketError.ConnectionReset)
-                {
-                    //LogError(Category, "Error sending data");
-                    //LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
-                }
+          //  Log(Category, "SERVER RESR: " + Encoding.UTF8.GetString(bytes));
 
-                return false;
+            if (state.ReceivingEncoded)
+            {
+                fixed (byte* bytesToSendPtr = bytes)
+                    ChatCrypt.GSEncodeDecode(state.SendingGameKey, bytesToSendPtr, bytes.Length);
             }
-        }*/
 
+            state.GameSocket.Send(bytes, bytes.Length, SocketFlags.None);
+        }
+
+        
         void OnSent(IAsyncResult async)
         {
             SocketState state = (SocketState)async.AsyncState;
 
-            if (state == null || state.Socket == null)
+            if (state == null || state.GameSocket == null)
                 return;
 
             try
             {
-                var remote = (IPEndPoint)state.Socket.RemoteEndPoint;
-                int sent = state.Socket.EndSend(async);
+                var remote = (IPEndPoint)state.GameSocket.RemoteEndPoint;
+                int sent = state.GameSocket.EndSend(async);
                 // Log(Category, String.Format("[{0}] Sent {1} byte response to: {2}:{3}", Category, sent, remote.Address, remote.Port));
             }
             catch (NullReferenceException)
@@ -478,13 +504,16 @@ namespace GSMasterServer.Servers
         private class SocketState : IDisposable
         {
             public bool Disposing;
-            public bool Encoded;
-            public Socket Socket = null;
+            public bool ReceivingEncoded;
+            public bool SendingEncoded;
+            public Socket GameSocket = null;
             public byte[] GameBuffer = new byte[8192];
             public byte[] ServerBuffer = new byte[8192];
 
-            public ChatCrypt.GDCryptKey ClientKey;
-            public ChatCrypt.GDCryptKey ServerKey;
+            public ChatCrypt.GDCryptKey SendingGameKey;
+            public ChatCrypt.GDCryptKey ReceivingGameKey;
+            public ChatCrypt.GDCryptKey SendingServerKey;
+            public ChatCrypt.GDCryptKey ReceivingServerKey;
             //public UserInfo UserInfo;
             public long ProfileId;
 
@@ -501,19 +530,19 @@ namespace GSMasterServer.Servers
                 {
                     if (disposing)
                     {
-                        if (Socket != null)
+                        if (GameSocket != null)
                         {
                             try
                             {
-                                Socket.Shutdown(SocketShutdown.Both);
+                                GameSocket.Shutdown(SocketShutdown.Both);
                                 //IrcDaemon.RemoveUserFromAllChannels(UserInfo);
                             }
                             catch (Exception)
                             {
                             }
-                            Socket.Close();
-                            Socket.Dispose();
-                            Socket = null;
+                            GameSocket.Close();
+                            GameSocket.Dispose();
+                            GameSocket = null;
                         }
                     }
 
