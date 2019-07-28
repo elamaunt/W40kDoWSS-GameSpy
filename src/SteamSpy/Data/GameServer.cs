@@ -11,6 +11,7 @@ namespace GSMasterServer.Data
         public bool Valid { get; set; }
 
         public CSteamID HostSteamId { get; set; }
+        public bool HasPlayers => Get<string>("numplayers ") != "0";
 
         /*
 

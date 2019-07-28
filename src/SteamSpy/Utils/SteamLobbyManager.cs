@@ -155,7 +155,7 @@ namespace SteamSpy.Utils
 
                         if (ownerSteamId == SteamUser.GetSteamID())
                             continue;
-                        
+                       
                         var server = new GameServer();
 
                         server.HostSteamId = ownerSteamId;
@@ -169,6 +169,9 @@ namespace SteamSpy.Utils
                             if (SteamMatchmaking.GetLobbyDataByIndex(lobbyId, k, out key, 100, out value, 100))
                                 server.Set(key, value);
 
+                        if (!server.HasPlayers)
+                            continue;
+                        
                         lobbies.Add(server);
                     }
                 }
