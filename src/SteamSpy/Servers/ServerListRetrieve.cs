@@ -341,7 +341,11 @@ namespace GSMasterServer.Servers
                    
                    byte[] unencryptedServerList = PackServerList(state, servers, fields, isAutomatch);
                    byte[] encryptedServerList = GSEncoding.Encode(/*ChatServer.Gamekey,*/ "pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedServerList, unencryptedServerList.LongLength);
-                   SendToClient(state, encryptedServerList);
+
+                   Task.Delay(1500).ContinueWith(t =>
+                   {
+                       SendToClient(state, encryptedServerList);
+                   });
                });
         }
 
@@ -588,10 +592,7 @@ namespace GSMasterServer.Servers
                 data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
                 data.AddRange(ip);
                 data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(retranslationPort));*/
-
-
-
-
+                
                 data.Add(255);
 
                 for (int i = 0; i < fields.Length; i++)
