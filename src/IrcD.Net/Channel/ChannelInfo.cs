@@ -72,10 +72,8 @@ namespace IrcD.Channel
             UserPerChannelInfos.Remove(user.Nick);
             user.UserPerChannelInfos.Remove(upci);
 
-            if (UserPerChannelInfos.Any() == false)
-            {
-                IrcDaemon.Channels.Remove(Name);
-            }
+            if (UserPerChannelInfos.Count == 0)
+                IrcDaemon.Channels.TryRemove(Name, out ChannelInfo channel);
         }
 
         public override int WriteLine(StringBuilder line)

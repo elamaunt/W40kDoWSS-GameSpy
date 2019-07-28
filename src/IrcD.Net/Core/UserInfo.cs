@@ -149,8 +149,8 @@ namespace IrcD.Core
         public void Rename(string newNick)
         {
             // Update Global Nick-Dictionary
-            IrcDaemon.Nicks.Remove(Nick);
-            IrcDaemon.Nicks.Add(newNick, this);
+            IrcDaemon.Nicks.TryRemove(Nick, out UserInfo oldUser);
+            IrcDaemon.Nicks[newNick] = this;
 
             // Update Channel Nicklists
             foreach (var channel in Channels)
@@ -177,6 +177,7 @@ namespace IrcD.Core
         public List<UserPerChannelInfo> UserPerChannelInfos { get; } = new List<UserPerChannelInfo>();
 
         public IEnumerable<ChannelInfo> Channels => UserPerChannelInfos.Select(upci => upci.ChannelInfo);
+    
 
         public List<ChannelInfo> Invited { get; } = new List<ChannelInfo>();
 
@@ -240,15 +241,12 @@ namespace IrcD.Core
 
             // Clean up server
 
-            if (Nick != null && IrcDaemon.Nicks.ContainsKey(Nick))
-            {
-                IrcDaemon.Nicks.Remove(Nick);
-            }
+            UserInfo info;
 
-            if (IrcDaemon.Users.ContainsKey(ProfileId))
-            {
-                IrcDaemon.Users.Remove(ProfileId);
-            }
+            if (Nick != null)
+                IrcDaemon.Nicks.TryRemove(Nick, out info);
+
+            IrcDaemon.Users.TryRemove(ProfileId, out info);
 
             // Close connection
             Socket.Close();

@@ -505,10 +505,10 @@ namespace GSMasterServer.Servers
                 {
                     Log(Category, String.Format("Added new server at: {0}:{1} ({2}) ({3})", server.GetByName("IPAddress"), server.GetByName("QueryPort"), server.GetByName("country"), server.GetByName("gamevariant")));
                     
-                    var gametype = server.Get<string>("gametype");
+                   // var gametype = server.Get<string>("gametype");
 
-                    if (server.Get<string>("maxplayers") == "2" && gametype == "unranked")
-                        Task.Factory.StartNew(WhisperNewGameToPlayers, server);
+                   // if (server.Get<string>("maxplayers") == "2" && gametype == "unranked")
+                   //     Task.Factory.StartNew(WhisperNewGameToPlayers, server);
                 }
                 
                 return server;
@@ -517,7 +517,7 @@ namespace GSMasterServer.Servers
             return true;
         }
 
-        private void WhisperNewGameToPlayers(object abstractServer)
+        /*private void WhisperNewGameToPlayers(object abstractServer)
         {
             var server = (GameServer)abstractServer;
             var hostName = server.Get<string>("hostname");
@@ -536,7 +536,7 @@ namespace GSMasterServer.Servers
                     item.WriteServerPrivateMessage("Эй, большой Босс! Вааа какой-то старшак начал игру в авто. Говорят, его дакка такая же как у вас. Но мы то знаем, что это вы у нас скрага. Вы определенно должны забрать его зубы! Вааргх!");
                 }
             }
-        }
+        }*/
 
         private void AddValidServer(IPEndPoint remote)
         {

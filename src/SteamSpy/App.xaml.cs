@@ -31,8 +31,9 @@ namespace SteamSpy
              ChatServer chatServer = new ChatServer(bind, 6667);
              HttpServer httpServer = new HttpServer(bind, 80);
              StatsServer statsServer = new StatsServer(bind, 29920);*/
-
-            ModifyHostsFile(Entries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
+            
+            ModifyHostsFile(LocalEntries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
+            //ModifyHostsFile(Entries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
 
             if (Is64BitProcess)
                 File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api64.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api.dll"), true);
@@ -177,6 +178,64 @@ namespace SteamSpy
 127.0.0.1 chat.master.gamespy.com
 134.209.198.2 thq.vo.llnwd.net
 134.209.198.2 gamespyid.com
+127.0.0.1 nat.gamespy.com
+";
+
+        string LocalEntries = @"
+192.168.159.1 ocs.thq.com
+192.168.159.1 www.dawnofwargame.com
+192.168.159.1 gmtest.master.gamespy.com
+
+127.0.0.1 whamdowfr.master.gamespy.com
+127.0.0.1 whamdowfr.gamespy.com
+127.0.0.1 whamdowfr.ms9.gamespy.com
+127.0.0.1 whamdowfr.ms11.gamespy.com
+127.0.0.1 whamdowfr.available.gamespy.com
+127.0.0.1 whamdowfr.available.gamespy.com
+127.0.0.1 whamdowfr.natneg.gamespy.com
+127.0.0.1 whamdowfr.natneg0.gamespy.com
+127.0.0.1 whamdowfr.natneg1.gamespy.com
+127.0.0.1 whamdowfr.natneg2.gamespy.com
+127.0.0.1 whamdowfr.natneg3.gamespy.com
+192.168.159.1 whamdowfr.gamestats.gamespy.com
+
+127.0.0.1 whamdowfram.master.gamespy.com
+127.0.0.1 whamdowfram.gamespy.com
+127.0.0.1 whamdowfram.ms9.gamespy.com
+127.0.0.1 whamdowfram.ms11.gamespy.com
+127.0.0.1 whamdowfram.available.gamespy.com
+127.0.0.1 whamdowfram.available.gamespy.com
+127.0.0.1 whamdowfram.natneg.gamespy.com
+127.0.0.1 whamdowfram.natneg0.gamespy.com
+127.0.0.1 whamdowfram.natneg1.gamespy.com
+127.0.0.1 whamdowfram.natneg2.gamespy.com
+127.0.0.1 whamdowfram.natneg3.gamespy.com
+192.168.159.1 whamdowfram.gamestats.gamespy.com
+
+192.168.159.1 gamespy.net
+192.168.159.1 gamespygp
+192.168.159.1 motd.gamespy.com
+127.0.0.1 peerchat.gamespy.com
+192.168.159.1 gamestats.gamespy.com
+127.0.0.1 gpcm.gamespy.com
+127.0.0.1 gpsp.gamespy.com
+192.168.159.1 key.gamespy.com
+192.168.159.1 master.gamespy.com
+192.168.159.1 master0.gamespy.com
+127.0.0.1 natneg.gamespy.com
+127.0.0.1 natneg0.gamespy.com
+127.0.0.1 natneg1.gamespy.com
+127.0.0.1 natneg2.gamespy.com
+127.0.0.1 natneg3.gamespy.com
+127.0.0.1 chat.gamespynetwork.com
+192.168.159.1 available.gamespy.com
+192.168.159.1 gamespy.com
+192.168.159.1 gamespyarcade.com
+192.168.159.1 www.gamespy.com
+192.168.159.1 www.gamespyarcade.com
+127.0.0.1 chat.master.gamespy.com
+192.168.159.1 thq.vo.llnwd.net
+192.168.159.1 gamespyid.com
 127.0.0.1 nat.gamespy.com
 ";
     }

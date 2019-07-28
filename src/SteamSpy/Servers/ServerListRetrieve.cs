@@ -128,7 +128,7 @@ namespace GSMasterServer.Servers
                    {
                        var server = servers[i];
                        // start connection establishment
-                       SteamNetworking.SendP2PPacket(server.HostSteamId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendUnreliableNoDelay, 1);
+                       SteamNetworking.SendP2PPacket(server.HostSteamId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendUnreliable, 1);
                    }
                });
         }
@@ -495,7 +495,7 @@ namespace GSMasterServer.Servers
                 data.AddRange(new byte[] { 0, 0 });
             }
 
-            PortBindingManager.ClearPortBindings();
+            //PortBindingManager.ClearPortBindings();
 
             foreach (var server in servers)
             {
@@ -541,7 +541,12 @@ namespace GSMasterServer.Servers
 
                 //var endPoint = (IPEndPoint)state.Socket.RemoteEndPoint;
 
-                ushort retranslationPort = PortBindingManager.AddOrUpdatePortBinding(server.HostSteamId).Port;
+                var retranslator = PortBindingManager.AddOrUpdatePortBinding(server.HostSteamId);
+                retranslator.Clear();
+
+                ushort retranslationPort = retranslator.Port;
+
+
 
                 var channelHash = ChatCrypt.PiStagingRoomHash("127.0.0.1", "127.0.0.1", retranslationPort);
 

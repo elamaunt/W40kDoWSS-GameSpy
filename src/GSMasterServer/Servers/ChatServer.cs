@@ -402,7 +402,6 @@ namespace GSMasterServer.Servers
             public ChatCrypt.GDCryptKey ServerKey;
             public ChatCrypt.GDCryptKey ServerKeyClone;
             public UserInfo UserInfo;
-            public long ProfileId;
 
             public void Dispose()
             {
@@ -422,7 +421,6 @@ namespace GSMasterServer.Servers
                             try
                             {
                                 Socket.Shutdown(SocketShutdown.Both);
-                                IrcDaemon.RemoveUserFromAllChannels(UserInfo);
                             }
                             catch (Exception)
                             {
@@ -432,6 +430,8 @@ namespace GSMasterServer.Servers
                             Socket = null;
                         }
                     }
+
+                    IrcDaemon.RemoveUserFromAllChannels(UserInfo);
 
                     GC.Collect();
                 }

@@ -27,10 +27,10 @@ namespace SteamSpy.Utils
 
             Console.WriteLine($"OnSessionConnectFailReceived {param.m_steamIDRemote} {error}");
 
-            if (PortBindings.TryRemove(param.m_steamIDRemote, out ServerRetranslator retranslator))
+            /*if (PortBindings.TryRemove(param.m_steamIDRemote, out ServerRetranslator retranslator))
             {
                 retranslator.Dispose();
-            }
+            }*/
         }
 
         public static void ClearPortBindings()
@@ -49,7 +49,16 @@ namespace SteamSpy.Utils
             uint size, bytesReaded;
             CSteamID remoteSteamId;
             P2PSessionState_t state;
-            
+
+            while (SteamNetworking.IsP2PPacketAvailable(out size, 1))
+            {
+                if (size == 0)
+                    continue;
+
+                if (SteamNetworking.ReadP2PPacket(_receiveBuffer, size, out bytesReaded, out remoteSteamId, 1))
+                    PortBindings.GetOrAdd(remoteSteamId, steamId => new ServerRetranslator(steamId));
+            }
+
             while (SteamNetworking.IsP2PPacketAvailable(out size))
             {
                 if (size == 0)
@@ -57,18 +66,18 @@ namespace SteamSpy.Utils
 
                 if (_receiveBuffer.Length < size)
                     _receiveBuffer = new byte[size];
-
+                
                 if (SteamNetworking.ReadP2PPacket(_receiveBuffer, size, out bytesReaded, out remoteSteamId))
                 {
-                   // if (SteamNetworking.GetP2PSessionState(remoteSteamId, out state))
-                   // {
-                   //     if (state.m_bConnectionActive == 1)
-                   //     {
-                            var retranslator = PortBindings.GetOrAdd(remoteSteamId, steamId => new ServerRetranslator(steamId));
+                    // if (SteamNetworking.GetP2PSessionState(remoteSteamId, out state))
+                    // {
+                    //     if (state.m_bConnectionActive == 1)
+                    //     {
+                    var retranslator = PortBindings.GetOrAdd(remoteSteamId, steamId => new ServerRetranslator(steamId));
 
-                            retranslator.SendToGame(_receiveBuffer, size);
-                   //     }
-                   // }
+                    retranslator.SendToGame(_receiveBuffer, size);
+                    //     }
+                    // }
                 }
             }
         }

@@ -71,7 +71,7 @@ namespace GSMasterServer.Servers
 
                     if (_idsRetrievingClient != null)
                     {
-                        _idsRetrievingClient.Dispose();
+                        (_idsRetrievingClient as IDisposable)?.Dispose();
                         _idsRetrievingClient = null;
                     }
                 }
@@ -109,7 +109,7 @@ namespace GSMasterServer.Servers
                 _socket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
 
                 Port = (ushort)((IPEndPoint)_socket.LocalEndPoint).Port;
-
+                
                 _socketReadEvent = new SocketAsyncEventArgs()
                 {
                     RemoteEndPoint = new IPEndPoint(IPAddress.Any, 0)
@@ -162,22 +162,24 @@ namespace GSMasterServer.Servers
             {
                 LocalPoint = e.RemoteEndPoint as IPEndPoint;
 
-                byte[] receivedBytes = new byte[e.BytesTransferred];
-                Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
+                //byte[] receivedBytes = new byte[e.BytesTransferred];
+                //Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
 
-                var str = Encoding.UTF8.GetString(receivedBytes);
+                //var str = Encoding.UTF8.GetString(receivedBytes);
 
                 // there by a bunch of different message formats...
                 //Log(Category, $">> {RemoteUserSteamId} "+str);
-
+                //Log(Category, ">> BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
                 //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
 
+
+
                 var count = (uint)e.BytesTransferred;
 
-               // if (count < 900)
-               //     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliableNoDelay);
-               // else
+                if (count < 900)
+                    SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliable);
+                else
                     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendReliable);
             }
             catch (Exception ex)
@@ -227,7 +229,10 @@ namespace GSMasterServer.Servers
 
                 if (index != -1)
                 {
-                    var bytes = Encoding.UTF8.GetBytes(str.Replace("6112", Port.ToString()));
+                    var newStr = str.Replace("6112", Port.ToString()).Replace("hostport\00", "hostport\0"+ Port.ToString());
+                    var bytes = Encoding.UTF8.GetBytes(newStr);
+
+                    Console.WriteLine("CONNECTING "+ newStr);
 
                     _socket?.SendTo(bytes, bytes.Length, SocketFlags.None, LocalPoint ?? GameEndPoint);
 
@@ -236,7 +241,7 @@ namespace GSMasterServer.Servers
                 
                 if (_socket == null)
                     Console.WriteLine("RECEIVE SOCKET NULL");
-
+                
                 _socket?.SendTo(buffer, (int)size, SocketFlags.None, LocalPoint ?? GameEndPoint);
             }
             catch (Exception ex)
