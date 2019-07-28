@@ -22,11 +22,12 @@ namespace GSMasterServer.Servers
 
         public static byte[] Gamename;
         public static byte[] Gamekey = null;
+        
+        SocketState _currentClientState;
 
-        AddressInfo _adressInfo;
         public ChatServerRetranslator(IPAddress address, ushort port)
         {
-            StartServer(_adressInfo = new AddressInfo()
+            StartServer(new AddressInfo()
             {
                 Address = address,
                 Port = port
@@ -90,6 +91,8 @@ namespace GSMasterServer.Servers
             {
                 GameSocket = handler
             };
+
+            _currentClientState = state;
 
             if (_serverSocket.Connected)
                 _serverSocket.Disconnect(true);
@@ -431,12 +434,22 @@ namespace GSMasterServer.Servers
             CONTINUE: WaitForGameData(state);
         }
 
-        private unsafe void SendToServerSocket(ref SocketState state, byte[] bytes, bool skipEncoding = false)
+        public void SendAutomatchGameBroadcast(int maxPlayers)
+        {
+            var state = _currentClientState;
+
+            if (state.Disposing)
+                return;
+            
+          //  SendToServerSocket(ref state, $@"GAMEBROADCAST {SteamUser.GetSteamID()} {maxPlayers}".ToAssciiBytes());
+        }
+
+        private unsafe void SendToServerSocket(ref SocketState state, byte[] bytes)
         {
             if (state.Disposing)
                 return;
 
-            if (!skipEncoding && state.SendingEncoded)
+            if (state.SendingEncoded)
             {
                 fixed (byte* bytesToSendPtr = bytes)
                     ChatCrypt.GSEncodeDecode(state.SendingServerKey, bytesToSendPtr, bytes.Length);

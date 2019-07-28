@@ -11,6 +11,9 @@ namespace SteamSpy.Utils
     {
         static readonly object LOCK = new object();
         static CSteamID? _currentLobby;
+        static GameServer _currentServer;
+
+        public static bool IsLobbyJoinable => IsInLobbyNow && _currentServer.Valid;
 
         public static bool IsInLobbyNow => _currentLobby != null;
 
@@ -28,6 +31,7 @@ namespace SteamSpy.Utils
                     SteamMatchmaking.LeaveLobby(id);
                     Console.WriteLine("Лобби покинуто " + id);
                     _currentLobby = null;
+                    _currentServer = null;
                 }
             }
         }
@@ -61,6 +65,7 @@ namespace SteamSpy.Utils
                           }
 
                           _currentLobby = id;
+                          _currentServer = server;
 
                           UpdateCurrentLobby(server);
 
@@ -87,8 +92,15 @@ namespace SteamSpy.Utils
 
                 Console.WriteLine("Задан HOST ID "+ hostId);
 
+                _currentServer.Valid = server.Valid;
+
                 foreach (var item in server.Properties)
+                {
                     SteamMatchmaking.SetLobbyData(id, item.Key, item.Value);
+
+                    if (_currentServer != server)
+                        _currentServer.Set(item.Key, item.Value);
+                }
             }
         }
 

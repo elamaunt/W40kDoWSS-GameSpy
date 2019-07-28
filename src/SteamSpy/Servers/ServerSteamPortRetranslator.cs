@@ -177,9 +177,9 @@ namespace GSMasterServer.Servers
 
                 var count = (uint)e.BytesTransferred;
 
-                if (count < 900)
-                    SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliable);
-                else
+               // if (count < 900)
+               //     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliable);
+               // else
                     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendReliable);
             }
             catch (Exception ex)
@@ -229,7 +229,7 @@ namespace GSMasterServer.Servers
 
                 if (index != -1)
                 {
-                    var newStr = str.Replace("6112", Port.ToString()).Replace("hostport\00", "hostport\0"+ Port.ToString());
+                    var newStr = str.Replace("hostport\06112", "hostport\0" + Port.ToString()).Replace("hostport\00", "hostport\0"+ Port.ToString());
                     var bytes = Encoding.UTF8.GetBytes(newStr);
 
                     Console.WriteLine("CONNECTING "+ newStr);

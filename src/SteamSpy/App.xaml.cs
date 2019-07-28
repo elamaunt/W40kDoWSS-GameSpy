@@ -18,19 +18,7 @@ namespace SteamSpy
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            var bind = IPAddress.Any;
-
-            //CDKeyServer cdKeyServer = new CDKeyServer(bind, 29910);
-            ServerListReport serverListReport = new ServerListReport(bind, 27900);
-            //ServerRetranslationNatNeg serverNatNeg = new ServerRetranslationNatNeg(bind, 27901);
-            ServerListRetrieve serverListRetrieve = new ServerListRetrieve(bind, 28910);
-
-            LoginServerRetranslator loginMasterServer = new LoginServerRetranslator(bind, 29900, 29901);
-            ChatServerRetranslator chatServer = new ChatServerRetranslator(bind, 6667);
-            /*
-             ChatServer chatServer = new ChatServer(bind, 6667);
-             HttpServer httpServer = new HttpServer(bind, 80);
-             StatsServer statsServer = new StatsServer(bind, 29920);*/
+            CoreContext.Start(IPAddress.Any);
             
             //ModifyHostsFile(LocalEntries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
             ModifyHostsFile(Entries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());

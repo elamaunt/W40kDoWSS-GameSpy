@@ -25,19 +25,28 @@ namespace GSMasterServer.Servers
         private const string Category = "ServerRetrieve";
         
         Socket _socket;
+        Timer _reloadLobbiesTimer;
 
         public static ConcurrentDictionary<string, CSteamID> IDByChannelCache { get; } = new ConcurrentDictionary<string, CSteamID>();
         public static ConcurrentDictionary<CSteamID, string> ChannelByIDCache { get; } = new ConcurrentDictionary<CSteamID, string>();
         
-        AddressInfo _adressInfo;
-
         public ServerListRetrieve(IPAddress listen, ushort port)
         {
-            StartServer(_adressInfo = new AddressInfo()
+            StartServer(new AddressInfo()
             {
                 Address = listen,
                 Port = port
             });
+        }
+
+        public void StartReloadingTimer()
+        {
+            _reloadLobbiesTimer = new Timer(OnReloadRequested, null, 0, 2000);
+        }
+
+        private void OnReloadRequested(object state)
+        {
+            WarmingUpTheGameList();
         }
 
         public void Dispose()
@@ -121,7 +130,7 @@ namespace GSMasterServer.Servers
                    {
                        var server = servers[i];
                        // start connection establishment
-                       SteamNetworking.SendP2PPacket(server.HostSteamId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendUnreliable, 1);
+                       SteamNetworking.SendP2PPacket(server.HostSteamId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
                    }
                });
         }
@@ -334,10 +343,7 @@ namespace GSMasterServer.Servers
                    byte[] unencryptedServerList = PackServerList(state, servers, fields, isAutomatch);
                    byte[] encryptedServerList = GSEncoding.Encode(/*ChatServer.Gamekey,*/ "pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedServerList, unencryptedServerList.LongLength);
 
-                   Task.Delay(1500).ContinueWith(t =>
-                   {
-                       SendToClient(state, encryptedServerList);
-                   });
+                   SendToClient(state, encryptedServerList);
                });
         }
 
@@ -491,7 +497,7 @@ namespace GSMasterServer.Servers
                 data.AddRange(new byte[] { 0, 0 });
             }
 
-            //PortBindingManager.ClearPortBindings();
+            PortBindingManager.ClearPortBindings();
 
             foreach (var server in servers)
             {
@@ -538,7 +544,7 @@ namespace GSMasterServer.Servers
                 //var endPoint = (IPEndPoint)state.Socket.RemoteEndPoint;
 
                 var retranslator = PortBindingManager.AddOrUpdatePortBinding(server.HostSteamId);
-                retranslator.Clear();
+                //retranslator.Clear();
 
                 ushort retranslationPort = retranslator.Port;
 
@@ -552,6 +558,12 @@ namespace GSMasterServer.Servers
                 IDByChannelCache[channelHash] = server.HostSteamId;
                 ChannelByIDCache[server.HostSteamId] = channelHash;
 
+                if (SteamNetworking.GetP2PSessionState(server.HostSteamId, out P2PSessionState_t connectionState))
+                {
+                    if (connectionState.m_bConnectionActive != 1)
+                        continue;
+                }
+                
                 var loopbackIpBytes = IPAddress.Loopback.GetAddressBytes(); //IPAddress.Loopback.GetAddressBytes();
                 //var ipBytes = IPAddress.Parse(iPAddress).GetAddressBytes();
 

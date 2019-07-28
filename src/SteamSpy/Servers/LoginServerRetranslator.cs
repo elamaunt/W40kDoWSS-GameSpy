@@ -19,22 +19,19 @@ namespace GSMasterServer.Servers
 
         private static Socket _clientManagerServerSocket;
         private static Socket _searchManagerServerSocket;
-
-        AddressInfo _clientAdressInfo;
-        AddressInfo _searchAdressInfo;
-
+        
 
         public LoginServerRetranslator(IPAddress listen, ushort clientManagerPort, ushort searchManagerPort)
         {
             ServicePointManager.SetTcpKeepAlive(true, 60 * 1000 * 10, 1000);
 
-            StartServerClientManager(_clientAdressInfo = new AddressInfo()
+            StartServerClientManager(new AddressInfo()
             {
                 Address = listen,
                 Port = clientManagerPort
             });
 
-            StartServerSearchManager(_searchAdressInfo = new AddressInfo()
+            StartServerSearchManager(new AddressInfo()
             {
                 Address = listen,
                 Port = searchManagerPort

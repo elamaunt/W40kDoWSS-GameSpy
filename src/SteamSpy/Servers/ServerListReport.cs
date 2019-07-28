@@ -1,5 +1,6 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
+using SteamSpy;
 using SteamSpy.Utils;
 using System;
 using System.Linq;
@@ -21,17 +22,16 @@ namespace GSMasterServer.Servers
         byte[] _socketReceivedBuffer;
 
         public static string CurrentUserRoomHash { get; set; }
-
+        
         public ServerListReport(IPAddress listen, ushort port)
         {
             GeoIP.Initialize(Log, Category);
-            
+
             StartServer(new AddressInfo()
             {
                 Address = listen,
                 Port = port
             });
-            
         }
 
         public void Dispose()
@@ -425,7 +425,7 @@ namespace GSMasterServer.Servers
                   // only allow servers with a gamevariant of those listed in modwhitelist.txt, or (pr || pr_*) by default
                   return true; // true means we don't send back a response
               }*/
-
+              
             // you've got to have all these properties in order for your server to be valid
             if (!String.IsNullOrWhiteSpace(server.Get<string>("hostname")) &&
                 !String.IsNullOrWhiteSpace(server.Get<string>("gamevariant")) &&
@@ -451,23 +451,19 @@ namespace GSMasterServer.Servers
                     return true;
                 }
             }
-            
+
+            PortBindingManager.ClearPortBindings();
+
+            var wasJoinable = SteamLobbyManager.IsLobbyJoinable;
             SteamLobbyManager.UpdateCurrentLobby(server);
-            
-            /*Servers.AddOrUpdate(key, server, (k, old) =>
+
+            if (!wasJoinable && SteamLobbyManager.IsLobbyJoinable)
             {
-                if (!old.Valid && server.Valid)
-                {
-                    Log(Category, String.Format("Added new server at: {0}:{1} ({2}) ({3})", server.GetByName("IPAddress"), server.GetByName("QueryPort"), server.GetByName("country"), server.GetByName("gamevariant")));
+                var gameType = server.Get<string>("gametype");
 
-                    var gametype = server.Get<string>("gametype");
-
-                    if (server.Get<string>("maxplayers") == "2" && gametype == "unranked")
-                        Task.Factory.StartNew(WhisperNewGameToPlayers, server);
-                }
-                
-                return server;
-            });*/
+                if (gameType == "unranked")
+                    CoreContext.ChatServer.SendAutomatchGameBroadcast(int.Parse(server.Get<string>("maxplayers")));
+            }
 
             return true;
         }
