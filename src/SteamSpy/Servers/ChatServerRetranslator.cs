@@ -89,7 +89,8 @@ namespace GSMasterServer.Servers
 
             SocketState state = new SocketState()
             {
-                GameSocket = handler
+                GameSocket = handler,
+                ServerSocket = _serverSocket
             };
 
             _currentClientState = state;
@@ -511,7 +512,8 @@ namespace GSMasterServer.Servers
             public bool Disposing;
             public bool ReceivingEncoded;
             public bool SendingEncoded;
-            public Socket GameSocket = null;
+            public Socket GameSocket;
+            public Socket ServerSocket;
             public byte[] GameBuffer = new byte[8192];
             public byte[] ServerBuffer = new byte[8192];
 
@@ -519,9 +521,10 @@ namespace GSMasterServer.Servers
             public ChatCrypt.GDCryptKey ReceivingGameKey;
             public ChatCrypt.GDCryptKey SendingServerKey;
             public ChatCrypt.GDCryptKey ReceivingServerKey;
+
             //public UserInfo UserInfo;
             //public long ProfileId;
-            
+
             public void Dispose()
             {
                 Dispose(true);
@@ -548,6 +551,9 @@ namespace GSMasterServer.Servers
                             GameSocket.Close();
                             GameSocket.Dispose();
                             GameSocket = null;
+
+                            if (ServerSocket.Connected)
+                                ServerSocket.Disconnect(true);
                         }
                     }
                     GC.Collect();
