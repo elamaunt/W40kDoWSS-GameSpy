@@ -90,7 +90,7 @@
     <Compile Include="Servers\ChatServerRetranslator.cs" />
     <Compile Include="Servers\LoginServerRetranslator.cs" />
     <Compile Include="Servers\Server.cs" />
-    <Compile Include="Servers\ServerRetranslator.cs" />
+    <Compile Include="Servers\ServerSteamPortRetranslator.cs" />
     <Compile Include="Servers\ServerListReport.cs" />
     <Compile Include="Servers\ServerListRetrieve.cs" />
     <Compile Include="Utils\ByteHelpers.cs" />

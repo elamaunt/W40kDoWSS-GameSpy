@@ -1,5 +1,4 @@
 ﻿using GSMasterServer.Data;
-using GSMasterServer.Utils;
 using Reality.Net.GameSpy.Servers;
 using SteamSpy.Utils;
 using Steamworks;
@@ -7,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 
 namespace GSMasterServer.Servers
@@ -15,9 +13,6 @@ namespace GSMasterServer.Servers
     internal class LoginServerRetranslator : Server
     {
         public const string Category = "Login Server Retranslator";
-        
-        Thread _clientManagerThread;
-        Thread _searchManagerThread;
 
         private static Socket _clientManagerGameSocket;
         private static Socket _searchManagerGameSocket;
@@ -25,30 +20,21 @@ namespace GSMasterServer.Servers
         private static Socket _clientManagerServerSocket;
         private static Socket _searchManagerServerSocket;
 
-        private readonly ManualResetEvent _clientManagerReset = new ManualResetEvent(false);
-        private readonly ManualResetEvent _searchManagerReset = new ManualResetEvent(false);
-        
+        AddressInfo _clientAdressInfo;
+        AddressInfo _searchAdressInfo;
+
+
         public LoginServerRetranslator(IPAddress listen, ushort clientManagerPort, ushort searchManagerPort)
         {
             ServicePointManager.SetTcpKeepAlive(true, 60 * 1000 * 10, 1000);
-            
-            _clientManagerThread = new Thread(StartServerClientManager)
-            {
-                Name = "Login Thread Client Manager"
-            };
 
-            _clientManagerThread.Start(new AddressInfo()
+            StartServerClientManager(_clientAdressInfo = new AddressInfo()
             {
                 Address = listen,
                 Port = clientManagerPort
             });
 
-            _searchManagerThread = new Thread(StartServerSearchManager)
-            {
-                Name = "Login Thread Search Manager"
-            };
-
-            _searchManagerThread.Start(new AddressInfo()
+            StartServerSearchManager(_searchAdressInfo = new AddressInfo()
             {
                 Address = listen,
                 Port = searchManagerPort
@@ -89,7 +75,7 @@ namespace GSMasterServer.Servers
                         _searchManagerServerSocket.Dispose();
                         _searchManagerServerSocket = null;
                     }
-                    
+
                     if (_clientManagerServerSocket != null)
                     {
                         _clientManagerServerSocket.Close();
@@ -108,9 +94,8 @@ namespace GSMasterServer.Servers
             Dispose(false);
         }
 
-        private void StartServerClientManager(object parameter)
+        private void StartServerClientManager(AddressInfo info)
         {
-            AddressInfo info = (AddressInfo)parameter;
 
             Log(Category, "Starting Login Server ClientManager");
 
@@ -155,25 +140,22 @@ namespace GSMasterServer.Servers
                 return;
             }
 
-            while (true)
-            {
-                _clientManagerReset.Reset();
-
-                LoginSocketState state = new LoginSocketState()
-                {
-                    Type = LoginSocketState.SocketType.Client,
-                    GameSocket = _clientManagerGameSocket
-                };
-
-                _clientManagerGameSocket.BeginAccept(AcceptCallback, state);
-                _clientManagerReset.WaitOne();
-            }
+            RestartClientAcepting();
         }
 
-        private void StartServerSearchManager(object parameter)
+        private void RestartClientAcepting()
         {
-            AddressInfo info = (AddressInfo)parameter;
+            LoginSocketState state = new LoginSocketState()
+            {
+                Type = LoginSocketState.SocketType.Client,
+                GameSocket = _clientManagerGameSocket
+            };
 
+            _clientManagerGameSocket.BeginAccept(AcceptCallback, state);
+        }
+
+        private void StartServerSearchManager(AddressInfo info)
+        {
             Log(Category, "Starting Login Server SearchManager");
 
             try
@@ -217,19 +199,24 @@ namespace GSMasterServer.Servers
                 return;
             }
 
-            while (true)
+            LoginSocketState state = new LoginSocketState()
             {
-                _searchManagerReset.Reset();
+                Type = LoginSocketState.SocketType.Search,
+                GameSocket = _searchManagerGameSocket
+            };
 
-                LoginSocketState state = new LoginSocketState()
-                {
-                    Type = LoginSocketState.SocketType.Search,
-                    GameSocket = _searchManagerGameSocket
-                };
+            RestartSearchAcepting();
+        }
 
-                _searchManagerGameSocket.BeginAccept(AcceptCallback, state);
-                _searchManagerReset.WaitOne();
-            }
+        private void RestartSearchAcepting()
+        {
+            LoginSocketState state = new LoginSocketState()
+            {
+                Type = LoginSocketState.SocketType.Search,
+                GameSocket = _searchManagerGameSocket
+            };
+
+            _searchManagerGameSocket.BeginAccept(AcceptCallback, state);
         }
 
         private void AcceptCallback(IAsyncResult ar)
@@ -242,13 +229,8 @@ namespace GSMasterServer.Servers
 
                 Thread.Sleep(1);
 
-                if (state.Type == LoginSocketState.SocketType.Client)
-                    _clientManagerReset.Set();
-                else if (state.Type == LoginSocketState.SocketType.Search)
-                    _searchManagerReset.Set();
-
                 state.GameSocket = client;
-                
+
                 if (state.Type == LoginSocketState.SocketType.Client)
                 {
                     state.ServerSocket = _clientManagerServerSocket;
@@ -256,7 +238,7 @@ namespace GSMasterServer.Servers
                         _clientManagerServerSocket.Disconnect(true);
                     _clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), GameConstants.CLIENT_LOGIN_TCP_PORT), OnConnect, state);
                     //_clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 29902), OnConnect, state);
-
+                    RestartClientAcepting();
                 }
                 else if (state.Type == LoginSocketState.SocketType.Search)
                 {
@@ -264,6 +246,7 @@ namespace GSMasterServer.Servers
                     if (_searchManagerServerSocket.Connected)
                         _searchManagerServerSocket.Disconnect(true);
                     _searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), GameConstants.SEARCH_LOGIN_TCP_PORT), OnConnect, state);
+                    RestartSearchAcepting();
                     //_searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 29903), OnConnect, state);
                 }
             }
@@ -456,7 +439,7 @@ namespace GSMasterServer.Servers
                 }
             }
         }
-        
+
         private void WaitForServerData(ref LoginSocketState state)
         {
             Thread.Sleep(10);
@@ -619,8 +602,8 @@ namespace GSMasterServer.Servers
                 LogError(Category, e.ToString());
             }
 
-            // and we wait for more data...
-            CONTINUE: WaitForServerData(ref state);
+        // and we wait for more data...
+        CONTINUE: WaitForServerData(ref state);
         }
 
         private void OnGameDataReceived(IAsyncResult async)
@@ -737,32 +720,32 @@ namespace GSMasterServer.Servers
             }
         }*/
 
-       /* private void HandleClientManager(ref LoginSocketState state, string query, Dictionary<string, string> keyValues)
-        {
-            if (state == null || String.IsNullOrWhiteSpace(query) || keyValues == null)
-            {
-                return;
-            }
-            
-            if (state.State >= 4)
-            {
-                state.Dispose();
-            }
-            else
-            {
-                switch (query)
-                {
-                    case "login":
-                        //SendToClient(ref state, LoginServerMessages.SendProof(ref state, keyValues));
-                        //state.StartKeepAlive(this);
+        /* private void HandleClientManager(ref LoginSocketState state, string query, Dictionary<string, string> keyValues)
+         {
+             if (state == null || String.IsNullOrWhiteSpace(query) || keyValues == null)
+             {
+                 return;
+             }
 
-                        break;
+             if (state.State >= 4)
+             {
+                 state.Dispose();
+             }
+             else
+             {
+                 switch (query)
+                 {
+                     case "login":
+                         //SendToClient(ref state, LoginServerMessages.SendProof(ref state, keyValues));
+                         //state.StartKeepAlive(this);
 
-                    default:
-                        break;
-                }
-            }
-        }*/
+                         break;
+
+                     default:
+                         break;
+                 }
+             }
+         }*/
 
         /*private void HandleSearchManager(ref LoginSocketState state, string query, Dictionary<string, string> keyValues)
         {
@@ -820,63 +803,64 @@ namespace GSMasterServer.Servers
 
             return parsedData;
         }
-    }
 
-    internal class LoginSocketState : IDisposable
-    {
-        public enum SocketType
-        {
-            Client,
-            Search
-        }
-        
-        public SocketType Type;
-        
-        public Socket ServerSocket = null;
-        public Socket GameSocket = null;
-        public byte[] ServerBuffer = new byte[8192];
-        public byte[] Buffer = new byte[8192];
 
-        public void Dispose()
+        internal class LoginSocketState : IDisposable
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            try
+            public enum SocketType
             {
-                if (disposing)
+                Client,
+                Search
+            }
+
+            public SocketType Type;
+
+            public Socket ServerSocket = null;
+            public Socket GameSocket = null;
+            public byte[] ServerBuffer = new byte[8192];
+            public byte[] Buffer = new byte[8192];
+            
+            public void Dispose()
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+
+            protected virtual void Dispose(bool disposing)
+            {
+                try
                 {
-                    if (GameSocket != null)
+                    if (disposing)
                     {
-                        GameSocket.Shutdown(SocketShutdown.Both);
-                        GameSocket.Close();
-                        GameSocket.Dispose();
-                        GameSocket = null;
+                        if (GameSocket != null)
+                        {
+                            GameSocket.Shutdown(SocketShutdown.Both);
+                            GameSocket.Close();
+                            GameSocket.Dispose();
+                            GameSocket = null;
+                        }
+
+                        if (ServerSocket != null)
+                        {
+                            ServerSocket.Shutdown(SocketShutdown.Both);
+                            ServerSocket.Close();
+                            ServerSocket.Dispose();
+                            ServerSocket = null;
+                        }
                     }
 
-                    if (ServerSocket != null)
-                    {
-                        ServerSocket.Shutdown(SocketShutdown.Both);
-                        ServerSocket.Close();
-                        ServerSocket.Dispose();
-                        ServerSocket = null;
-                    }
+                    // yeah yeah, this is terrible, but it stops a memory leak :|
+                    GC.Collect();
                 }
-
-                // yeah yeah, this is terrible, but it stops a memory leak :|
-                GC.Collect();
+                catch (Exception)
+                {
+                }
             }
-            catch (Exception)
+
+            ~LoginSocketState()
             {
+                Dispose(false);
             }
-        }
-
-        ~LoginSocketState()
-        {
-            Dispose(false);
         }
     }
 }

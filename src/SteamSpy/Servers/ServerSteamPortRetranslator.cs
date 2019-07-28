@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace GSMasterServer.Servers
 {
-    public class ServerRetranslator : Server
+    public class ServerSteamPortRetranslator : Server
     {
         public const string Category = "ServerRetranslator";
         const int BufferSize = 65535;
@@ -34,13 +34,13 @@ namespace GSMasterServer.Servers
 
         static readonly ConcurrentDictionary<string, CSteamID> IdByNicksCache = new ConcurrentDictionary<string, CSteamID>();
 
-        public ServerRetranslator(CSteamID userId)
+        public ServerSteamPortRetranslator(CSteamID userId)
             : this()
         {
             RemoteUserSteamId = userId;
         }
 
-        public ServerRetranslator()
+        public ServerSteamPortRetranslator()
         {
             GeoIP.Initialize(Log, Category);
             StartServer();
@@ -86,7 +86,7 @@ namespace GSMasterServer.Servers
             LocalPoint = null;
         }
 
-        ~ServerRetranslator()
+        ~ServerSteamPortRetranslator()
         {
             Dispose(false);
         }

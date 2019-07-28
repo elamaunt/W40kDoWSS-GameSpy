@@ -2,7 +2,6 @@
 using GSMasterServer.Utils;
 using SteamSpy.Utils;
 using System;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -17,11 +16,6 @@ namespace GSMasterServer.Servers
         public const string Category = "ServerReport";
         const int BufferSize = 65535;
         
-        string[] _modWhitelist;
-        IPAddress[] _plasmaServers;
-
-        Thread _thread;
-
         Socket _socket;
         SocketAsyncEventArgs _socketReadEvent;
         byte[] _socketReceivedBuffer;
@@ -32,25 +26,12 @@ namespace GSMasterServer.Servers
         {
             GeoIP.Initialize(Log, Category);
             
-            _thread = new Thread(StartServer)
-            {
-                Name = "Server Reporting Socket Thread"
-            };
-            _thread.Start(new AddressInfo()
+            StartServer(new AddressInfo()
             {
                 Address = listen,
                 Port = port
             });
-
-           /* new Thread(StartCleanup)
-            {
-                Name = "Server Reporting Cleanup Thread"
-            }.Start();*/
-
-            new Thread(StartDynamicInfoReload)
-            {
-                Name = "Dynamic Info Reload Thread"
-            }.Start();
+            
         }
 
         public void Dispose()
@@ -83,10 +64,8 @@ namespace GSMasterServer.Servers
             Dispose(false);
         }
 
-        private void StartServer(object parameter)
+        private void StartServer(AddressInfo info)
         {
-            AddressInfo info = (AddressInfo)parameter;
-
             Log(Category, "Starting Server List Reporting");
 
             try
@@ -121,7 +100,7 @@ namespace GSMasterServer.Servers
             WaitForData();
         }
         
-        private void StartDynamicInfoReload(object obj)
+        /*private void StartDynamicInfoReload(object obj)
         {
             while (true)
             {
@@ -165,7 +144,7 @@ namespace GSMasterServer.Servers
                 
                 Thread.Sleep(5 * 60 * 1000);
             }
-        }
+        }*/
 
         private void WaitForData()
         {

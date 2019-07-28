@@ -14,37 +14,28 @@ namespace GSMasterServer.Servers
     internal class ChatServerRetranslator : Server
     {
         private const string Category = "Chat";
-
-        Thread _thread;
-
+        
         Socket _serverSocket;
         Socket _newPeerAceptingsocket;
-        readonly ManualResetEvent _reset = new ManualResetEvent(false);
 
         public string ChatNick { get; private set; }
 
         public static byte[] Gamename;
         public static byte[] Gamekey = null;
 
+        AddressInfo _adressInfo;
         public ChatServerRetranslator(IPAddress address, ushort port)
         {
-            _thread = new Thread(StartServer)
-            {
-                Name = "Chat Socket Thread"
-            };
-
-            _thread.Start(new AddressInfo()
+            StartServer(_adressInfo = new AddressInfo()
             {
                 Address = address,
                 Port = port
             });
         }
 
-        private void StartServer(object parameter)
+        private void StartServer(AddressInfo info)
         {
-            AddressInfo info = (AddressInfo)parameter;
-
-            Log(Category, "Init");
+            Log(Category, "Init Chat Retranslator");
 
             try
             {
@@ -82,18 +73,16 @@ namespace GSMasterServer.Servers
                 return;
             }
 
-            while (true)
-            {
-                _reset.Reset();
-                _newPeerAceptingsocket.BeginAccept(AcceptCallback, _newPeerAceptingsocket);
-                _reset.WaitOne();
-            }
+            RestartAcepting();
+        }
+
+        private void RestartAcepting()
+        {
+            _newPeerAceptingsocket.BeginAccept(AcceptCallback, _newPeerAceptingsocket);
         }
 
         private void AcceptCallback(IAsyncResult ar)
         {
-            _reset.Set();
-
             Socket listener = (Socket)ar.AsyncState;
             Socket handler = listener.EndAccept(ar);
 
@@ -102,7 +91,10 @@ namespace GSMasterServer.Servers
                 GameSocket = handler
             };
 
+            if (_serverSocket.Connected)
+                _serverSocket.Disconnect(true);
             _serverSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), 6668), OnServerConnect, state);
+            RestartAcepting();
         }
 
         private void OnServerConnect(IAsyncResult ar)
@@ -515,8 +507,8 @@ namespace GSMasterServer.Servers
             public ChatCrypt.GDCryptKey SendingServerKey;
             public ChatCrypt.GDCryptKey ReceivingServerKey;
             //public UserInfo UserInfo;
-            public long ProfileId;
-
+            //public long ProfileId;
+            
             public void Dispose()
             {
                 Dispose(true);
@@ -545,7 +537,6 @@ namespace GSMasterServer.Servers
                             GameSocket = null;
                         }
                     }
-
                     GC.Collect();
                 }
                 catch (Exception)

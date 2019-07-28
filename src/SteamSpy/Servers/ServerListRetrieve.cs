@@ -23,24 +23,17 @@ namespace GSMasterServer.Servers
     internal class ServerListRetrieve : Server
     {
         private const string Category = "ServerRetrieve";
-
-        Thread _thread;
+        
         Socket _socket;
 
         public static ConcurrentDictionary<string, CSteamID> IDByChannelCache { get; } = new ConcurrentDictionary<string, CSteamID>();
         public static ConcurrentDictionary<CSteamID, string> ChannelByIDCache { get; } = new ConcurrentDictionary<CSteamID, string>();
-
-
-        readonly ManualResetEvent _reset = new ManualResetEvent(false);
         
+        AddressInfo _adressInfo;
+
         public ServerListRetrieve(IPAddress listen, ushort port)
         {
-            _thread = new Thread(StartServer)
-            {
-                Name = "Server Retrieving Socket Thread"
-            };
-
-            _thread.Start(new AddressInfo()
+            StartServer(_adressInfo = new AddressInfo()
             {
                 Address = listen,
                 Port = port
@@ -105,13 +98,13 @@ namespace GSMasterServer.Servers
                 LogError(Category, e.ToString());
                 return;
             }
-            
-            while (true)
-            {
-                _reset.Reset();
-                _socket.BeginAccept(AcceptCallback, _socket);
-                _reset.WaitOne();
-            }
+
+            RestartClientAcepting();
+        }
+
+        private void RestartClientAcepting()
+        {
+            _socket.BeginAccept(AcceptCallback, _socket);
         }
 
         public static void WarmingUpTheGameList()
@@ -135,8 +128,6 @@ namespace GSMasterServer.Servers
 
         private void AcceptCallback(IAsyncResult ar)
         {
-            _reset.Set();
-
             Socket listener = (Socket)ar.AsyncState;
             Socket handler = listener.EndAccept(ar);
 
@@ -146,6 +137,7 @@ namespace GSMasterServer.Servers
             };
 
             WaitForData(state);
+            RestartClientAcepting();
         }
 
         private void WaitForData(SocketState state)
