@@ -15,6 +15,15 @@ using System.Threading.Tasks;
 
 namespace GSMasterServer.Servers
 {
+    
+    public class GameUserInfo
+    {
+        public StatsData Stats;
+        public Race Race;
+        public int Team;
+        public PlayerFinalState FinalState;
+    }
+    
     internal class StatsServer : Server
     {
         const string Category = "Stats";
@@ -262,9 +271,11 @@ namespace GSMasterServer.Servers
 
                     goto CONTINUE;
                 }
-
+                
                 if (input.StartsWith(@"\updgame\"))
                 {
+                
+                    Log("StatWriteFromSource", input);
                     var gamedataIndex = input.IndexOf("gamedata");
                     var finalIndex = input.IndexOf("final");
 
@@ -316,7 +327,7 @@ namespace GSMasterServer.Servers
                         //var nick = dictionary["player_"+i];
                         var pid = long.Parse(dictionary["PID_" + i]);
 
-                        var info = new GameUserInfo()
+                        var info = new GameUserInfo
                         {
                             Stats = UsersDatabase.Instance.GetStatsDataByProfileId(pid),
                             Race = Enum.Parse<Race>(dictionary["PRace_" + i], true),
@@ -414,9 +425,10 @@ namespace GSMasterServer.Servers
 
                     var chatUserInfo = ChatServer.IrcDaemon.Users[state.ProfileId];
                     var game = chatUserInfo.Game;
+                    var isRateGame = game != null && game.Clean();
                     
                     // For rated games
-                    if (game != null && game.Clean())
+                    if (isRateGame)
                     {
                         chatUserInfo.Game = null;
 
@@ -485,6 +497,9 @@ namespace GSMasterServer.Servers
                     UPDATE:
                     for (int i = 0; i < usersGameInfos.Length; i++)
                         UsersDatabase.Instance.UpdateUserStats(usersGameInfos[i].Stats);
+                    
+                    // upload stats to dowstat in new thread
+                    Task.Factory.StartNew(() => Dowstats.UploadGame(dictionary, usersGameInfos, isRateGame));
                 }
             }
             catch (ObjectDisposedException)
@@ -677,14 +692,6 @@ namespace GSMasterServer.Servers
             {
                 Dispose(false);
             }
-        }
-
-        private class GameUserInfo
-        {
-            public StatsData Stats;
-            public Race Race;
-            public int Team;
-            public PlayerFinalState FinalState;
         }
     }
 }

@@ -57,3 +57,6 @@ Add these lines in your hosts file.
 127.0.0.1 thq.vo.llnwd.net<br />
 127.0.0.1 gamespyid.com<br />
 127.0.0.1 nat.gamespy.com<br />
+
+## Dowstats integration
+To setup custom dowstats server add to server environment variable "dowstatsServer" (someAnotherDowstats.ru) and "dowstatsVersion" (108).  Without environment paramethers game stats will send to dowstats.ru. 
