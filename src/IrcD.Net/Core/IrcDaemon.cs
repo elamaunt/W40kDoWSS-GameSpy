@@ -440,7 +440,22 @@ namespace IrcD.Core
                 Commands.Handle(info, prefix, replyCode, args, line.Length);
             }
         }
-        
+
+        public void SendToAll(string message)
+        {
+            var mainRooms = GetMainRooms();
+
+            for (int i = 0; i < mainRooms.Length; i++)
+            {
+                var room = mainRooms[i];
+
+                foreach (var item in room.Users)
+                {
+                    item.WriteServerPrivateMessage(message);
+                }
+            }
+        }
+
         private static void FilterArgs(List<string> args)
         {
             args.RemoveAll(s => string.IsNullOrEmpty(s.Trim()));

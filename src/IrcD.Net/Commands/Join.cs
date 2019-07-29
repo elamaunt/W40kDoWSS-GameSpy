@@ -85,7 +85,7 @@ namespace IrcD.Commands
                     chanuser.Modes.Add(IrcDaemon.ModeFactory.GetChannelRank('o'));
                 }
 
-                chan.UserPerChannelInfos.Add(info.Nick, chanuser);
+                chan.UserPerChannelInfos[info.Nick] = chanuser;
                 info.UserPerChannelInfos.Add(chanuser);
                 Send(new JoinArgument(info, chan, chan));
                 SendTopic(info, chan);

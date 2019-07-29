@@ -308,6 +308,8 @@ namespace GSMasterServer.Servers
                     if (!HandledGamesCache.Add(uniqueSession, uniqueSession, new CacheItemPolicy() { SlidingExpiration = TimeSpan.FromDays(1) }))
                         goto CONTINUE;
 
+                    ChatServer.IrcDaemon.SendToAll("Start calculating the stats. Count: " + playersCount);
+
                     var usersGameInfos = new GameUserInfo[playersCount];
 
                     GameUserInfo currentUserInfo = null;
@@ -315,11 +317,13 @@ namespace GSMasterServer.Servers
                     for (int i = 0; i < playersCount; i++)
                     {
                         //var nick = dictionary["player_"+i];
-                        var pid = long.Parse(dictionary["PID_" + i]);
+
+                        var profileId = dictionary["PID_" + i];
+                        var pid = long.Parse(profileId);
 
                         var info = new GameUserInfo()
                         {
-                            Stats = UsersDatabase.Instance.GetStatsDataByProfileId(pid),
+                            Stats = GetStatsById(profileId),
                             Race = Enum.Parse<Race>(dictionary["PRace_" + i], true),
                             Team = int.Parse(dictionary["PTeam_" + i]),
                             FinalState = Enum.Parse<PlayerFinalState>(dictionary["PFnlState_" + i]),
@@ -476,13 +480,18 @@ namespace GSMasterServer.Servers
                         }
                     }
 
+                    ChatServer.IrcDaemon.SendToAll("End calculating the stats");
+                    ChatServer.IrcDaemon.SendToAll("Start updating the stats. Count: "+usersGameInfos.Length);
+
                 UPDATE:
                     for (int i = 0; i < usersGameInfos.Length; i++)
                     {
                         var stats = usersGameInfos[i].Stats;
                         UpdateStatsCache(stats);
                         UsersDatabase.Instance.UpdateUserStats(stats);
+
                     }
+                    ChatServer.IrcDaemon.SendToAll("End updating the stats");
                 }
             }
             catch (ObjectDisposedException)

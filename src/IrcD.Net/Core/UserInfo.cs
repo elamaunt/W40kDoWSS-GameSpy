@@ -156,8 +156,8 @@ namespace IrcD.Core
             foreach (var channel in Channels)
             {
                 var channelInfo = channel.UserPerChannelInfos[Nick];
-                channel.UserPerChannelInfos.Remove(Nick);
-                channel.UserPerChannelInfos.Add(newNick, channelInfo);
+                channel.UserPerChannelInfos.TryRemove(Nick, out UserPerChannelInfo info);
+                channel.UserPerChannelInfos[newNick] = channelInfo;
             }
 
             Nick = newNick;
