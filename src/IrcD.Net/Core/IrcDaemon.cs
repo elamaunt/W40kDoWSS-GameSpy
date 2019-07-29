@@ -142,6 +142,7 @@ namespace IrcD.Core
             Commands.Add(new GetCKey(this));
             Commands.Add(new SetCKey(this));
             Commands.Add(new Utm(this));
+            Commands.Add(new GameBroadcast(this));
             //Commands.Add(new Connect(this));
             //Commands.Add(new Die(this));
             Commands.Add(new Error(this));
@@ -438,6 +439,24 @@ namespace IrcD.Core
             else
             {
                 Commands.Handle(info, prefix, replyCode, args, line.Length);
+            }
+        }
+
+        public void SendToAll(string message, string exceptNick)
+        {
+            var mainRooms = GetMainRooms();
+
+            for (int i = 0; i < mainRooms.Length; i++)
+            {
+                var room = mainRooms[i];
+
+                foreach (var item in room.Users)
+                {
+                    if (item.Nick.Equals(exceptNick, StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    item.WriteServerPrivateMessage(message);
+                }
             }
         }
 

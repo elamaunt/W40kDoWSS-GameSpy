@@ -27,6 +27,8 @@ namespace GSMasterServer.Servers
         Socket _socket;
         Timer _reloadLobbiesTimer;
 
+
+
         public static ConcurrentDictionary<string, CSteamID> IDByChannelCache { get; } = new ConcurrentDictionary<string, CSteamID>();
         public static ConcurrentDictionary<CSteamID, string> ChannelByIDCache { get; } = new ConcurrentDictionary<CSteamID, string>();
         
@@ -509,7 +511,7 @@ namespace GSMasterServer.Servers
                 // 81 (\x51)	= public ip / public port
 
                 var localip0 = server.Get<string>("localip0");
-                ushort localport = 23456; //ushort.Parse(server.Get<string>("localport") ?? "0");
+                ushort localport = ushort.Parse(server.Get<string>("localport") ?? "0");
                 var queryPort = (ushort)server.Get<int>("QueryPort");
                 var iPAddress = server.Get<string>("IPAddress");
 
@@ -544,7 +546,8 @@ namespace GSMasterServer.Servers
                 //var endPoint = (IPEndPoint)state.Socket.RemoteEndPoint;
 
                 var retranslator = PortBindingManager.AddOrUpdatePortBinding(server.HostSteamId);
-                //retranslator.Clear();
+
+                retranslator.AttachedServer = server;
 
                 ushort retranslationPort = retranslator.Port;
 
@@ -558,12 +561,14 @@ namespace GSMasterServer.Servers
                 IDByChannelCache[channelHash] = server.HostSteamId;
                 ChannelByIDCache[server.HostSteamId] = channelHash;
 
-                if (SteamNetworking.GetP2PSessionState(server.HostSteamId, out P2PSessionState_t connectionState))
+                /*if (SteamNetworking.GetP2PSessionState(server.HostSteamId, out P2PSessionState_t connectionState))
                 {
                     if (connectionState.m_bConnectionActive != 1)
                         continue;
-                }
+                }*/
+
                 
+
                 var loopbackIpBytes = IPAddress.Loopback.GetAddressBytes(); //IPAddress.Loopback.GetAddressBytes();
                 //var ipBytes = IPAddress.Parse(iPAddress).GetAddressBytes();
 

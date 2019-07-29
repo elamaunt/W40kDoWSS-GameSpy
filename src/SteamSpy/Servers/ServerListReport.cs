@@ -460,9 +460,10 @@ namespace GSMasterServer.Servers
             if (!wasJoinable && SteamLobbyManager.IsLobbyJoinable)
             {
                 var gameType = server.Get<string>("gametype");
+                var hostname = server.Get<string>("hostname");
 
                 if (gameType == "unranked")
-                    CoreContext.ChatServer.SendAutomatchGameBroadcast(int.Parse(server.Get<string>("maxplayers")));
+                    CoreContext.ChatServer.SendAutomatchGameBroadcast(hostname, int.Parse(server.Get<string>("maxplayers")));
             }
 
             return true;

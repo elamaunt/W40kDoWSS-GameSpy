@@ -435,14 +435,14 @@ namespace GSMasterServer.Servers
             CONTINUE: WaitForGameData(state);
         }
 
-        public void SendAutomatchGameBroadcast(int maxPlayers)
+        public void SendAutomatchGameBroadcast(string hostname, int maxPlayers)
         {
             var state = _currentClientState;
 
             if (state.Disposing)
                 return;
             
-          //  SendToServerSocket(ref state, $@"GAMEBROADCAST {SteamUser.GetSteamID()} {maxPlayers}".ToAssciiBytes());
+            SendToServerSocket(ref state, $@"GAMEBROADCAST {hostname} {maxPlayers}".ToAssciiBytes());
         }
 
         private unsafe void SendToServerSocket(ref SocketState state, byte[] bytes)

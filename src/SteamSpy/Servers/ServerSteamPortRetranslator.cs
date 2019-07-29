@@ -21,6 +21,8 @@ namespace GSMasterServer.Servers
 
         public CSteamID RemoteUserSteamId { get; set; }
 
+        public Data.GameServer AttachedServer { get; set; }
+
         Socket _socket;
         SocketAsyncEventArgs _socketReadEvent;
         byte[] _socketReceivedBuffer;
@@ -84,6 +86,7 @@ namespace GSMasterServer.Servers
         public void Clear()
         {
             LocalPoint = null;
+            AttachedServer = null;
         }
 
         ~ServerSteamPortRetranslator()
@@ -161,9 +164,10 @@ namespace GSMasterServer.Servers
             try
             {
                 LocalPoint = e.RemoteEndPoint as IPEndPoint;
+                var count = (uint)e.BytesTransferred;
 
-                //byte[] receivedBytes = new byte[e.BytesTransferred];
-                //Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
+                byte[] receivedBytes = new byte[e.BytesTransferred];
+                Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
 
                 //var str = Encoding.UTF8.GetString(receivedBytes);
 
@@ -173,14 +177,70 @@ namespace GSMasterServer.Servers
                 //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
 
+                // "��\0���J���\u0001"
+                //  ��\0�z�J���\u0001
+                // "254 253 0 247 122 228 74 255 255 255 1"
+
+                // Fake host response to speed up connection
+                if (count == 11 &&
+                    e.Buffer[0] == 254 &&
+                    e.Buffer[1] == 253 &&
+                    e.Buffer[2] == 0 &&
+                   // e.Buffer[3] == 247 &&
+                   // e.Buffer[4] == 122 &&
+                   // e.Buffer[5] == 228 &&
+                    e.Buffer[6] == 74 &&
+                    e.Buffer[7] == 255 &&
+                    e.Buffer[8] == 255 &&
+                    e.Buffer[9] == 255 &&
+                    e.Buffer[10] == 1)
+                {
+                    var builder = new StringBuilder("\0$��Jsplitnum\0�");
+
+                    AppendServerProperty(builder, "numplayers");
+
+                    AppendServerProperty(builder, "numplayers");
+                    AppendServerProperty(builder, "maxplayers");
+                    AppendServerProperty(builder, "hostname");
+                    AppendServerProperty(builder, "hostport", Port.ToString());
+                    AppendServerProperty(builder, "mapname");
+                    AppendServerProperty(builder, "password");
+                    AppendServerProperty(builder, "gamever");
+                    AppendServerProperty(builder, "numplayers");
+                    AppendServerProperty(builder, "maxplayers");
+                    AppendServerProperty(builder, "score_");
+                    AppendServerProperty(builder, "teamplay");
+                    AppendServerProperty(builder, "gametype");
+                    AppendServerProperty(builder, "gamevariant");
+                    AppendServerProperty(builder, "groupid");
+                    AppendServerProperty(builder, "numobservers");
+                    AppendServerProperty(builder, "maxobservers");
+                    AppendServerProperty(builder, "modname");
+                    AppendServerProperty(builder, "moddisplayname");
+                    AppendServerProperty(builder, "modversion");
+                    AppendServerProperty(builder, "devmode");
+
+                    for (int i = 0; i < 32; i++)
+                    {
+                        AppendServerProperty(builder, "gametype" + i);
+                    }
+                    
+                    var hostname = AttachedServer?.GetByName("hostname") ?? string.Empty;
+                    builder.Append($"\u0001player_\0\0{hostname}\0\0ping_\0\00\0\0player_\0\0{hostname}\0\0\0\u0002\0");
+
+                    var fakeString = builder.ToString();
+                    var bytes = Encoding.UTF8.GetBytes(fakeString);
+
+                    Console.WriteLine("SERVER FAKE " + fakeString);
+
+                    _socket?.SendTo(bytes, bytes.Length, SocketFlags.None, LocalPoint ?? GameEndPoint);
+                }
 
 
-                var count = (uint)e.BytesTransferred;
-
-               // if (count < 900)
-               //     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliable);
-               // else
-                    SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendReliable);
+                // if (count < 900)
+                //     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliable);
+                // else
+                SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendReliable);
             }
             catch (Exception ex)
             {
@@ -209,6 +269,8 @@ namespace GSMasterServer.Servers
                     buffer[m++] == 0 &&
                     buffer[m++] == 0)
                 {
+                    Console.WriteLine("JOINGAMEDATA " + str);
+
                     var clone = new byte[s];
 
                     Array.Copy(buffer, clone, s);
@@ -229,12 +291,14 @@ namespace GSMasterServer.Servers
 
                 if (index != -1)
                 {
+                    Console.WriteLine("INCOME " + str);
+
                     var newStr = str.Replace("hostport\06112", "hostport\0" + Port.ToString()).Replace("hostport\00", "hostport\0"+ Port.ToString());
                     var bytes = Encoding.UTF8.GetBytes(newStr);
-
+                    
                     Console.WriteLine("CONNECTING "+ newStr);
 
-                    _socket?.SendTo(bytes, bytes.Length, SocketFlags.None, LocalPoint ?? GameEndPoint);
+                   // _socket?.SendTo(bytes, bytes.Length, SocketFlags.None, LocalPoint ?? GameEndPoint);
 
                     return;
                 }
@@ -248,6 +312,22 @@ namespace GSMasterServer.Servers
             {
                 LogError(Category, ex.ToString());
             }
+        }
+
+        private void AppendServerProperty(StringBuilder builder, string name, string value)
+        {
+            builder.Append("\0");
+            builder.Append(name);
+            builder.Append("\0");
+            builder.Append(value);
+        }
+
+        private void AppendServerProperty( StringBuilder builder, string name)
+        {
+            builder.Append("\0");
+            builder.Append(name);
+            builder.Append("\0");
+            builder.Append(AttachedServer?.GetByName(name)?? string.Empty);
         }
 
         private async Task<byte[]> HandleGamelobbyRequest(byte[] bytes)
