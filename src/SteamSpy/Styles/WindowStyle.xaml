@@ -6,16 +6,12 @@
     <SolidColorBrush x:Key="BrushColor" Color="#FFFFFF" />
     <SolidColorBrush x:Key="PressedColor" Color="#FFFFFF" />
 
-    
+
     <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
-        <Setter Property="Focusable" Value="false" />
-        <Setter Property="Background" Value="Transparent" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid>
-                        <ContentPresenter x:Name="ContentPresenter" Opacity="0.7"/>
-                    </Grid>
+                    <ContentPresenter x:Name="ContentPresenter" Opacity="0.7"/>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ContentPresenter" Property="Opacity" Value="1" />
@@ -25,7 +21,6 @@
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
-
             </Setter.Value>
         </Setter>
     </Style>
@@ -49,9 +44,9 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Window}">
-                    <Border x:Name="PART_Container" Padding="7 7 7 5">
+                    <Border x:Name="MainBorder" Padding="7 7 7 5">
                         <Grid TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display">
-                            <Border x:Name="PART_Border" Width="Auto" Height="Auto" Background="Black"
+                            <Border x:Name="PartBorder" Width="Auto" Height="Auto" Background="Black"
                                 BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Padding="0">
                                 <Grid>
                                     <Grid.Background>
@@ -84,7 +79,7 @@
                                                             StrokeThickness="2"
                                                             Data="m12,9 h9 v7 h-9 v-8"/>
                                                 <Path
-                                                            x:Name="PART_MaxButton_Additive_Path"   
+                                                            x:Name="MaxButtonAdditive"   
                                                             Stroke="{StaticResource BrushColor}"
                                                             StrokeThickness="1.5"
                                                             Data=""/>
@@ -107,10 +102,10 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Maximized">
-                            <Setter TargetName="PART_MaxButton_Additive_Path" Property="Data" Value="m14,6 h10 v7"/>
+                            <Setter TargetName="MaxButtonAdditive" Property="Data" Value="m14,6 h10 v7"/>
                         </Trigger>
                         <Trigger Property="WindowState" Value="Normal">
-                            <Setter TargetName="PART_Border" Property="Effect">
+                            <Setter TargetName="PartBorder" Property="Effect">
                                 <Setter.Value>
                                     <DropShadowEffect
                                         Color="black"

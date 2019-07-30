@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace SteamSpy.ViewModels
@@ -78,6 +79,13 @@ namespace SteamSpy.ViewModels
         public ShellViewModel()
         {
             PageViewModels.Add(new MainPageViewModel());
+            //PageViewModels.Add(new MainPageViewModel());
+            //PageViewModels.Add(new MainPageViewModel());
+            //PageViewModels.Add(new MainPageViewModel());
+            //PageViewModels.Add(new MainPageViewModel());
+            //PageViewModels.Add(new MainPageViewModel());
+            //PageViewModels.Add(new MainPageViewModel());
+            //PageViewModels.Add(new LobbyPageViewModel());
             SetPageNames();
 
             CurrentPageViewModel = PageViewModels[0];

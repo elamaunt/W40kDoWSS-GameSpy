@@ -115,6 +115,7 @@
     <Compile Include="Utils\SystemExtensionMethods.cs" />
     <Compile Include="Utils\TaskHelper.cs" />
     <Compile Include="ViewModels\PageViewModels\IPageViewModel.cs" />
+    <Compile Include="ViewModels\PageViewModels\LobbyPageViewModel.cs" />
     <Compile Include="ViewModels\PageViewModels\MainPageViewModel.cs" />
     <Compile Include="ViewModels\ShellViewModel.cs" />
     <Compile Include="Views\Pages\MainPage.xaml.cs">
@@ -140,6 +141,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Resources\Russian.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\ButtonsStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

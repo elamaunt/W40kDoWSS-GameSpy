@@ -46,7 +46,7 @@ namespace SteamSpy.Styles
         {
             var w = ((Window)sender);
             var handle = w.GetWindowHandle();
-            var containerBorder = (Border)w.Template.FindName("PART_Container", w);
+            var containerBorder = (Border)w.Template.FindName("MainBorder", w);
 
             if (w.WindowState == WindowState.Maximized)
             {

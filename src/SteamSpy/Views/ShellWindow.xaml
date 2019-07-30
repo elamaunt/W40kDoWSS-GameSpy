@@ -6,7 +6,7 @@
         xmlns:pages="clr-namespace:SteamSpy.Views.Pages"
         xmlns:pagevm="clr-namespace:SteamSpy.ViewModels.PageViewModels"
         mc:Ignorable="d"
-        Title="Soulstorm Launcher" MinHeight="720" Height="720" MinWidth="1200" Width="1200" Style="{DynamicResource WindowStyle}">
+        Title="Soulstorm Launcher" MinHeight="640" Height="640" MinWidth="1024" Width="1024" Style="{DynamicResource WindowStyle}">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type pagevm:MainPageViewModel}">
@@ -21,11 +21,12 @@
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">
-            <ItemsControl ItemsSource="{Binding PageViewModels}" HorizontalAlignment="Stretch">
+            <ItemsControl Margin="80 0 0 0" ItemsSource="{Binding PageViewModels}" HorizontalAlignment="Stretch">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Button Content="{Binding PageName}"
-                                Command="{Binding DataContext.ChangePageCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                        <Button Content="{Binding PageName}" Style="{DynamicResource NavigationButtonStyle}"
+                                Command="{Binding DataContext.ChangePageCommand, 
+                                RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
                                 CommandParameter="{Binding }"/>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
