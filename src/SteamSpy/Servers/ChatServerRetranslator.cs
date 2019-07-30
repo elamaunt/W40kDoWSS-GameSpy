@@ -435,6 +435,16 @@ namespace GSMasterServer.Servers
             CONTINUE: WaitForGameData(state);
         }
 
+        public void SentServerMessageToClient(string message)
+        {
+            var state = _currentClientState;
+
+            if (state.Disposing || ChatNick.IsNullOrWhiteSpace() || message.IsNullOrWhiteSpace())
+                return;
+
+            SendToGameSocket(ref state, $@":SERVER!XaaaaaaaaX|10008@127.0.0.1 PRIVMSG {ChatNick} :{message}".ToAssciiBytes());
+        }
+
         public void SendAutomatchGameBroadcast(string hostname, int maxPlayers)
         {
             var state = _currentClientState;
