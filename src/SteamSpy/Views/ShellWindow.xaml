@@ -3,9 +3,40 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SteamSpy.Views"
+        xmlns:pages="clr-namespace:SteamSpy.Views.Pages"
+        xmlns:pagevm="clr-namespace:SteamSpy.ViewModels.PageViewModels"
         mc:Ignorable="d"
-        Title="Soulstorm Launcher" MinHeight="700" Height="700" MinWidth="1200" Width="1200" Style="{DynamicResource WindowStyle}">
+        Title="Soulstorm Launcher" MinHeight="720" Height="720" MinWidth="1200" Width="1200" Style="{DynamicResource WindowStyle}">
+
+    <Window.Resources>
+        <DataTemplate DataType="{x:Type pagevm:MainPageViewModel}">
+            <pages:MainPage />
+        </DataTemplate>
+    </Window.Resources>
+    
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="5"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <ItemsControl ItemsSource="{Binding PageViewModels}" HorizontalAlignment="Stretch">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding PageName}"
+                                Command="{Binding DataContext.ChangePageCommand, RelativeSource={RelativeSource AncestorType={x:Type Window}}}"
+                                CommandParameter="{Binding }"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+        </StackPanel>
+
+        <ContentControl Grid.Row="2" Content="{Binding CurrentPageViewModel}" />
     </Grid>
 </Window>

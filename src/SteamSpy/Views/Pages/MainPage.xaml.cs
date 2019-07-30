@@ -1,5 +1,4 @@
-﻿using SteamSpy.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,20 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SteamSpy.Views
+namespace SteamSpy.Views.Pages
 {
     /// <summary>
-    /// Interaction logic for ShellWindow.xaml
+    /// Interaction logic for MainPage.xaml
     /// </summary>
-    public partial class ShellWindow : Window
+    public partial class MainPage : UserControl
     {
-        public ShellWindow()
+        public MainPage()
         {
             InitializeComponent();
-
-            DataContext = new ShellViewModel();
         }
     }
 }
