@@ -2,43 +2,53 @@
 {
     public class StatsData
     {
-        public object Id;
-        public long UserId;
-        public long ProfileId;
-        public ulong SteamId;
-        
-        public long Score1v1;
-        public long Score2v2;
-        public long Score3v3;
+        public long Id { get; set; }
+        public long UserId { get; set; }
+        public long ProfileId { get; set; }
+        public ulong SteamId { get; set; }
 
-        public long Disconnects;
-        public long AllInGameTicks;
-        public long Current1v1Winstreak;
-        public long Best1v1Winstreak;
-        public long Modified;
+        public long Score1v1 { get; set; }
+        public long Score2v2 { get; set; }
+        public long Score3v3 { get; set; }
 
-        public long Smgamescount;
-        public long Csmgamescount;
-        public long Orkgamescount;
-        public long Eldargamescount;
-        public long Iggamescount;
-        public long Necrgamescount;
-        public long Taugamescount;
-        public long Degamescount;
-        public long Sobgamescount;
+        public long Disconnects { get; set; }
+        public long AllInGameTicks { get; set; }
+        public long Current1v1Winstreak { get; set; }
+        public long Best1v1Winstreak { get; set; }
+        public long Modified { get; set; }
 
-        public long Smwincount;
-        public long Csmwincount;
-        public long Orkwincount;
-        public long Eldarwincount;
-        public long Igwincount;
-        public long Necrwincount;
-        public long Tauwincount;
-        public long Dewincount;
-        public long Sobwincount;
+        public long Smgamescount { get; set; }
+        public long Csmgamescount { get; set; }
+        public long Orkgamescount { get; set; }
+        public long Eldargamescount { get; set; }
+        public long Iggamescount { get; set; }
+        public long Necrgamescount { get; set; }
+        public long Taugamescount { get; set; }
+        public long Degamescount { get; set; }
+        public long Sobgamescount { get; set; }
+
+        public long Smwincount { get; set; }
+        public long Csmwincount { get; set; }
+        public long Orkwincount { get; set; }
+        public long Eldarwincount { get; set; }
+        public long Igwincount { get; set; }
+        public long Necrwincount { get; set; }
+        public long Tauwincount { get; set; }
+        public long Dewincount { get; set; }
+        public long Sobwincount { get; set; }
 
         public long GamesCount => Smgamescount + Csmgamescount + Orkgamescount + Eldargamescount + Iggamescount + Necrgamescount + Taugamescount + Degamescount + Sobgamescount;
         public long WinsCount => Smwincount + Csmwincount + Orkwincount + Eldarwincount + Igwincount + Necrwincount + Tauwincount + Dewincount + Sobwincount;
+
+        public float WinRate
+        {
+            get
+            {
+                if (GamesCount == 0)
+                    return 0f;
+                return ((float)WinsCount) / GamesCount;
+            }
+        }
 
         public long AverageDuractionTicks
         {
@@ -112,6 +122,29 @@
                 }
 
                 return race;
+            }
+        }
+
+        public int StarsCount
+        {
+            get
+            {
+                if (WinsCount > 20 && WinRate > 0.85f)
+                    return 5;
+
+                if (WinsCount > 10 && WinRate > 0.65f)
+                    return 4;
+
+                if (WinsCount > 5 && WinRate > 0.5f)
+                    return 3;
+
+                if (WinsCount > 5 )
+                    return 2;
+
+                if (WinsCount > 1)
+                    return 1;
+
+                return 0;
             }
         }
     }

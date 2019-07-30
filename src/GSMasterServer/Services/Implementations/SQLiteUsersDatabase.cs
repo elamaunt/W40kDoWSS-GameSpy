@@ -1,4 +1,5 @@
-﻿using GSMasterServer.Utils;
+﻿using GSMasterServer.Data;
+using GSMasterServer.Utils;
 using Reality.Net.Extensions;
 using System;
 using System.Collections.Generic;
@@ -7,18 +8,13 @@ using System.Data.SQLite;
 using System.IO;
 using System.Net;
 
-namespace GSMasterServer.Data
+namespace GSMasterServer.Services.Implementations
 {
-    public class UsersDatabase : IDisposable
+    public class SQLiteUsersDatabase : IUsersDataBase
     {
         private const string Category = "UsersDatabase";
         
-        private static UsersDatabase _instance;
-
         private SQLiteConnection _db;
-
-        private delegate bool EventHandler(CtrlType sig);
-        private static EventHandler _closeHandler;
 
         private SQLiteCommand _getUsersByProfileId;
         private SQLiteCommand _getUserStatsByProfileId;
@@ -38,16 +34,8 @@ namespace GSMasterServer.Data
 
         private readonly object _dbLock = new object();
 
-        public static void Initialize(string databasePath)
+        public void Initialize(string databasePath)
         {
-            // we need to safely dispose of the database when the application closes
-            // this is a console app, so we need to hook into the console ctrl signal
-            _closeHandler += CloseHandler;
-
-            //SetConsoleCtrlHandler(_closeHandler, true);
-            
-            _instance = new UsersDatabase();
-
             databasePath = Path.GetFullPath(databasePath);
 
             if (!File.Exists(databasePath))
@@ -68,13 +56,13 @@ namespace GSMasterServer.Data
                     DefaultTimeout = 500
                 };
 
-                _instance._db = new SQLiteConnection(connBuilder.ToString());
-                _instance._db.Open();
+                _db = new SQLiteConnection(connBuilder.ToString());
+                _db.Open();
 
-                if (_instance._db.State == ConnectionState.Open)
+                if (_db.State == ConnectionState.Open)
                 {
                     bool read = false;
-                    using (SQLiteCommand queryTables = new SQLiteCommand("SELECT * FROM sqlite_master WHERE type='table' AND name='users'", _instance._db))
+                    using (SQLiteCommand queryTables = new SQLiteCommand("SELECT * FROM sqlite_master WHERE type='table' AND name='users'", _db))
                     {
                         using (SQLiteDataReader reader = queryTables.ExecuteReader())
                         {
@@ -129,18 +117,18 @@ necrwincount INTEGER NULL DEFAULT '0',
 tauwincount INTEGER NULL DEFAULT '0',
 dewincount INTEGER NULL DEFAULT '0',
 sobwincount INTEGER NULL DEFAULT '0'
-)", _instance._db))
+)", _db))
                         {
                             createTables.ExecuteNonQuery();
                         }
                         L.Log(Category, "Using " + databasePath);
-                        _instance.PrepareStatements();
+                        PrepareStatements();
                         return;
                     }
                     else
                     {
                         L.Log(Category, "Using " + databasePath);
-                        _instance.PrepareStatements();
+                        PrepareStatements();
                         return;
                     }
                 }
@@ -148,8 +136,7 @@ sobwincount INTEGER NULL DEFAULT '0'
 
             L.LogError(Category, "Error creating database");
 
-            _instance.Dispose();
-            _instance = null;
+            Dispose();
         }
 
         private void PrepareStatements()
@@ -328,23 +315,7 @@ WHERE id=@id COLLATE NOCASE", _db);
 
             _updateUserStats.Parameters.Add("@id", DbType.Int64);
         }
-
-        private static bool CloseHandler(CtrlType sig)
-        {
-            if (_instance != null)
-                _instance.Dispose();
-
-            switch (sig)
-            {
-                case CtrlType.CTRL_C_EVENT:
-                case CtrlType.CTRL_LOGOFF_EVENT:
-                case CtrlType.CTRL_SHUTDOWN_EVENT:
-                case CtrlType.CTRL_CLOSE_EVENT:
-                default:
-                    return false;
-            }
-        }
-
+        
         public void Dispose()
         {
             Dispose(true);
@@ -414,13 +385,6 @@ WHERE id=@id COLLATE NOCASE", _db);
                         _db.Dispose();
                         _db = null;
                     }
-                    _instance = null;
-
-                    if (_instance != null)
-                    {
-                        _instance.Dispose();
-                        _instance = null;
-                    }
                 }
             }
             catch (Exception)
@@ -428,29 +392,13 @@ WHERE id=@id COLLATE NOCASE", _db);
             }
         }
 
-        ~UsersDatabase()
+        ~SQLiteUsersDatabase()
         {
             Dispose(false);
         }
 
-        public static bool IsInitialized()
-        {
-            return _instance != null && _instance._db != null;
-        }
-
-        public static UsersDatabase Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    throw new ArgumentNullException("Instance", "Initialize() must be called first");
-                }
-
-                return _instance;
-            }
-        }
-
+        public bool IsInitialized => _db != null;
+        
         public UserData GetUserDataByProfileId(long profileId)
         {
             if (_db == null)
@@ -466,7 +414,7 @@ WHERE id=@id COLLATE NOCASE", _db);
                     {
                         var data = new UserData()
                         {
-                            Id = reader["@id"],
+                            Id = (Int64)reader["@id"],
                             Name = (string)reader["name"],
                             Passwordenc = (string)reader["password"],
                             Email = (string)reader["email"],
@@ -500,7 +448,7 @@ WHERE id=@id COLLATE NOCASE", _db);
                     {
                         var data = new StatsData();
 
-                        data.Id = reader["id"];
+                        data.Id = (Int64)reader["id"];
                         data.UserId = (Int64)reader["id"] + UserIdOffset;
                         data.ProfileId = (Int64)reader["id"] + ProfileIdOffset;
                         data.SteamId = (UInt64)(Int64)reader["steamid"];
@@ -601,7 +549,7 @@ WHERE id=@id COLLATE NOCASE", _db);
                     {
                         var data = new StatsData();
                         
-                        data.Id = reader["id"];
+                        data.Id = (Int64)reader["id"];
                         data.UserId = (Int64)reader["id"] + UserIdOffset;
                         data.ProfileId = (Int64)reader["id"] + ProfileIdOffset;
                         data.SteamId = (UInt64)(Int64)reader["steamid"];
@@ -663,7 +611,7 @@ WHERE id=@id COLLATE NOCASE", _db);
                     {
                         var data = new UserData()
                         {
-                            Id = reader["id"],
+                            Id = (Int64)reader["id"],
                             Name = username,
                             Passwordenc = (string)reader["password"],
                             Email = (string)reader["email"],
@@ -702,7 +650,7 @@ WHERE id=@id COLLATE NOCASE", _db);
 
                         var data = new UserData();
 
-                        data.Id = reader["id"];
+                        data.Id = (Int64)reader["id"];
                         data.SteamId = (UInt64)(Int64)reader["steamid"];
                         data.Name = (string)reader["name"];
                         data.Passwordenc = (string)reader["password"];
@@ -721,7 +669,7 @@ WHERE id=@id COLLATE NOCASE", _db);
             return values;
         }
 
-        public void SetUserData(string name, Dictionary<string, object> data)
+        /*public void SetUserData(string name, Dictionary<string, object> data)
         {
             var oldValues = GetUserData(name);
 
@@ -738,7 +686,7 @@ WHERE id=@id COLLATE NOCASE", _db);
 
                 _updateUser.ExecuteNonQuery();
             }
-        }
+        }*/
 
         public void LogLogin(string name, ulong steamId, IPAddress address)
         {
@@ -794,13 +742,13 @@ WHERE id=@id COLLATE NOCASE", _db);
             }
         }
 
-        public void CreateUser(string username, string passwordEncrypted, ulong steamId, string email, string country, IPAddress address)
+        public UserData CreateUser(string username, string passwordEncrypted, ulong steamId, string email, string country, IPAddress address)
         {
             if (_db == null)
-                return;
+                return null;
 
             if (UserExists(username))
-                return;
+                return null;
 
             lock (_dbLock)
             {
@@ -813,6 +761,8 @@ WHERE id=@id COLLATE NOCASE", _db);
 
                 _createUser.ExecuteNonQuery();
             }
+
+            return GetUserData(username);
         }
 
         public bool UserExists(string username)
@@ -841,18 +791,6 @@ WHERE id=@id COLLATE NOCASE", _db);
             }
 
             return existing;
-        }
-
-       // [DllImport("Kernel32")]
-       // private static extern bool SetConsoleCtrlHandler(EventHandler handler, bool add);
-
-        private enum CtrlType
-        {
-            CTRL_C_EVENT = 0,
-            CTRL_BREAK_EVENT = 1,
-            CTRL_CLOSE_EVENT = 2,
-            CTRL_LOGOFF_EVENT = 5,
-            CTRL_SHUTDOWN_EVENT = 6
         }
     }
 }

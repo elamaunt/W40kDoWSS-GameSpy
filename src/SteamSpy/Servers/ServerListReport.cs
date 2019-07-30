@@ -347,66 +347,6 @@ namespace GSMasterServer.Servers
                     server.Set(serverVarsSplit[i], serverVarsSplit[i + 1]);
 
 
-                /*PropertyInfo property = server.GetType().GetProperty(serverVarsSplit[i]);
-
-                if (property == null)
-                    continue;
-
-                if (property.Name == "hostname")
-                {
-                    // strip consecutive whitespace from hostname
-                    property.SetValue(server, Regex.Replace(serverVarsSplit[i + 1], @"\s+", " ").Trim(), null);
-                }
-                else if (property.Name == "bf2_plasma")
-                {
-                    // set plasma to true if the ip is in plasmaservers.txt
-                    if (_plasmaServers.Any(x => x.Equals(remote.Address)))
-                        property.SetValue(server, true, null);
-                    else
-                        property.SetValue(server, false, null);
-                }
-                else if (property.Name == "bf2_ranked")
-                {
-                    // we're always a ranked server (helps for mods with a default bf2 main menu, and default filters wanting ranked servers)
-                    property.SetValue(server, true, null);
-                }
-                else if (property.Name == "bf2_pure")
-                {
-                    // we're always a pure server
-                    property.SetValue(server, true, null);
-                }
-                else if (property.PropertyType == typeof(Boolean))
-                {
-                    // parse string to bool (values come in as 1 or 0)
-                    int value;
-                    if (Int32.TryParse(serverVarsSplit[i + 1], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
-                    {
-                        property.SetValue(server, value != 0, null);
-                    }
-                }
-                else if (property.PropertyType == typeof(Int32))
-                {
-                    // parse string to int
-                    int value;
-                    if (Int32.TryParse(serverVarsSplit[i + 1], NumberStyles.Integer, CultureInfo.InvariantCulture, out value))
-                    {
-                        property.SetValue(server, value, null);
-                    }
-                }
-                else if (property.PropertyType == typeof(Double))
-                {
-                    // parse string to double
-                    double value;
-                    if (Double.TryParse(serverVarsSplit[i + 1], NumberStyles.Float, CultureInfo.InvariantCulture, out value))
-                    {
-                        property.SetValue(server, value, null);
-                    }
-                }
-                else if (property.PropertyType == typeof(String))
-                {
-                    // parse string to string
-                    property.SetValue(server, serverVarsSplit[i + 1], null);
-                }*/
             }
 
             CurrentUserRoomHash = ChatCrypt.PiStagingRoomHash(server["IPAddress"], server["localip0"], 6112);
@@ -459,10 +399,10 @@ namespace GSMasterServer.Servers
 
             if (!wasJoinable && SteamLobbyManager.IsLobbyJoinable)
             {
-                var gameType = server.Get<string>("gametype");
+                var gamename = server.Get<string>("gamename");
                 var hostname = server.Get<string>("hostname");
 
-                if (gameType == "unranked")
+                if (gamename == "whamdowfram")
                     CoreContext.ChatServer.SendAutomatchGameBroadcast(hostname, int.Parse(server.Get<string>("maxplayers")));
             }
 

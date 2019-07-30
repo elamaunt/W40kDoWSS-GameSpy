@@ -336,7 +336,10 @@ namespace GSMasterServer.Servers
                .ContinueWith(task =>
                {
                    if (task.Status != TaskStatus.RanToCompletion)
+                   {
+                       Console.WriteLine(task.Exception);
                        return;
+                   }
 
                    var servers = task.Result;
                    
@@ -503,6 +506,15 @@ namespace GSMasterServer.Servers
 
             foreach (var server in servers)
             {
+                if (server.Properties.TryGetValue("gamename", out string gamename))
+                {
+                    if (isAutomatch && gamename != "whamdowfram")
+                        continue;
+
+                    if (!isAutomatch && gamename != "whamdowfr")
+                        continue;
+                }
+
                 // commented this stuff out since it caused some issues on testing, might come back to it later and see what's happening...
                 // NAT traversal stuff...
                 // 126 (\x7E)	= public ip / public port / private ip / private port / icmp ip
@@ -514,37 +526,7 @@ namespace GSMasterServer.Servers
                 ushort localport = ushort.Parse(server.Get<string>("localport") ?? "0");
                 var queryPort = (ushort)server.Get<int>("QueryPort");
                 var iPAddress = server.Get<string>("IPAddress");
-
-                // var iPAddress = server.Properties.Where(x => x.Key.StartsWith("localip") && x.Value.ToString().StartsWith("192.168.1.")).FirstOrDefault().Value.ToString();
-                /* if (!String.IsNullOrWhiteSpace(localip0) && !String.IsNullOrWhiteSpace(localip1) && localport > 0)
-                 {
-                     data.Add(126);
-                     data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
-                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)queryPort).Reverse() : BitConverter.GetBytes((ushort)queryPort));
-                     data.AddRange(IPAddress.Parse(localip0).GetAddressBytes());
-                     data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes((ushort)localport).Reverse() : BitConverter.GetBytes((ushort)localport));
-                     data.AddRange(IPAddress.Parse(localip1).GetAddressBytes());
-
-
-                 }
-                 else */
-                /*if (!String.IsNullOrWhiteSpace(localip0) && localport > 0)
-                {
-                    data.Add(115);
-                    data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
-                    data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
-                    data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
-                    data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport));
-                }
-                else
-                {
-                    data.Add(81); // it could be 85 as well, unsure of the difference, but 81 seems more common...
-                    data.AddRange(IPAddress.Parse(iPAddress).GetAddressBytes());
-                    data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
-                }*/
-
-                //var endPoint = (IPEndPoint)state.Socket.RemoteEndPoint;
-
+                
                 var retranslator = PortBindingManager.AddOrUpdatePortBinding(server.HostSteamId);
 
                 retranslator.AttachedServer = server;
@@ -560,24 +542,9 @@ namespace GSMasterServer.Servers
 
                 IDByChannelCache[channelHash] = server.HostSteamId;
                 ChannelByIDCache[server.HostSteamId] = channelHash;
-
-                /*if (SteamNetworking.GetP2PSessionState(server.HostSteamId, out P2PSessionState_t connectionState))
-                {
-                    if (connectionState.m_bConnectionActive != 1)
-                        continue;
-                }*/
-
                 
-
-                var loopbackIpBytes = IPAddress.Loopback.GetAddressBytes(); //IPAddress.Loopback.GetAddressBytes();
-                //var ipBytes = IPAddress.Parse(iPAddress).GetAddressBytes();
-
-                //var queryPortBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort);
-                //var localportBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(localport);
                 var retranslationPortBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(retranslationPort).Reverse() : BitConverter.GetBytes(retranslationPort);
 
-                //var localPortBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse().ToArray() : BitConverter.GetBytes(localport);
-               
                 server["hostport"] = retranslationPort.ToString();
                 server["localport"] = retranslationPort.ToString();
 
@@ -587,20 +554,13 @@ namespace GSMasterServer.Servers
                     ServerFlags.NONSTANDARD_PRIVATE_PORT_FLAG |
                     ServerFlags.HAS_KEYS_FLAG;
 
+                var loopbackIpBytes = IPAddress.Loopback.GetAddressBytes();
+
                 data.Add((byte)flags);
                 data.AddRange(loopbackIpBytes);
                 data.AddRange(retranslationPortBytes);
                 data.AddRange(loopbackIpBytes);
                 data.AddRange(retranslationPortBytes);
-
-                // data.Add(81); // it could be 85 as well, unsure of the difference, but 81 seems more common...
-                // data.AddRange(loopbackIpBytes);
-                // data.AddRange(retranslationPortBytes);
-
-                /*data.AddRange(ip);
-                data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(queryPort).Reverse() : BitConverter.GetBytes(queryPort));
-                data.AddRange(ip);
-                data.AddRange(BitConverter.IsLittleEndian ? BitConverter.GetBytes(localport).Reverse() : BitConverter.GetBytes(retranslationPort));*/
                 
                 data.Add(255);
 

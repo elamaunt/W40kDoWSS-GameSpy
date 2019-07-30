@@ -180,62 +180,79 @@ namespace GSMasterServer.Servers
                 // "��\0���J���\u0001"
                 //  ��\0�z�J���\u0001
                 // "254 253 0 247 122 228 74 255 255 255 1"
-
+                // "254 253 0 170 87 26 75 255 255 255 1"
                 // Fake host response to speed up connection
-                if (count == 11 &&
-                    e.Buffer[0] == 254 &&
-                    e.Buffer[1] == 253 &&
-                    e.Buffer[2] == 0 &&
-                   // e.Buffer[3] == 247 &&
-                   // e.Buffer[4] == 122 &&
-                   // e.Buffer[5] == 228 &&
-                    e.Buffer[6] == 74 &&
-                    e.Buffer[7] == 255 &&
-                    e.Buffer[8] == 255 &&
-                    e.Buffer[9] == 255 &&
-                    e.Buffer[10] == 1)
+
+                try
                 {
-                    var builder = new StringBuilder("\0$��Jsplitnum\0�");
-
-                    AppendServerProperty(builder, "numplayers");
-
-                    AppendServerProperty(builder, "numplayers");
-                    AppendServerProperty(builder, "maxplayers");
-                    AppendServerProperty(builder, "hostname");
-                    AppendServerProperty(builder, "hostport", Port.ToString());
-                    AppendServerProperty(builder, "mapname");
-                    AppendServerProperty(builder, "password");
-                    AppendServerProperty(builder, "gamever");
-                    AppendServerProperty(builder, "numplayers");
-                    AppendServerProperty(builder, "maxplayers");
-                    AppendServerProperty(builder, "score_");
-                    AppendServerProperty(builder, "teamplay");
-                    AppendServerProperty(builder, "gametype");
-                    AppendServerProperty(builder, "gamevariant");
-                    AppendServerProperty(builder, "groupid");
-                    AppendServerProperty(builder, "numobservers");
-                    AppendServerProperty(builder, "maxobservers");
-                    AppendServerProperty(builder, "modname");
-                    AppendServerProperty(builder, "moddisplayname");
-                    AppendServerProperty(builder, "modversion");
-                    AppendServerProperty(builder, "devmode");
-
-                    for (int i = 0; i < 32; i++)
+                    if (count == 11 &&
+                        e.Buffer[0] == 254 &&
+                        e.Buffer[1] == 253 &&
+                        e.Buffer[2] == 0 &&
+                        // e.Buffer[3] == 247 &&
+                        // e.Buffer[4] == 122 &&
+                        // e.Buffer[5] == 228 &&
+                        // e.Buffer[6] == 228 &&
+                        e.Buffer[7] == 255 &&
+                        e.Buffer[8] == 255 &&
+                        e.Buffer[9] == 255 &&
+                        e.Buffer[10] == 1)
                     {
-                        AppendServerProperty(builder, "gametype" + i);
+                        Log(Category, ">> REQUEST BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
+
+                        var builder = new StringBuilder("\0$��Jsplitnum\0�");
+
+                        AppendServerProperty(builder, "numplayers");
+                        AppendServerProperty(builder, "maxplayers");
+                        AppendServerProperty(builder, "hostname");
+                        AppendServerProperty(builder, "hostport", Port.ToString());
+                        AppendServerProperty(builder, "mapname");
+                        AppendServerProperty(builder, "password");
+                        AppendServerProperty(builder, "gamever");
+                        AppendServerProperty(builder, "numplayers");
+                        AppendServerProperty(builder, "maxplayers");
+                        AppendServerProperty(builder, "score_");
+                        AppendServerProperty(builder, "teamplay");
+                        AppendServerProperty(builder, "gametype");
+                        AppendServerProperty(builder, "gamevariant");
+                        AppendServerProperty(builder, "groupid");
+                        AppendServerProperty(builder, "numobservers");
+                        AppendServerProperty(builder, "maxobservers");
+                        AppendServerProperty(builder, "modname");
+                        AppendServerProperty(builder, "moddisplayname");
+                        AppendServerProperty(builder, "modversion");
+                        AppendServerProperty(builder, "devmode");
+
+                        for (int i = 0; i < 32; i++)
+                        {
+                            AppendServerProperty(builder, "gametype" + i);
+                        }
+
+                        var hostname = AttachedServer?.GetByName("hostname") ?? string.Empty;
+                        builder.Append($"\u0001player_\0\0{hostname}\0\0ping_\0\00\0\0player_\0\0{hostname}\0\0\0\u0002\0");
+
+                        var fakeString = builder.ToString();
+                        var bytes = Encoding.UTF8.GetBytes(fakeString);
+
+                        // unique Id
+                        bytes[1] = e.Buffer[3];
+                        bytes[2] = e.Buffer[4];
+                        bytes[3] = e.Buffer[5];
+                        bytes[4] = e.Buffer[6];
+
+                        // 172 164 27 75
+
+                        Console.WriteLine("SERVER FAKE " + fakeString);
+
+                        _socket?.SendTo(bytes, bytes.Length, SocketFlags.None, LocalPoint ?? GameEndPoint);
                     }
-                    
-                    var hostname = AttachedServer?.GetByName("hostname") ?? string.Empty;
-                    builder.Append($"\u0001player_\0\0{hostname}\0\0ping_\0\00\0\0player_\0\0{hostname}\0\0\0\u0002\0");
 
-                    var fakeString = builder.ToString();
-                    var bytes = Encoding.UTF8.GetBytes(fakeString);
-
-                    Console.WriteLine("SERVER FAKE " + fakeString);
-
-                    _socket?.SendTo(bytes, bytes.Length, SocketFlags.None, LocalPoint ?? GameEndPoint);
                 }
-
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+                
 
                 // if (count < 900)
                 //     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliable);
@@ -298,7 +315,7 @@ namespace GSMasterServer.Servers
                     
                     Console.WriteLine("CONNECTING "+ newStr);
 
-                   // _socket?.SendTo(bytes, bytes.Length, SocketFlags.None, LocalPoint ?? GameEndPoint);
+                    _socket?.SendTo(bytes, bytes.Length, SocketFlags.None, LocalPoint ?? GameEndPoint);
 
                     return;
                 }

@@ -491,7 +491,7 @@ namespace GSMasterServer.Servers
                         break;
 
                     case "updatepro":
-                        LoginServerMessages.UpdateProfile(ref state, keyValues);
+                        //LoginServerMessages.UpdateProfile(ref state, keyValues);
                         break;
 
                     case "status":

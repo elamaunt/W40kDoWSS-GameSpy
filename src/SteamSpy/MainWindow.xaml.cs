@@ -15,8 +15,10 @@ namespace SteamSpy
             InitializeComponent();
             
             CompositionTarget.Rendering += OnRender;
-           // if (SteamAPI.RestartAppIfNecessary(new AppId_t(685420))) 
-            if (SteamAPI.RestartAppIfNecessary(AppId_t.Invalid))
+
+
+            if (SteamAPI.RestartAppIfNecessary(new AppId_t(9450))) 
+            //if (SteamAPI.RestartAppIfNecessary(AppId_t.Invalid))
             {
                 Console.WriteLine("APP RESTART REQUESTED");
                 Environment.Exit(0);

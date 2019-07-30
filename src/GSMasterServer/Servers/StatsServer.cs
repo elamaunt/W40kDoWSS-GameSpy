@@ -195,9 +195,6 @@ namespace GSMasterServer.Servers
 
                     var keysResult = new StringBuilder();
                     var stats = GetStatsById(pid);
-
-                    var gamesCount = stats.GamesCount;
-                    var stars = Math.Min(5, gamesCount);
                     
                     for (int i = 0; i < keysList.Length; i++)
                     {
@@ -211,9 +208,9 @@ namespace GSMasterServer.Servers
                             case "points2": keysResult.Append(stats.Score2v2); break;
                             case "points3": keysResult.Append(stats.Score3v3); break;
 
-                            case "stars": keysResult.Append(stars); break;
+                            case "stars": keysResult.Append(stats.StarsCount); break;
 
-                            case "games": keysResult.Append(gamesCount); break;
+                            case "games": keysResult.Append(stats.GamesCount); break;
                             case "wins": keysResult.Append(stats.WinsCount); break;
                             case "disconn": keysResult.Append(stats.Disconnects); break;
                             case "a_durat": keysResult.Append(stats.AverageDuractionTicks); break;
@@ -488,7 +485,7 @@ namespace GSMasterServer.Servers
                     {
                         var stats = usersGameInfos[i].Stats;
                         UpdateStatsCache(stats);
-                        UsersDatabase.Instance.UpdateUserStats(stats);
+                        Database.UsersDBInstance.UpdateUserStats(stats);
 
                     }
                     ChatServer.IrcDaemon.SendToAll("End updating the stats");
@@ -553,7 +550,7 @@ namespace GSMasterServer.Servers
             }
             else
             {
-                var stats = UsersDatabase.Instance.GetStatsDataByProfileId(long.Parse(profileId));
+                var stats = Database.UsersDBInstance.GetStatsDataByProfileId(long.Parse(profileId));
 
                 StatsCache.Add(new CacheItem(profileId, stats), new CacheItemPolicy()
                 {

@@ -58,7 +58,7 @@ namespace GSMasterServer.Servers
            // if (requiredValues != 3)
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
 
-            var clientData = UsersDatabase.Instance.GetUserData(state.Name);
+            var clientData = Database.UsersDBInstance.GetUserData(state.Name);
 
             if (clientData != null)
             {
@@ -97,7 +97,7 @@ namespace GSMasterServer.Servers
 					};
 					LoginDatabase.Instance.SetData(state.Name, updateClientData);*/
 
-                    UsersDatabase.Instance.LogLogin(state.Name, state.SteamId, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
+                    Database.UsersDBInstance.LogLogin(state.Name, state.SteamId, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
 
                     state.State++;
                     return DataFunctions.StringToBytes(proof);
@@ -115,7 +115,7 @@ namespace GSMasterServer.Servers
 
         public static byte[] SendProfile(ref LoginSocketState state, Dictionary<string, string> keyValues, bool retrieve)
         {
-            var clientData = UsersDatabase.Instance.GetUserData(state.Name);
+            var clientData = Database.UsersDBInstance.GetUserData(state.Name);
 
             if (clientData == null)
             {
@@ -145,7 +145,7 @@ namespace GSMasterServer.Servers
             return DataFunctions.StringToBytes(message);
         }
 
-        public static void UpdateProfile(ref LoginSocketState state, Dictionary<string, string> keyValues)
+       /* public static void UpdateProfile(ref LoginSocketState state, Dictionary<string, string> keyValues)
         {
             string country = "??";
             if (keyValues.ContainsKey("countrycode"))
@@ -158,9 +158,9 @@ namespace GSMasterServer.Servers
                 { "country", country }
             };
 
-            UsersDatabase.Instance.SetUserData(state.Name, clientData);
+            Database.UsersDBInstance.SetUserData(state.Name, clientData);
             state.State++;
-        }
+        }*/
 
         public static void Logout(ref LoginSocketState state, Dictionary<string, string> keyValues)
         {
@@ -213,7 +213,7 @@ namespace GSMasterServer.Servers
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
             }
 
-            if (UsersDatabase.Instance.UserExists(state.Name))
+            if (Database.UsersDBInstance.UserExists(state.Name))
             {
                 return DataFunctions.StringToBytes(@"\error\\err\516\fatal\\errmsg\This account name is already in use!\id\1\final\");
             }
@@ -221,10 +221,8 @@ namespace GSMasterServer.Servers
             {
                 string password = DecryptPassword(state.PasswordEncrypted);
 
-                UsersDatabase.Instance.CreateUser(state.Name, password.ToMD5(), state.SteamId, state.Email, "??", ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
-
-                var clientData = UsersDatabase.Instance.GetUserData(state.Name);
-
+                var clientData = Database.UsersDBInstance.CreateUser(state.Name, password.ToMD5(), state.SteamId, state.Email, "??", ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
+                
                 if (clientData == null)
                 {
                     return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Error creating account!\id\1\final\");
@@ -265,7 +263,7 @@ namespace GSMasterServer.Servers
 
             password = password.ToMD5();
 
-            var clientData = UsersDatabase.Instance.GetAllUserDatas(keyValues["email"], password);
+            var clientData = Database.UsersDBInstance.GetAllUserDatas(keyValues["email"], password);
 
             if (clientData == null)
             {
@@ -321,7 +319,7 @@ namespace GSMasterServer.Servers
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
             }
 
-            var clientData = UsersDatabase.Instance.GetUserData(name);
+            var clientData = Database.UsersDBInstance.GetUserData(name);
 
             if (clientData == null)
             {

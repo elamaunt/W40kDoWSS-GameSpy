@@ -52,12 +52,8 @@ namespace IrcD.Commands
                                     where info.UserPerChannelInfos.All(upci => upci.ChannelInfo.Name != temp)
                                     select temp)
             {
-                ChannelInfo chan;
-                
-                if (IrcDaemon.Channels.ContainsKey(channel))
+                if (IrcDaemon.Channels.TryGetValue(channel, out ChannelInfo chan))
                 {
-                    chan = IrcDaemon.Channels[channel];
-
                     if (!chan.Modes.HandleEvent(this, chan, info, args))
                     {
                         continue;

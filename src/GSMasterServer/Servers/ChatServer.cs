@@ -224,7 +224,7 @@ namespace GSMasterServer.Servers
                             {
                                 var nick = utf8alue.Split(' ')[2];
 
-                                var userData = UsersDatabase.Instance.GetUserData(nick);
+                                var userData = Database.UsersDBInstance.GetUserData(nick);
 
                                 state.UserInfo = IrcDaemon.RegisterNewUser(state.Socket, nick, userData.ProfileId, state, SendToClient);
                                 

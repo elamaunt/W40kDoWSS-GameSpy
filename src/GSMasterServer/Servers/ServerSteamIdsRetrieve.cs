@@ -179,7 +179,7 @@ namespace GSMasterServer.Servers
 
         private ulong GetSteamIdByNick(string nick)
         {
-            var userData = UsersDatabase.Instance.GetUserData(nick);
+            var userData = Database.UsersDBInstance.GetUserData(nick);
 
             if (userData == null)
                 return 0;
