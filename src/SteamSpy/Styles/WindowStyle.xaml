@@ -4,7 +4,7 @@
 
     <SolidColorBrush x:Key="BorderColor" Color="#BBBBBB" />
     <SolidColorBrush x:Key="BrushColor" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="PressedColor" Color="#FFFFFF" />
+    <SolidColorBrush x:Key="BackgroundColor" Color="#232B2B" />
 
 
     <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
@@ -46,7 +46,7 @@
                 <ControlTemplate TargetType="{x:Type Window}">
                     <Border x:Name="MainBorder" Padding="7 7 7 5">
                         <Grid TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display">
-                            <Border x:Name="PartBorder" Width="Auto" Height="Auto" Background="Black"
+                            <Border x:Name="PartBorder" Width="Auto" Height="Auto" Background="{DynamicResource BackgroundColor}"
                                 BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Padding="0">
                                 <Grid>
                                     <Grid.Background>
