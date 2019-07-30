@@ -304,9 +304,7 @@ namespace GSMasterServer.Servers
 
                     if (!HandledGamesCache.Add(uniqueSession, uniqueSession, new CacheItemPolicy() { SlidingExpiration = TimeSpan.FromDays(1) }))
                         goto CONTINUE;
-
-                    ChatServer.IrcDaemon.SendToAll("Start calculating the stats. Count: " + playersCount);
-
+                    
                     var usersGameInfos = new GameUserInfo[playersCount];
 
                     GameUserInfo currentUserInfo = null;
@@ -476,19 +474,14 @@ namespace GSMasterServer.Servers
                             }
                         }
                     }
-
-                    ChatServer.IrcDaemon.SendToAll("End calculating the stats");
-                    ChatServer.IrcDaemon.SendToAll("Start updating the stats. Count: "+usersGameInfos.Length);
-
+                    
                 UPDATE:
                     for (int i = 0; i < usersGameInfos.Length; i++)
                     {
                         var stats = usersGameInfos[i].Stats;
                         UpdateStatsCache(stats);
                         Database.UsersDBInstance.UpdateUserStats(stats);
-
                     }
-                    ChatServer.IrcDaemon.SendToAll("End updating the stats");
                 }
             }
             catch (ObjectDisposedException)

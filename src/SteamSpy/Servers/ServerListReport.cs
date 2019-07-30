@@ -100,52 +100,6 @@ namespace GSMasterServer.Servers
             WaitForData();
         }
         
-        /*private void StartDynamicInfoReload(object obj)
-        {
-            while (true)
-            {
-                // the modwhitelist.txt file is for only allowing servers running certain mods to register with the master server
-                // by default, this is pr or pr_* (it's really pr!_%, since % is wildcard, _ is placeholder, ! is escape)
-                // # is for comments
-                // you either want to utilize modwhitelist.txt or hardcode the default if you're using another mod...
-                // put each mod name on a new line
-                // to allow all mods, just put a single %
-                if (File.Exists("modwhitelist.txt"))
-                {
-                    Log(Category, "Loading mod whitelist");
-                    _modWhitelist = File.ReadAllLines("modwhitelist.txt").Where(x => !String.IsNullOrWhiteSpace(x) && !x.Trim().StartsWith("#")).ToArray();
-                }
-                else
-                {
-                    _modWhitelist = new string[] { "pr", "pr!_%" };
-                }
-
-                // plasma servers (bf2_plasma = 1) makes servers show up in green in the server list in bf2's main menu (or blue in pr's menu)
-                // this could be useful to promote servers and make them stand out, sponsored servers, special events, stuff like that
-                // put in the ip address of each server on a new line in plasmaservers.txt, and make them stand out
-                if (File.Exists("plasmaservers.txt"))
-                {
-                    Log(Category, "Loading plasma servers");
-                    _plasmaServers = File.ReadAllLines("plasmaservers.txt").Select(x =>
-                    {
-                        IPAddress address;
-                        if (IPAddress.TryParse(x, out address))
-                            return address;
-                        else
-                            return null;
-                    }).Where(x => x != null).ToArray();
-                }
-                else
-                {
-                    _plasmaServers = new IPAddress[0];
-                }
-
-                GC.Collect();
-                
-                Thread.Sleep(5 * 60 * 1000);
-            }
-        }*/
-
         private void WaitForData()
         {
             Thread.Sleep(10);
@@ -186,13 +140,6 @@ namespace GSMasterServer.Servers
 
                 // there by a bunch of different message formats...
                 Log(Category, str);
-                
-                // Autom game
-                // \u0003\u0015?{?localip0\0192.168.159.1\0localip1\0192.168.58.1\0localip2\0192.168.97.2\0localip3\0192.168.56.1\0localip4\0192.168.1.21\0localport\06112\0natneg\01\0statechanged\02\0gamename\0whammer40kdcam\0\0
-                // ?{?localip0 192.168.159.1 localip1 192.168.58.1 localip2 192.168.97.2 localip3 192.168.56.1 localip4 192.168.1.21 localport 6112 natneg 1 statechanged 2 gamename whammer40kdcam
-
-                // Simple game
-                // "\u0003???\rlocalip0\0192.168.159.1\0localip1\0192.168.58.1\0localip2\0192.168.97.2\0localip3\0192.168.56.1\0localip4\0192.168.1.21\0localport\06112\0natneg\01\0statechanged\03\0gamename\0whammer40kdc\0hostname\0sF|elamaunt\0gamemode\0\0numplayers\01\0maxplayers\02\0hostname\0sF|elamaunt\0hostport\06112\0mapname\0???????? ?????????? (2)\0password\00\0gamever\01.2\0numplayers\01\0maxplayers\02\0score_\02500\0teamplay\00\0gametype\01\0gamevariant\01.0dxp2\0groupid\00\0numobservers\00\0maxobservers\00\0modname\0dxp2\0moddisplayname\0Dawn of War: Dark Crusade\0modversion\01.0\0devmode\00\0CK_GameTypeOption0\0oid0-n-1095320646\0CK_GameTypeOption1\0oc0-n-0\0CK_GameTypeOption2\0oid1-n-1381192532\0CK_GameTypeOption3\0oc1-n-0\0CK_GameTypeOption4\0oid2-n-1280005197\0CK_GameTypeOption5\0oc2-n-0\0CK_GameTypeOption6\0oid3-n-1128809793\0CK_GameTypeOption7\0oc3-n-1\0CK_GameTypeOption8\0oid4-n-1397509955\0CK_GameTypeOption9\0oc4-n-0\0CK_GameTypeOption10\0oid5-n-1196642372\0CK_GameTypeOption11\0oc5-n-2\0CK_GameTypeOption12\0oid6-n-1381192520\0CK_GameTypeOption13\0oc6-n-0\0CK_GameTypeOption14\0oid7-n-1381192276\0CK_GameTypeOption15\0oc7-n-1\0CK_GameTypeOption16\0wid0-n--1444668741\0CK_GameTypeOption17\0wid1-n-735076042\0CK_GameTypeOption18\0wid2-n-1959084950\0CK_GameTypeOption19\0wid3-n-69421273\0CK_GameTypeOption20\0wn0-s-??????????????????????\0CK_GameTypeOption21\0wn1-s-???????????? ????????????????\0CK_GameTypeOption22\0wn2-s-???????? ????????\0CK_GameTypeOption23\0wn3-s-????????????\0CK_GameTypeOption24\0\0CK_GameTypeOption25\0\0CK_GameTypeOption26\0\0CK_GameTypeOption27\0\0CK_GameTypeOption28\0\0CK_GameTypeOption29\0\0CK_GameTypeOption30\0\0CK_GameTypeOption31\0\0\0\0\0player_\0ping_\0player_\0\0\0\0\0"
                 
                 if (receivedBytes[0] == (byte)MessageType.AVAILABLE)
                 {
@@ -345,27 +292,11 @@ namespace GSMasterServer.Servers
                     server.Set(serverVarsSplit[i], Regex.Replace(serverVarsSplit[i + 1], @"\s+", " ").Trim());
                 else
                     server.Set(serverVarsSplit[i], serverVarsSplit[i + 1]);
-
-
             }
-
-            CurrentUserRoomHash = ChatCrypt.PiStagingRoomHash(server["IPAddress"], server["localip0"], 6112);
-
+            
             server["hostport"] = remote.Port.ToString();
             server["localport"] = remote.Port.ToString();
-            // whammer40kdcam
-
-            //if (String.IsNullOrWhiteSpace(server.gamename) || !server.gamename.Equals("whamdowfr", StringComparison.InvariantCultureIgnoreCase))
-            //{
-            // only allow servers with a gamename of battlefield2
-            //    return true; // true means we don't send back a response
-            // }
-            /*  else if (String.IsNullOrWhiteSpace(server.gamevariant) || !_modWhitelist.ToList().Any(x => SQLMethods.EvaluateIsLike(server.gamevariant, x)))
-              {
-                  // only allow servers with a gamevariant of those listed in modwhitelist.txt, or (pr || pr_*) by default
-                  return true; // true means we don't send back a response
-              }*/
-              
+           
             // you've got to have all these properties in order for your server to be valid
             if (!String.IsNullOrWhiteSpace(server.Get<string>("hostname")) &&
                 !String.IsNullOrWhiteSpace(server.Get<string>("gamevariant")) &&
@@ -408,28 +339,7 @@ namespace GSMasterServer.Servers
 
             return true;
         }
-
-        private void WhisperNewGameToPlayers(object abstractServer)
-        {
-           /* var server = (GameServer)abstractServer;
-            var hostName = server.Get<string>("hostname");
-
-            var mainRooms = ChatServer.IrcDaemon.GetMainRooms();
-
-            for (int i = 0; i < mainRooms.Length; i++)
-            {
-                var room = mainRooms[i];
-
-                foreach (var item in room.Users)
-                {
-                    if (item.Nick == hostName)
-                        continue;
-
-                    item.WriteServerPrivateMessage("Эй, большой Босс! Вааа какой-то старшак начал игру в авто. Говорят, его дакка такая же как у вас. Но мы то знаем, что это вы у нас скрага. Вы определенно должны забрать его зубы! Вааргх!");
-                }
-            }*/
-        }
-
+        
         private void AddValidServer(IPEndPoint remote)
         {
             string key = String.Format("{0}:{1}", remote.Address, remote.Port);

@@ -46,8 +46,8 @@ namespace IrcD.Commands
             }
 
             // Тестовый вывод подключения к чату
-            IrcDaemon.SendToAll($@"{info.Nick} присоединился к комнате {string.Join(" ", args)}");
-           // info($@"{info.Nick} {string.Join(" подключение ", args)}");
+            //IrcDaemon.SendToAll($@"{info.Nick} присоединился к комнате {string.Join(" ", args)}");
+            // info($@"{info.Nick} {string.Join(" подключение ", args)}");
 
             foreach (var channel in from temp in GetSubArgument(args[0])
                                     where info.UserPerChannelInfos.All(upci => upci.ChannelInfo.Name != temp)

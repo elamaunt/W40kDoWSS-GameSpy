@@ -27,7 +27,7 @@ namespace GSMasterServer.Servers
         Socket _socket;
         Timer _reloadLobbiesTimer;
 
-
+        public readonly int[] ChatRoomPlayersCounts = new int[10];
 
         public static ConcurrentDictionary<string, CSteamID> IDByChannelCache { get; } = new ConcurrentDictionary<string, CSteamID>();
         public static ConcurrentDictionary<CSteamID, string> ChannelByIDCache { get; } = new ConcurrentDictionary<CSteamID, string>();
@@ -388,83 +388,41 @@ namespace GSMasterServer.Servers
             bytes.AddRange(DataFunctions.StringToBytes("numplayersname"));
             bytes.Add(0);
             bytes.Add(0);
-
-           // if (rooms == null)
-           // {
-                for (int i = 1; i <= 10; i++)
-                {
-                    bytes.Add(81);
-
-                    var b2 = BitConverter.GetBytes((long)i);
-
-                    bytes.Add(b2[3]);
-                    bytes.Add(b2[2]);
-                    bytes.Add(b2[1]);
-                    bytes.Add(b2[0]);
-
-                    bytes.Add(0);
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("Room " + i));
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes(/*ChatServer.IrcDaemon.GetChannelUsersCount("#GPG!" + i)*/0.ToString()));
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("1000"));
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("1"));
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("20"));
-                    bytes.Add(0);
-                }
-            /*}
-            else
+            
+            for (int i = 1; i <= 10; i++)
             {
-                for (int i = 0; i < rooms.Length; i++)
-                {
-                    var room = rooms[i];
+                bytes.Add(81);
 
-                    bytes.Add(81);
+                var b2 = BitConverter.GetBytes((long)i);
 
-                    var b2 = BitConverter.GetBytes((long)i);
+                bytes.Add(b2[3]);
+                bytes.Add(b2[2]);
+                bytes.Add(b2[1]);
+                bytes.Add(b2[0]);
 
-                    bytes.Add(b2[3]);
-                    bytes.Add(b2[2]);
-                    bytes.Add(b2[1]);
-                    bytes.Add(b2[0]);
+                bytes.Add(0);
+                bytes.Add(0);
 
-                    bytes.Add(0);
-                    bytes.Add(0);
+                bytes.Add(255);
+                bytes.AddRange(DataFunctions.StringToBytes("Room " + i));
+                bytes.Add(0);
 
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes(room.Name));
-                    bytes.Add(0);
+                bytes.Add(255);
+                bytes.AddRange(DataFunctions.StringToBytes(ChatRoomPlayersCounts[i-1].ToString()));
+                bytes.Add(0);
 
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes(room.Users.Count().ToString()));
-                    bytes.Add(0);
+                bytes.Add(255);
+                bytes.AddRange(DataFunctions.StringToBytes("1000"));
+                bytes.Add(0);
 
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("2"));
-                    bytes.Add(0);
+                bytes.Add(255);
+                bytes.AddRange(DataFunctions.StringToBytes("1"));
+                bytes.Add(0);
 
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("1"));
-                    bytes.Add(0);
-
-                    bytes.Add(255);
-                    bytes.AddRange(DataFunctions.StringToBytes("20"));
-                    bytes.Add(0);
-                }
-            }*/
+                bytes.Add(255);
+                bytes.AddRange(DataFunctions.StringToBytes("20"));
+                bytes.Add(0);
+            }
 
             bytes.AddRange(new byte[] { 0, 255, 255, 255, 255 });
 

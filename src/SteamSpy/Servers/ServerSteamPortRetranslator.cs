@@ -109,7 +109,7 @@ namespace GSMasterServer.Servers
                 };
 
                 _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _socket.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+                _socket.Bind(new IPEndPoint(IPAddress.Any, 0));
 
                 Port = (ushort)((IPEndPoint)_socket.LocalEndPoint).Port;
                 
@@ -253,10 +253,6 @@ namespace GSMasterServer.Servers
                     Console.WriteLine(ex);
                 }
                 
-
-                // if (count < 900)
-                //     SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendUnreliable);
-                // else
                 SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendReliable);
             }
             catch (Exception ex)

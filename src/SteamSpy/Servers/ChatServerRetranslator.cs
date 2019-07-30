@@ -204,7 +204,7 @@ namespace GSMasterServer.Servers
 
                     var stringSteamId = utf8value.Substring(index + 15, endIndex - index - 15);
                     var steamId = new CSteamID(ulong.Parse(stringSteamId));
-
+                    
                     if (steamId != SteamUser.GetSteamID())
                     {
                         if (ServerListRetrieve.ChannelByIDCache.TryGetValue(steamId, out string roomHash))
@@ -369,7 +369,7 @@ namespace GSMasterServer.Servers
                                 var encodedEndPoint = utf8value.Substring(index + 15, 10);
 
                                 CSteamID steamId;
-
+                                
                                 if (ServerListReport.CurrentUserRoomHash == encodedEndPoint)
                                 {
                                     steamId = SteamUser.GetSteamID();
@@ -435,6 +435,16 @@ namespace GSMasterServer.Servers
             CONTINUE: WaitForGameData(state);
         }
 
+        public void SendGPGRoomsCountsRequest()
+        {
+            var state = _currentClientState;
+
+            if (state.Disposing)
+                return;
+
+            SendToServerSocket(ref state, $@"GPGCOUNTS".ToAssciiBytes());
+        }
+
         public void SentServerMessageToClient(string message)
         {
             var state = _currentClientState;
@@ -443,6 +453,16 @@ namespace GSMasterServer.Servers
                 return;
 
             SendToGameSocket(ref state, $@":SERVER!XaaaaaaaaX|10008@127.0.0.1 PRIVMSG {ChatNick} :{message}".ToAssciiBytes());
+        }
+
+        public void SendGameBroadcast(string message)
+        {
+            var state = _currentClientState;
+
+            if (state.Disposing)
+                return;
+
+            SendToServerSocket(ref state, $@"BROADCAST :{message}".ToAssciiBytes());
         }
 
         public void SendAutomatchGameBroadcast(string hostname, int maxPlayers)
