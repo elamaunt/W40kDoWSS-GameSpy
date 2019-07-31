@@ -98,37 +98,7 @@ namespace GSMasterServer.Servers
 
             try
             {
-                _clientManagerGameSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    SendTimeout = 30000,
-                    ReceiveTimeout = 30000,
-                    SendBufferSize = 8192,
-                    ReceiveBufferSize = 8192,
-                    Blocking = false
-                };
-
-                _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(true, 1));
-                _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
-                _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-
-                _clientManagerServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    SendTimeout = 30000,
-                    ReceiveTimeout = 30000,
-                    SendBufferSize = 8192,
-                    ReceiveBufferSize = 8192,
-                    Blocking = false
-                };
-
-                _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(true, 1));
-                _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-
-                _clientManagerGameSocket.Bind(new IPEndPoint(info.Address, info.Port));
-                _clientManagerServerSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
-                _clientManagerGameSocket.Listen(10);
+                StartClientManagerGameSocket(info);
             }
             catch (Exception e)
             {
@@ -138,6 +108,44 @@ namespace GSMasterServer.Servers
             }
 
             RestartClientAcepting();
+        }
+        
+        private void StartClientManagerGameSocket(AddressInfo info)
+        {
+            _clientManagerGameSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            {
+                SendTimeout = 30000,
+                ReceiveTimeout = 30000,
+                SendBufferSize = 8192,
+                ReceiveBufferSize = 8192,
+                Blocking = false
+            };
+
+            _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+            _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(true, 1));
+            _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+            _clientManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+            _clientManagerGameSocket.Bind(new IPEndPoint(info.Address, info.Port));
+            _clientManagerGameSocket.Listen(10);
+        }
+
+        private void StartClientManagerServerSocket()
+        {
+            _clientManagerServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            {
+                SendTimeout = 30000,
+                ReceiveTimeout = 30000,
+                SendBufferSize = 8192,
+                ReceiveBufferSize = 8192,
+                Blocking = false
+            };
+
+            _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+            _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+            _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(true, 1));
+            _clientManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+            _clientManagerServerSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
         }
 
         private void RestartClientAcepting()
@@ -157,37 +165,7 @@ namespace GSMasterServer.Servers
 
             try
             {
-                _searchManagerGameSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    SendTimeout = 5000,
-                    ReceiveTimeout = 5000,
-                    SendBufferSize = 8192,
-                    ReceiveBufferSize = 8192,
-                    Blocking = false
-                };
-                _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
-                _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-
-                _searchManagerServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    SendTimeout = 5000,
-                    ReceiveTimeout = 5000,
-                    SendBufferSize = 8192,
-                    ReceiveBufferSize = 8192,
-                    Blocking = false
-                };
-                _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
-                _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-
-
-                _searchManagerGameSocket.Bind(new IPEndPoint(info.Address, info.Port));
-                _searchManagerServerSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
-
-                _searchManagerGameSocket.Listen(10);
+                StartSearchManagerGameSocket(info);
             }
             catch (Exception e)
             {
@@ -205,6 +183,43 @@ namespace GSMasterServer.Servers
             RestartSearchAcepting();
         }
 
+        private void StartSearchManagerServerSocket()
+        {
+            _searchManagerServerSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            {
+                SendTimeout = 5000,
+                ReceiveTimeout = 5000,
+                SendBufferSize = 8192,
+                ReceiveBufferSize = 8192,
+                Blocking = false
+            };
+
+            _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+            _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+            _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+            _searchManagerServerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+            _searchManagerServerSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
+        }
+
+        private void StartSearchManagerGameSocket(AddressInfo info)
+        {
+            _searchManagerGameSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            {
+                SendTimeout = 5000,
+                ReceiveTimeout = 5000,
+                SendBufferSize = 8192,
+                ReceiveBufferSize = 8192,
+                Blocking = false
+            };
+            _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+            _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+            _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+            _searchManagerGameSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+            _searchManagerGameSocket.Bind(new IPEndPoint(info.Address, info.Port));
+            _searchManagerGameSocket.Listen(10);
+        }
+
         private void RestartSearchAcepting()
         {
             LoginSocketState state = new LoginSocketState()
@@ -212,7 +227,7 @@ namespace GSMasterServer.Servers
                 Type = LoginSocketState.SocketType.Search,
                 GameSocket = _searchManagerGameSocket
             };
-
+            
             _searchManagerGameSocket.BeginAccept(AcceptCallback, state);
         }
 
@@ -230,21 +245,20 @@ namespace GSMasterServer.Servers
 
                 if (state.Type == LoginSocketState.SocketType.Client)
                 {
+                    StartClientManagerServerSocket();
+
                     state.ServerSocket = _clientManagerServerSocket;
-                    if (_clientManagerServerSocket.Connected)
-                        _clientManagerServerSocket.Disconnect(true);
+
                     _clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), GameConstants.CLIENT_LOGIN_TCP_PORT), OnConnect, state);
-                    //_clientManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 29902), OnConnect, state);
                     RestartClientAcepting();
                 }
                 else if (state.Type == LoginSocketState.SocketType.Search)
                 {
+                    StartSearchManagerServerSocket();
+
                     state.ServerSocket = _searchManagerServerSocket;
-                    if (_searchManagerServerSocket.Connected)
-                        _searchManagerServerSocket.Disconnect(true);
                     _searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), GameConstants.SEARCH_LOGIN_TCP_PORT), OnConnect, state);
                     RestartSearchAcepting();
-                    //_searchManagerServerSocket.BeginConnect(new IPEndPoint(IPAddress.Loopback, 29903), OnConnect, state);
                 }
             }
             catch (NullReferenceException)

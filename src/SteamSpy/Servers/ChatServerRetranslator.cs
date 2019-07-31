@@ -19,6 +19,7 @@ namespace GSMasterServer.Servers
         Socket _newPeerAceptingsocket;
 
         public string ChatNick { get; private set; }
+        public readonly int[] ChatRoomPlayersCounts = new int[10];
 
         public static byte[] Gamename;
         public static byte[] Gamekey = null;
@@ -53,19 +54,6 @@ namespace GSMasterServer.Servers
 
                 _newPeerAceptingsocket.Bind(new IPEndPoint(info.Address, info.Port));
                 _newPeerAceptingsocket.Listen(10);
-
-                _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
-                {
-                    SendTimeout = 5000,
-                    ReceiveTimeout = 5000,
-                    SendBufferSize = 65535,
-                    ReceiveBufferSize = 65535
-                };
-
-                _serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
-
-                _serverSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
             }
             catch (Exception e)
             {
@@ -95,10 +83,26 @@ namespace GSMasterServer.Servers
 
             _currentClientState = state;
 
-            if (_serverSocket.Connected)
-                _serverSocket.Disconnect(true);
-            _serverSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), 6668), OnServerConnect, state);
+            RestartServerSocket(state);
+            
             RestartAcepting();
+        }
+
+        private void RestartServerSocket(SocketState state)
+        {
+            _serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            {
+                SendTimeout = 5000,
+                ReceiveTimeout = 5000,
+                SendBufferSize = 65535,
+                ReceiveBufferSize = 65535
+            };
+
+            _serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+            _serverSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
+
+            _serverSocket.Bind(new IPEndPoint(IPAddress.Any, 0));
+            _serverSocket.BeginConnect(new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), 6668), OnServerConnect, state);
         }
 
         private void OnServerConnect(IAsyncResult ar)
@@ -344,12 +348,27 @@ namespace GSMasterServer.Servers
 
                             Log("CHATDATA", utf8value);
 
+                            if (utf8value.StartsWith("ROOMCOUNTERS", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var values = utf8value.Split(new string[] { "ROOMCOUNTERS", " " }, StringSplitOptions.RemoveEmptyEntries);
+
+                                for (int i = 0; i < values.Length; i+=2)
+                                {
+                                    var roomIndex = values[i];
+                                    var count = values[i+1];
+
+                                    ChatRoomPlayersCounts[int.Parse(roomIndex) - 1] = int.Parse(count);
+                                }
+                                goto CONTINUE;
+                            }
+
                             if (utf8value.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase))
                             {
                                 var nick = utf8value.Split(' ')[2];
 
                                 ChatNick = nick;
 
+                                SendGPGRoomsCountsRequest();
                                 SendToServerSocket(ref state, bytes);
 
                                 goto CONTINUE;
@@ -442,7 +461,7 @@ namespace GSMasterServer.Servers
             if (state.Disposing)
                 return;
 
-            SendToServerSocket(ref state, $@"GPGCOUNTS".ToAssciiBytes());
+            SendToServerSocket(ref state, $@"ROOMCOUNTERS".ToAssciiBytes());
         }
 
         public void SentServerMessageToClient(string message)

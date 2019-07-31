@@ -2,6 +2,7 @@
 using GSMasterServer.Utils;
 using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
+using SteamSpy;
 using SteamSpy.Data;
 using SteamSpy.Utils;
 using Steamworks;
@@ -28,7 +29,6 @@ namespace GSMasterServer.Servers
         Timer _reloadLobbiesTimer;
 
         private static volatile Task<GameServer[]> _currentLobbiesTask;
-        public readonly int[] ChatRoomPlayersCounts = new int[10];
 
         public static ConcurrentDictionary<string, CSteamID> IDByChannelCache { get; } = new ConcurrentDictionary<string, CSteamID>();
         public static ConcurrentDictionary<CSteamID, string> ChannelByIDCache { get; } = new ConcurrentDictionary<CSteamID, string>();
@@ -364,6 +364,8 @@ namespace GSMasterServer.Servers
 
         private void SendRooms(SocketState state, string validate)
         {
+            CoreContext.ChatServer.SendGPGRoomsCountsRequest();
+
             // d    whamdowfr whamdowfr fkT>_2Cr \hostname\numwaiting\maxwaiting\numservers\numplayersname
             //var bytes = @"\fieldcount\8\groupid\hostname\numplayers\maxwaiting\numwaiting\numservers\password\other\309\Europe\0\50\0\0\0\.maxplayers.0\408\Pros\0\50\0\0\0\.maxplayers.0\254\West Coast 2\0\50\0\0\0\.maxplayers.0\255\West Coast 3\0\50\0\0\0\.maxplayers.0\256\East Coast 1\0\50\0\0\0\.maxplayers.0\257\East Coast 2\0\50\0\0\0\.maxplayers.0\253\West Coast 1\0\50\0\0\0\.maxplayers.0\258\East Coast 3\0\50\0\0\0\.maxplayers.0\407\Newbies\0\50\0\0\0\.maxplayers.0\final\".ToAssciiBytes();
 
@@ -418,7 +420,7 @@ namespace GSMasterServer.Servers
                 bytes.Add(0);
 
                 bytes.Add(255);
-                bytes.AddRange(DataFunctions.StringToBytes(ChatRoomPlayersCounts[i-1].ToString()));
+                bytes.AddRange(DataFunctions.StringToBytes( CoreContext.ChatServer.ChatRoomPlayersCounts[i-1].ToString()));
                 bytes.Add(0);
 
                 bytes.Add(255);

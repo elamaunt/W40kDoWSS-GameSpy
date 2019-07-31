@@ -73,8 +73,6 @@
     <Compile Include="Data\AddressInfo.cs" />
     <Compile Include="Data\GameServer.cs" />
     <Compile Include="Data\GeoIP.cs" />
-    <Compile Include="Data\NatNegMessage.cs" />
-    <Compile Include="Data\NatNegPeer.cs" />
     <Compile Include="Data\PlayerFinalState.cs" />
     <Compile Include="Data\Race.cs" />
     <Compile Include="Data\ServerFlags.cs" />

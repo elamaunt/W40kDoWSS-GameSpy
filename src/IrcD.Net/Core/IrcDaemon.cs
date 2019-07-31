@@ -143,6 +143,8 @@ namespace IrcD.Core
             Commands.Add(new SetCKey(this));
             Commands.Add(new Utm(this));
             Commands.Add(new GameBroadcast(this));
+            Commands.Add(new RoomCounters(this));
+            
             //Commands.Add(new Connect(this));
             //Commands.Add(new Die(this));
             Commands.Add(new Error(this));
