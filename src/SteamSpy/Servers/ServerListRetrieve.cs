@@ -27,6 +27,7 @@ namespace GSMasterServer.Servers
         Socket _socket;
         Timer _reloadLobbiesTimer;
 
+        private static volatile Task<GameServer[]> _currentLobbiesTask;
         public readonly int[] ChatRoomPlayersCounts = new int[10];
 
         public static ConcurrentDictionary<string, CSteamID> IDByChannelCache { get; } = new ConcurrentDictionary<string, CSteamID>();
@@ -120,8 +121,8 @@ namespace GSMasterServer.Servers
 
         public static void WarmingUpTheGameList()
         {
-            SteamLobbyManager.LoadLobbies()
-               .ContinueWith(task =>
+            LoadLobbies()
+                .ContinueWith(task =>
                {
                    if (task.Status != TaskStatus.RanToCompletion)
                        return;
@@ -332,7 +333,7 @@ namespace GSMasterServer.Servers
                 }
             }
 
-            SteamLobbyManager.LoadLobbies()
+            LoadLobbies()
                .ContinueWith(task =>
                {
                    if (task.Status != TaskStatus.RanToCompletion)
@@ -347,9 +348,18 @@ namespace GSMasterServer.Servers
                    
                    byte[] unencryptedServerList = PackServerList(state, servers, fields, isAutomatch);
                    byte[] encryptedServerList = GSEncoding.Encode(/*ChatServer.Gamekey,*/ "pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedServerList, unencryptedServerList.LongLength);
-
+                   
                    SendToClient(state, encryptedServerList);
                });
+        }
+
+        private static async Task<GameServer[]> LoadLobbies()
+        {
+            if (_currentLobbiesTask != null)
+                return await _currentLobbiesTask;
+            var servers = await (_currentLobbiesTask = SteamLobbyManager.LoadLobbies());
+            _currentLobbiesTask = null;
+            return servers;
         }
 
         private void SendRooms(SocketState state, string validate)
