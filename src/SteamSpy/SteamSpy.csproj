@@ -70,6 +70,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="StaticClasses\DataKeepers\RunTimeData.cs" />
     <Compile Include="CoreContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />
     <Compile Include="Data\GameServer.cs" />
@@ -83,22 +84,22 @@
     <Compile Include="Data\StatsDelegates.cs" />
     <Compile Include="Data\UserData.cs" />
     <Compile Include="Data\UsersDatabase.cs" />
-    <Compile Include="Extensions\SoulstormExtensions.cs" />
+    <Compile Include="StaticClasses\SoulstormExtensions.cs" />
     <Compile Include="Http\HttpHelper.cs" />
     <Compile Include="Http\HttpRequest.cs" />
     <Compile Include="Http\HttpResponceBuilder.cs" />
     <Compile Include="Http\HttpResponse.cs" />
     <Compile Include="Http\QuickMimeTypeMapper.cs" />
     <Compile Include="Http\Route.cs" />
-    <Compile Include="Services\LangService.cs" />
-    <Compile Include="RelayCommand.cs" />
+    <Compile Include="StaticClasses\LangService.cs" />
+    <Compile Include="WPFHelpClasses\RelayCommand.cs" />
     <Compile Include="Servers\ChatServerRetranslator.cs" />
     <Compile Include="Servers\LoginServerRetranslator.cs" />
     <Compile Include="Servers\Server.cs" />
     <Compile Include="Servers\ServerSteamPortRetranslator.cs" />
     <Compile Include="Servers\ServerListReport.cs" />
     <Compile Include="Servers\ServerListRetrieve.cs" />
-    <Compile Include="Services\SoulstormFindService.cs" />
+    <Compile Include="StaticClasses\PathFinder.cs" />
     <Compile Include="Styles\WindowStyle.cs" />
     <Compile Include="Utils\ByteHelpers.cs" />
     <Compile Include="Utils\ChatCrypt.cs" />
@@ -230,6 +231,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Config\" />
     <Folder Include="Helpers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

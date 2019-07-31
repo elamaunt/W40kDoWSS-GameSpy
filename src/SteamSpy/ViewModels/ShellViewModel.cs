@@ -1,5 +1,5 @@
-﻿using SteamSpy.Services;
-using SteamSpy.ViewModels.PageViewModels;
+﻿using SteamSpy.ViewModels.PageViewModels;
+using SteamSpy.WPFHelpClasses;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

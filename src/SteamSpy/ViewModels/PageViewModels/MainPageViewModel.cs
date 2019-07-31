@@ -1,5 +1,6 @@
-﻿using SteamSpy.Extensions;
-using SteamSpy.Services;
+﻿
+using SteamSpy.StaticClasses;
+using SteamSpy.WPFHelpClasses;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -32,7 +33,7 @@ namespace SteamSpy.ViewModels.PageViewModels
                 {
                     launchGameCommand = new RelayCommand(
                         obj => SoulstormExtensions.LaunchGame(),
-                        obj => !SoulstormExtensions.IsGameRunning());
+                        obj => SoulstormExtensions.CanLaunchGame());
 
                 }
                 return launchGameCommand;

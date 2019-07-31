@@ -1,4 +1,6 @@
 ﻿using GSMasterServer.Servers;
+using SteamSpy.StaticClasses;
+using SteamSpy.StaticClasses.DataKeepers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,9 +21,11 @@ namespace SteamSpy
         protected override void OnStartup(StartupEventArgs e)
         {
             CoreContext.Start(IPAddress.Any);
-            
-            //ModifyHostsFile(LocalEntries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
-            ModifyHostsFile(Entries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
+
+            var steamPath = PathFinder.FindSteamSoulstorm();
+            RunTimeData.SetGamePath(steamPath);
+
+            //ModifyHostsFile(Entries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
 
             if (Is64BitProcess)
                 File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api64.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api.dll"), true);
