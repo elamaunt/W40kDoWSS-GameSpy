@@ -58,7 +58,6 @@ namespace GSMasterServer.Utils
             }
         }
 
-
         // gs_peerchat init same
         [MethodImpl(MethodImplOptions.NoOptimization)]
         public static void GSCryptKeyInit(GDCryptKey ctx, byte* chall, byte* gamekey, int gameKeySize)

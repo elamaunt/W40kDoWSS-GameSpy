@@ -58,7 +58,7 @@ namespace IrcD.Commands
             info.InitNick(args[0]);
             info.InitUser("service", "I am a service");
 
-            IrcDaemon.Nicks.Add(info.Nick, info);
+            IrcDaemon.Nicks[info.Nick] = info;
         }
 
         protected override int PrivateSend(CommandArgument commandArgument)

@@ -19,6 +19,7 @@
  *   this software without specific prior written permission.
  */
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -42,7 +43,7 @@ namespace IrcD.Channel
         public string Name { get; }
         public string Topic { get; set; }
 
-        public Dictionary<string, UserPerChannelInfo> UserPerChannelInfos { get; } = new Dictionary<string, UserPerChannelInfo>();
+        public ConcurrentDictionary<string, UserPerChannelInfo> UserPerChannelInfos { get; } = new ConcurrentDictionary<string, UserPerChannelInfo>();
         public IEnumerable<UserInfo> Users => UserPerChannelInfos.Select(upci => upci.Value.UserInfo);
         public ChannelModeList Modes { get; }
 
@@ -69,13 +70,11 @@ namespace IrcD.Channel
         {
             var upci = UserPerChannelInfos[user.Nick];
 
-            UserPerChannelInfos.Remove(user.Nick);
+            UserPerChannelInfos.TryRemove(user.Nick, out UserPerChannelInfo info);
             user.UserPerChannelInfos.Remove(upci);
 
-            if (UserPerChannelInfos.Any() == false)
-            {
-                IrcDaemon.Channels.Remove(Name);
-            }
+            if (UserPerChannelInfos.Count == 0)
+                IrcDaemon.Channels.TryRemove(Name, out ChannelInfo channel);
         }
 
         public override int WriteLine(StringBuilder line)

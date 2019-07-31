@@ -68,7 +68,7 @@ namespace IrcD.Commands
                 if (!info.NickExists)
                 {
                     //First Nick Command
-                    IrcDaemon.Nicks.Add(args[0], info);
+                    IrcDaemon.Nicks[args[0]] = info;
                     info.InitNick(args[0]);
                     return;
                 }

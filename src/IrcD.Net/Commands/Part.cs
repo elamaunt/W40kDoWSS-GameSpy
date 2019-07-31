@@ -21,6 +21,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using IrcD.Channel;
 using IrcD.Commands.Arguments;
 using IrcD.Core;
 using IrcD.Core.Utils;
@@ -41,10 +42,8 @@ namespace IrcD.Commands
             
             foreach (string channelName in GetSubArgument(args[0]))
             {
-                if (IrcDaemon.Channels.ContainsKey(channelName))
+                if (IrcDaemon.Channels.TryGetValue(channelName, out ChannelInfo chan))
                 {
-                    var chan = IrcDaemon.Channels[channelName];
-
                     if (info.Channels.Contains(chan))
                     {
                         Send(new PartArgument(info, chan, chan, message));

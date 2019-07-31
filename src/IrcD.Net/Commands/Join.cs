@@ -45,16 +45,16 @@ namespace IrcD.Commands
                 return;
             }
 
+            // Тестовый вывод подключения к чату
+            //IrcDaemon.SendToAll($@"{info.Nick} присоединился к комнате {string.Join(" ", args)}");
+            // info($@"{info.Nick} {string.Join(" подключение ", args)}");
+
             foreach (var channel in from temp in GetSubArgument(args[0])
                                     where info.UserPerChannelInfos.All(upci => upci.ChannelInfo.Name != temp)
                                     select temp)
             {
-                ChannelInfo chan;
-                
-                if (IrcDaemon.Channels.ContainsKey(channel))
+                if (IrcDaemon.Channels.TryGetValue(channel, out ChannelInfo chan))
                 {
-                    chan = IrcDaemon.Channels[channel];
-
                     if (!chan.Modes.HandleEvent(this, chan, info, args))
                     {
                         continue;
@@ -65,7 +65,7 @@ namespace IrcD.Commands
                     if (IrcDaemon.ValidChannel(channel))
                     {
                         chan = new ChannelInfo(channel, IrcDaemon);
-                        IrcDaemon.Channels.Add(chan.Name, chan);
+                        IrcDaemon.Channels[chan.Name] = chan;
                     }
                     else
                     {
@@ -82,7 +82,7 @@ namespace IrcD.Commands
                     chanuser.Modes.Add(IrcDaemon.ModeFactory.GetChannelRank('o'));
                 }
 
-                chan.UserPerChannelInfos.Add(info.Nick, chanuser);
+                chan.UserPerChannelInfos[info.Nick] = chanuser;
                 info.UserPerChannelInfos.Add(chanuser);
                 Send(new JoinArgument(info, chan, chan));
                 SendTopic(info, chan);

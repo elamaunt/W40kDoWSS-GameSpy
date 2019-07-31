@@ -11,7 +11,7 @@ namespace GSMasterServer
 
         static void Main(string[] args)
         {
-            args = new string[] { "+db", @"..\..\test.db" };
+            args = new string[] { "+db", @"test.db" };
             
             IPAddress bind = IPAddress.Any;
 
@@ -34,13 +34,13 @@ namespace GSMasterServer
                         }
                         else
                         {
-                            UsersDatabase.Initialize(args[i + 1]);
+                            Database.Initialize(args[i + 1]);
                         }
                     }
                 }
             }
 
-            if (!UsersDatabase.IsInitialized())
+            if (!Database.IsInitialized())
             {
                 Server.LogError("Error initializing database, please confirm parameter +db is valid");
                 Server.LogError("Press any key to continue");
@@ -49,11 +49,13 @@ namespace GSMasterServer
             }
 
             CDKeyServer cdKeyServer = new CDKeyServer(bind, 29910);
-            ServerListReport serverListReport = new ServerListReport(bind, 27900);
-            ServerNatNeg serverNatNeg = new ServerNatNeg(bind, 27901);
-            ServerListRetrieve serverListRetrieve = new ServerListRetrieve(bind, 28910, serverListReport);
-            LoginServer loginServer = new LoginServer(bind, 29900, 29901);
-            ChatServer chatServer = new ChatServer(bind, 6667);
+            //ServerListReport serverListReport = new ServerListReport(bind, 27900);
+            //ServerNatNeg serverNatNeg = new ServerNatNeg(bind, 27901);
+            ServerSteamIdsRetrieve serverSteamIdsRetrieve = new ServerSteamIdsRetrieve(bind, 27902);
+            //ServerListRetrieve serverListRetrieve = new ServerListRetrieve(bind, 28910, serverListReport);
+            //LoginServer loginServer = new LoginServer(bind, 29900, 29901);
+            LoginServer loginServer = new LoginServer(bind, 29902, 29903);
+            ChatServer chatServer = new ChatServer(bind, 6668);
             HttpServer httpServer = new HttpServer(bind, 80);
             StatsServer statsServer = new StatsServer(bind, 29920);
 

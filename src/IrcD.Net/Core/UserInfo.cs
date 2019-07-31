@@ -149,15 +149,15 @@ namespace IrcD.Core
         public void Rename(string newNick)
         {
             // Update Global Nick-Dictionary
-            IrcDaemon.Nicks.Remove(Nick);
-            IrcDaemon.Nicks.Add(newNick, this);
+            IrcDaemon.Nicks.TryRemove(Nick, out UserInfo oldUser);
+            IrcDaemon.Nicks[newNick] = this;
 
             // Update Channel Nicklists
             foreach (var channel in Channels)
             {
                 var channelInfo = channel.UserPerChannelInfos[Nick];
-                channel.UserPerChannelInfos.Remove(Nick);
-                channel.UserPerChannelInfos.Add(newNick, channelInfo);
+                channel.UserPerChannelInfos.TryRemove(Nick, out UserPerChannelInfo info);
+                channel.UserPerChannelInfos[newNick] = channelInfo;
             }
 
             Nick = newNick;
@@ -177,6 +177,7 @@ namespace IrcD.Core
         public List<UserPerChannelInfo> UserPerChannelInfos { get; } = new List<UserPerChannelInfo>();
 
         public IEnumerable<ChannelInfo> Channels => UserPerChannelInfos.Select(upci => upci.ChannelInfo);
+    
 
         public List<ChannelInfo> Invited { get; } = new List<ChannelInfo>();
 
@@ -196,7 +197,7 @@ namespace IrcD.Core
         public int WriteLine(string line)
         {
 #if DEBUG
-            Logger.Log(line.ToString(), location: "OUT:" + Nick);
+            //Logger.Log(line.ToString(), location: "OUT:" + Nick);
 #endif
             // Костыль дла переопределения отправки
             return _send(_state, line + IrcDaemon.ServerCrLf);
@@ -240,15 +241,12 @@ namespace IrcD.Core
 
             // Clean up server
 
-            if (Nick != null && IrcDaemon.Nicks.ContainsKey(Nick))
-            {
-                IrcDaemon.Nicks.Remove(Nick);
-            }
+            UserInfo info;
 
-            if (IrcDaemon.Users.ContainsKey(ProfileId))
-            {
-                IrcDaemon.Users.Remove(ProfileId);
-            }
+            if (Nick != null)
+                IrcDaemon.Nicks.TryRemove(Nick, out info);
+
+            IrcDaemon.Users.TryRemove(ProfileId, out info);
 
             // Close connection
             Socket.Close();

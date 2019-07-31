@@ -104,8 +104,7 @@ namespace GSMasterServer.Servers
                 };
 
                 _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+                _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
                 _clientManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
                 _clientManagerSocket.Bind(new IPEndPoint(info.Address, info.Port));
@@ -151,8 +150,7 @@ namespace GSMasterServer.Servers
                 };
 
                 _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+                _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
                 _searchManagerSocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
                 _searchManagerSocket.Bind(new IPEndPoint(info.Address, info.Port));
@@ -362,8 +360,7 @@ namespace GSMasterServer.Servers
                 int received = state.Socket.EndReceive(async);
                 if (received == 0)
                 {
-                    // when EndReceive returns 0, it means the socket on the other end has been shut down.
-                    return;
+                    goto CONTINUE;
                 }
 
                 // take what we received, and append it to the received data buffer
@@ -419,7 +416,7 @@ namespace GSMasterServer.Servers
             }
 
             // and we wait for more data...
-            WaitForData(ref state);
+            CONTINUE: WaitForData(ref state);
         }
 
         private void ParseMessage(ref LoginSocketState state, string message)
@@ -494,7 +491,7 @@ namespace GSMasterServer.Servers
                         break;
 
                     case "updatepro":
-                        LoginServerMessages.UpdateProfile(ref state, keyValues);
+                        //LoginServerMessages.UpdateProfile(ref state, keyValues);
                         break;
 
                     case "status":
@@ -641,6 +638,7 @@ namespace GSMasterServer.Servers
 
         public string ServerChallenge;
         public string ClientChallenge;
+        public ulong SteamId;
         public string Name;
         public string Email;
         public string PasswordEncrypted;

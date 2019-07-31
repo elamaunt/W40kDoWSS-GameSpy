@@ -34,7 +34,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading.Tasks;
 using Mode = IrcD.Commands.Mode;
 using Version = IrcD.Commands.Version;
@@ -51,14 +50,14 @@ namespace IrcD.Core
         public ConcurrentDictionary<Game, DateTime> Games { get; } = new ConcurrentDictionary<Game, DateTime>();
 
         // Main Datastructures
-        public Dictionary<long, UserInfo> Users { get; } = new Dictionary<long, UserInfo>();
+        public ConcurrentDictionary<long, UserInfo> Users { get; } = new ConcurrentDictionary<long, UserInfo>();
 
-        public Dictionary<string, ChannelInfo> Channels { get; } = new Dictionary<string, ChannelInfo>();
+        public ConcurrentDictionary<string, ChannelInfo> Channels { get; } = new ConcurrentDictionary<string, ChannelInfo>();
 
 
-        public Dictionary<char, ChannelType> SupportedChannelTypes { get; } = new Dictionary<char, ChannelType>();
+        public ConcurrentDictionary<char, ChannelType> SupportedChannelTypes { get; } = new ConcurrentDictionary<char, ChannelType>();
 
-        public Dictionary<string, UserInfo> Nicks { get; } = new Dictionary<string, UserInfo>();
+        public ConcurrentDictionary<string, UserInfo> Nicks { get; } = new ConcurrentDictionary<string, UserInfo>();
 
         #region Modes
 
@@ -143,6 +142,7 @@ namespace IrcD.Core
             Commands.Add(new GetCKey(this));
             Commands.Add(new SetCKey(this));
             Commands.Add(new Utm(this));
+            Commands.Add(new GameBroadcast(this));
             //Commands.Add(new Connect(this));
             //Commands.Add(new Die(this));
             Commands.Add(new Error(this));
@@ -237,7 +237,7 @@ namespace IrcD.Core
         private void SetupChannelTypes()
         {
             ChannelType chan = new NormalChannel();
-            SupportedChannelTypes.Add(chan.Prefix, chan);
+            SupportedChannelTypes.TryAdd(chan.Prefix, chan);
         }
 
        /* public void Start()
@@ -278,7 +278,7 @@ namespace IrcD.Core
             info.InitNick(nick);
             Users[profileId] = info;
             
-            Task.Delay(1000).ContinueWith(t =>
+            Task.Delay(2000).ContinueWith(t =>
             {
                 var rooms = Channels.Where(x => x.Key.StartsWith("#GSP")).ToArray();
 
@@ -441,7 +441,40 @@ namespace IrcD.Core
                 Commands.Handle(info, prefix, replyCode, args, line.Length);
             }
         }
-        
+
+        public void SendToAll(string message, string exceptNick)
+        {
+            var mainRooms = GetMainRooms();
+
+            for (int i = 0; i < mainRooms.Length; i++)
+            {
+                var room = mainRooms[i];
+
+                foreach (var item in room.Users)
+                {
+                    if (item.Nick.Equals(exceptNick, StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    item.WriteServerPrivateMessage(message);
+                }
+            }
+        }
+
+        public void SendToAll(string message)
+        {
+            var mainRooms = GetMainRooms();
+
+            for (int i = 0; i < mainRooms.Length; i++)
+            {
+                var room = mainRooms[i];
+
+                foreach (var item in room.Users)
+                {
+                    item.WriteServerPrivateMessage(message);
+                }
+            }
+        }
+
         private static void FilterArgs(List<string> args)
         {
             args.RemoveAll(s => string.IsNullOrEmpty(s.Trim()));

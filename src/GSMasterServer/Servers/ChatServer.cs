@@ -55,7 +55,7 @@ namespace GSMasterServer.Servers
                 };
 
                 _newPeerAceptingsocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                _newPeerAceptingsocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                _newPeerAceptingsocket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
 
                 _newPeerAceptingsocket.Bind(new IPEndPoint(info.Address, info.Port));
                 _newPeerAceptingsocket.Listen(10);
@@ -148,7 +148,7 @@ namespace GSMasterServer.Servers
 
                              var line = reader.ReadLine();
 
-                            if (line.StartsWith("CRYPT"))
+                            if (line.StartsWith("CRYPT", StringComparison.OrdinalIgnoreCase))
                             {
                                 state.Encoded = true;
                                 
@@ -174,6 +174,7 @@ namespace GSMasterServer.Servers
 
                                 var clientKey = new ChatCrypt.GDCryptKey();
                                 var serverKey = new ChatCrypt.GDCryptKey();
+                                var serverKeyClone = new ChatCrypt.GDCryptKey();
 
                                 fixed (byte* challPtr = chall)
                                 {
@@ -181,11 +182,13 @@ namespace GSMasterServer.Servers
                                     {
                                         ChatCrypt.GSCryptKeyInit(clientKey, challPtr, gamekeyPtr, Gamekey.Length);
                                         ChatCrypt.GSCryptKeyInit(serverKey, challPtr, gamekeyPtr, Gamekey.Length);
+                                        ChatCrypt.GSCryptKeyInit(serverKeyClone, challPtr, gamekeyPtr, Gamekey.Length);
                                     }
                                 }
 
                                 state.ClientKey = clientKey;
                                 state.ServerKey = serverKey;
+                                state.ServerKeyClone = serverKeyClone;
 
                                 SendToClient(ref state, DataFunctions.StringToBytes(":s 705 * 0000000000000000 0000000000000000\r\n"));
                             }
@@ -217,11 +220,11 @@ namespace GSMasterServer.Servers
 
                             Log("CHATDATA", utf8alue);
 
-                            if (utf8alue.StartsWith("LOGIN"))
+                            if (utf8alue.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase))
                             {
                                 var nick = utf8alue.Split(' ')[2];
 
-                                var userData = UsersDatabase.Instance.GetUserData(nick);
+                                var userData = Database.UsersDBInstance.GetUserData(nick);
 
                                 state.UserInfo = IrcDaemon.RegisterNewUser(state.Socket, nick, userData.ProfileId, state, SendToClient);
                                 
@@ -235,7 +238,7 @@ namespace GSMasterServer.Servers
                                 goto CONTINUE;
                             }
 
-                            if (utf8alue.StartsWith("USRIP"))
+                            if (utf8alue.StartsWith("USRIP", StringComparison.OrdinalIgnoreCase))
                             {
                                 var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
 
@@ -305,10 +308,25 @@ namespace GSMasterServer.Servers
 
             var bytesToSend = Encoding.UTF8.GetBytes(message);
 
+
             if (state.Encoded)
             {
                 fixed (byte* bytesToSendPtr = bytesToSend)
+                {
                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);
+                }
+
+               /* var clone = new byte[bytesToSend.Length];
+
+                for (int i = 0; i < bytesToSend.Length; i++)
+                    clone[i] = bytesToSend[i];
+                
+                fixed (byte* bytesToSendPtr = clone)
+                {
+                    ChatCrypt.GSEncodeDecode(state.ServerKeyClone, bytesToSendPtr, bytesToSend.Length);
+                }
+
+                var val = Encoding.UTF8.GetString(clone);*/
             }
 
             SendToClient(ref state, bytesToSend);
@@ -334,8 +352,8 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode != SocketError.ConnectionAborted &&
                     e.SocketErrorCode != SocketError.ConnectionReset)
                 {
-                    LogError(Category, "Error sending data");
-                    LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                    //LogError(Category, "Error sending data");
+                    //LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
                 }
                 
                 return false;
@@ -382,8 +400,8 @@ namespace GSMasterServer.Servers
 
             public ChatCrypt.GDCryptKey ClientKey;
             public ChatCrypt.GDCryptKey ServerKey;
+            public ChatCrypt.GDCryptKey ServerKeyClone;
             public UserInfo UserInfo;
-            public long ProfileId;
 
             public void Dispose()
             {
@@ -403,7 +421,6 @@ namespace GSMasterServer.Servers
                             try
                             {
                                 Socket.Shutdown(SocketShutdown.Both);
-                                IrcDaemon.RemoveUserFromAllChannels(UserInfo);
                             }
                             catch (Exception)
                             {
@@ -413,6 +430,8 @@ namespace GSMasterServer.Servers
                             Socket = null;
                         }
                     }
+
+                    IrcDaemon.RemoveUserFromAllChannels(UserInfo);
 
                     GC.Collect();
                 }
