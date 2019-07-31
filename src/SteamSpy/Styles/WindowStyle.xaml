@@ -4,7 +4,7 @@
 
     <SolidColorBrush x:Key="BorderColor" Color="#BBBBBB" />
     <SolidColorBrush x:Key="BrushColor" Color="#FFFFFF" />
-    <SolidColorBrush x:Key="BackgroundColor" Color="#232B2B" />
+    <SolidColorBrush x:Key="BackgroundColor" Color="Black" />
 
 
     <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
@@ -50,7 +50,7 @@
                                 BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Padding="0">
                                 <Grid>
                                     <Grid.Background>
-                                        <ImageBrush Opacity="0.5" ImageSource="/Images/LauncherBackground.jpg" Stretch="UniformToFill"></ImageBrush>
+                                        <ImageBrush Opacity="0.4" ImageSource="/Images/LauncherBackground.jpg" Stretch="None"></ImageBrush>
                                     </Grid.Background>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"></RowDefinition>

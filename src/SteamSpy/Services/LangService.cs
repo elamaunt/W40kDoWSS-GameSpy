@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 
-namespace SteamSpy
+namespace SteamSpy.Services
 {
     public static class LangService
     {

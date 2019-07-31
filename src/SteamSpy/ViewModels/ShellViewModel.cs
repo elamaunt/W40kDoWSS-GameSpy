@@ -1,4 +1,5 @@
-﻿using SteamSpy.ViewModels.PageViewModels;
+﻿using SteamSpy.Services;
+using SteamSpy.ViewModels.PageViewModels;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -79,13 +80,6 @@ namespace SteamSpy.ViewModels
         public ShellViewModel()
         {
             PageViewModels.Add(new MainPageViewModel());
-            //PageViewModels.Add(new MainPageViewModel());
-            //PageViewModels.Add(new MainPageViewModel());
-            //PageViewModels.Add(new MainPageViewModel());
-            //PageViewModels.Add(new MainPageViewModel());
-            //PageViewModels.Add(new MainPageViewModel());
-            //PageViewModels.Add(new MainPageViewModel());
-            //PageViewModels.Add(new LobbyPageViewModel());
             SetPageNames();
 
             CurrentPageViewModel = PageViewModels[0];

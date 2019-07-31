@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
+﻿using SteamSpy.Extensions;
+using SteamSpy.Services;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Windows.Input;
 
 namespace SteamSpy.ViewModels.PageViewModels
 {
@@ -18,6 +21,22 @@ namespace SteamSpy.ViewModels.PageViewModels
         public void SetPageName()
         {
             PageName = LangService.GetString("MainPage");
+        }
+
+        private ICommand launchGameCommand;
+        public ICommand LaunchGameCommand
+        {
+            get
+            {
+                if (launchGameCommand == null)
+                {
+                    launchGameCommand = new RelayCommand(
+                        obj => SoulstormExtensions.LaunchGame(),
+                        obj => !SoulstormExtensions.IsGameRunning());
+
+                }
+                return launchGameCommand;
+            }
         }
     }
 }

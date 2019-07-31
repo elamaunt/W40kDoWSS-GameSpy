@@ -6,4 +6,7 @@
     <!-- Page names -->
     <system:String x:Key="MainPage">Main</system:String>
 
+    <!-- Main Page -->
+    <system:String x:Key="LaunchGame">Launch game</system:String>
+
 </ResourceDictionary>

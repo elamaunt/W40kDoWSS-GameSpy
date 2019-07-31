@@ -5,4 +5,6 @@
     <!-- Page names -->
     <system:String x:Key="MainPage">Основная</system:String>
 
+    <!-- Main Page -->
+    <system:String x:Key="LaunchGame">Запустить игру</system:String>    
 </ResourceDictionary>

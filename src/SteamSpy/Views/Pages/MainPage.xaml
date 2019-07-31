@@ -7,6 +7,14 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <DockPanel Margin="20 0 0 20" Grid.Row="2" LastChildFill="False">
+            <Button Width="250" Height="70" Command="{Binding LaunchGameCommand}"
+                DockPanel.Dock="Left" Content="{DynamicResource LaunchGame}" Style="{DynamicResource LaunchButtonStyle}">
+            </Button>
+        </DockPanel>
     </Grid>
 </UserControl>
