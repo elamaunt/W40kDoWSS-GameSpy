@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Runtime.Caching;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace GSMasterServer.Servers
 {
@@ -422,10 +423,12 @@ namespace GSMasterServer.Servers
                         }
                     }
 
+                    bool isRateGame = false;
+
                     if (ChatServer.IrcDaemon.Users.TryGetValue(state.ProfileId, out UserInfo chatUserInfo))
                     {
                         var game = chatUserInfo.Game;
-                        var isRateGame = game != null && game.Clean();
+                        isRateGame = game != null && game.Clean();
 
                         // For rated games
                         if (isRateGame)
