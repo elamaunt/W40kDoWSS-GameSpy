@@ -191,9 +191,28 @@ namespace GSMasterServer.Servers
                 if (utf8value.StartsWith(":s 705", StringComparison.OrdinalIgnoreCase))
                 {
                     SendToGameSocket(ref state, bytes);
+                    
                     state.ReceivingEncoded = true;
                     goto CONTINUE;
                 }
+
+                if (utf8value.StartsWith("ROOMCOUNTERS", StringComparison.OrdinalIgnoreCase))
+                {
+                    var values = utf8value.Split(new string[] { "ROOMCOUNTERS", " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                    for (int i = 0; i < ChatRoomPlayersCounts.Length; i++)
+                        ChatRoomPlayersCounts[i] = 0;
+
+                    for (int i = 0; i < values.Length; i += 2)
+                    {
+                        var roomIndex = values[i];
+                        var count = values[i + 1];
+
+                        ChatRoomPlayersCounts[int.Parse(roomIndex) - 1] = int.Parse(count);
+                    }
+                    goto CONTINUE;
+                }
+
 
                 var index = utf8value.IndexOf("#GSP!whamdowfr!", StringComparison.OrdinalIgnoreCase);
 
@@ -347,28 +366,13 @@ namespace GSMasterServer.Servers
                             var utf8value = Encoding.UTF8.GetString(bytes);
 
                             Log("CHATDATA", utf8value);
-
-                            if (utf8value.StartsWith("ROOMCOUNTERS", StringComparison.OrdinalIgnoreCase))
-                            {
-                                var values = utf8value.Split(new string[] { "ROOMCOUNTERS", " " }, StringSplitOptions.RemoveEmptyEntries);
-
-                                for (int i = 0; i < values.Length; i+=2)
-                                {
-                                    var roomIndex = values[i];
-                                    var count = values[i+1];
-
-                                    ChatRoomPlayersCounts[int.Parse(roomIndex) - 1] = int.Parse(count);
-                                }
-                                goto CONTINUE;
-                            }
-
+                            
                             if (utf8value.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase))
                             {
                                 var nick = utf8value.Split(' ')[2];
 
                                 ChatNick = nick;
 
-                                SendGPGRoomsCountsRequest();
                                 SendToServerSocket(ref state, bytes);
 
                                 goto CONTINUE;
