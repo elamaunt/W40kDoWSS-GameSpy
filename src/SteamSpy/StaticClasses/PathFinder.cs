@@ -12,7 +12,14 @@ namespace SteamSpy.StaticClasses
 
         public static string FindSteamSoulstorm()
         {
-            // First. Try to check default Steam location
+            // First. Try to check THIS folder. Maybe user installed launcher to the game-folder.
+            var currentDirectory = Directory.GetCurrentDirectory();
+            if (IsSteamGameLocation(currentDirectory))
+            {
+                return currentDirectory;
+            }
+
+            // Second. Try to check default Steam location
             if (Directory.Exists(defaultSteamPath))
             {
                 if (IsSteamGameLocation(defaultSteamPath))
@@ -21,7 +28,7 @@ namespace SteamSpy.StaticClasses
                 }
             }
 
-            // Second. Try to check registry
+            // Third. Try to check registry
             RegistryKey regKey;
             if (Environment.Is64BitOperatingSystem)
                 regKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);

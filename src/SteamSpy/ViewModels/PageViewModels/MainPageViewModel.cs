@@ -50,8 +50,10 @@ namespace SteamSpy.ViewModels.PageViewModels
             switch (gameState)
             {
                 case GameState.Success:
-                    GameStateText = LangService.GetString("GameStateSuccess");
-                    GameStateImage = "/Images/success-mark.png";
+                    //GameStateText = LangService.GetString("GameStateSuccess");
+                    //GameStateImage = "/Images/success-mark.png";
+                    GameStateText = ""; // No show info when all is ok
+                    GameStateImage = "";
                     break;
                 case GameState.Warning:
                     GameStateText = LangService.GetString("GameStateWarning");
