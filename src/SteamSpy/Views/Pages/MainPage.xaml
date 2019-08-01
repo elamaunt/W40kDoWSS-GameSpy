@@ -9,12 +9,17 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="5"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <DockPanel Margin="20 0 0 20" Grid.Row="2" LastChildFill="False">
-            <Button Width="250" Height="70" Command="{Binding LaunchGameCommand}"
-                DockPanel.Dock="Left" Content="{DynamicResource LaunchGame}" Style="{DynamicResource LaunchButtonStyle}">
+        <DockPanel Grid.Row="2" Margin="20 0 0 10" LastChildFill="False">
+            <Button DockPanel.Dock="Left"  Width="250" Height="70" Command="{Binding LaunchGameCommand}"
+                    Content="{DynamicResource LaunchGame}" Style="{DynamicResource LaunchButtonStyle}">
             </Button>
+            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5 0 0 0">
+                <Image Source="{Binding GameStateImage}" Width="16" Height="16"></Image>
+                <TextBlock Text="{Binding GameStateText}" Margin="5 0 0 0" Style="{DynamicResource GameStateTextStyle}"></TextBlock>
+            </StackPanel>
         </DockPanel>
     </Grid>
 </UserControl>

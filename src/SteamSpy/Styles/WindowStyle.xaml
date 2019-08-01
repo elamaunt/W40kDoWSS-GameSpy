@@ -50,7 +50,7 @@
                                 BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Padding="0">
                                 <Grid>
                                     <Grid.Background>
-                                        <ImageBrush Opacity="0.4" ImageSource="/Images/LauncherBackground.jpg" Stretch="None"></ImageBrush>
+                                        <ImageBrush Opacity="0.4" ImageSource="/Images/launcher-background.jpg" Stretch="None"></ImageBrush>
                                     </Grid.Background>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"></RowDefinition>

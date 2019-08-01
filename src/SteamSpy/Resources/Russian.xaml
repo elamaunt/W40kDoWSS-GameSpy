@@ -6,5 +6,9 @@
     <system:String x:Key="MainPage">Основная</system:String>
 
     <!-- Main Page -->
-    <system:String x:Key="LaunchGame">Запустить игру</system:String>    
+    <system:String x:Key="LaunchGame">Запустить игру</system:String>
+    <system:String x:Key="GameStateSuccess">Ошибок не обнаружено!</system:String>
+    <system:String x:Key="GameStateWarning">Есть некоторые предупреждения!</system:String>
+    <system:String x:Key="GameStateErrors">Обнаружены ошибки!</system:String>
+    <system:String x:Key="GameStateCantRun">Путь к игре не был найден!</system:String>
 </ResourceDictionary>

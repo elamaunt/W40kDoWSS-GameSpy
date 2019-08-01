@@ -70,6 +70,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GameState.cs" />
     <Compile Include="StaticClasses\DataKeepers\RunTimeData.cs" />
     <Compile Include="CoreContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />
@@ -151,6 +152,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\TextStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\WindowStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -203,7 +208,11 @@
     <Content Include="External\Reality.Net.dll" />
     <Resource Include="Images\search.ico" />
     <Resource Include="Resources\Files\Russiandow_news.txt" />
-    <Resource Include="Images\LauncherBackground.jpg" />
+    <Resource Include="Images\launcher-background.jpg" />
+    <Resource Include="Images\success-mark.png" />
+    <Resource Include="Images\warning-mark.png" />
+    <Resource Include="Images\error-mark.png" />
+    <Resource Include="Images\cantrun-mark.png" />
     <Content Include="Resources\Pages\404.html" />
     <Content Include="Resources\Pages\500.html" />
     <Content Include="Resources\Pages\ComingSoon.html" />

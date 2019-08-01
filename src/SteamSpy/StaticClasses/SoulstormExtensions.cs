@@ -16,14 +16,14 @@ namespace SteamSpy.StaticClasses
             return FindGameProcesses().Length > 0;
         }
 
-        public static bool IsGameInstalled()
+        public static bool IsPathFound()
         {
             return !string.IsNullOrWhiteSpace(RunTimeData.GamePath);
         }
 
         public static bool CanLaunchGame()
         {
-            return !IsGameRunning() && IsGameInstalled();
+            return !IsGameRunning() && IsPathFound();
         }
 
         public static void LaunchGame()

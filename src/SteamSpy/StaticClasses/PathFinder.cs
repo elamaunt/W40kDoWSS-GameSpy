@@ -7,8 +7,8 @@ namespace SteamSpy.StaticClasses
 {
     public static class PathFinder
     {
-        private static readonly string defaultSteamPath = @"C:\Program Files (x86)\Steam\steamapps\common\Dawn of War Soulstorm";
-        private static readonly string regSteamPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 9450";
+        private static readonly string defaultSteamPath = @"C:\Program Files (x86)\Steam\steamapps\common\Dawn of Wr Soulstorm";
+        private static readonly string regSteamPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam Ap 9450";
 
         public static string FindSteamSoulstorm()
         {

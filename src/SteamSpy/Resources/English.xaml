@@ -8,5 +8,10 @@
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Launch game</system:String>
+    <system:String x:Key="GameStateSuccess">No errors found!</system:String>
+    <system:String x:Key="GameStateWarning">There are some warnings!</system:String>
+    <system:String x:Key="GameStateErrors">Errors found!</system:String>
+    <system:String x:Key="GameStateCantRun">Path to the game was not found!</system:String>
+
 
 </ResourceDictionary>

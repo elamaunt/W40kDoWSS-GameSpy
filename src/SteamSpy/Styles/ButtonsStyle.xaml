@@ -54,6 +54,7 @@
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter TargetName="ContentGrid" Property="Opacity" Value="0.5" />
+                            <Setter TargetName="ContentGrid" Property="Background" Value="#4682b4" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

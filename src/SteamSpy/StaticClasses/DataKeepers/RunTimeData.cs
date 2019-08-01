@@ -1,4 +1,6 @@
-﻿namespace SteamSpy.StaticClasses.DataKeepers
+﻿using System;
+
+namespace SteamSpy.StaticClasses.DataKeepers
 {
     public static class RunTimeData
     {
@@ -7,6 +9,10 @@
         public static void SetGamePath(string path)
         {
             GamePath = path;
+            //OnPathUpdated?.Invoke();
         }
+
+        //public static event Action OnPathUpdated;
+
     }
 }

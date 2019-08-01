@@ -1,6 +1,8 @@
 ﻿
 using SteamSpy.StaticClasses;
+using SteamSpy.StaticClasses.DataKeepers;
 using SteamSpy.WPFHelpClasses;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
@@ -38,6 +40,46 @@ namespace SteamSpy.ViewModels.PageViewModels
                 }
                 return launchGameCommand;
             }
+        }
+
+        public string GameStateText { get; private set; } = "";
+        public string GameStateImage { get; private set; } = "";
+
+        private void UpdateGameState(GameState gameState)
+        {
+            switch (gameState)
+            {
+                case GameState.Success:
+                    GameStateText = LangService.GetString("GameStateSuccess");
+                    GameStateImage = "/Images/success-mark.png";
+                    break;
+                case GameState.Warning:
+                    GameStateText = LangService.GetString("GameStateWarning");
+                    GameStateImage = "/Images/warning-mark.png";
+                    break;
+                case GameState.Error:
+                    GameStateText = LangService.GetString("GameStateError");
+                    GameStateImage = "/Images/error-mark.png";
+                    break;
+                case GameState.CantRun:
+                    GameStateText = LangService.GetString("GameStateCantRun");
+                    GameStateImage = "/Images/cantrun-mark.png";
+                    break;
+            }
+        }
+
+        private void UpdateGameStateByPath()
+        {
+            if (SoulstormExtensions.IsPathFound())
+                UpdateGameState(GameState.Success);
+            else
+                UpdateGameState(GameState.CantRun);
+        }
+
+        public MainPageViewModel()
+        {
+            //RunTimeData.OnPathUpdated += UpdateGameStateByPath;
+            UpdateGameStateByPath();
         }
     }
 }
