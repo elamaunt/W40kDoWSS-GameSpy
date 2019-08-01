@@ -286,6 +286,7 @@ namespace IrcD.Core
 
                 info.WriteServerPrivateMessage($"Wellcome to server, {info.Nick}!");
                 info.WriteServerPrivateMessage($"To play RATING games in auto you should leave rated checkbox in UNCHECKED state.");
+                info.WriteServerPrivateMessage($"In current version you can create game hosts ONLY with \"Soulstorm BugFix mod\".");
                 info.WriteServerPrivateMessage($"Opened Automatchmaking rooms now {rooms.Length} with players {rooms.Sum(x => x.Value.Users.Count())}");
 
                 //.:sF|elamaunt!X1lsaFvqsX|35226254@127.0.0.1 PRIVMSG Bambochuk :1234

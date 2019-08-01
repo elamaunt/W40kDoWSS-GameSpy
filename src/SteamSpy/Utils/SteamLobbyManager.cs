@@ -112,6 +112,7 @@ namespace SteamSpy.Utils
 
                 SteamMatchmaking.AddRequestLobbyListDistanceFilter(ELobbyDistanceFilter.k_ELobbyDistanceFilterWorldwide);
                 SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.STEAM_SPY_INDICATOR, SteamConstants.INDICATOR, ELobbyComparison.k_ELobbyComparisonEqual);
+                SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.GAME_VARIANT, SteamConstants.GameVariant, ELobbyComparison.k_ELobbyComparisonEqual);
                 /* SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.LOBBY_TYPE, SteamConstants.LOBBY_TYPE_DEFAULT, ELobbyComparison.k_ELobbyComparisonEqual);
                  SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.GAME_VERSION, GameConstants.VERSION, ELobbyComparison.k_ELobbyComparisonEqual);
                  SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.IS_IN_GAME, false.ToString(), ELobbyComparison.k_ELobbyComparisonEqual);
@@ -184,6 +185,8 @@ namespace SteamSpy.Utils
         {
             public const string STEAM_SPY_INDICATOR = "gameVersion";
             public const string HOST_STEAM_ID = "hostSteamId";
+            public const string GAME_VARIANT = "gamevariant";
         }
+        
     }
 }

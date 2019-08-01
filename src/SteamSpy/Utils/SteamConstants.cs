@@ -2,7 +2,7 @@
 {
     internal static class SteamConstants
     {
-        public const uint PRODUCTION_APP_ID = 685420;
         public const string INDICATOR = "SteamSpyW40k_" + GameConstants.VERSION;
+        public const string GameVariant = "1.00sbm";
     }
 }

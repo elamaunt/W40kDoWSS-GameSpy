@@ -12,7 +12,7 @@ namespace SteamSpy.Utils
     {
         private const string KEY_BASE = @"SOFTWARE\Classes\steam\Shell\Open\Command\";
 
-        public static bool IsProduction => SteamUtils.GetAppID() == new AppId_t(SteamConstants.PRODUCTION_APP_ID);
+        //public static bool IsProduction => SteamUtils.GetAppID() == new AppId_t(SteamConstants.PRODUCTION_APP_ID);
 
         internal static string GetSteamExePath()
         {
