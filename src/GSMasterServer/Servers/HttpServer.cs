@@ -215,7 +215,7 @@ namespace GSMasterServer.Servers
 
                     if (request.Url.EndsWith("homepage.php.htm"))
                     {
-                        //if (StatsResponce == null || (DateTime.Now - _lastStatsUpdate).TotalMinutes > 5)
+                        if (StatsResponce == null || (DateTime.Now - _lastStatsUpdate).TotalMinutes > 5)
                             StatsResponce = BuildStatsResponce();
 
                         HttpHelper.WriteResponse(ms, StatsResponce);
@@ -287,10 +287,23 @@ namespace GSMasterServer.Servers
                     )
                 )
             );
-            
+
+            var builder = new StringBuilder();
+
             foreach (var item in Database.UsersDBInstance.Load1v1Top10())
-                ol.Add(new XElement("li", item.Value.Score1v1 + "   -   " + item.Key));
-            
+            {
+                builder
+                   .Append(item.Value.Score1v1)
+                   .Append("   -   ")
+                   .Append(item.Key)
+                   .Append("   |   ")
+                   .Append(GetRaceName(item.Value.FavouriteRace));
+
+
+                ol.Add(new XElement("li", builder.ToString()));
+                builder.Clear();
+            }
+
             var settings = new XmlWriterSettings
             {
                 OmitXmlDeclaration = true,
@@ -309,6 +322,23 @@ namespace GSMasterServer.Servers
                     StatusCode = "200",
                     Content = ms.ToArray()
                 };
+            }
+        }
+
+        private string GetRaceName(Race favouriteRace)
+        {
+            switch (favouriteRace)
+            {
+                case Race.space_marine_race: return "Space Marines";
+                case Race.chaos_marine_race: return "Chaos Space Marines";
+                case Race.ork_race: return "Orks";
+                case Race.eldar_race: return "Eldar";
+                case Race.guard_race: return "Imperial Guard";
+                case Race.necron_race: return "Necrons";
+                case Race.tau_race: return "Tau";
+                case Race.dark_eldar_race: return "Dark Eldar";
+                case Race.sisters_race: return "Sisters of Battle";
+                default: return "Unknown";
             }
         }
 
