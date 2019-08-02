@@ -216,12 +216,18 @@ namespace GSMasterServer.Servers
                     if (request.Url.EndsWith("homepage.php.htm"))
                     {
                         if (StatsResponce == null || (DateTime.Now - _lastStatsUpdate).TotalMinutes > 5)
-                            StatsResponce = BuildStatsResponce();
+                            StatsResponce = BuildTop10StatsResponce();
 
                         HttpHelper.WriteResponse(ms, StatsResponce);
                         goto END;
                     }
-
+                    
+                    if (request.Url.StartsWith("all"))
+                    {
+                        HttpHelper.WriteResponse(ms, BuildAllStatsResponce());
+                        goto END;
+                    }
+                    
                     HttpHelper.WriteResponse(ms, HttpResponceBuilder.NotFound());
                     
                     END: // Завершение отправки
@@ -270,10 +276,64 @@ namespace GSMasterServer.Servers
             CONTINUE: WaitForData(ref state);
         }
 
-        private HttpResponse BuildStatsResponce()
+        private HttpResponse BuildAllStatsResponce()
         {
             XElement ol;
 
+            var xDocument = new XDocument(
+                new XDocumentType("html", null, null, null),
+                new XElement("html",
+                    new XElement("head", new XElement("b", "Ladder Top 10")),
+                    new XElement("body",
+                        new XElement("p", "Updates every 5 minutes"),
+                        ol = new XElement("ol")
+
+
+                    )
+                )
+            );
+
+            var builder = new StringBuilder();
+
+            foreach (var item in Database.UsersDBInstance.LoadAllStats())
+            {
+                builder
+                   .Append(item.Value.Score1v1)
+                   .Append("   -   ")
+                   .Append(item.Key)
+                   .Append("   |   ")
+                   .Append(GetRaceName(item.Value.FavouriteRace));
+
+
+                ol.Add(new XElement("li", builder.ToString()));
+                builder.Clear();
+            }
+
+            var settings = new XmlWriterSettings
+            {
+                OmitXmlDeclaration = true,
+                Indent = true,
+                IndentChars = "\t"
+            };
+
+            using (var ms = new MemoryStream())
+            using (var writer = XmlWriter.Create(ms, settings))
+            {
+                xDocument.WriteTo(writer);
+                writer.Flush();
+                return new HttpResponse()
+                {
+                    ReasonPhrase = "Ok",
+                    StatusCode = "200",
+                    Content = ms.ToArray()
+                };
+            }
+        }
+
+
+        private HttpResponse BuildTop10StatsResponce()
+        {
+            XElement ol;
 
             var xDocument = new XDocument(
                 new XDocumentType("html", null, null, null),

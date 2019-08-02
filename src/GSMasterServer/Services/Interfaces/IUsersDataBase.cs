@@ -29,5 +29,6 @@ namespace GSMasterServer.Services
 
         bool UserExists(string username);
         KeyValuePair<string, StatsData>[] Load1v1Top10();
+        KeyValuePair<string, StatsData>[] LoadAllStats();
     }
 }

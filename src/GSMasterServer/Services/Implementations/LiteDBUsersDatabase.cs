@@ -136,5 +136,11 @@ namespace GSMasterServer.Services.Implementations
         {
             return StatsTable.Find(Query.All(nameof(StatsData.Score1v1), Query.Descending), 0, 10).Select(x => new KeyValuePair<string, StatsData>(UsersTable.FindById(new BsonValue(x.Id)).Name, x)).ToArray();
         }
+
+        public KeyValuePair<string, StatsData>[] LoadAllStats()
+        {
+            return StatsTable.Find(Query.All(nameof(StatsData.Score1v1), Query.Descending), 0).Select(x => new KeyValuePair<string, StatsData>(UsersTable.FindById(new BsonValue(x.Id)).Name, x)).ToArray();
+        }
+
     }
 }
