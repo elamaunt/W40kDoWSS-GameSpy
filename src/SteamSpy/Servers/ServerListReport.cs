@@ -296,10 +296,20 @@ namespace GSMasterServer.Servers
             
             server["hostport"] = remote.Port.ToString();
             server["localport"] = remote.Port.ToString();
-           
+
+            var gamevariant = server.Get<string>("gamevariant");
+
+            if (!gamevariant.IsNullOrWhiteSpace())
+            {
+                if (gamevariant != SteamConstants.GameVariant)
+                {
+                    CoreContext.ChatServer.SentServerMessageToClient("Вы используете не ту версию модификации. Вам необходимо использовать Soulstorm Bugfix Mod 1.56a.\r\n");
+                }
+            }
+
             // you've got to have all these properties in order for your server to be valid
             if (!String.IsNullOrWhiteSpace(server.Get<string>("hostname")) &&
-                !String.IsNullOrWhiteSpace(server.Get<string>("gamevariant")) &&
+                !String.IsNullOrWhiteSpace(gamevariant) &&
                 !String.IsNullOrWhiteSpace(server.Get<string>("gamever")) &&
                 !String.IsNullOrWhiteSpace(server.Get<string>("gametype")) &&
                 server.Get<string>("maxplayers") != "0")

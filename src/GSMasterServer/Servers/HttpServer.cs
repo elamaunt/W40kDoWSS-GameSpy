@@ -6,6 +6,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace GSMasterServer.Servers
 {
@@ -15,7 +17,10 @@ namespace GSMasterServer.Servers
         
         Thread _thread;
         Socket _newPeerAceptingsocket;
+        private DateTime _lastStatsUpdate = DateTime.Now;
         readonly ManualResetEvent _reset = new ManualResetEvent(false);
+
+        public HttpResponse StatsResponce { get; set; }
 
         public HttpServer(IPAddress listen, ushort port)
         {
@@ -210,10 +215,13 @@ namespace GSMasterServer.Servers
 
                     if (request.Url.EndsWith("homepage.php.htm"))
                     {
-                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Pages/ComingSoon.html"));
+                        //if (StatsResponce == null || (DateTime.Now - _lastStatsUpdate).TotalMinutes > 5)
+                            StatsResponce = BuildStatsResponce();
+
+                        HttpHelper.WriteResponse(ms, StatsResponce);
                         goto END;
                     }
-                    
+
                     HttpHelper.WriteResponse(ms, HttpResponceBuilder.NotFound());
                     
                     END: // Завершение отправки
@@ -260,6 +268,48 @@ namespace GSMasterServer.Servers
 
             // and we wait for more data...
             CONTINUE: WaitForData(ref state);
+        }
+
+        private HttpResponse BuildStatsResponce()
+        {
+            XElement ol;
+
+
+            var xDocument = new XDocument(
+                new XDocumentType("html", null, null, null),
+                new XElement("html",
+                    new XElement("head", new XElement("b", "Ladder Top 10")),
+                    new XElement("body",
+                        new XElement("p", "Updates every 5 minutes"),
+                        ol = new XElement("ol")
+
+
+                    )
+                )
+            );
+            
+            foreach (var item in Database.UsersDBInstance.Load1v1Top10())
+                ol.Add(new XElement("li", item.Value.Score1v1 + "   -   " + item.Key));
+            
+            var settings = new XmlWriterSettings
+            {
+                OmitXmlDeclaration = true,
+                Indent = true,
+                IndentChars = "\t"
+            };
+
+            using (var ms = new MemoryStream())
+            using (var writer = XmlWriter.Create(ms, settings))
+            {
+                xDocument.WriteTo(writer);
+                writer.Flush();
+                return new HttpResponse()
+                {
+                    ReasonPhrase = "Ok",
+                    StatusCode = "200",
+                    Content = ms.ToArray()
+                };
+            }
         }
 
         internal class HttpSocketState : IDisposable

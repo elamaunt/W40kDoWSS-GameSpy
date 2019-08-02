@@ -28,5 +28,6 @@ namespace GSMasterServer.Services
         UserData CreateUser(string username, string passwordEncrypted, ulong steamId, string email, string country, IPAddress address);
 
         bool UserExists(string username);
+        KeyValuePair<string, StatsData>[] Load1v1Top10();
     }
 }

@@ -495,8 +495,9 @@ namespace GSMasterServer.Servers
                         var stats = usersGameInfos[i].Stats;
                         UpdateStatsCache(stats);
                         Database.UsersDBInstance.UpdateUserStats(stats);
-                        Task.Factory.StartNew(() => Dowstats.UploadGame(dictionary, usersGameInfos, isRateGame));
                     }
+
+                    Task.Factory.StartNew(() => Dowstats.UploadGame(dictionary, usersGameInfos, isRateGame));
                 }
             }
             catch (ObjectDisposedException)

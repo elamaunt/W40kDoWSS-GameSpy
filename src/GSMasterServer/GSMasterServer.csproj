@@ -18,6 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\Implementations\SQLiteUsersDatabase.cs" />
     <Compile Remove="Utils\DynamicLinq.cs" />
   </ItemGroup>
 

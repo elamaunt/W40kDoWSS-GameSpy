@@ -22,6 +22,10 @@ namespace GSMasterServer.Services.Implementations
         public void Initialize(string databasePath)
         {
             _db = new LiteDatabase(databasePath);
+
+            _db.Engine.EnsureIndex("STATS", nameof(StatsData.Score1v1));
+            _db.Engine.EnsureIndex("STATS", nameof(StatsData.Score2v2));
+            _db.Engine.EnsureIndex("STATS", nameof(StatsData.Score3v3));
         }
 
         public bool IsInitialized => _db != null;
@@ -126,6 +130,11 @@ namespace GSMasterServer.Services.Implementations
         public bool UserExists(string username)
         {
            return UsersTable.Exists(Query.EQ(nameof(UserData.Name), new BsonValue(username)));
+        }
+
+        public KeyValuePair<string, StatsData>[] Load1v1Top10()
+        {
+            return StatsTable.Find(Query.All(nameof(StatsData.Score1v1), Query.Descending), 0, 10).Select(x => new KeyValuePair<string, StatsData>(UsersTable.FindById(new BsonValue(x.Id)).Name, x)).ToArray();
         }
     }
 }

@@ -3,6 +3,6 @@
     internal static class SteamConstants
     {
         public const string INDICATOR = "SteamSpyW40k_" + GameConstants.VERSION;
-        public const string GameVariant = "1.00sbm";
+        public const string GameVariant = "1.56bugfix";
     }
 }
