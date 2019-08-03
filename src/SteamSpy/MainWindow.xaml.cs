@@ -37,12 +37,12 @@ namespace SteamSpy
 
             var appId = SteamUtils.GetAppID();
 
-            if (appId.m_AppId != 9450)
+            /*if (appId.m_AppId != 9450)
             {
                 MessageBox.Show("Программа запущена не от имени Sousltorm. Необходимо переместить все файлы этой программы в папку с игрой в Steam, предварительно сохранив оригинальный Soulstorm.exe. Запустить программу, а потом запустить SS 1.2 с модом Soulstorm Bugfix Mod 1.56a.");
                 Environment.Exit(0);
                 return;
-            }
+            }*/
             
             var currentMoscowTime = new DateTime(1970, 1, 1).AddSeconds(SteamUtils.GetServerRealTime()).AddHours(3);
 
@@ -67,6 +67,7 @@ namespace SteamSpy
 
         public static ulong[] RegisteredIds => new ulong[]
             {
+                76561198408785287ul, // Favelin
                 76561198001658409ul, // elamaunt
                 76561198064050301ul, // SunRay
                 76561198137977374ul, // Anibus

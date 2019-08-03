@@ -3,11 +3,15 @@ using GSMasterServer.Utils;
 using SteamSpy.Utils;
 using Steamworks;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using System.Windows;
+using System.Windows.Interop;
 
 namespace GSMasterServer.Servers
 {
@@ -377,11 +381,18 @@ namespace GSMasterServer.Servers
 
                                 goto CONTINUE;
                             }
-
+                            
                             if (utf8value.StartsWith("USRIP", StringComparison.OrdinalIgnoreCase))
                             {
                                 SendToServerSocket(ref state, bytes);
 
+                                goto CONTINUE;
+                            }
+
+                            if (utf8value.IndexOf($@"UTM {ChatNick} :GML", StringComparison.OrdinalIgnoreCase) != -1)
+                            {
+                                ProcessHelper.RestoreGameWindow();
+                                SendToServerSocket(ref state, bytes);
                                 goto CONTINUE;
                             }
 

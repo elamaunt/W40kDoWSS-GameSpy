@@ -222,7 +222,7 @@ namespace GSMasterServer.Servers
                         goto END;
                     }
                     
-                    if (request.Url.StartsWith("all"))
+                    if (request.Url.StartsWith("/all"))
                     {
                         HttpHelper.WriteResponse(ms, BuildAllStatsResponce());
                         goto END;
@@ -298,12 +298,13 @@ namespace GSMasterServer.Servers
             foreach (var item in Database.UsersDBInstance.LoadAllStats())
             {
                 builder
-                   .Append(item.Value.Score1v1)
-                   .Append("   -   ")
-                   .Append(item.Key)
-                   .Append("   |   ")
-                   .Append(GetRaceName(item.Value.FavouriteRace));
-
+                 .Append(item.Value.Score1v1)
+                 .Append("   -   ")
+                 .Append(item.Key)
+                 .Append("   |   ")
+                 .Append(GetRaceName(item.Value.FavouriteRace))
+                 .Append("   |   ")
+                 .Append(item.Value.SteamId);
 
                 ol.Add(new XElement("li", builder.ToString()));
                 builder.Clear();
@@ -353,13 +354,18 @@ namespace GSMasterServer.Servers
             foreach (var item in Database.UsersDBInstance.Load1v1Top10())
             {
                 builder
-                   .Append(item.Value.Score1v1)
-                   .Append("   -   ")
-                   .Append(item.Key)
-                   .Append("   |   ")
-                   .Append(GetRaceName(item.Value.FavouriteRace));
-
-
+                .Append(item.Value.Score1v1)
+                 .Append("   -   ")
+                .Append(item.Value.WinsCount)
+                .Append("/")
+                .Append(item.Value.GamesCount)
+                 .Append("   -   ")
+                .Append(((int)(item.Value.WinRate * 100f)) + "%")
+                .Append("   -   ")
+                .Append(item.Key)
+                .Append("   |   ")
+                .Append(GetRaceName(item.Value.FavouriteRace));
+                
                 ol.Add(new XElement("li", builder.ToString()));
                 builder.Clear();
             }
