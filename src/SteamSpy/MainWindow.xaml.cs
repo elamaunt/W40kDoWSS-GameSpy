@@ -37,7 +37,7 @@ namespace SteamSpy
 
             var appId = SteamUtils.GetAppID();
 
-            /*if (appId.m_AppId != 9450)
+           /* if (appId.m_AppId != 9450)
             {
                 MessageBox.Show("Программа запущена не от имени Sousltorm. Необходимо переместить все файлы этой программы в папку с игрой в Steam, предварительно сохранив оригинальный Soulstorm.exe. Запустить программу, а потом запустить SS 1.2 с модом Soulstorm Bugfix Mod 1.56a.");
                 Environment.Exit(0);
@@ -79,7 +79,7 @@ namespace SteamSpy
                 76561198233237924ul, // Flashbang
                 76561198855597623ul, // onebillygrimm
                 76561198856913976ul, // Jabka_X
-                                     // Mizopolak
+                76561198174310885ul, // Mizopolak
                 76561198842926724ul, // veloziraptor
                 76561198098129338ul, // DAG05 Simon
                 76561198021093802ul, // ki4a

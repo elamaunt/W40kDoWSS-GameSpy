@@ -23,6 +23,11 @@ namespace GSMasterServer.Services.Implementations
         {
             _db = new LiteDatabase(databasePath);
 
+            _db.Engine.EnsureIndex("USERS", nameof(UserData.ProfileId), true);
+            _db.Engine.EnsureIndex("USERS", nameof(UserData.UserId), true);
+            _db.Engine.EnsureIndex("USERS", nameof(UserData.Name), true);
+
+            _db.Engine.EnsureIndex("STATS", nameof(StatsData.ProfileId), true);
             _db.Engine.EnsureIndex("STATS", nameof(StatsData.Score1v1));
             _db.Engine.EnsureIndex("STATS", nameof(StatsData.Score2v2));
             _db.Engine.EnsureIndex("STATS", nameof(StatsData.Score3v3));
