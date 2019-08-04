@@ -24,8 +24,6 @@ namespace GSMasterServer.Servers
 
         public HttpServer(IPAddress listen, ushort port)
         {
-            GeoIP.Initialize(Log, Category);
-            
             _thread = new Thread(StartServer)
             {
                 Name = "Http Socket Thread"
@@ -298,13 +296,13 @@ namespace GSMasterServer.Servers
             foreach (var item in Database.UsersDBInstance.LoadAllStats())
             {
                 builder
-                 .Append(item.Value.Score1v1)
+                 .Append(item.Score1v1)
                  .Append("   -   ")
-                 .Append(item.Key)
+                 .Append(item.Name)
                  .Append("   |   ")
-                 .Append(GetRaceName(item.Value.FavouriteRace))
+                 .Append(GetRaceName(item.FavouriteRace))
                  .Append("   |   ")
-                 .Append(item.Value.SteamId);
+                 .Append(item.SteamId);
 
                 ol.Add(new XElement("li", builder.ToString()));
                 builder.Clear();
@@ -354,17 +352,17 @@ namespace GSMasterServer.Servers
             foreach (var item in Database.UsersDBInstance.Load1v1Top10())
             {
                 builder
-                .Append(item.Value.Score1v1)
+                .Append(item.Score1v1)
                  .Append("   -   ")
-                .Append(item.Value.WinsCount)
+                .Append(item.WinsCount)
                 .Append("/")
-                .Append(item.Value.GamesCount)
+                .Append(item.GamesCount)
                  .Append("   -   ")
-                .Append(((int)(item.Value.WinRate * 100f)) + "%")
+                .Append(((int)(item.WinRate * 100f)) + "%")
                 .Append("   -   ")
-                .Append(item.Key)
+                .Append(item.Name)
                 .Append("   |   ")
-                .Append(GetRaceName(item.Value.FavouriteRace));
+                .Append(GetRaceName(item.FavouriteRace));
                 
                 ol.Add(new XElement("li", builder.ToString()));
                 builder.Clear();

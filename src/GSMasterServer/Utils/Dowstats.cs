@@ -38,9 +38,9 @@ namespace GSMasterServer.Utils
                 var dowStatsPIndex = i + 1;
                 parameters["p" + dowStatsPIndex] = gameInfo["player_" + i];
                 parameters["id" + dowStatsPIndex] = gameInfo["PID_" + i];
-                parameters["mmr1x1p" + dowStatsPIndex] = gameUserInfo[i].Stats.Score1v1.ToString();
-                parameters["mmr2x2p" + dowStatsPIndex] = gameUserInfo[i].Stats.Score2v2.ToString();
-                parameters["mmr3x3p" + dowStatsPIndex] = gameUserInfo[i].Stats.Score3v3.ToString();
+                parameters["mmr1x1p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score1v1.ToString();
+                parameters["mmr2x2p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score2v2.ToString();
+                parameters["mmr3x3p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score3v3.ToString();
                 switch (gameUserInfo[i].Race)
                 {
                     case Race.space_marine_race:

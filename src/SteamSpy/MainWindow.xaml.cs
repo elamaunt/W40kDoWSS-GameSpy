@@ -37,30 +37,30 @@ namespace SteamSpy
 
             var appId = SteamUtils.GetAppID();
 
-           /* if (appId.m_AppId != 9450)
+            /*if (appId.m_AppId != 9450)
             {
                 MessageBox.Show("Программа запущена не от имени Sousltorm. Необходимо переместить все файлы этой программы в папку с игрой в Steam, предварительно сохранив оригинальный Soulstorm.exe. Запустить программу, а потом запустить SS 1.2 с модом Soulstorm Bugfix Mod 1.56a.");
                 Environment.Exit(0);
                 return;
             }*/
             
-            var currentMoscowTime = new DateTime(1970, 1, 1).AddSeconds(SteamUtils.GetServerRealTime()).AddHours(3);
+            /*var currentMoscowTime = new DateTime(1970, 1, 1).AddSeconds(SteamUtils.GetServerRealTime()).AddHours(3);
 
-            if (currentMoscowTime > new DateTime(2019, 8, 4, 19, 0,0))
+            if (currentMoscowTime > new DateTime(2019, 8, 4, 22, 0,0))
             {
                 MessageBox.Show($@"Событие было завершено");
                 Environment.Exit(0);
                 return;
-            }
+            }*/
 
             var steamId = SteamUser.GetSteamID().m_SteamID;
 
-            if (!RegisteredIds.Contains(steamId))
+           /* if (!RegisteredIds.Contains(steamId))
             {
                 MessageBox.Show($@"Ваш SteamID {steamId} не был зарегистрирован для участия. Обратитесь к elamaunt'у.");
                 Environment.Exit(0);
                 return;
-            }
+            }*/
 
             CoreContext.ServerListRetrieve.StartReloadingTimer();
         }

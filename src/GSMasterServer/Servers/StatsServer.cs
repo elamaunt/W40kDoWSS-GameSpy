@@ -19,10 +19,12 @@ namespace GSMasterServer.Servers
     
     public class GameUserInfo
     {
-        public StatsData Stats;
+        public ProfileData Profile;
         public Race Race;
         public int Team;
         public PlayerFinalState FinalState;
+        public long Delta;
+        public ReatingGameType RatingGameType;
     }
     
     internal class StatsServer : Server
@@ -40,7 +42,7 @@ namespace GSMasterServer.Servers
         readonly ManualResetEvent _reset = new ManualResetEvent(false);
 
         readonly MemoryCache HandledGamesCache = new MemoryCache("GameIds");
-        readonly MemoryCache StatsCache = new MemoryCache("UserStats");
+        readonly MemoryCache StatsByPidCache = new MemoryCache("UserStats");
 
         readonly ConcurrentDictionary<string, DateTime> HandledGames = new ConcurrentDictionary<string, DateTime>();
 
@@ -175,37 +177,37 @@ namespace GSMasterServer.Servers
 
                 if (input.StartsWith(@"\authp\\pid\"))
                 {
-                    //var clientData = LoginDatabase.Instance.GetData(state.Name);
+                    try
+                    {
+                        var pid = GetPidFromInput(input, 12);
+                        var profileId = long.Parse(pid);
 
+                        state.ProfileId = profileId;
+                        state.Nick = Database.UsersDBInstance.GetProfileById(profileId).Name;
 
-                    // \authp\\pid\87654321\resp\67512e365ba89497d60963caa4ce23d4\lid\1\final\
-
-                    // \authp\\pid\87654321\resp\7e2270c581e8daf5a5321ff218953035\lid\1\final\
-
-                    var pid = input.Substring(12, 9);
+                        SendToClient(state, $@"\pauthr\{pid}\lid\1\final\");
+                    }
+                    catch (Exception)
+                    {
+                        state.Dispose();
+                        return;
+                    }
                     
-                    state.ProfileId = long.Parse(pid);
-
-                    SendToClient(state, $@"\pauthr\{pid}\lid\1\final\");
-                    //SendToClient(state, @"\pauthr\-3\lid\1\errmsg\helloworld\final\");
-                    //SendToClient(state, @"\pauthr\100000004\lid\1\final\");
-
                     goto CONTINUE;
                 }
-
                 
                 if (input.StartsWith(@"\getpd\"))
                 {
                     // \\getpd\\\\pid\\87654321\\ptype\\3\\dindex\\0\\keys\\\u0001points\u0001points2\u0001points3\u0001stars\u0001games\u0001wins\u0001disconn\u0001a_durat\u0001m_streak\u0001f_race\u0001SM_wins\u0001Chaos_wins\u0001Ork_wins\u0001Tau_wins\u0001SoB_wins\u0001DE_wins\u0001Eldar_wins\u0001IG_wins\u0001Necron_wins\u0001lsw\u0001rnkd_vics\u0001con_rnkd_vics\u0001team_vics\u0001mdls1\u0001mdls2\u0001rg\u0001pw\\lid\\1\\final\\
                     // \getpd\\pid\87654321\ptype\3\dindex\0\keys\pointspoints2points3starsgameswinsdisconna_duratm_streakf_raceSM_winsChaos_winsOrk_winsTau_winsSoB_winsDE_winsEldar_winsIG_winsNecron_winslswrnkd_vicscon_rnkd_vicsteam_vicsmdls1mdls2rgpw\lid\1\final\
-                    var pid = input.Substring(12, 9);
+                    var pid = GetPidFromInput(input, 12);
 
                     var keysIndex = input.IndexOf("keys") + 5;
                     var keys = input.Substring(keysIndex);
                     var keysList = keys.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "final", "\\", "lid" }, StringSplitOptions.RemoveEmptyEntries );
 
                     var keysResult = new StringBuilder();
-                    var stats = GetStatsById(pid);
+                    var stats = GetProfileByPid(pid);
                     
                     for (int i = 0; i < keysList.Length; i++)
                     {
@@ -260,7 +262,7 @@ namespace GSMasterServer.Servers
                 
                 if (input.StartsWith(@"\setpd\"))
                 {
-                    var pid = input.Substring(12, 9);
+                    var pid = GetPidFromInput(input, 12);
 
                     var lidIndex = input.IndexOf("\\lid\\", StringComparison.OrdinalIgnoreCase);
                     var lid = input.Substring(lidIndex+5, 1);
@@ -308,43 +310,28 @@ namespace GSMasterServer.Servers
                         for (int i = 0; i < playersCount; i++)
                         {
                             uniqueGameSessionBuilder.Append('<');
-                            uniqueGameSessionBuilder.Append(dictionary["PID_" + i]);
+                            uniqueGameSessionBuilder.Append(dictionary["player_" + i]);
                             uniqueGameSessionBuilder.Append('>');
                         }
 
                         var uniqueSession = uniqueGameSessionBuilder.ToString();
-
-                        File.AppendAllText("GameSessions.txt", uniqueSession);
-
+                        
                         if (!HandledGamesCache.Add(uniqueSession, uniqueSession, new CacheItemPolicy() { SlidingExpiration = TimeSpan.FromDays(1) }))
                         {
-                            File.AppendAllText("GameSessions.txt", uniqueSession + " ALREADY PROCESSED");
                             return;
                         }
-
-                        File.AppendAllText("GameSessions.txt", uniqueSession+" START PROCESSING");
-
+                        
                         var usersGameInfos = new GameUserInfo[playersCount];
 
                         GameUserInfo currentUserInfo = null;
 
                         for (int i = 0; i < playersCount; i++)
                         {
-                            //var nick = dictionary["player_"+i];
-
-                            var profileId = dictionary["PID_" + i];
-                            var pid = long.Parse(profileId);
-
-                            // Dont process games with unknown users
-                            if (pid == 0)
-                            {
-                                File.AppendAllText("GameSessions.txt", uniqueSession + " BAD PID");
-                                return;
-                            }
+                            var nick = dictionary["player_"+i];
 
                             var info = new GameUserInfo
                             {
-                                Stats = GetStatsById(profileId),
+                                Profile = GetProfileByName(nick),
                                 Race = Enum.Parse<Race>(dictionary["PRace_" + i], true),
                                 Team = int.Parse(dictionary["PTeam_" + i]),
                                 FinalState = Enum.Parse<PlayerFinalState>(dictionary["PFnlState_" + i]),
@@ -352,7 +339,7 @@ namespace GSMasterServer.Servers
 
                             usersGameInfos[i] = info;
 
-                            if (pid == state.ProfileId)
+                            if (nick.Equals(state.Nick, StringComparison.Ordinal))
                                 currentUserInfo = info;
                         }
 
@@ -365,36 +352,36 @@ namespace GSMasterServer.Servers
                             {
                                 var info = team.Value[i];
 
-                                info.Stats.AllInGameTicks += gameDuration;
+                                info.Profile.AllInGameTicks += gameDuration;
 
                                 switch (info.Race)
                                 {
                                     case Race.space_marine_race:
-                                        info.Stats.Smgamescount++;
+                                        info.Profile.Smgamescount++;
                                         break;
                                     case Race.chaos_marine_race:
-                                        info.Stats.Csmgamescount++;
+                                        info.Profile.Csmgamescount++;
                                         break;
                                     case Race.ork_race:
-                                        info.Stats.Orkgamescount++;
+                                        info.Profile.Orkgamescount++;
                                         break;
                                     case Race.eldar_race:
-                                        info.Stats.Eldargamescount++;
+                                        info.Profile.Eldargamescount++;
                                         break;
                                     case Race.guard_race:
-                                        info.Stats.Iggamescount++;
+                                        info.Profile.Iggamescount++;
                                         break;
                                     case Race.necron_race:
-                                        info.Stats.Necrgamescount++;
+                                        info.Profile.Necrgamescount++;
                                         break;
                                     case Race.tau_race:
-                                        info.Stats.Taugamescount++;
+                                        info.Profile.Taugamescount++;
                                         break;
                                     case Race.dark_eldar_race:
-                                        info.Stats.Degamescount++;
+                                        info.Profile.Degamescount++;
                                         break;
                                     case Race.sisters_race:
-                                        info.Stats.Sobgamescount++;
+                                        info.Profile.Sobgamescount++;
                                         break;
                                     default:
                                         break;
@@ -405,31 +392,31 @@ namespace GSMasterServer.Servers
                                     switch (info.Race)
                                     {
                                         case Race.space_marine_race:
-                                            info.Stats.Smwincount++;
+                                            info.Profile.Smwincount++;
                                             break;
                                         case Race.chaos_marine_race:
-                                            info.Stats.Csmwincount++;
+                                            info.Profile.Csmwincount++;
                                             break;
                                         case Race.ork_race:
-                                            info.Stats.Orkwincount++;
+                                            info.Profile.Orkwincount++;
                                             break;
                                         case Race.eldar_race:
-                                            info.Stats.Eldarwincount++;
+                                            info.Profile.Eldarwincount++;
                                             break;
                                         case Race.guard_race:
-                                            info.Stats.Igwincount++;
+                                            info.Profile.Igwincount++;
                                             break;
                                         case Race.necron_race:
-                                            info.Stats.Necrwincount++;
+                                            info.Profile.Necrwincount++;
                                             break;
                                         case Race.tau_race:
-                                            info.Stats.Tauwincount++;
+                                            info.Profile.Tauwincount++;
                                             break;
                                         case Race.dark_eldar_race:
-                                            info.Stats.Dewincount++;
+                                            info.Profile.Dewincount++;
                                             break;
                                         case Race.sisters_race:
-                                            info.Stats.Sobwincount++;
+                                            info.Profile.Sobwincount++;
                                             break;
                                         default:
                                             break;
@@ -437,9 +424,7 @@ namespace GSMasterServer.Servers
                                 }
                             }
                         }
-
-                        File.AppendAllText("GameSessions.txt", uniqueSession + " PROCESSED COUNT");
-
+                        
                         bool isRateGame = false;
 
                         if (ChatServer.IrcDaemon.Users.TryGetValue(state.ProfileId, out UserInfo chatUserInfo))
@@ -456,7 +441,7 @@ namespace GSMasterServer.Servers
 
                                 var usersInGame = game.UsersInGame;
 
-                                if (usersGameInfos.Select(x => x.Stats.ProfileId).OrderBy(x => x).SequenceEqual(usersInGame.OrderBy(x => x)))
+                                if (usersGameInfos.Select(x => x.Profile.Id).OrderBy(x => x).SequenceEqual(usersInGame.OrderBy(x => x)))
                                 {
                                     // Update winstreaks for 1v1 only
                                     if (usersInGame.Length == 2)
@@ -470,62 +455,89 @@ namespace GSMasterServer.Servers
                                     var players1Team = groupedTeams[0];
                                     var players2Team = groupedTeams[1];
 
-                                    Func<StatsData, long> scoreSelector = null;
-                                    Action<StatsData, long> scoreUpdater = null;
+                                    Func<ProfileData, long> scoreSelector = null;
+                                    Action<ProfileData, long> scoreUpdater = null;
+
+                                    ReatingGameType type = ReatingGameType.Unknown;
 
                                     switch (usersInGame.Length)
                                     {
                                         case 2:
                                             scoreSelector = StatsDelegates.Score1v1Selector;
                                             scoreUpdater = StatsDelegates.Score1v1Updated;
+                                            type = ReatingGameType.Rating1v1;
                                             break;
                                         case 4:
                                             scoreSelector = StatsDelegates.Score2v2Selector;
                                             scoreUpdater = StatsDelegates.Score2v2Updated;
+                                            type = ReatingGameType.Rating2v2;
                                             break;
                                         case 6:
                                         case 8:
+                                            type = ReatingGameType.Rating3v3_4v4;
                                             scoreSelector = StatsDelegates.Score3v3Selector;
                                             scoreUpdater = StatsDelegates.Score3v3Updated;
                                             break;
-                                        default: goto UPDATE;
+                                        default:
+                                            goto UPDATE;
                                     }
 
-                                    var team0score = (long)players1Team.Average(x => scoreSelector(x.Stats));
-                                    var team1score = (long)players2Team.Average(x => scoreSelector(x.Stats));
+                                    var team0score = (long)players1Team.Average(x => scoreSelector(x.Profile));
+                                    var team1score = (long)players2Team.Average(x => scoreSelector(x.Profile));
 
                                     var isFirstTeamResult = players1Team.Any(x => x.FinalState == PlayerFinalState.Winner);
                                     var delta = EloRating.CalculateELOdelta(team0score, team1score, isFirstTeamResult ? EloRating.GameOutcome.Win : EloRating.GameOutcome.Loss);
 
                                     for (int i = 0; i < players1Team.Length; i++)
-                                        scoreUpdater(players1Team[i].Stats, Math.Max(1000L, scoreSelector(players1Team[i].Stats) + delta));
+                                    {
+                                        players1Team[i].Delta = delta;
+                                        players1Team[i].RatingGameType = type;
+                                        scoreUpdater(players1Team[i].Profile, Math.Max(1000L, scoreSelector(players1Team[i].Profile) + delta));
+                                    }
 
                                     for (int i = 0; i < players2Team.Length; i++)
-                                        scoreUpdater(players2Team[i].Stats, Math.Max(1000L, scoreSelector(players2Team[i].Stats) - delta));
+                                    {
+                                        players2Team[i].Delta = -delta;
+                                        players2Team[i].RatingGameType = type;
+                                        scoreUpdater(players2Team[i].Profile, Math.Max(1000L, scoreSelector(players2Team[i].Profile) - delta));
+                                    }
                                 }
                             }
-                            else
-                            {
-                                File.AppendAllText("GameSessions.txt", uniqueSession + " GAME NOT RATED");
-                            }
-                        }
-                        else
-                        {
-                            File.AppendAllText("GameSessions.txt", uniqueSession + " INFO NULL");
                         }
 
                     UPDATE:
                         for (int i = 0; i < usersGameInfos.Length; i++)
                         {
-                            var stats = usersGameInfos[i].Stats;
-                            UpdateStatsCache(stats);
-                            Database.UsersDBInstance.UpdateUserStats(stats);
+                            var info = usersGameInfos[i];
+                            var profile = info.Profile;
+                            UpdateProfilesCache(profile);
+                            Database.UsersDBInstance.UpdateProfileData(profile);
+
+                            if (info.Delta != 0)
+                            {
+                                Task.Delay(5000).ContinueWith(task =>
+                                {
+                                    switch (info.RatingGameType)
+                                    {
+                                        case ReatingGameType.Unknown:
+                                            break;
+                                        case ReatingGameType.Rating1v1:
+                                            ChatServer.IrcDaemon.SendToUser(profile.Id, $@"Ваш рейтинг 1v1 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score1v1}.");
+                                            break;
+                                        case ReatingGameType.Rating2v2:
+                                            ChatServer.IrcDaemon.SendToUser(profile.Id, $@"Ваш рейтинг 2v2 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score2v2}.");
+                                            break;
+                                        case ReatingGameType.Rating3v3_4v4:
+                                            ChatServer.IrcDaemon.SendToUser(profile.Id, $@"Ваш рейтинг 3v3/4v4 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score3v3}.");
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                });
+                            }
                         }
 
                         Dowstats.UploadGame(dictionary, usersGameInfos, isRateGame);
-
-                        File.AppendAllText("GameSessions.txt", uniqueSession + " PROCESSED FULL");
-
                     }, CancellationToken.None, TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness, _exclusiveScheduler);
 
                     goto CONTINUE;
@@ -571,47 +583,83 @@ namespace GSMasterServer.Servers
             CONTINUE: WaitForData(state);
         }
 
-        private void UpdateStatsCache(StatsData stats)
+        private string GetPidFromInput(string input, int start)
         {
-            var idString = stats.ProfileId.ToString();
+            int end = start;
+            while (true)
+            {
+                var ch = input[end++];
 
-            StatsCache.Remove(idString, CacheEntryRemovedReason.Removed);
-            StatsCache.Add(new CacheItem(idString, stats), new CacheItemPolicy()
+                if (!char.IsDigit(ch))
+                    break;
+            }
+
+            return input.Substring(start, end - start - 1);
+        }
+
+        private string GetDeltaString(long delta)
+        {
+            if (delta < 0)
+                return delta.ToString();
+            else
+                return "+" + delta.ToString();
+        }
+
+        private void UpdateProfilesCache(ProfileData stats)
+        {
+            var idString = stats.Id.ToString();
+
+            if (StatsByPidCache.Contains(idString))
+                StatsByPidCache.Remove(idString, CacheEntryRemovedReason.Removed);
+
+            StatsByPidCache.Add(new CacheItem(idString, stats), new CacheItemPolicy()
             {
                 SlidingExpiration = TimeSpan.FromMinutes(25)
             });
         }
 
-        private StatsData GetStatsById(string profileId)
+        private ProfileData GetProfileByPid(string pid)
         {
-            if (StatsCache.Contains(profileId))
+            if (StatsByPidCache.Contains(pid))
             {
-                return (StatsData)StatsCache.Get(profileId);
+                return (ProfileData)StatsByPidCache.Get(pid);
             }
             else
             {
-                var stats = Database.UsersDBInstance.GetStatsDataByProfileId(long.Parse(profileId));
+                var stats = Database.UsersDBInstance.GetProfileById(long.Parse(pid));
 
-                StatsCache.Add(new CacheItem(profileId, stats), new CacheItemPolicy()
+                StatsByPidCache.Add(new CacheItem(stats.Id.ToString(), stats), new CacheItemPolicy()
                 {
                     SlidingExpiration = TimeSpan.FromMinutes(25)
                 });
-                
+
                 return stats;
             }
+        }
+
+        private ProfileData GetProfileByName(string name)
+        {
+            var stats = Database.UsersDBInstance.GetProfileByName(name);
+
+            StatsByPidCache.Add(new CacheItem(stats.Id.ToString(), stats), new CacheItemPolicy()
+            {
+                SlidingExpiration = TimeSpan.FromMinutes(25)
+            });
+
+            return stats;
         }
 
         private void UpdateStreak(GameUserInfo info)
         {
             if (info.FinalState == PlayerFinalState.Winner)
             {
-                info.Stats.Current1v1Winstreak++;
+                info.Profile.Current1v1Winstreak++;
 
-                if (info.Stats.Current1v1Winstreak > info.Stats.Best1v1Winstreak)
-                    info.Stats.Best1v1Winstreak = info.Stats.Current1v1Winstreak;
+                if (info.Profile.Current1v1Winstreak > info.Profile.Best1v1Winstreak)
+                    info.Profile.Best1v1Winstreak = info.Profile.Current1v1Winstreak;
             }
             else
-                info.Stats.Current1v1Winstreak = 0;
+                info.Profile.Current1v1Winstreak = 0;
         }
 
         private unsafe int SendToClient(object abstractState, string message)
@@ -712,6 +760,7 @@ namespace GSMasterServer.Servers
             public Socket Socket = null;
             public byte[] Buffer = new byte[8192];
             public long ProfileId;
+            public string Nick;
 
             public void Dispose()
             {

@@ -29,8 +29,6 @@ namespace GSMasterServer.Servers
         
         public ServerListReport(IPAddress listen, ushort port)
         {
-            GeoIP.Initialize(Log, Category);
-
             Servers = new ConcurrentDictionary<string, GameServer>();
 
             _thread = new Thread(StartServer)
@@ -368,24 +366,7 @@ namespace GSMasterServer.Servers
             server["QueryPort"] = remote.Port;
             server["LastRefreshed"] = DateTime.UtcNow;
             server["LastPing"] = DateTime.UtcNow;
-
-            // set the country based off ip address
-            if (GeoIP.Instance == null || GeoIP.Instance.Reader == null)
-            {
-                server["country"] = "??";
-            }
-            else
-            {
-               /* try
-                {
-                    server["country"] = GeoIP.Instance.Reader.Omni(server.Get<string>("IPAddress")).Country.IsoCode.ToUpperInvariant();
-                }
-                catch (Exception e)
-                {
-                    LogError(Category, e.ToString());*/
-                    server["country"] = "??";
-                //}
-            }
+            server["country"] = "??";
 
             for (int i = 0; i < serverVarsSplit.Length - 1; i += 2)
             {

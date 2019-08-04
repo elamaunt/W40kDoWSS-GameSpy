@@ -217,7 +217,6 @@ namespace GSMasterServer.Servers
                     goto CONTINUE;
                 }
 
-
                 var index = utf8value.IndexOf("#GSP!whamdowfr!", StringComparison.OrdinalIgnoreCase);
 
                 if (index != -1)

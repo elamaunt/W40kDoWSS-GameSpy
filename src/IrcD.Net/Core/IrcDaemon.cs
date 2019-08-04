@@ -290,12 +290,11 @@ namespace IrcD.Core
                 //info.WriteServerPrivateMessage($"Opened Automatchmaking rooms now {rooms.Length} with players {rooms.Sum(x => x.Value.Users.Count())}");
 
                 info.WriteServerPrivateMessage($"Добро пожаловать на сервер, {info.Nick}!");
-                info.WriteServerPrivateMessage($"Вы участвуете в Beta Automatchmaking Event");
-                info.WriteServerPrivateMessage($"Приз за первое место в рейтинге - 2000 рублей");
                 info.WriteServerPrivateMessage($"Чтобы играть РЕЙТИНГОВЫЕ игры вам необходимо НЕ использовать галочку \"Игра на счет\" во время запуска системы автоматча.");
                 info.WriteServerPrivateMessage($"В текущей версии можно создавать игры используя ТОЛЬКО \"Soulstorm BugFix mod 1.56a\".");
+                info.WriteServerPrivateMessage($"Прямо сейчас идет игр в авто {Games.Count}, с участием игроков {Games.Sum(x => x.Key.Users.Count)}");
                 info.WriteServerPrivateMessage($"Открытых игр в авто {rooms.Length}, количество игроков в поиске игры {rooms.Sum(x => x.Value.Users.Count())}");
-                
+
             });
 
             return info;
@@ -440,6 +439,12 @@ namespace IrcD.Core
             {
                 Commands.Handle(info, prefix, replyCode, args, line.Length);
             }
+        }
+
+        public void SendToUser(long profileId, string message)
+        {
+            if (Users.TryGetValue(profileId, out UserInfo user))
+                user.WriteServerPrivateMessage(message);
         }
 
         public void SendToAll(string message, string exceptNick)

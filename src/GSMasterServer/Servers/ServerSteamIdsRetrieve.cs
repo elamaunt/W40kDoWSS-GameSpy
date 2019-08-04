@@ -24,8 +24,6 @@ namespace GSMasterServer.Servers
 
         public ServerSteamIdsRetrieve(IPAddress listen, ushort port)
         {
-            GeoIP.Initialize(Log, Category);
-
             Thread = new Thread(StartServer)
             {
                 Name = "Server NatNeg Socket Thread"
@@ -179,7 +177,7 @@ namespace GSMasterServer.Servers
 
         private ulong GetSteamIdByNick(string nick)
         {
-            var userData = Database.UsersDBInstance.GetUserData(nick);
+            var userData = Database.UsersDBInstance.GetProfileByName(nick);
 
             if (userData == null)
                 return 0;
