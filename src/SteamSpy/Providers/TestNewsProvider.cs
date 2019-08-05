@@ -5,12 +5,8 @@ namespace SteamSpy.Providers
 {
     class TestNewsProvider : INewsProvider
     {
-        private bool getOnlyOnce = false;
         public News[] GetNews()
         {
-            if (getOnlyOnce)
-                return null;
-            getOnlyOnce = true;
             var tNews1 = new News("Вышло обновление 6.2.3", "Короче сегодня. Да-да именно сегодня вышло новое крутое обновление! Бегом скачивать!", "тест тесттесттесттесттесттесттесттест",
                 "test", "test test test", "test test test test test", "/Images/test-news-image.jpg", NewsType.Update, 
                 DateTime.UtcNow.Ticks - 10000, DateTime.UtcNow.Ticks - 10000, 1);

@@ -1,4 +1,5 @@
 ﻿
+using NLog;
 using SteamSpy.Models;
 using SteamSpy.Providers;
 using SteamSpy.StaticClasses;
@@ -11,6 +12,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 
 namespace SteamSpy.ViewModels.PageViewModels
@@ -25,6 +27,9 @@ namespace SteamSpy.ViewModels.PageViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
+
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
         public string PageName { get; set; }
 
         public void SetPageName()
@@ -110,26 +115,23 @@ namespace SteamSpy.ViewModels.PageViewModels
                 try
                 {
                     var newData = newsProvider.GetNews().ToList();
-                    if (newData != null)
+                    DispatchService.Invoke(new Action(() =>
                     {
-                        DispatchService.Invoke(new Action(() =>
+                        NewsList.Clear();
+                        // Maximum 3 news
+                        if (newData.Count > 3)
+                            newData.RemoveRange(3, newData.Count - 3);
+                        foreach (var news in newData)
                         {
-                            NewsList.Clear();
-                            // Maximum 3 news
-                            if (newData.Count > 3)
-                                newData.RemoveRange(3, newData.Count - 3);
-                            foreach (var news in newData)
-                            {
-                                NewsList.Add(new NewsModel(news));
-                            }
-                        }));
-                    }
-                    Task.Delay(1000 * 10); // Check it every 10s
+                            NewsList.Add(new NewsModel(news));
+                        }
+                    }));
+                    Task.Delay(1000 * 10).Wait(); // Check it every 10s
                 }
                 catch (Exception ex)
                 {
-                    //TODO: LOGGER IS HERE
-                    Task.Delay(1000 * 10 * 2);
+                    logger.Error(ex);
+                    Task.Delay(1000 * 10 * 2).Wait();
                 }
             }
         }
