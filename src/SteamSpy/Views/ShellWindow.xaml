@@ -6,7 +6,7 @@
         xmlns:pages="clr-namespace:SteamSpy.Views.Pages"
         xmlns:pagevm="clr-namespace:SteamSpy.ViewModels.PageViewModels"
         mc:Ignorable="d"
-        Title="Soulstorm Launcher" MinHeight="640" Height="640" MinWidth="1024" Width="1024" Style="{DynamicResource WindowStyle}">
+        Title="Soulstorm Launcher" MinHeight="700" Height="700" MinWidth="980" Width="980" Style="{DynamicResource WindowStyle}">
 
     <Window.Resources>
         <DataTemplate DataType="{x:Type pagevm:MainPageViewModel}">
@@ -17,7 +17,7 @@
     <Grid Margin="5, 5, 5, 5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"></RowDefinition>
-            <RowDefinition Height="5"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" Orientation="Horizontal">

@@ -15,9 +15,13 @@
 
         public long newsTime;
 
+        public uint newsId; // Unique identifier for this news
+
+        public long newsEditTime; 
+
         public News(string rusHeader, string rusPreviewText, string rusText,
             string engHeader, string engPreviewText, string engText,
-            NewsType type, long time)
+            NewsType type, long time, long editTime, uint id)
         {
             russianHeader = rusHeader;
             englishHeader = engHeader;
@@ -29,7 +33,11 @@
             englishText = engText;
 
             newsType = type;
+
             newsTime = time;
+            newsEditTime = editTime;
+
+            newsId = id;
         }
     }
 

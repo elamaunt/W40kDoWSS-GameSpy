@@ -6,19 +6,57 @@
              xmlns:local="clr-namespace:SteamSpy.Views.Pages"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid Margin="10 0 10 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="5"></RowDefinition>
+            <RowDefinition Height="10"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
-        <DockPanel Grid.Row="2" Margin="20 0 0 10" LastChildFill="False">
-            <Button DockPanel.Dock="Left"  Width="250" Height="70" Command="{Binding LaunchGameCommand}"
+        <Grid HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="0">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+                <ItemsControl ItemsSource="{Binding NewsList, Mode=OneWay}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border x:Name="ItemBorder" Width="288" Margin="30 0 0 0" BorderThickness="1" BorderBrush="Black">
+                                <StackPanel Orientation="Vertical">
+                                    <Image Height="144" Source="/Images/test-news-image.jpg" Stretch="Fill"></Image>
+                                    <Border Height="180" Padding="5 10 5 5">
+                                        <Border.Background>
+                                            <SolidColorBrush Color="Black" Opacity="0.5"/>
+                                        </Border.Background>
+                                        <DockPanel LastChildFill="False">
+                                            <TextBlock DockPanel.Dock="Top" Text="{Binding Header, Mode=OneWay}" 
+                                                       Style="{DynamicResource BigTextStyle}"></TextBlock>
+                                            <TextBlock DockPanel.Dock="Top" Margin="0 5 0 0" Text="{Binding ShortText, Mode=OneWay}"
+                                                       TextWrapping="Wrap" Style="{DynamicResource RegularTextStyle}"></TextBlock>
+                                            <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Right" Text="{Binding NewsTime, Mode=OneWay}" 
+                                                       Margin="0 0 2 0" Style="{DynamicResource RegularTextStyle}"/>
+                                        </DockPanel>
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                            <DataTemplate.Triggers>
+                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource PreviousData}}" Value="{x:Null}">
+                                    <Setter TargetName="ItemBorder" Property="Margin" Value="0 0 0 0"/>
+                                </DataTrigger>
+                            </DataTemplate.Triggers>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+        <DockPanel Grid.Row="2" Margin="0 0 0 20" LastChildFill="False">
+            <Button DockPanel.Dock="Left" Width="250" Height="70" Command="{Binding LaunchGameCommand}"
                     Content="{DynamicResource LaunchGame}" Style="{DynamicResource LaunchButtonStyle}">
             </Button>
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5 0 0 0">
                 <Image Source="{Binding GameStateImage}" Width="16" Height="16"></Image>
-                <TextBlock Text="{Binding GameStateText}" Margin="5 0 0 0" Style="{DynamicResource GameStateTextStyle}"></TextBlock>
+                <TextBlock Text="{Binding GameStateText}" Margin="5 0 0 0" Style="{DynamicResource RegularTextStyle}"></TextBlock>
             </StackPanel>
         </DockPanel>
     </Grid>

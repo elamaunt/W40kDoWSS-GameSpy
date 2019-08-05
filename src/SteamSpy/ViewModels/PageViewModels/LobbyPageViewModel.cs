@@ -1,4 +1,5 @@
 ﻿using SteamSpy.StaticClasses;
+using SteamSpy.StaticClasses.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

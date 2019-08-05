@@ -2,9 +2,21 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:SteamSpy.Styles">
 
-    <Style x:Key="GameStateTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
-        <Setter Property="FontSize" Value="14" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+
+    <Style x:Key="WhiteTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource {x:Type TextBlock}}">
         <Setter Property="Foreground" Value="White" />
+    </Style>
+
+    <Style x:Key="RegularTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource WhiteTextStyle}">
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="BoldTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource RegularTextStyle}">
+        <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style x:Key="BigTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource WhiteTextStyle}">
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
 </ResourceDictionary>

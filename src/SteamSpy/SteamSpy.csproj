@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>SteamSpy</RootNamespace>
     <AssemblyName>SteamSpy</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -70,7 +70,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Config.cs" />
     <Compile Include="GameState.cs" />
+    <Compile Include="Models\NewsModel.cs" />
+    <Compile Include="Providers\INewsProvider.cs" />
+    <Compile Include="Providers\ServerNewsProvider.cs" />
+    <Compile Include="Providers\TestNewsProvider.cs" />
+    <Compile Include="StaticClasses\DataExtensions.cs" />
     <Compile Include="StaticClasses\DataKeepers\RunTimeData.cs" />
     <Compile Include="CoreContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />
@@ -85,6 +91,7 @@
     <Compile Include="Data\StatsDelegates.cs" />
     <Compile Include="Data\UserData.cs" />
     <Compile Include="Data\UsersDatabase.cs" />
+    <Compile Include="StaticClasses\Services\DispatchService.cs" />
     <Compile Include="StaticClasses\SoulstormExtensions.cs" />
     <Compile Include="Http\HttpHelper.cs" />
     <Compile Include="Http\HttpRequest.cs" />
@@ -92,7 +99,7 @@
     <Compile Include="Http\HttpResponse.cs" />
     <Compile Include="Http\QuickMimeTypeMapper.cs" />
     <Compile Include="Http\Route.cs" />
-    <Compile Include="StaticClasses\LangService.cs" />
+    <Compile Include="StaticClasses\Services\LangService.cs" />
     <Compile Include="WPFHelpClasses\RelayCommand.cs" />
     <Compile Include="Servers\ChatServerRetranslator.cs" />
     <Compile Include="Servers\LoginServerRetranslator.cs" />
@@ -199,6 +206,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\Common.csproj">
+      <Project>{7f16e328-21a5-418d-bf92-30f5b7bb97fa}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Steamworks.NET\Standalone\Steamworks.NET.csproj">
       <Project>{b3543600-587c-4fdc-994a-cb0bdc629a7e}</Project>
       <Name>Steamworks.NET</Name>
@@ -213,6 +224,7 @@
     <Resource Include="Images\warning-mark.png" />
     <Resource Include="Images\error-mark.png" />
     <Resource Include="Images\cantrun-mark.png" />
+    <Resource Include="Images\test-news-image.jpg" />
     <Content Include="Resources\Pages\404.html" />
     <Content Include="Resources\Pages\500.html" />
     <Content Include="Resources\Pages\ComingSoon.html" />
