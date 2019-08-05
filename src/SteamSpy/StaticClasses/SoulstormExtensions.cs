@@ -1,4 +1,5 @@
-﻿using SteamSpy.StaticClasses.DataKeepers;
+﻿using NLog;
+using SteamSpy.StaticClasses.DataKeepers;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -7,6 +8,7 @@ namespace SteamSpy.StaticClasses
 {
     public static class SoulstormExtensions
     {
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public static Process[] FindGameProcesses()
         {
             return Process.GetProcessesByName("Soulstorm");
@@ -42,7 +44,7 @@ namespace SteamSpy.StaticClasses
             }
             catch (Exception ex)
             {
-                //TODO: Nlogger log(ex)...
+                logger.Error(ex);
             }
         }
     }
