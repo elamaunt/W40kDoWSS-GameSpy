@@ -109,12 +109,15 @@ namespace SteamSpy.ViewModels.PageViewModels
             {
                 try
                 {
-                    var newData = newsProvider.GetNews();
+                    var newData = newsProvider.GetNews().ToList();
                     if (newData != null)
                     {
                         DispatchService.Invoke(new Action(() =>
                         {
                             NewsList.Clear();
+                            // Maximum 3 news
+                            if (newData.Count > 3)
+                                newData.RemoveRange(3, newData.Count - 3);
                             foreach (var news in newData)
                             {
                                 NewsList.Add(new NewsModel(news));

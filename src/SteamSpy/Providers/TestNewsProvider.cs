@@ -17,7 +17,7 @@ namespace SteamSpy.Providers
             var tNews2 = new News("Турнир в честь великого Горка", "Эй ты, эльдаровод! Там аннонсировали новый турнир! Бегом регистрироваться!", "тест тес2ттесттест2есттесттесттесттест",
                 "test", "test test test", "test test test test test", NewsType.Update,
                 DateTime.UtcNow.Ticks, DateTime.UtcNow.Ticks, 2);
-            return new News[] { tNews1, tNews2, tNews2, tNews1, tNews2 };
+            return new News[] { tNews1, tNews2, tNews1, tNews2};
         }
     }
 }
