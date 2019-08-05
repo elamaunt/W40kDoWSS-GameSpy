@@ -9,6 +9,8 @@ namespace SteamSpy.Models
         public string ShortText { get; private set; }
         public string Header { get; private set; }
 
+        public string Image => rawNews.image;
+
         public string NewsTime
         {
             get
@@ -17,6 +19,7 @@ namespace SteamSpy.Models
                 return $"{dt.ToString(@"hh\:mm")}";
             }
         }
+
 
         public void UpdateText(bool isRus)
         {

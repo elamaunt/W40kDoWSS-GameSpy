@@ -11,16 +11,19 @@
         public string russianText;
         public string englishText;
 
+        public string image; //Image representation by its path.
+
         public NewsType newsType;
 
         public long newsTime;
 
         public uint newsId; // Unique identifier for this news
 
-        public long newsEditTime; 
+        public long newsEditTime;
+
 
         public News(string rusHeader, string rusPreviewText, string rusText,
-            string engHeader, string engPreviewText, string engText,
+            string engHeader, string engPreviewText, string engText, string img,
             NewsType type, long time, long editTime, uint id)
         {
             russianHeader = rusHeader;
@@ -31,6 +34,8 @@
 
             russianText = rusText;
             englishText = engText;
+
+            image = img;
 
             newsType = type;
 
