@@ -114,7 +114,6 @@ namespace SteamSpy.ViewModels.PageViewModels
             {
                 try
                 {
-                    logger.Error("kek");
                     var newData = newsProvider.GetNews().ToList();
                     DispatchService.Invoke(new Action(() =>
                     {
