@@ -11,8 +11,9 @@ using System.Threading;
 
 namespace GSMasterServer.Servers
 {
-    internal class ServerListReport : Server
+    internal class ServerListReport
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public const string Category = "ServerReport";
         const int BufferSize = 65535;
 
@@ -86,7 +87,7 @@ namespace GSMasterServer.Servers
         {
             AddressInfo info = (AddressInfo)parameter;
 
-            Log(Category, "Starting Server List Reporting");
+            logger.Info("Starting Server List Reporting");
 
             try
             {
@@ -112,8 +113,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, String.Format("Unable to bind Server List Reporting to {0}:{1}", info.Address, info.Port));
-                LogError(Category, e.ToString());
+                logger.Error(e, $"Unable to bind Server List Reporting to {info.Address}:{info.Port}");
                 return;
             }
 
@@ -132,7 +132,7 @@ namespace GSMasterServer.Servers
                     {
                         if (value.Get<DateTime>("LastPing") < DateTime.UtcNow - TimeSpan.FromSeconds(30))
                         {
-                            Log(Category, String.Format("Removing old server at: {0}", key));
+                            logger.Info("Removing old server at: {key}");
 
                             GameServer temp;
                             Servers.TryRemove(key, out temp);
@@ -156,7 +156,7 @@ namespace GSMasterServer.Servers
                 // to allow all mods, just put a single %
                 if (File.Exists("modwhitelist.txt"))
                 {
-                    Log(Category, "Loading mod whitelist");
+                    logger.Info("Loading mod whitelist");
                     _modWhitelist = File.ReadAllLines("modwhitelist.txt").Where(x => !String.IsNullOrWhiteSpace(x) && !x.Trim().StartsWith("#")).ToArray();
                 }
                 else
@@ -169,7 +169,7 @@ namespace GSMasterServer.Servers
                 // put in the ip address of each server on a new line in plasmaservers.txt, and make them stand out
                 if (File.Exists("plasmaservers.txt"))
                 {
-                    Log(Category, "Loading plasma servers");
+                    logger.Info("Loading plasma servers");
                     _plasmaServers = File.ReadAllLines("plasmaservers.txt").Select(x =>
                     {
                         IPAddress address;
@@ -202,9 +202,7 @@ namespace GSMasterServer.Servers
             }
             catch (SocketException e)
             {
-                LogError(Category, "Error receiving data");
-                LogError(Category, e.ToString());
-                return;
+                logger.Error(e, "Error receiving data");
             }
         }
 
@@ -229,7 +227,7 @@ namespace GSMasterServer.Servers
                 var str = Encoding.UTF8.GetString(receivedBytes);
 
                 // there by a bunch of different message formats...
-                Log(Category, str);
+                logger.Info($"Data received: {str}");
                 
                 // Autom game
                 // \u0003\u0015?{?localip0\0192.168.159.1\0localip1\0192.168.58.1\0localip2\0192.168.97.2\0localip3\0192.168.56.1\0localip4\0192.168.1.21\0localport\06112\0natneg\01\0statechanged\02\0gamename\0whammer40kdcam\0\0
@@ -245,20 +243,20 @@ namespace GSMasterServer.Servers
                     byte[] response = new byte[] { 0xfe, 0xfd, 0x09, 0x00, 0x00, 0x00, 0x00 };
 
                     var resp = Encoding.UTF8.GetString(response);
-                    Log(Category, "RESPONCE SERVER CHECK:" + resp);
+                    logger.Info("RESPONCE SERVER CHECK:" + resp);
                     _socket.SendTo(response, remote);
                 }
                 else if (receivedBytes.Length > 5 && receivedBytes[0] == (byte)MessageType.HEARTBEAT)
                 {
-                    Log(Category, "========= SEVER DETAILS =========");
+                    logger.Info("========= SEVER DETAILS =========");
 
                     // this is where server details come in, it starts with 0x03, it happens every 60 seconds or so
 
                     byte[] uniqueId = new byte[4];
                     Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
 
-                    Log(Category, "UNIQUEID:" + BitConverter.ToInt32(uniqueId));
-                    Log(Category, "UNIQUEID_INVERTED:" + BitConverter.ToInt32(uniqueId.Reverse().ToArray()));
+                    logger.Info($"UNIQUEID: {BitConverter.ToInt32(uniqueId)}");
+                    logger.Info($"UNIQUEID_INVERTED: {BitConverter.ToInt32(uniqueId.Reverse().ToArray())}");
 
                     if (!ParseServerDetails(remote, receivedBytes.Skip(5).ToArray()))
                     {
@@ -268,7 +266,7 @@ namespace GSMasterServer.Servers
                         // Рабочий вариант server challenge из кода сервака для Цивы 4
                         byte[] response = new byte[] { 0xfe, 0xfd, (byte)MessageType.CHALLENGE_RESPONSE, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3], 0x41, 0x43, 0x4E, 0x2B, 0x78, 0x38, 0x44, 0x6D, 0x57, 0x49, 0x76, 0x6D, 0x64, 0x5A, 0x41, 0x51, 0x45, 0x37, 0x68, 0x41, 0x00 };
 
-                        Log(Category, "=========!!!! RESPONCE CHANNELGE:" + Encoding.ASCII.GetString(response));
+                        logger.Info($"=========!!!! RESPONCE CHANNELGE: {Encoding.ASCII.GetString(response)}");
 
                         _socket.SendTo(response, remote);
                     }
@@ -297,7 +295,7 @@ namespace GSMasterServer.Servers
                     {
                         byte[] response = new byte[] { 0xfe, 0xfd, 0x0a, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3] };
 
-                        Log(Category, "==========>>>>> RESPONCE VALIDATION:" + Encoding.ASCII.GetString(response));
+                        logger.Info($"==========>>>>> RESPONCE VALIDATION: {Encoding.ASCII.GetString(response)}");
 
                         _socket.SendTo(response, remote);
 
@@ -310,14 +308,14 @@ namespace GSMasterServer.Servers
 
                     byte[] uniqueId = new byte[4];
                     Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
-                    Log(Category, "==========>>>>> REFRESH SERVER PING:" + remote);
+                    logger.Info($"==========>>>>> REFRESH SERVER PING: {remote}");
 
                     RefreshServerPing(remote);
                 }
             }
             catch (Exception ex)
             {
-                LogError(Category, ex.ToString());
+                logger.Info(ex.ToString());
             }
 
             WaitForData();
@@ -483,7 +481,7 @@ namespace GSMasterServer.Servers
             {
                 if (!old.Valid && server.Valid)
                 {
-                    Log(Category, String.Format("Added new server at: {0}:{1} ({2}) ({3})", server.GetByName("IPAddress"), server.GetByName("QueryPort"), server.GetByName("country"), server.GetByName("gamevariant")));
+                    logger.Info($"Added new server at: {server.GetByName("IPAddress")}:{server.GetByName("QueryPort")} ({server.GetByName("country")}) ({server.GetByName("gamevariant")})");
                     
                    // var gametype = server.Get<string>("gametype");
 

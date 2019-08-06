@@ -13,6 +13,7 @@ using System.Runtime.Caching;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using NLog.Fluent;
 
 namespace GSMasterServer.Servers
 {
@@ -27,8 +28,9 @@ namespace GSMasterServer.Servers
         public ReatingGameType RatingGameType;
     }
     
-    internal class StatsServer : Server
+    internal class StatsServer
     {
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         const string Category = "Stats";
 
         const string XorKEY = "GameSpy3D";
@@ -67,7 +69,7 @@ namespace GSMasterServer.Servers
         {
             AddressInfo info = (AddressInfo)parameter;
 
-            Log(Category, "Init");
+            logger.Info("Stats server Init");
 
             try
             {
@@ -88,8 +90,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, String.Format("Unable to bind Server List Retrieval to {0}:{1}", info.Address, info.Port));
-                LogError(Category, e.ToString());
+                logger.Error(e, $"Unable to bind Server List Retrieval to {info.Address}:{info.Port}");
                 return;
             }
 
@@ -136,9 +137,7 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode == SocketError.NotConnected)
                     return;
 
-                LogError(Category, "Error receiving data");
-                LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
-                return;
+                logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
             }
         }
 
@@ -163,7 +162,7 @@ namespace GSMasterServer.Servers
 
                 var input = Encoding.UTF8.GetString(XorBytes(buffer, 0, received - 7, XorKEY), 0, received);
 
-                Log(Category, input);
+                logger.Info($"Receive data from the socket: {input}");
 
                 if (input.StartsWith(@"\auth\\gamename\"))
                 {
@@ -564,8 +563,7 @@ namespace GSMasterServer.Servers
                         state = null;
                         return;
                     default:
-                        LogError(Category, "Error receiving data");
-                        LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                        logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
                         if (state != null)
                             state.Dispose();
                         state = null;
@@ -574,8 +572,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, "Error receiving data");
-                LogError(Category, e.ToString());
+                logger.Error(e, "Error receiving data");
             }
 
             // and we wait for more data...
@@ -648,8 +645,7 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode != SocketError.ConnectionAborted &&
                     e.SocketErrorCode != SocketError.ConnectionReset)
                 {
-                    LogError(Category, "Error sending data");
-                    LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                    logger.Error($"Error sending data. SocketErrorCode: {e.SocketErrorCode}");
                 }
                 
                 return false;
@@ -680,8 +676,7 @@ namespace GSMasterServer.Servers
                     case SocketError.Disconnecting:
                         return;
                     default:
-                        LogError(Category, "Error sending data");
-                        LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                        logger.Error("Error sending data. SocketErrorCode: {e.SocketErrorCode}");
                         return;
                 }
             }
