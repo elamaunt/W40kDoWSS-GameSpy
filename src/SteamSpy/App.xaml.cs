@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Windows;
 
 namespace SteamSpy
@@ -20,6 +21,9 @@ namespace SteamSpy
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Directory.GetCurrentDirectory() + "\\LauncherFiles\\NLog.config", true);
+
+
             CoreContext.Start(IPAddress.Any);
 
             var steamPath = PathFinder.FindSteamSoulstorm();

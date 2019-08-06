@@ -2,6 +2,7 @@
 using SteamSpy.StaticClasses.DataKeepers;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace SteamSpy.StaticClasses
@@ -35,12 +36,19 @@ namespace SteamSpy.StaticClasses
 
             try
             {
-                var exeFileName = RunTimeData.GamePath + "\\soulstorm.exe";
-                Process.Start(new ProcessStartInfo(exeFileName, $"-nomovies")
+                var exeFileName = RunTimeData.GamePath + "\\LauncherFiles\\Patch1.2\\soulstorm.exe";
+                if (File.Exists(exeFileName))
                 {
-                    UseShellExecute = true,
-                    WorkingDirectory = RunTimeData.GamePath
-                });
+                    Process.Start(new ProcessStartInfo(exeFileName, $"-nomovies")
+                    {
+                        UseShellExecute = true,
+                        WorkingDirectory = RunTimeData.GamePath
+                    });
+                }
+                else
+                {
+                    throw new Exception("No soulstorm.exe in patch12 folder found!");
+                }
             }
             catch (Exception ex)
             {
