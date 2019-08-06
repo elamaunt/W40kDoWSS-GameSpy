@@ -16,15 +16,13 @@ namespace SteamSpy.Utils
 
         public static void RestoreGameWindow()
         {
-            var processes = Process.GetProcessesByName("Soulstorm.exe");
+            var processes = Process.GetProcessesByName("Soulstorm");
 
             if (processes == null || processes.Length < 1)
                 return;
 
             for (int i = 0; i < processes.Length; i++)
                 ShowWindow(processes[i].MainWindowHandle, WindowShowStyle.Restore);
-
-            //var form = (Form)(Control.FromHandle(processes[0].MainWindowHandle));
         }
 
         /// <summary>Enumeration of the different ways of showing a window using

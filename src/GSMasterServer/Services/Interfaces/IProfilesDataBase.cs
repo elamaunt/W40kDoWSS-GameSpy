@@ -10,6 +10,8 @@ namespace GSMasterServer.Services
         bool IsInitialized { get; }
         void Initialize(string databasePath);
 
+        bool AddFriend(long toProfileId, long friendProfileId);
+        void RemoveFriend(long profileId, long friendProfileId);
         ProfileData GetProfileById(long profileId);
         ProfileData GetProfileByName(string username);
         void UpdateProfileData(ProfileData stats);

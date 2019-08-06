@@ -285,7 +285,7 @@ namespace GSMasterServer.Servers
                     server["country"] = "??";
                 //}
             }
-
+            
             for (int i = 0; i < serverVarsSplit.Length - 1; i += 2)
             {
                 if (serverVarsSplit[i] == "hostname")
@@ -293,7 +293,14 @@ namespace GSMasterServer.Servers
                 else
                     server.Set(serverVarsSplit[i], serverVarsSplit[i + 1]);
             }
-            
+
+            var gamename = server.Get<string>("gamename");
+
+            if (server.Get<string>("statechanged") == "3" && gamename.Equals("whamdowfram", StringComparison.Ordinal))
+            {
+                CoreContext.ChatServer.SentServerMessageToClient("Вы создаете хост для игры в авто. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.\n\r");
+            }
+
             server["hostport"] = remote.Port.ToString();
             server["localport"] = remote.Port.ToString();
 
@@ -340,7 +347,6 @@ namespace GSMasterServer.Servers
 
             if (!wasJoinable && SteamLobbyManager.IsLobbyJoinable)
             {
-                var gamename = server.Get<string>("gamename");
                 var hostname = server.Get<string>("hostname");
 
                 if (gamename == "whamdowfram")

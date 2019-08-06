@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using System.Collections.Generic;
 
 namespace GSMasterServer.Data
 {
@@ -13,6 +14,8 @@ namespace GSMasterServer.Data
         public string Country { get; set; }
         public long Session { get; set; }
         public string LastIp { get; set; }
+
+        public List<long> Friends { get; set; }
 
 
         public long Score1v1 { get; set; }

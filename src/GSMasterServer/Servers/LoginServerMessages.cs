@@ -1,4 +1,5 @@
 ﻿using GSMasterServer.Data;
+using GSMasterServer.Utils;
 using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
 using System;
@@ -96,6 +97,7 @@ namespace GSMasterServer.Servers
 						{ "session", session }
 					};
 					LoginDatabase.Instance.SetData(state.Name, updateClientData);*/
+                    state.ProfileId = clientData.Id;
 
                     Database.UsersDBInstance.LogProfileLogin(state.Name, state.SteamId, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
 
@@ -113,11 +115,12 @@ namespace GSMasterServer.Servers
             }
         }
 
-        public static byte[] SendProfile(ref LoginSocketState state, Dictionary<string, string> keyValues, bool retrieve)
+        public static byte[] SendProfile(ref LoginSocketState state, Dictionary<string, string> keyValues)
         {
-            var clientData = Database.UsersDBInstance.GetProfileByName(state.Name);
+            var id = long.Parse(keyValues["profileid"]);
+            var profile = ProfilesCache.GetProfileByPid(keyValues["profileid"]);
 
-            if (clientData == null)
+            if (profile == null)
             {
                 return DataFunctions.StringToBytes(String.Format(@"\error\\err\265\fatal\\errmsg\Username [{0}] doesn't exist!\id\1\final\", state.Name));
             }
@@ -125,22 +128,23 @@ namespace GSMasterServer.Servers
             string message = String.Format(
                 @"\pi\\profileid\{0}\nick\{1}\userid\{2}\email\{3}\sig\{4}\uniquenick\{5}\pid\{6}" +
                 @"\firstname\lastname\countrycode\{7}\birthday\{8}\lon\{9}\lat\{10}\loc\id\{11}\final\",
-                clientData.Id,
-                state.Name,
-                clientData.Id + 10000000,
-                clientData.Email,
+                profile.Id,
+                profile.Name,
+                profile.Id,
+                profile.Email,
                 _random.GetString(32, "0123456789abcdef"),
-                state.Name,
-                0,
-                clientData.Country,
+                profile.Name,
+                profile.Id,
+                profile.Country,
                 16844722,
                 "0.000000",
                 "0.000000",
-                retrieve ? 5 : 2
+                keyValues["id"]
+                //retrieve ? 5 : 2
             );
-
-            if (!retrieve)
-                state.State++;
+            
+            //if (!retrieve && id == state.ProfileId)
+            //    state.State++;
 
             return DataFunctions.StringToBytes(message);
         }

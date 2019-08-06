@@ -3,15 +3,11 @@ using GSMasterServer.Utils;
 using SteamSpy.Utils;
 using Steamworks;
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Windows;
-using System.Windows.Interop;
 
 namespace GSMasterServer.Servers
 {
@@ -192,6 +188,8 @@ namespace GSMasterServer.Servers
                 
                 var utf8value = Encoding.UTF8.GetString(bytes);
 
+                Log(Category, utf8value);
+
                 if (utf8value.StartsWith(":s 705", StringComparison.OrdinalIgnoreCase))
                 {
                     SendToGameSocket(ref state, bytes);
@@ -199,6 +197,9 @@ namespace GSMasterServer.Servers
                     state.ReceivingEncoded = true;
                     goto CONTINUE;
                 }
+
+                if (utf8value.IndexOf($@"UTM #GSP!whamdowfr!", StringComparison.OrdinalIgnoreCase) != -1)
+                    ProcessHelper.RestoreGameWindow();
 
                 if (utf8value.StartsWith("ROOMCOUNTERS", StringComparison.OrdinalIgnoreCase))
                 {
@@ -385,13 +386,6 @@ namespace GSMasterServer.Servers
                             {
                                 SendToServerSocket(ref state, bytes);
 
-                                goto CONTINUE;
-                            }
-
-                            if (utf8value.IndexOf($@"UTM {ChatNick} :GML", StringComparison.OrdinalIgnoreCase) != -1)
-                            {
-                                ProcessHelper.RestoreGameWindow();
-                                SendToServerSocket(ref state, bytes);
                                 goto CONTINUE;
                             }
 

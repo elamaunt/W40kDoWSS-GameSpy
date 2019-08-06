@@ -42,7 +42,6 @@ namespace GSMasterServer.Servers
         readonly ManualResetEvent _reset = new ManualResetEvent(false);
 
         readonly MemoryCache HandledGamesCache = new MemoryCache("GameIds");
-        readonly MemoryCache StatsByPidCache = new MemoryCache("UserStats");
 
         readonly ConcurrentDictionary<string, DateTime> HandledGames = new ConcurrentDictionary<string, DateTime>();
 
@@ -207,7 +206,7 @@ namespace GSMasterServer.Servers
                     var keysList = keys.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "final", "\\", "lid" }, StringSplitOptions.RemoveEmptyEntries );
 
                     var keysResult = new StringBuilder();
-                    var stats = GetProfileByPid(pid);
+                    var stats = ProfilesCache.GetProfileByPid(pid);
                     
                     for (int i = 0; i < keysList.Length; i++)
                     {
@@ -331,7 +330,7 @@ namespace GSMasterServer.Servers
 
                             var info = new GameUserInfo
                             {
-                                Profile = GetProfileByName(nick),
+                                Profile = ProfilesCache.GetProfileByName(nick),
                                 Race = Enum.Parse<Race>(dictionary["PRace_" + i], true),
                                 Team = int.Parse(dictionary["PTeam_" + i]),
                                 FinalState = Enum.Parse<PlayerFinalState>(dictionary["PFnlState_" + i]),
@@ -510,7 +509,7 @@ namespace GSMasterServer.Servers
                         {
                             var info = usersGameInfos[i];
                             var profile = info.Profile;
-                            UpdateProfilesCache(profile);
+                            ProfilesCache.UpdateProfilesCache(profile);
                             Database.UsersDBInstance.UpdateProfileData(profile);
 
                             if (info.Delta != 0)
@@ -603,50 +602,6 @@ namespace GSMasterServer.Servers
                 return delta.ToString();
             else
                 return "+" + delta.ToString();
-        }
-
-        private void UpdateProfilesCache(ProfileData stats)
-        {
-            var idString = stats.Id.ToString();
-
-            if (StatsByPidCache.Contains(idString))
-                StatsByPidCache.Remove(idString, CacheEntryRemovedReason.Removed);
-
-            StatsByPidCache.Add(new CacheItem(idString, stats), new CacheItemPolicy()
-            {
-                SlidingExpiration = TimeSpan.FromMinutes(25)
-            });
-        }
-
-        private ProfileData GetProfileByPid(string pid)
-        {
-            if (StatsByPidCache.Contains(pid))
-            {
-                return (ProfileData)StatsByPidCache.Get(pid);
-            }
-            else
-            {
-                var stats = Database.UsersDBInstance.GetProfileById(long.Parse(pid));
-
-                StatsByPidCache.Add(new CacheItem(stats.Id.ToString(), stats), new CacheItemPolicy()
-                {
-                    SlidingExpiration = TimeSpan.FromMinutes(25)
-                });
-
-                return stats;
-            }
-        }
-
-        private ProfileData GetProfileByName(string name)
-        {
-            var stats = Database.UsersDBInstance.GetProfileByName(name);
-
-            StatsByPidCache.Add(new CacheItem(stats.Id.ToString(), stats), new CacheItemPolicy()
-            {
-                SlidingExpiration = TimeSpan.FromMinutes(25)
-            });
-
-            return stats;
         }
 
         private void UpdateStreak(GameUserInfo info)

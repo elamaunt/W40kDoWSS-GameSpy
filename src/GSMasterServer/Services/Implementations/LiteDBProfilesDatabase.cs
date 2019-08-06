@@ -13,7 +13,7 @@ namespace GSMasterServer.Services.Implementations
 
         LiteDatabase _db;
 
-        LiteCollection<ProfileData> UsersTable => _db.GetCollection<ProfileData>("USERS");
+        LiteCollection<ProfileData> ProfilesTable => _db.GetCollection<ProfileData>("USERS");
 
         public void Initialize(string databasePath)
         {
@@ -49,14 +49,48 @@ namespace GSMasterServer.Services.Implementations
                 Modified = DateTime.UtcNow.Ticks
             };
 
-            var idBson = UsersTable.Insert(data);
+            var idBson = ProfilesTable.Insert(data);
 
             data.Id = idBson.AsInt64;
            
 
-            UsersTable.Update(data);
+            ProfilesTable.Update(data);
             
             return data;
+        }
+        
+        public bool AddFriend(long toProfileId, long friendProfileId)
+        {
+            var profile = ProfilesTable.FindById(new BsonValue(toProfileId));
+
+            if (profile == null)
+                return false;
+
+            if (profile.Friends == null)
+                profile.Friends = new List<long>();
+
+            if (!profile.Friends.Contains(friendProfileId))
+            {
+                profile.Friends.Add(friendProfileId);
+                ProfilesTable.Update(profile);
+                return true;
+            }
+
+            return false;
+        }
+
+        public void RemoveFriend(long profileId, long friendProfileId)
+        {
+            var profile = ProfilesTable.FindById(new BsonValue(profileId));
+
+            if (profile == null)
+                return;
+
+            if (profile.Friends == null)
+                return;
+
+            if (profile.Friends.Remove(friendProfileId))
+                ProfilesTable.Update(profile);
         }
 
         public List<ProfileData> GetAllProfilesByEmailAndPass(string email, string passwordEncrypted)
@@ -66,17 +100,17 @@ namespace GSMasterServer.Services.Implementations
 
             var andQury = Query.And(emailQ, passQuery);
 
-            return UsersTable.Find(andQury).ToList();
+            return ProfilesTable.Find(andQury).ToList();
         }
         
         public ProfileData GetProfileByName(string username)
         {
-            return UsersTable.FindOne(Query.EQ(nameof(ProfileData.Name), new BsonValue(username)));
+            return ProfilesTable.FindOne(Query.EQ(nameof(ProfileData.Name), new BsonValue(username)));
         }
 
         public ProfileData GetProfileById(long profileId)
         {
-            return UsersTable.FindById(new BsonValue(profileId));
+            return ProfilesTable.FindById(new BsonValue(profileId));
         }
         
         public void LogProfileLogin(string name, ulong steamId, IPAddress address)
@@ -89,27 +123,27 @@ namespace GSMasterServer.Services.Implementations
             data.SteamId = steamId;
             data.LastIp = address.ToString();
 
-            UsersTable.Update(data);
+            ProfilesTable.Update(data);
         }
 
         public void UpdateProfileData(ProfileData stats)
         {
-            UsersTable.Update(stats);
+            ProfilesTable.Update(stats);
         }
 
         public bool ProfileExists(string username)
         {
-           return UsersTable.Exists(Query.EQ(nameof(ProfileData.Name), new BsonValue(username)));
+           return ProfilesTable.Exists(Query.EQ(nameof(ProfileData.Name), new BsonValue(username)));
         }
 
         public ProfileData[] Load1v1Top10()
         {
-            return UsersTable.Find(Query.All(nameof(ProfileData.Score1v1), Query.Descending), 0, 10).ToArray();
+            return ProfilesTable.Find(Query.All(nameof(ProfileData.Score1v1), Query.Descending), 0, 10).ToArray();
         }
 
         public ProfileData[] LoadAllStats()
         {
-            return UsersTable.Find(Query.All(nameof(ProfileData.Score1v1), Query.Descending), 0).ToArray();
+            return ProfilesTable.Find(Query.All(nameof(ProfileData.Score1v1), Query.Descending), 0).ToArray();
         }
 
     }

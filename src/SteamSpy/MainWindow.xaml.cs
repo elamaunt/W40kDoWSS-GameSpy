@@ -53,7 +53,7 @@ namespace SteamSpy
                 return;
             }*/
 
-            var steamId = SteamUser.GetSteamID().m_SteamID;
+           // var steamId = SteamUser.GetSteamID().m_SteamID;
 
            /* if (!RegisteredIds.Contains(steamId))
             {
@@ -65,7 +65,7 @@ namespace SteamSpy
             CoreContext.ServerListRetrieve.StartReloadingTimer();
         }
 
-        public static ulong[] RegisteredIds => new ulong[]
+        /*public static ulong[] RegisteredIds => new ulong[]
             {
                 76561198408785287ul, // Favelin
                 76561198001658409ul, // elamaunt
@@ -97,7 +97,7 @@ namespace SteamSpy
                 76561198107179356ul, // Made in USSR
                 76561198132447203ul, // Dolorosa
                 76561198386642785ul  // Super_cega
-            };
+            };*/
 
         private void OnRender(object sender, EventArgs e)
         {
