@@ -10,13 +10,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using GSMasterServer.Services;
+using NLog.Fluent;
 
 namespace GSMasterServer.Servers
 {
-    internal class LoginServer : Server
+    internal class LoginServer
     {
-        public const string Category = "Login";
-        
+
         Thread _clientManagerThread;
         Thread _searchManagerThread;
 
@@ -95,7 +96,7 @@ namespace GSMasterServer.Servers
         {
             AddressInfo info = (AddressInfo)parameter;
 
-            Log(Category, "Starting Login Server ClientManager");
+            Logger.Info("Starting Login Server ClientManager");
 
             try
             {
@@ -117,8 +118,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, String.Format("Unable to bind Login Server ClientManager to {0}:{1}", info.Address, info.Port));
-                LogError(Category, e.ToString());
+                Logger.Error(e, $"Unable to bind Login Server ClientManager to {info.Address}:{info.Port}");
                 return;
             }
 
@@ -141,7 +141,7 @@ namespace GSMasterServer.Servers
         {
             AddressInfo info = (AddressInfo)parameter;
 
-            Log(Category, "Starting Login Server SearchManager");
+            Logger.Info("Starting Login Server SearchManager");
 
             try
             {
@@ -163,8 +163,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, String.Format("Unable to bind Login Server SearchManager to {0}:{1}", info.Address, info.Port));
-                LogError(Category, e.ToString());
+                Logger.Error(e, $"Unable to bind Login Server SearchManager to {info.Address}:{info.Port}");
                 return;
             }
 
@@ -200,7 +199,7 @@ namespace GSMasterServer.Servers
 
                 state.Socket = client;
 
-                Log(Category, String.Format("[{0}] New Client: {1}:{2}", state.Type, ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
+                Logger.Info( $"[{state.Type}] New Client: { ((IPEndPoint)state.Socket.RemoteEndPoint).Address}:{((IPEndPoint)state.Socket.RemoteEndPoint).Port}");
 
                 if (state.Type == LoginSocketState.SocketType.Client)
                 {
@@ -226,8 +225,7 @@ namespace GSMasterServer.Servers
             }
             catch (SocketException e)
             {
-                LogError(Category, "Error accepting client");
-                LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                Logger.Error(e, $"Error accepting client. SocketErrorCode: {e.SocketErrorCode}");
                 if (state != null)
                     state.Dispose();
                 state = null;
@@ -242,7 +240,7 @@ namespace GSMasterServer.Servers
             if (data == null || state == null || state.Socket == null)
                 return false;
 
-            Log("RESP", DataFunctions.BytesToString(data));
+            Logger.Info($"RESP: {DataFunctions.BytesToString(data)}");
 
             try
             {
@@ -261,8 +259,7 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode != SocketError.ConnectionAborted &&
                     e.SocketErrorCode != SocketError.ConnectionReset)
                 {
-                    LogError(Category, "Error sending data");
-                    LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                    Logger.Error(e, $"Error sending data. SocketErrorCode: {e.SocketErrorCode}");
                 }
                 if (state != null)
                     state.Dispose();
@@ -281,7 +278,8 @@ namespace GSMasterServer.Servers
             try
             {
                 int sent = state.Socket.EndSend(async);
-                Log(Category, String.Format("[{0}] Sent {1} byte response to: {2}:{3}", state.Type, sent, ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
+                Logger.Info($"[{state.Type}] Sent {sent} byte response to: " +
+                            $"{((IPEndPoint)state.Socket.RemoteEndPoint).Address}:{((IPEndPoint)state.Socket.RemoteEndPoint).Port}");
             }
             catch (NullReferenceException)
             {
@@ -300,8 +298,7 @@ namespace GSMasterServer.Servers
                         state = null;
                         return;
                     default:
-                        LogError(Category, "Error sending data");
-                        LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                        Logger.Error(e, $"Error sending data. SocketErrorCode: {e.SocketErrorCode}");
                         if (state != null)
                             state.Dispose();
                         state = null;
@@ -343,8 +340,7 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode != SocketError.ConnectionAborted &&
                     e.SocketErrorCode != SocketError.ConnectionReset)
                 {
-                    LogError(Category, "Error receiving data");
-                    LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                    Logger.Error(e,$"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
                 }
                 if (state != null)
                     state.Dispose();
@@ -406,8 +402,7 @@ namespace GSMasterServer.Servers
                         state = null;
                         return;
                     default:
-                        LogError(Category, "Error receiving data");
-                        LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                        Logger.Error(e,$"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
                         if (state != null)
                             state.Dispose();
                         state = null;
@@ -416,8 +411,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, "Error receiving data");
-                LogError(Category, e.ToString());
+                Logger.Error(e,$"Error receiving data");
             }
 
             // and we wait for more data...
@@ -427,7 +421,7 @@ namespace GSMasterServer.Servers
         private void ParseMessage(ref LoginSocketState state, string message)
         {
             string query;
-            Log("MESSAGE", message);
+            Logger.Info($"MESSAGE: {message}");
 
             var keyValues = GetKeyValue(message, out query);
 
@@ -447,7 +441,8 @@ namespace GSMasterServer.Servers
                 }
             }
 
-            Log(Category, String.Format("[{0}] Received {1} query from: {2}:{3}", state.Type, query, ((IPEndPoint)state.Socket.RemoteEndPoint).Address, ((IPEndPoint)state.Socket.RemoteEndPoint).Port));
+            Logger.Info($"[{state.Type}] Received {query} query from: " +
+                        $"{((IPEndPoint)state.Socket.RemoteEndPoint).Address}:{((IPEndPoint)state.Socket.RemoteEndPoint).Port}");
 
             /*if (!keyValues.ContainsKey("ka"))
             {
@@ -679,6 +674,8 @@ namespace GSMasterServer.Servers
 
     internal class LoginSocketState : IDisposable
     {
+        
+        private static NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
         public enum SocketType
         {
             Client,
@@ -756,7 +753,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Server.LogError(LoginServer.Category, "Error running keep alive: " + e);
+                logger.Error(e, "Error running keep alive");
                 Dispose();
             }
         }

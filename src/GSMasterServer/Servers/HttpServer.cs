@@ -8,10 +8,11 @@ using System.Text;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using GSMasterServer.Services;
 
 namespace GSMasterServer.Servers
 {
-    internal class HttpServer : Server
+    internal class HttpServer 
     {
         private const string Category = "Http";
         
@@ -40,7 +41,7 @@ namespace GSMasterServer.Servers
         {
             AddressInfo info = (AddressInfo)parameter;
 
-            Log(Category, "Starting Http Reporting");
+            Logger.Info("Starting Http Reporting");
 
             try
             {
@@ -62,8 +63,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, String.Format("Unable to bind Http Server to {0}:{1}", info.Address, info.Port));
-                LogError(Category, e.ToString());
+                Logger.Error(e, $"Unable to bind Http Server to {info.Address}:{info.Port}");
                 return;
             }
 
@@ -103,8 +103,7 @@ namespace GSMasterServer.Servers
             }
             catch (SocketException e)
             {
-                LogError(Category, "Error accepting client");
-                LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                Logger.Error(e, $"Error accepting client. SocketErrorCode: {e.SocketErrorCode}");
                 if (state != null)
                     state.Dispose();
                 state = null;
@@ -147,8 +146,7 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode != SocketError.ConnectionAborted &&
                     e.SocketErrorCode != SocketError.ConnectionReset)
                 {
-                    LogError(Category, "Error receiving data");
-                    LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                    Logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
                 }
                 if (state != null)
                     state.Dispose();
@@ -175,7 +173,7 @@ namespace GSMasterServer.Servers
                 using (var ms = new MemoryStream(state.Buffer, 0, received))
                     request = HttpHelper.GetRequest(ms);
                 
-                Log(Category, Encoding.UTF8.GetString(state.Buffer, 0, received).Replace('\n', ' ').Replace('\r', ' '));
+                Logger.Info("Data received: " + Encoding.UTF8.GetString(state.Buffer, 0, received).Replace('\n', ' ').Replace('\r', ' '));
 
 
                 using (var ms = new MemoryStream(state.Buffer))
@@ -256,8 +254,7 @@ namespace GSMasterServer.Servers
                         state = null;
                         return;
                     default:
-                        LogError(Category, "Error receiving data");
-                        LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                        Logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
                         if (state != null)
                             state.Dispose();
                         state = null;
@@ -266,8 +263,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, "Error receiving data");
-                LogError(Category, e.ToString());
+                Logger.Error(e, $"Error receiving data");
             }
 
             // and we wait for more data...
