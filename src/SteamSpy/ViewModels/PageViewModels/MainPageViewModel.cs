@@ -1,9 +1,7 @@
-﻿
-using NLog;
+﻿using NLog;
 using SteamSpy.Models;
 using SteamSpy.Providers;
 using SteamSpy.StaticClasses;
-using SteamSpy.StaticClasses.DataKeepers;
 using SteamSpy.StaticClasses.Services;
 using SteamSpy.WPFHelpClasses;
 using System;

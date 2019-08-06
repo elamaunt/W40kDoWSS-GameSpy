@@ -92,7 +92,6 @@
     <Compile Include="Providers\ServerNewsProvider.cs" />
     <Compile Include="Providers\TestNewsProvider.cs" />
     <Compile Include="StaticClasses\DataExtensions.cs" />
-    <Compile Include="StaticClasses\DataKeepers\RunTimeData.cs" />
     <Compile Include="CoreContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />
     <Compile Include="Data\GameServer.cs" />
@@ -115,6 +114,8 @@
     <Compile Include="Http\QuickMimeTypeMapper.cs" />
     <Compile Include="Http\Route.cs" />
     <Compile Include="StaticClasses\Services\LangService.cs" />
+    <Compile Include="Tweaks\ITweak.cs" />
+    <Compile Include="Tweaks\UnlockRacesTweak.cs" />
     <Compile Include="WPFHelpClasses\RelayCommand.cs" />
     <Compile Include="Servers\ChatServerRetranslator.cs" />
     <Compile Include="Servers\LoginServerRetranslator.cs" />

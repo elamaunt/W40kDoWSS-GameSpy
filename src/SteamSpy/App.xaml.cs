@@ -1,6 +1,5 @@
 ﻿using GSMasterServer.Servers;
 using SteamSpy.StaticClasses;
-using SteamSpy.StaticClasses.DataKeepers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,11 +22,9 @@ namespace SteamSpy
         {
             NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Directory.GetCurrentDirectory() + "\\LauncherFiles\\NLog.config", true);
 
-
             CoreContext.Start(IPAddress.Any);
 
-            var steamPath = PathFinder.FindSteamSoulstorm();
-            RunTimeData.SetGamePath(steamPath);
+            SoulstormExtensions.Init();
 
             //ModifyHostsFile(Entries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
 

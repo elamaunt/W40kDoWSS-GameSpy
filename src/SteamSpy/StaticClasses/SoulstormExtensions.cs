@@ -1,15 +1,23 @@
 ﻿using NLog;
-using SteamSpy.StaticClasses.DataKeepers;
+using SteamSpy.Tweaks;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Windows;
 
 namespace SteamSpy.StaticClasses
 {
     public static class SoulstormExtensions
     {
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+        private static string GamePath { get; set; }
+
+        public static void Init()
+        {
+            GamePath = PathFinder.FindSteamSoulstorm();
+        }
+
         public static Process[] FindGameProcesses()
         {
             return Process.GetProcessesByName("Soulstorm");
@@ -21,7 +29,7 @@ namespace SteamSpy.StaticClasses
 
         public static bool IsPathFound()
         {
-            return !string.IsNullOrWhiteSpace(RunTimeData.GamePath);
+            return !string.IsNullOrWhiteSpace(GamePath);
         }
 
         public static bool CanLaunchGame()
@@ -36,13 +44,18 @@ namespace SteamSpy.StaticClasses
 
             try
             {
-                var exeFileName = RunTimeData.GamePath + "\\LauncherFiles\\Patch1.2\\soulstorm.exe";
+                var unlocker = new UnlockRacesTweak(GamePath);
+                if (!unlocker.IsTweakApplied())
+                {
+                    unlocker.ApplyTweak();
+                }
+                var exeFileName = GamePath + "\\LauncherFiles\\Patch1.2\\soulstorm.exe";
                 if (File.Exists(exeFileName))
                 {
                     Process.Start(new ProcessStartInfo(exeFileName, $"-nomovies")
                     {
                         UseShellExecute = true,
-                        WorkingDirectory = RunTimeData.GamePath
+                        WorkingDirectory = GamePath
                     });
                 }
                 else
