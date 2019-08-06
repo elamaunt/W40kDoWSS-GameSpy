@@ -105,6 +105,7 @@
     <Compile Include="Data\StatsDelegates.cs" />
     <Compile Include="Data\UserData.cs" />
     <Compile Include="Data\UsersDatabase.cs" />
+    <Compile Include="StaticClasses\Options.cs" />
     <Compile Include="StaticClasses\Services\DispatchService.cs" />
     <Compile Include="StaticClasses\SoulstormExtensions.cs" />
     <Compile Include="Http\HttpHelper.cs" />
@@ -114,8 +115,14 @@
     <Compile Include="Http\QuickMimeTypeMapper.cs" />
     <Compile Include="Http\Route.cs" />
     <Compile Include="StaticClasses\Services\LangService.cs" />
+    <Compile Include="StaticClasses\WPFExtensions.cs" />
+    <Compile Include="Styles\SettingsWindowStyle.cs" />
     <Compile Include="Tweaks\ITweak.cs" />
     <Compile Include="Tweaks\UnlockRacesTweak.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
+    <Compile Include="Views\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPFHelpClasses\RelayCommand.cs" />
     <Compile Include="Servers\ChatServerRetranslator.cs" />
     <Compile Include="Servers\LoginServerRetranslator.cs" />
@@ -175,6 +182,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\CheckBoxStyles.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\SettingsWindowStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\TextStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -184,6 +199,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Pages\MainPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

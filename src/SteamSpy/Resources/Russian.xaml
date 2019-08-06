@@ -11,4 +11,7 @@
     <system:String x:Key="GameStateWarning">Есть некоторые предупреждения!</system:String>
     <system:String x:Key="GameStateErrors">Обнаружены ошибки!</system:String>
     <system:String x:Key="GameStateCantRun">Путь к игре не был найден!</system:String>
+
+    <!-- Settings -->
+    <system:String x:Key="DisableFog">Отключить туман?</system:String>
 </ResourceDictionary>

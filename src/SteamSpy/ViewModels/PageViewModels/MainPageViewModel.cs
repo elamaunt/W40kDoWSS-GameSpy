@@ -3,6 +3,7 @@ using SteamSpy.Models;
 using SteamSpy.Providers;
 using SteamSpy.StaticClasses;
 using SteamSpy.StaticClasses.Services;
+using SteamSpy.Views;
 using SteamSpy.WPFHelpClasses;
 using System;
 using System.Collections.ObjectModel;
@@ -123,6 +124,10 @@ namespace SteamSpy.ViewModels.PageViewModels
                         {
                             NewsList.Add(new NewsModel(news));
                         }
+
+                        SettingsWindow settingsWindow = new SettingsWindow();
+                        settingsWindow.ShowDialog();
+
                     }));
                     Task.Delay(1000 * 10).Wait(); // Check it every 10s
                 }

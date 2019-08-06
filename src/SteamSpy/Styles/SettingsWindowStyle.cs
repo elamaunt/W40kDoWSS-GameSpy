@@ -3,11 +3,10 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
-using System.Windows.Input;
 
 namespace SteamSpy.Styles
 {
-    public partial class WindowStyle
+    public partial class SettingsWindowStyle
     {
         void WindowLoaded(object sender, RoutedEventArgs e)
         {
@@ -42,20 +41,6 @@ namespace SteamSpy.Styles
         void CloseButtonClick(object sender, RoutedEventArgs e)
         {
             sender.ForWindowFromTemplate(w => SystemCommands.CloseWindow(w));
-        }
-
-        void MinButtonClick(object sender, RoutedEventArgs e)
-        {
-            sender.ForWindowFromTemplate(w => SystemCommands.MinimizeWindow(w));
-        }
-
-        void MaxButtonClick(object sender, RoutedEventArgs e)
-        {
-            sender.ForWindowFromTemplate(w =>
-            {
-                if (w.WindowState == WindowState.Maximized) SystemCommands.RestoreWindow(w);
-                else SystemCommands.MaximizeWindow(w);
-            });
         }
     }
 }
