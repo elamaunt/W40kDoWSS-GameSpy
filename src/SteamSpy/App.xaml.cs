@@ -1,5 +1,6 @@
 ﻿using GSMasterServer.Servers;
 using SteamSpy.StaticClasses;
+using SteamSpy.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -116,10 +117,10 @@ namespace SteamSpy
             }
         }
         
-        string Entries = @"
-134.209.198.2 ocs.thq.com
-134.209.198.2 www.dawnofwargame.com
-134.209.198.2 gmtest.master.gamespy.com
+        string Entries = $@"
+{GameConstants.SERVER_ADDRESS} ocs.thq.com
+{GameConstants.SERVER_ADDRESS} www.dawnofwargame.com
+{GameConstants.SERVER_ADDRESS} gmtest.master.gamespy.com
 
 127.0.0.1 whamdowfr.master.gamespy.com
 127.0.0.1 whamdowfr.gamespy.com
@@ -132,7 +133,7 @@ namespace SteamSpy
 127.0.0.1 whamdowfr.natneg1.gamespy.com
 127.0.0.1 whamdowfr.natneg2.gamespy.com
 127.0.0.1 whamdowfr.natneg3.gamespy.com
-134.209.198.2 whamdowfr.gamestats.gamespy.com
+{GameConstants.SERVER_ADDRESS} whamdowfr.gamestats.gamespy.com
 
 127.0.0.1 whamdowfram.master.gamespy.com
 127.0.0.1 whamdowfram.gamespy.com
@@ -145,90 +146,32 @@ namespace SteamSpy
 127.0.0.1 whamdowfram.natneg1.gamespy.com
 127.0.0.1 whamdowfram.natneg2.gamespy.com
 127.0.0.1 whamdowfram.natneg3.gamespy.com
-134.209.198.2 whamdowfram.gamestats.gamespy.com
+{GameConstants.SERVER_ADDRESS} whamdowfram.gamestats.gamespy.com
 
-134.209.198.2 gamespy.net
-134.209.198.2 gamespygp
-134.209.198.2 motd.gamespy.com
+{GameConstants.SERVER_ADDRESS} gamespy.net
+{GameConstants.SERVER_ADDRESS} gamespygp
+{GameConstants.SERVER_ADDRESS} motd.gamespy.com
 127.0.0.1 peerchat.gamespy.com
-134.209.198.2 gamestats.gamespy.com
+{GameConstants.SERVER_ADDRESS} gamestats.gamespy.com
 127.0.0.1 gpcm.gamespy.com
 127.0.0.1 gpsp.gamespy.com
-134.209.198.2 key.gamespy.com
-134.209.198.2 master.gamespy.com
-134.209.198.2 master0.gamespy.com
+{GameConstants.SERVER_ADDRESS} key.gamespy.com
+{GameConstants.SERVER_ADDRESS} master.gamespy.com
+{GameConstants.SERVER_ADDRESS} master0.gamespy.com
 127.0.0.1 natneg.gamespy.com
 127.0.0.1 natneg0.gamespy.com
 127.0.0.1 natneg1.gamespy.com
 127.0.0.1 natneg2.gamespy.com
 127.0.0.1 natneg3.gamespy.com
 127.0.0.1 chat.gamespynetwork.com
-134.209.198.2 available.gamespy.com
-134.209.198.2 gamespy.com
-134.209.198.2 gamespyarcade.com
-134.209.198.2 www.gamespy.com
-134.209.198.2 www.gamespyarcade.com
+{GameConstants.SERVER_ADDRESS} available.gamespy.com
+{GameConstants.SERVER_ADDRESS} gamespy.com
+{GameConstants.SERVER_ADDRESS} gamespyarcade.com
+{GameConstants.SERVER_ADDRESS} www.gamespy.com
+{GameConstants.SERVER_ADDRESS} www.gamespyarcade.com
 127.0.0.1 chat.master.gamespy.com
-134.209.198.2 thq.vo.llnwd.net
-134.209.198.2 gamespyid.com
-127.0.0.1 nat.gamespy.com
-";
-
-        string LocalEntries = @"
-192.168.159.1 ocs.thq.com
-192.168.159.1 www.dawnofwargame.com
-192.168.159.1 gmtest.master.gamespy.com
-
-127.0.0.1 whamdowfr.master.gamespy.com
-127.0.0.1 whamdowfr.gamespy.com
-127.0.0.1 whamdowfr.ms9.gamespy.com
-127.0.0.1 whamdowfr.ms11.gamespy.com
-127.0.0.1 whamdowfr.available.gamespy.com
-127.0.0.1 whamdowfr.available.gamespy.com
-127.0.0.1 whamdowfr.natneg.gamespy.com
-127.0.0.1 whamdowfr.natneg0.gamespy.com
-127.0.0.1 whamdowfr.natneg1.gamespy.com
-127.0.0.1 whamdowfr.natneg2.gamespy.com
-127.0.0.1 whamdowfr.natneg3.gamespy.com
-192.168.159.1 whamdowfr.gamestats.gamespy.com
-
-127.0.0.1 whamdowfram.master.gamespy.com
-127.0.0.1 whamdowfram.gamespy.com
-127.0.0.1 whamdowfram.ms9.gamespy.com
-127.0.0.1 whamdowfram.ms11.gamespy.com
-127.0.0.1 whamdowfram.available.gamespy.com
-127.0.0.1 whamdowfram.available.gamespy.com
-127.0.0.1 whamdowfram.natneg.gamespy.com
-127.0.0.1 whamdowfram.natneg0.gamespy.com
-127.0.0.1 whamdowfram.natneg1.gamespy.com
-127.0.0.1 whamdowfram.natneg2.gamespy.com
-127.0.0.1 whamdowfram.natneg3.gamespy.com
-192.168.159.1 whamdowfram.gamestats.gamespy.com
-
-192.168.159.1 gamespy.net
-192.168.159.1 gamespygp
-192.168.159.1 motd.gamespy.com
-127.0.0.1 peerchat.gamespy.com
-192.168.159.1 gamestats.gamespy.com
-127.0.0.1 gpcm.gamespy.com
-127.0.0.1 gpsp.gamespy.com
-192.168.159.1 key.gamespy.com
-192.168.159.1 master.gamespy.com
-192.168.159.1 master0.gamespy.com
-127.0.0.1 natneg.gamespy.com
-127.0.0.1 natneg0.gamespy.com
-127.0.0.1 natneg1.gamespy.com
-127.0.0.1 natneg2.gamespy.com
-127.0.0.1 natneg3.gamespy.com
-127.0.0.1 chat.gamespynetwork.com
-192.168.159.1 available.gamespy.com
-192.168.159.1 gamespy.com
-192.168.159.1 gamespyarcade.com
-192.168.159.1 www.gamespy.com
-192.168.159.1 www.gamespyarcade.com
-127.0.0.1 chat.master.gamespy.com
-192.168.159.1 thq.vo.llnwd.net
-192.168.159.1 gamespyid.com
+{GameConstants.SERVER_ADDRESS} thq.vo.llnwd.net
+{GameConstants.SERVER_ADDRESS} gamespyid.com
 127.0.0.1 nat.gamespy.com
 ";
     }

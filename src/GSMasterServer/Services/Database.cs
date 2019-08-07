@@ -6,7 +6,7 @@ namespace GSMasterServer
     public static class Database
     {
         //public static readonly IUsersDataBase UsersDBInstance = new SQLiteUsersDatabase();
-        public static readonly IUsersDataBase UsersDBInstance = new LiteDBUsersDatabase();
+        public static readonly IProfilesDataBase UsersDBInstance = new LiteDBProfilesDatabase();
 
         public static void Initialize(string databasePath)
         {

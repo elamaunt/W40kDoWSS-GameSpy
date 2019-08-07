@@ -1,4 +1,5 @@
 ﻿using GSMasterServer.Data;
+using GSMasterServer.Utils;
 using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
 using System;
@@ -58,7 +59,7 @@ namespace GSMasterServer.Servers
            // if (requiredValues != 3)
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
 
-            var clientData = Database.UsersDBInstance.GetUserData(state.Name);
+            var clientData = Database.UsersDBInstance.GetProfileByName(state.Name);
 
             if (clientData != null)
             {
@@ -86,8 +87,8 @@ namespace GSMasterServer.Servers
                     string proof = String.Format(@"\lc\2\sesskey\{0}\proof\{1}\userid\{2}\profileid\{3}\uniquenick\{4}\lt\{5}\id\1\final\",
                         session,
                         proofValue,
-                        clientData.UserId,
-                        clientData.ProfileId,
+                        clientData.Id+10000000,
+                        clientData.Id,
                         state.Name,
                         _random.GetString(22, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") + "__");
 
@@ -96,8 +97,9 @@ namespace GSMasterServer.Servers
 						{ "session", session }
 					};
 					LoginDatabase.Instance.SetData(state.Name, updateClientData);*/
+                    state.ProfileId = clientData.Id;
 
-                    Database.UsersDBInstance.LogLogin(state.Name, state.SteamId, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
+                    Database.UsersDBInstance.LogProfileLogin(state.Name, state.SteamId, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
 
                     state.State++;
                     return DataFunctions.StringToBytes(proof);
@@ -113,11 +115,12 @@ namespace GSMasterServer.Servers
             }
         }
 
-        public static byte[] SendProfile(ref LoginSocketState state, Dictionary<string, string> keyValues, bool retrieve)
+        public static byte[] SendProfile(ref LoginSocketState state, Dictionary<string, string> keyValues)
         {
-            var clientData = Database.UsersDBInstance.GetUserData(state.Name);
+            var id = long.Parse(keyValues["profileid"]);
+            var profile = ProfilesCache.GetProfileByPid(keyValues["profileid"]);
 
-            if (clientData == null)
+            if (profile == null)
             {
                 return DataFunctions.StringToBytes(String.Format(@"\error\\err\265\fatal\\errmsg\Username [{0}] doesn't exist!\id\1\final\", state.Name));
             }
@@ -125,22 +128,23 @@ namespace GSMasterServer.Servers
             string message = String.Format(
                 @"\pi\\profileid\{0}\nick\{1}\userid\{2}\email\{3}\sig\{4}\uniquenick\{5}\pid\{6}" +
                 @"\firstname\lastname\countrycode\{7}\birthday\{8}\lon\{9}\lat\{10}\loc\id\{11}\final\",
-                clientData.ProfileId,
-                state.Name,
-                clientData.UserId,
-                clientData.Email,
+                profile.Id,
+                profile.Name,
+                profile.Id,
+                profile.Email,
                 _random.GetString(32, "0123456789abcdef"),
-                state.Name,
-                0,
-                clientData.Country,
+                profile.Name,
+                profile.Id,
+                profile.Country,
                 16844722,
                 "0.000000",
                 "0.000000",
-                retrieve ? 5 : 2
+                keyValues["id"]
+                //retrieve ? 5 : 2
             );
-
-            if (!retrieve)
-                state.State++;
+            
+            //if (!retrieve && id == state.ProfileId)
+            //    state.State++;
 
             return DataFunctions.StringToBytes(message);
         }
@@ -213,7 +217,7 @@ namespace GSMasterServer.Servers
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
             }
 
-            if (Database.UsersDBInstance.UserExists(state.Name))
+            if (Database.UsersDBInstance.ProfileExists(state.Name))
             {
                 return DataFunctions.StringToBytes(@"\error\\err\516\fatal\\errmsg\This account name is already in use!\id\1\final\");
             }
@@ -221,14 +225,14 @@ namespace GSMasterServer.Servers
             {
                 string password = DecryptPassword(state.PasswordEncrypted);
 
-                var clientData = Database.UsersDBInstance.CreateUser(state.Name, password.ToMD5(), state.SteamId, state.Email, "??", ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
+                var clientData = Database.UsersDBInstance.CreateProfile(state.Name, password.ToMD5(), state.SteamId, state.Email, "??", ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
                 
                 if (clientData == null)
                 {
                     return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Error creating account!\id\1\final\");
                 }
 
-                message = String.Format(@"\nur\\userid\{0}\profileid\{1}\id\1\final\", clientData.UserId, clientData.ProfileId);
+                message = String.Format(@"\nur\\userid\{0}\profileid\{1}\id\1\final\", clientData.Id + 10000000, clientData.Id);
             }
 
             return DataFunctions.StringToBytes(message);
@@ -263,7 +267,7 @@ namespace GSMasterServer.Servers
 
             password = password.ToMD5();
 
-            var clientData = Database.UsersDBInstance.GetAllUserDatas(keyValues["email"], password);
+            var clientData = Database.UsersDBInstance.GetAllProfilesByEmailAndPass(keyValues["email"], password);
 
             if (clientData == null)
             {
@@ -319,14 +323,14 @@ namespace GSMasterServer.Servers
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
             }
 
-            var clientData = Database.UsersDBInstance.GetUserData(name);
+            var clientData = Database.UsersDBInstance.GetProfileByName(name);
 
             if (clientData == null)
             {
                 return DataFunctions.StringToBytes(String.Format(@"\error\\err\265\fatal\\errmsg\Username [{0}] doesn't exist!\id\1\final\", name));
             }
 
-            string message = String.Format(@"\cur\0\pid\{0}\final\", clientData.ProfileId);
+            string message = String.Format(@"\cur\0\pid\{0}\final\", clientData.Id);
 
             return DataFunctions.StringToBytes(message);
         }
@@ -366,7 +370,7 @@ namespace GSMasterServer.Servers
             return value.ToMD5();
         }
 
-        private static string GenerateResponseValueWithEmail(ref LoginSocketState state, ref UserData clientData)
+        private static string GenerateResponseValueWithEmail(ref LoginSocketState state, ref ProfileData clientData)
         {
             string value = state.PasswordEncrypted;
             value += new String(' ', 48);

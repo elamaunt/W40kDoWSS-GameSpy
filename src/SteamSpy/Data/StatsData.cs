@@ -39,15 +39,7 @@
         public long GamesCount => Smgamescount + Csmgamescount + Orkgamescount + Eldargamescount + Iggamescount + Necrgamescount + Taugamescount + Degamescount + Sobgamescount;
         public long WinsCount => Smwincount + Csmwincount + Orkwincount + Eldarwincount + Igwincount + Necrwincount + Tauwincount + Dewincount + Sobwincount;
 
-        public long AverageDuractionTicks
-        {
-            get
-            {
-                if (GamesCount == 0)
-                    return 0;
-                return AllInGameTicks / GamesCount;
-            }
-        }
+        public long AverageDuractionTicks => GamesCount == 0 ? 0 :  AllInGameTicks / GamesCount;
 
         public Race FavouriteRace
         {

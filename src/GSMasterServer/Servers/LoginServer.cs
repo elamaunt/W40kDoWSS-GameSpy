@@ -1,8 +1,11 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
+using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -22,6 +25,8 @@ namespace GSMasterServer.Servers
 
         private readonly ManualResetEvent _clientManagerReset = new ManualResetEvent(false);
         private readonly ManualResetEvent _searchManagerReset = new ManualResetEvent(false);
+
+        public static readonly ConcurrentDictionary<long, LoginSocketState> Users = new ConcurrentDictionary<long, LoginSocketState>();
 
         public LoginServer(IPAddress listen, ushort clientManagerPort, ushort searchManagerPort)
         {
@@ -478,6 +483,7 @@ namespace GSMasterServer.Servers
                 {
                     case "login":
                         SendToClient(ref state, LoginServerMessages.SendProof(ref state, keyValues));
+                        Users[state.ProfileId] = state;
                         state.StartKeepAlive(this);
 
                         break;
@@ -486,8 +492,34 @@ namespace GSMasterServer.Servers
                         SendToClient(ref state, LoginServerMessages.NewUser(ref state, keyValues));
                         break;
 
+                    case "addbuddy":
+                        // \\addbuddy\\\\sesskey\\51437\\newprofileid\\1\\reason\\just be my friend
+
+                        var newFriendId = long.Parse(keyValues["newprofileid"]);
+
+                        if (Database.UsersDBInstance.AddFriend(state.ProfileId, newFriendId))
+                        {
+                            //var signature = (state.ProfileId.ToString() + newFriendId.ToString()).ToMD5();
+                            // "\\bm\\%d\\f\\%d\\msg\\%s|signed|%s",GPI_BM_REQUEST,profileid,reason,signature);
+                            //SendToClient(ref state, $@"\bm\2\f\{newFriendId}\msg\{keyValues["reason"]}|signed|{signature}".ToAssciiBytes());
+
+                            if (Users.TryGetValue(newFriendId, out LoginSocketState friendState))
+                            {
+                                SendToClient(ref friendState, $@"\bm\100\f\{state.ProfileId}\msg\|s|{state.Status}{state.GetLSParameter()}|ss|{state.StatusString}\final\".ToAssciiBytes());
+                                SendToClient(ref state, $@"\bm\100\f\{newFriendId}\msg\|s|{friendState.Status}{friendState.GetLSParameter()}|ss|{friendState.StatusString}\final\".ToAssciiBytes());
+                            }
+                            else
+                            {
+                                SendToClient(ref state, $@"\bm\100\f\{newFriendId}\msg\|s|0|ss|Offline\final\".ToAssciiBytes());
+                            }
+                        }
+                        break;
+                    case "delbuddy":
+                        // \delbuddy\\sesskey\51437\delprofileid\1
+                        Database.UsersDBInstance.RemoveFriend(state.ProfileId, long.Parse(keyValues["delprofileid"]));
+                        break;
                     case "getprofile":
-                        SendToClient(ref state, LoginServerMessages.SendProfile(ref state, keyValues, false));
+                        SendToClient(ref state, LoginServerMessages.SendProfile(ref state, keyValues));
                         break;
 
                     case "updatepro":
@@ -498,12 +530,50 @@ namespace GSMasterServer.Servers
 
                         var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
 
+                        var profile = Database.UsersDBInstance.GetProfileById(state.ProfileId);
+
+                        if (profile == null)
+                            return;
+
+                        var friends = profile.Friends ?? new List<long>();
+                        
+                        SendToClient(ref state, $@"\bdy\{friends.Count + 1}\list\{string.Join(",",friends.Concat(new long[] { profile.Id }))}\final\".ToAssciiBytes());
+
+                       // var loopbackIp = (uint)IPAddress.NetworkToHostOrder((int)IPAddress.Loopback.Address);
+                       // var loopbackIp = ReverseEndian32((uint)IPAddress.NetworkToHostOrder((int)IPAddress.Parse("192.168.159.128").Address));
+                       // var port = ReverseEndian16(27900);
+
+                        state.Status = keyValues.GetOrDefault("status") ?? state.Status ?? "0";
+                        state.StatusString = keyValues.GetOrDefault("statstring") ?? state.StatusString ?? "Offline";
+                        state.LocString = keyValues.GetOrDefault("locstring") ?? state.LocString ?? "-1";
+
+                        //SendToClient(ref state, $@"\bm\100\f\{profile.Id}\msg\|s|{1}|ss|DXP{"|ls|"}{-1}|ip|{loopbackIp}|p|{port}|qm|{0}\final\".ToAssciiBytes());
+
+                        var statusResult = $@"\bm\100\f\{profile.Id}\msg\|s|{state.Status}{state.GetLSParameter()}|ss|{state.StatusString}\final\".ToAssciiBytes();
+                        SendToClient(ref state, statusResult);
+
+                        for (int i = 0; i < friends.Count; i++)
+                        {
+                            var friendId = friends[i];
+                            
+                            if (Users.TryGetValue(friendId, out LoginSocketState friendState))
+                            {
+                                SendToClient(ref friendState, statusResult);
+                                //SendToClient(ref state, $@"\bm\100\f\{friendId}\msg\|s|{1}|ss|DXP|ls|-1\final\".ToAssciiBytes());
+                                SendToClient(ref state, $@"\bm\100\f\{friendId}\msg\|s|{friendState.Status}{friendState.GetLSParameter()}|ss|{friendState.StatusString}\final\".ToAssciiBytes());
+                            }
+                            else
+                            {
+                                SendToClient(ref state, $@"\bm\100\f\{friendId}\msg\|s|0|ss|Offline\final\".ToAssciiBytes());
+                            }
+                        }
+
                         // \status\1\sesskey\17562\statstring\DXP\locstring\-1
 
                         // userid\200000003\profileid\100000003\uniquenick\Bambochuk
 
                         //sendBuddies()
-                         // SendToClient(ref state, $@"\bdy\1\list\100000003\final\".ToAssciiBytes());
+                        // SendToClient(ref state, $@"\bdy\1\list\100000003\final\".ToAssciiBytes());
                         //SendToClient(ref state, $@"\bdy\0\list\\final\".ToAssciiBytes());
 
                         // TODO: sendAddRequests();
@@ -524,7 +594,7 @@ namespace GSMasterServer.Servers
 
                         // SendToClient(ref state, $@"\bm\100\f\100000003\msg\|s|{2}|ss|DXP{"|ls|"}{-1}|ip|{(uint)IPAddress.NetworkToHostOrder((int)IPAddress.Loopback.Address)}|p|{ReverseEndian16(6500)}|qm|{0}\final\".ToAssciiBytes());
                         //SendToClient(ref state, $@"\bm\100\f\100000002\msg\|s|0|ss|Offline\final\".ToAssciiBytes());
-                         //SendToClient(ref state, $@"\bm\100\f\100000001\msg\|s|{1}|ss|DXP{"|ls|"}{-1}|ip|{(uint)IPAddress.NetworkToHostOrder((int)remoteEndPoint.Address.Address)}|p|{ReverseEndian16(6500)}|qm|{0}\final\".ToAssciiBytes());
+                        //SendToClient(ref state, $@"\bm\100\f\100000001\msg\|s|{1}|ss|DXP{"|ls|"}{-1}|ip|{(uint)IPAddress.NetworkToHostOrder((int)remoteEndPoint.Address.Address)}|p|{ReverseEndian16(6500)}|qm|{0}\final\".ToAssciiBytes());
 
 
 
@@ -535,6 +605,7 @@ namespace GSMasterServer.Servers
                         break;
 
                     case "logout":
+                        Users.TryRemove(state.ProfileId, out LoginSocketState removingState);
                         LoginServerMessages.Logout(ref state, keyValues);
                         break;
                     case "registernick":
@@ -549,18 +620,6 @@ namespace GSMasterServer.Servers
                         break;
                 }
             }
-        }
-
-        UInt32 ReverseEndian32(UInt32 x)
-        { 
-            //little to big or vice versa
-            return (UInt32)(x << 24 | (x << 8 & 0x00ff0000) | x >> 8 & 0x0000ff00 | x >> 24 & 0x000000ff);
-        }
-
-        UInt16 ReverseEndian16(UInt16 x)
-        { 
-            //little to big or vice versa
-            return (UInt16)((x & 0xff00) >> 8 | (x & 0x00ff) << 8);
         }
 
         private void HandleSearchManager(ref LoginSocketState state, string query, Dictionary<string, string> keyValues)
@@ -636,6 +695,7 @@ namespace GSMasterServer.Servers
         public int HeartbeatState = 0;
         public string Session = "";
 
+        public long ProfileId;
         public string ServerChallenge;
         public string ClientChallenge;
         public ulong SteamId;
@@ -645,6 +705,10 @@ namespace GSMasterServer.Servers
 
         private Timer _keepAliveTimer;
 
+        public string Status;
+        public string StatusString;
+        public string LocString;
+        
         public void StartKeepAlive(LoginServer server)
         {
             if (_keepAliveTimer != null)
@@ -724,12 +788,22 @@ namespace GSMasterServer.Servers
                     }
                 }
 
+                LoginServer.Users.TryRemove(ProfileId, out LoginSocketState removingState);
+
                 // yeah yeah, this is terrible, but it stops a memory leak :|
                 GC.Collect();
             }
             catch (Exception)
             {
             }
+        }
+
+        public string GetLSParameter()
+        {
+            if (LocString.IsNullOrWhiteSpace() || LocString == "0")
+                return string.Empty;
+            return "|ls|" + LocString;
+
         }
 
         ~LoginSocketState()

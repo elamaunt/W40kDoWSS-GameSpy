@@ -19,7 +19,22 @@ namespace GSMasterServer.Utils
         {
             long eloK = 32L;
 
-            return (long)(eloK * ((long)gameResult - ExpectationToWin(teamOneRating, teamTwoRating)));
+            var delta =(eloK * ((long)gameResult - ExpectationToWin(teamOneRating, teamTwoRating)));
+
+            if (Math.Abs(delta) < 1)
+            {
+                if (delta < 0)
+                {
+                    delta = -1;
+                }
+                else
+                {
+                    delta = 1;
+                }
+            }
+
+
+            return (long)delta;
         }
 
         public static void ChangeByELO(ref long playerOneRating, ref long playerTwoRating, GameOutcome gameResult)

@@ -5,31 +5,16 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3F0C33F2-BBB7-45F2-91BE-A604C36EA0FE}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>SteamSpy</RootNamespace>
     <AssemblyName>SteamSpy</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -66,7 +51,6 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -85,19 +69,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Config.cs" />
-    <Compile Include="GameState.cs" />
-    <Compile Include="Models\NewsModel.cs" />
-    <Compile Include="Providers\INewsProvider.cs" />
-    <Compile Include="Providers\ServerNewsProvider.cs" />
-    <Compile Include="Providers\TestNewsProvider.cs" />
-    <Compile Include="StaticClasses\DataExtensions.cs" />
     <Compile Include="CoreContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />
     <Compile Include="Data\GameServer.cs" />
     <Compile Include="Data\GeoIP.cs" />
-    <Compile Include="Data\NatNegMessage.cs" />
-    <Compile Include="Data\NatNegPeer.cs" />
     <Compile Include="Data\PlayerFinalState.cs" />
     <Compile Include="Data\Race.cs" />
     <Compile Include="Data\ServerFlags.cs" />
@@ -105,33 +80,18 @@
     <Compile Include="Data\StatsDelegates.cs" />
     <Compile Include="Data\UserData.cs" />
     <Compile Include="Data\UsersDatabase.cs" />
-    <Compile Include="StaticClasses\Options.cs" />
-    <Compile Include="StaticClasses\Services\DispatchService.cs" />
-    <Compile Include="StaticClasses\SoulstormExtensions.cs" />
     <Compile Include="Http\HttpHelper.cs" />
     <Compile Include="Http\HttpRequest.cs" />
     <Compile Include="Http\HttpResponceBuilder.cs" />
     <Compile Include="Http\HttpResponse.cs" />
     <Compile Include="Http\QuickMimeTypeMapper.cs" />
     <Compile Include="Http\Route.cs" />
-    <Compile Include="StaticClasses\Services\LangService.cs" />
-    <Compile Include="StaticClasses\WPFExtensions.cs" />
-    <Compile Include="Styles\SettingsWindowStyle.cs" />
-    <Compile Include="Tweaks\ITweak.cs" />
-    <Compile Include="Tweaks\UnlockRacesTweak.cs" />
-    <Compile Include="ViewModels\SettingsViewModel.cs" />
-    <Compile Include="Views\SettingsWindow.xaml.cs">
-      <DependentUpon>SettingsWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="WPFHelpClasses\RelayCommand.cs" />
     <Compile Include="Servers\ChatServerRetranslator.cs" />
     <Compile Include="Servers\LoginServerRetranslator.cs" />
     <Compile Include="Servers\Server.cs" />
     <Compile Include="Servers\ServerSteamPortRetranslator.cs" />
     <Compile Include="Servers\ServerListReport.cs" />
     <Compile Include="Servers\ServerListRetrieve.cs" />
-    <Compile Include="StaticClasses\PathFinder.cs" />
-    <Compile Include="Styles\WindowStyle.cs" />
     <Compile Include="Utils\ByteHelpers.cs" />
     <Compile Include="Utils\ChatCrypt.cs" />
     <Compile Include="Utils\DynamicLinq.cs" />
@@ -140,6 +100,7 @@
     <Compile Include="Utils\Log.cs" />
     <Compile Include="Utils\NetworkHelper.cs" />
     <Compile Include="Utils\PortBindingManager.cs" />
+    <Compile Include="Utils\ProcessHelper.cs" />
     <Compile Include="Utils\SQLMethods.cs" />
     <Compile Include="Utils\SteamApiHelper.cs" />
     <Compile Include="Utils\SteamConstants.cs" />
@@ -148,16 +109,6 @@
     <Compile Include="Utils\SteamRichPresences.cs" />
     <Compile Include="Utils\SystemExtensionMethods.cs" />
     <Compile Include="Utils\TaskHelper.cs" />
-    <Compile Include="ViewModels\PageViewModels\IPageViewModel.cs" />
-    <Compile Include="ViewModels\PageViewModels\LobbyPageViewModel.cs" />
-    <Compile Include="ViewModels\PageViewModels\MainPageViewModel.cs" />
-    <Compile Include="ViewModels\ShellViewModel.cs" />
-    <Compile Include="Views\Pages\MainPage.xaml.cs">
-      <DependentUpon>MainPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ShellWindow.xaml.cs">
-      <DependentUpon>ShellWindow.xaml</DependentUpon>
-    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -170,46 +121,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Resources\English.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Resources\Russian.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\ButtonStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\CheckBoxStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\SettingsWindowStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\TextStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Styles\WindowStyle.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\Pages\MainPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SettingsWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ShellWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -229,9 +140,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -244,10 +152,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\Common.csproj">
-      <Project>{7f16e328-21a5-418d-bf92-30f5b7bb97fa}</Project>
-      <Name>Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Steamworks.NET\Standalone\Steamworks.NET.csproj">
       <Project>{b3543600-587c-4fdc-994a-cb0bdc629a7e}</Project>
       <Name>Steamworks.NET</Name>
@@ -257,12 +161,6 @@
     <Content Include="External\Reality.Net.dll" />
     <Resource Include="Images\search.ico" />
     <Resource Include="Resources\Files\Russiandow_news.txt" />
-    <Resource Include="Images\launcher-background.jpg" />
-    <Resource Include="Images\success-mark.png" />
-    <Resource Include="Images\warning-mark.png" />
-    <Resource Include="Images\error-mark.png" />
-    <Resource Include="Images\cantrun-mark.png" />
-    <Resource Include="Images\test-news-image.jpg" />
     <Content Include="Resources\Pages\404.html" />
     <Content Include="Resources\Pages\500.html" />
     <Content Include="Resources\Pages\ComingSoon.html" />
@@ -279,14 +177,8 @@
     <Content Include="x86\SQLite.Interop.dll" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Costura.Fody">
-      <Version>4.0.0</Version>
-    </PackageReference>
     <PackageReference Include="MaxMind.GeoIP2">
       <Version>3.0.0</Version>
-    </PackageReference>
-    <PackageReference Include="NLog">
-      <Version>4.6.6</Version>
     </PackageReference>
     <PackageReference Include="System.Data.SQLite">
       <Version>1.0.111</Version>
@@ -295,24 +187,5 @@
       <Version>4.5.0</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Config\" />
-    <Folder Include="Helpers\" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>move /y NLog.config LauncherFiles\</PostBuildEvent>
-  </PropertyGroup>
 </Project>

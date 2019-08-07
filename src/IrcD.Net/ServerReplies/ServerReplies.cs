@@ -2082,5 +2082,26 @@ namespace IrcD.ServerReplies
 
                info.WriteLine(_response);*/
         }
+
+        internal void SendMainRoomCounters(UserInfo info)
+        {
+            var mainRooms = _ircDaemon.GetMainRooms();
+
+            _response.Clear();
+            _response.Append("ROOMCOUNTERS ");
+
+            for (int i = 0; i < mainRooms.Length; i++)
+            {
+                var room = mainRooms[i];
+                var roomIndex = room.Name.Split('!')[1];
+
+                _response.Append(roomIndex);
+                _response.Append(" ");
+                _response.Append(room.Users.Count());
+                _response.Append(" ");
+            }
+
+            info.WriteLine(_response);
+        }
     }
 }

@@ -1,9 +1,52 @@
  Привет! Вы на сервере elamaunt'а.
-
-В настоящее время работа активно идет. Пока есть еще неисследованные проблемы с подключениями, но они скоро будут исправлены.
+ .
 Функционально сервер почти полностью готов. 
-Моды, отличающиеся от основной игры, временно не поддерживаются.
+В данный момент играть можно используя ТОЛЬКО "Soulstorm Bugfix Mod 1.56a".
 В будущем появится лаунчер c дополнительными удобствами.
-
+.
+Карты в авто: 
+.
+1на1
+- [TP MOD]edemus gamble
+- [TP MOD]galenas crusade
+- [TP MOD]shrine of excellion
+- [TP MOD]meeting of minds
+- 2P Battle Marshes
+- 2P Outer Reaches (доработанная Дэвилом)
+- 2P Blood River
+- 2P Fata Morgana
+- 2P Titan Fall (доработанная Дэвилом)
+- 2p velvet duress (доработанная Дэвилом)
+- 2P Tranquilitys End (доработанная  Дэвилом)
+- 2P FraziersDemise (доработанная Дэвилом)
+- 2P Moonbase (доработанная Дэвилом)
+.
+2на2
+- 4p murad swamplands (доработанная Дэвилом)
+- 4p gurmuns pass
+- 4P Biffys Peril
+- 4P Gorhael Crater
+- 4P Ice Flow
+- 4P Doom Spiral
+- 4p panrea lowlands (доработанная Дэвилом)
+- 4P Skerries (доработанная Дэвилом)
+- 4p Saints Square 
+.
+3на3
+- 6p Mortalis
+- 6P Alvarus
+- 6P Shakun Coast
+- 6P Fury Island
+- 6p paynes retribution
+.
+4на4
+- 8P Oasis of Sharr
+- 8P Forbidden Jungle
+- 8P Jalaganda Lowlands
+- 8p cerulea
+- 8p burial grounds
+- 8p thurabis plateau
+.
+.
 Сервер активно обсуждается здесь:
 http://forums.warforge.ru/ (RUS)

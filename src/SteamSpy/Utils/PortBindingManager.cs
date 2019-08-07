@@ -2,6 +2,7 @@
 using Steamworks;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 
 namespace SteamSpy.Utils
 {
@@ -37,6 +38,11 @@ namespace SteamSpy.Utils
                 item.Value.Clear();
         }
         
+        public static CSteamID? GetSteamIdByPort(ushort port)
+        {
+            return PortBindings.Values.FirstOrDefault(x => x.Port == port)?.RemoteUserSteamId;
+        }
+
         public static ServerSteamPortRetranslator AddOrUpdatePortBinding(CSteamID id)
         {
             return PortBindings.GetOrAdd(id, steamId => new ServerSteamPortRetranslator(steamId)); 

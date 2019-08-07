@@ -6,6 +6,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Xml;
+using System.Xml.Linq;
 
 namespace GSMasterServer.Servers
 {
@@ -15,12 +17,13 @@ namespace GSMasterServer.Servers
         
         Thread _thread;
         Socket _newPeerAceptingsocket;
+        private DateTime _lastStatsUpdate = DateTime.Now;
         readonly ManualResetEvent _reset = new ManualResetEvent(false);
+
+        public HttpResponse StatsResponce { get; set; }
 
         public HttpServer(IPAddress listen, ushort port)
         {
-            GeoIP.Initialize(Log, Category);
-            
             _thread = new Thread(StartServer)
             {
                 Name = "Http Socket Thread"
@@ -210,7 +213,16 @@ namespace GSMasterServer.Servers
 
                     if (request.Url.EndsWith("homepage.php.htm"))
                     {
-                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Pages/ComingSoon.html"));
+                        if (StatsResponce == null || (DateTime.Now - _lastStatsUpdate).TotalMinutes > 5)
+                            StatsResponce = BuildTop10StatsResponce();
+
+                        HttpHelper.WriteResponse(ms, StatsResponce);
+                        goto END;
+                    }
+                    
+                    if (request.Url.StartsWith("/all"))
+                    {
+                        HttpHelper.WriteResponse(ms, BuildAllStatsResponce());
                         goto END;
                     }
                     
@@ -260,6 +272,138 @@ namespace GSMasterServer.Servers
 
             // and we wait for more data...
             CONTINUE: WaitForData(ref state);
+        }
+
+        private HttpResponse BuildAllStatsResponce()
+        {
+            XElement ol;
+
+            var xDocument = new XDocument(
+                new XDocumentType("html", null, null, null),
+                new XElement("html",
+                    new XElement("head", new XElement("b", "Ladder Top 10")),
+                    new XElement("body",
+                        new XElement("p", "Updates every 5 minutes"),
+                        ol = new XElement("ol")
+
+
+                    )
+                )
+            );
+
+            var builder = new StringBuilder();
+
+            foreach (var item in Database.UsersDBInstance.LoadAllStats())
+            {
+                builder
+                 .Append(item.Score1v1)
+                 .Append("   -   ")
+                 .Append(item.Name)
+                 .Append("   |   ")
+                 .Append(GetRaceName(item.FavouriteRace))
+                 .Append("   |   ")
+                 .Append(item.SteamId);
+
+                ol.Add(new XElement("li", builder.ToString()));
+                builder.Clear();
+            }
+
+            var settings = new XmlWriterSettings
+            {
+                OmitXmlDeclaration = true,
+                Indent = true,
+                IndentChars = "\t"
+            };
+
+            using (var ms = new MemoryStream())
+            using (var writer = XmlWriter.Create(ms, settings))
+            {
+                xDocument.WriteTo(writer);
+                writer.Flush();
+                return new HttpResponse()
+                {
+                    ReasonPhrase = "Ok",
+                    StatusCode = "200",
+                    Content = ms.ToArray()
+                };
+            }
+        }
+
+
+        private HttpResponse BuildTop10StatsResponce()
+        {
+            XElement ol;
+
+            var xDocument = new XDocument(
+                new XDocumentType("html", null, null, null),
+                new XElement("html",
+                    new XElement("head", new XElement("b", "Ladder Top 10")),
+                    new XElement("body",
+                        new XElement("p", "Updates every 5 minutes"),
+                        ol = new XElement("ol")
+
+
+                    )
+                )
+            );
+
+            var builder = new StringBuilder();
+
+            foreach (var item in Database.UsersDBInstance.Load1v1Top10())
+            {
+                builder
+                .Append(item.Score1v1)
+                 .Append("   -   ")
+                .Append(item.WinsCount)
+                .Append("/")
+                .Append(item.GamesCount)
+                 .Append("   -   ")
+                .Append(((int)(item.WinRate * 100f)) + "%")
+                .Append("   -   ")
+                .Append(item.Name)
+                .Append("   |   ")
+                .Append(GetRaceName(item.FavouriteRace));
+                
+                ol.Add(new XElement("li", builder.ToString()));
+                builder.Clear();
+            }
+
+            var settings = new XmlWriterSettings
+            {
+                OmitXmlDeclaration = true,
+                Indent = true,
+                IndentChars = "\t"
+            };
+
+            using (var ms = new MemoryStream())
+            using (var writer = XmlWriter.Create(ms, settings))
+            {
+                xDocument.WriteTo(writer);
+                writer.Flush();
+                return new HttpResponse()
+                {
+                    ReasonPhrase = "Ok",
+                    StatusCode = "200",
+                    Content = ms.ToArray()
+                };
+            }
+        }
+
+        private string GetRaceName(Race favouriteRace)
+        {
+            switch (favouriteRace)
+            {
+                case Race.space_marine_race: return "Space Marines";
+                case Race.chaos_marine_race: return "Chaos Space Marines";
+                case Race.ork_race: return "Orks";
+                case Race.eldar_race: return "Eldar";
+                case Race.guard_race: return "Imperial Guard";
+                case Race.necron_race: return "Necrons";
+                case Race.tau_race: return "Tau";
+                case Race.dark_eldar_race: return "Dark Eldar";
+                case Race.sisters_race: return "Sisters of Battle";
+                default: return "Unknown";
+            }
         }
 
         internal class HttpSocketState : IDisposable

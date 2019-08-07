@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SteamSpy"
         mc:Ignorable="d"
-        Title="Steam Spy Retranslator" Height="152" Width="239">
+        Title="Soulstorm Steam Retranslator" Height="300" Width="400">
     <Grid>
-        <TextBlock Text="Данная программа служит ретранслятором и использует Steam для выполнения соединений. Ее нельзя закрывать, пока вы играете или находитесь в лобби." TextWrapping="Wrap"/>
+        <TextBlock Padding="30,30,30,30" Text="Данная программа служит ретранслятором и использует Steam для выполнения соединений. Ее нельзя закрывать, пока вы играете или находитесь в лобби. После ее запуска нужно просто зайти в SS 1.2, выбрать Интернет и выполнить авторизацию. Полноценный лаунчер в данный момент разработке." TextWrapping="Wrap"/>
     </Grid>
 </Window>

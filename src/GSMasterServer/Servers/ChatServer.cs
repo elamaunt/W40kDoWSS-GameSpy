@@ -224,11 +224,11 @@ namespace GSMasterServer.Servers
                             {
                                 var nick = utf8alue.Split(' ')[2];
 
-                                var userData = Database.UsersDBInstance.GetUserData(nick);
+                                var profile = Database.UsersDBInstance.GetProfileByName(nick);
 
-                                state.UserInfo = IrcDaemon.RegisterNewUser(state.Socket, nick, userData.ProfileId, state, SendToClient);
+                                state.UserInfo = IrcDaemon.RegisterNewUser(state.Socket, nick, profile.Id, state, SendToClient);
                                 
-                                var bytesToSend = $":s 707 {nick} 12345678 {userData.ProfileId}\r\n".ToAssciiBytes();
+                                var bytesToSend = $":s 707 {nick} 12345678 {profile.Id}\r\n".ToAssciiBytes();
                                 
                                 fixed (byte* bytesToSendPtr = bytesToSend)
                                     ChatCrypt.GSEncodeDecode(state.ServerKey, bytesToSendPtr, bytesToSend.Length);

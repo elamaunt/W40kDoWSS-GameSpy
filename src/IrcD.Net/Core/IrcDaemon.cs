@@ -143,6 +143,8 @@ namespace IrcD.Core
             Commands.Add(new SetCKey(this));
             Commands.Add(new Utm(this));
             Commands.Add(new GameBroadcast(this));
+            Commands.Add(new RoomCounters(this));
+            
             //Commands.Add(new Connect(this));
             //Commands.Add(new Die(this));
             Commands.Add(new Error(this));
@@ -282,20 +284,17 @@ namespace IrcD.Core
             {
                 var rooms = Channels.Where(x => x.Key.StartsWith("#GSP")).ToArray();
 
-                info.WriteServerPrivateMessage($"Wellcome to server, {info.Nick}!");
-                info.WriteServerPrivateMessage($"To play RATING games in auto you should leave rated checkbox in UNCHECKED state.");
-                info.WriteServerPrivateMessage($"Opened Automatchmaking rooms now {rooms.Length} with players {rooms.Sum(x => x.Value.Users.Count())}");
+                //info.WriteServerPrivateMessage($"Wellcome to server, {info.Nick}!");
+                //info.WriteServerPrivateMessage($"To play RATING games in auto you should leave rated checkbox in UNCHECKED state.");
+                //info.WriteServerPrivateMessage($"In current version you can create game hosts ONLY with \"Soulstorm BugFix mod\".");
+                //info.WriteServerPrivateMessage($"Opened Automatchmaking rooms now {rooms.Length} with players {rooms.Sum(x => x.Value.Users.Count())}");
 
-                //.:sF|elamaunt!X1lsaFvqsX|35226254@127.0.0.1 PRIVMSG Bambochuk :1234
+                info.WriteServerPrivateMessage($"Добро пожаловать на сервер, {info.Nick}!");
+                info.WriteServerPrivateMessage($"Чтобы играть РЕЙТИНГОВЫЕ игры вам необходимо НЕ использовать галочку \"Игра на счет\" во время запуска системы автоматча.");
+                info.WriteServerPrivateMessage($"В текущей версии можно создавать игры используя ТОЛЬКО \"Soulstorm BugFix mod 1.56a\".");
+                info.WriteServerPrivateMessage($"Прямо сейчас идет игр в авто {Games.Count}, с участием игроков {Games.Sum(x => x.Key.Users.Count)}");
+                info.WriteServerPrivateMessage($"Открытых игр в авто {rooms.Length}, количество игроков в поиске игры {rooms.Sum(x => x.Value.Users.Count())}");
 
-                //lutinblanc!*@*PRIVMSG #GPG!2266 :What with a "Please wait for Refresh NAT to be completed" error?
-                // info.WriteLine($@"{info.Nick} PRIVMSG {info.User} :Wellcome to server, {info.Nick}!\nTo play RATING games in auto you should leave rated checkbox in UNCKECHED state.");
-                //info
-                // new PrivateMessageArgument(info, chan, chan.Name, args[1])
-                //info.WriteLine($@"sF|elamaunt!X1lsaFvqsX|35226254@127.0.0.1 PRIVMSG {info.Usermask} :Hello");
-                //info.WriteLine($@"PRIVMSG #GPG!8 :Hello");
-                //info.WriteLine($@"sF|elamaunt!X1lsaFvqsX|35226254@127.0.0.1 PRIVMSG #GPG!8 :Hello");
-                //info.WriteLine($@"PRIVMSG {info.User} :Wellcome to server, {info.Nick}!\nTo play RATING games in auto you should leave rated checkbox in UNCKECHED state.");
             });
 
             return info;
@@ -440,6 +439,12 @@ namespace IrcD.Core
             {
                 Commands.Handle(info, prefix, replyCode, args, line.Length);
             }
+        }
+
+        public void SendToUser(long profileId, string message)
+        {
+            if (Users.TryGetValue(profileId, out UserInfo user))
+                user.WriteServerPrivateMessage(message);
         }
 
         public void SendToAll(string message, string exceptNick)
