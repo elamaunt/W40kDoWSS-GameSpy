@@ -540,8 +540,8 @@ namespace GSMasterServer.Servers
                         SendToClient(ref state, $@"\bdy\{friends.Count + 1}\list\{string.Join(",",friends.Concat(new long[] { profile.Id }))}\final\".ToAssciiBytes());
 
                        // var loopbackIp = (uint)IPAddress.NetworkToHostOrder((int)IPAddress.Loopback.Address);
-                        var loopbackIp = ReverseEndian32((uint)IPAddress.NetworkToHostOrder((int)IPAddress.Parse("192.168.159.128").Address));
-                        var port = ReverseEndian16(27900);
+                       // var loopbackIp = ReverseEndian32((uint)IPAddress.NetworkToHostOrder((int)IPAddress.Parse("192.168.159.128").Address));
+                       // var port = ReverseEndian16(27900);
 
                         state.Status = keyValues.GetOrDefault("status") ?? state.Status ?? "0";
                         state.StatusString = keyValues.GetOrDefault("statstring") ?? state.StatusString ?? "Offline";
@@ -620,20 +620,6 @@ namespace GSMasterServer.Servers
                         break;
                 }
             }
-        }
-
-        UInt32 ReverseEndian32(UInt32 x)
-        {
-            //little to big or vice versa
-            //return x;
-            return (UInt32)(x << 24 | (x << 8 & 0x00ff0000) | x >> 8 & 0x0000ff00 | x >> 24 & 0x000000ff);
-        }
-
-        UInt16 ReverseEndian16(UInt16 x)
-        { 
-            //little to big or vice versa
-            //return x;
-            return (UInt16)((x & 0xff00) >> 8 | (x & 0x00ff) << 8);
         }
 
         private void HandleSearchManager(ref LoginSocketState state, string query, Dictionary<string, string> keyValues)

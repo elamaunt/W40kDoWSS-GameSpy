@@ -107,7 +107,7 @@ namespace ChatMonitor
 
             //var ids = LoadSteamIds(new List<string>() { "elamaunt" }).Result;
 
-            /* var str = "??   &   {f29e528f-2461-4387-9443-84db458a8592}    B a m b o c h u k                   K04W        B a m b o c h u k     ?????      ?     ??BK04W   g i g a m o k       ???      ?       dxp2   1.0    :~?";
+              var str = "??   &   {f29e528f-2461-4387-9443-84db458a8592}    B a m b o c h u k                   K04W        B a m b o c h u k     ?????      ?     ??BK04W   g i g a m o k       ???      ?       dxp2   1.0    :~?";
 
               var bytesString = @"254 254 0 0 2 0 2 4 1 38 0 0 0 123 102 50 57 101 53 50 56 102 45 50 52 54 49 45 52 51 56 55 45 57 52 52 51 45 56 52 100 98 52 53 56 97 56 53 57 50 125 9 0 0 0 66 0 97 0 109 0 98 0 111 0 99 0 104 0 117 0 107 0 0 0 0 0 2 0 0 0 4 0 0 0 0 0 0 0 0 2 0 0 0 2 75 48 52 87 9 0 0 0 66 0 97 0 109 0 98 0 111 0 99 0 104 0 117 0 107 0 1 1 0 0 0 0 192 168 159 128 224 23 0 0 0 0 127 0 0 1 224 23 0 0 0 0 0 216 1 233 66 75 48 52 87 7 0 0 0 103 0 105 0 103 0 97 0 109 0 111 0 107 0 0 0 0 0 0 0 192 168 1 31 224 23 0 0 0 0 127 0 0 1 224 23 20 0 0 0 20 0 4 0 0 0 100 120 112 50 3 0 0 0 49 46 48 0 0 0 0 19 58 126 222";
               var bytes = bytesString.Split(" ").Select(x => byte.Parse(x)).ToArray();
@@ -123,9 +123,11 @@ namespace ChatMonitor
               {
                   if (bytes[i] == 'K' &&
                       bytes[i+1] == '0' &&
-                      bytes[i+2] == '4' &&
-                      bytes[i+3] == 'W')
+                      bytes[i+2] == '4')
                   {
+                      if (bytes[i + 3] != 'W')
+                         i--;
+
                       var nickLength = bytes[i+4];
 
                       var nickStart = i + 4 + 3;
@@ -142,7 +144,7 @@ namespace ChatMonitor
                       Console.WriteLine(ipEndPoint);
                       // Console.WriteLine(Between(bytes, i + 4, i + 4 + 57));
                   }
-              }*/
+              }
 
             //K04W
 

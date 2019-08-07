@@ -25,6 +25,7 @@ namespace GSMasterServer.Servers
         public static byte[] Gamekey = null;
         
         SocketState _currentClientState;
+        private const string HOST_ADDRESS_TOKEN = ";16777343;";
 
         public ChatServerRetranslator(IPAddress address, ushort port)
         {
@@ -247,6 +248,25 @@ namespace GSMasterServer.Servers
                     goto CONTINUE;
                 }
 
+                var hostAddressIndex = utf8value.IndexOf(HOST_ADDRESS_TOKEN, StringComparison.OrdinalIgnoreCase);
+
+                if (hostAddressIndex != -1)
+                {
+                    var steamIdValue = CutULongValue(utf8value, hostAddressIndex + HOST_ADDRESS_TOKEN.Length, out string idString);
+
+                    if (steamIdValue <= 65536)
+                        return;
+
+                    var hostSteamId = new CSteamID(steamIdValue);
+                    var port = PortBindingManager.AddOrUpdatePortBinding(hostSteamId).Port;
+                    
+                    utf8value = utf8value.Replace(HOST_ADDRESS_TOKEN + idString, HOST_ADDRESS_TOKEN + port.ToString());
+
+                    SendToGameSocket(ref state, Encoding.UTF8.GetBytes(utf8value));
+
+                    goto CONTINUE;
+                }
+
                 SendToGameSocket(ref state, bytes);
             }
 
@@ -370,7 +390,7 @@ namespace GSMasterServer.Servers
                             var utf8value = Encoding.UTF8.GetString(bytes);
 
                             Log("CHATDATA", utf8value);
-                            
+
                             if (utf8value.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase))
                             {
                                 var nick = utf8value.Split(' ')[2];
@@ -381,12 +401,32 @@ namespace GSMasterServer.Servers
 
                                 goto CONTINUE;
                             }
-                            
+
                             if (utf8value.StartsWith("USRIP", StringComparison.OrdinalIgnoreCase))
                             {
                                 SendToServerSocket(ref state, bytes);
 
                                 goto CONTINUE;
+                            }
+
+                            var hostAddressIndex = utf8value.IndexOf(HOST_ADDRESS_TOKEN, StringComparison.OrdinalIgnoreCase);
+
+                            if (hostAddressIndex != -1)
+                            {
+                                var port = CutPortValue(utf8value, hostAddressIndex + HOST_ADDRESS_TOKEN.Length, out string portString);
+
+                                port = ByteHelpers.ReverseEndian16(port);
+
+                                var hostSteamId = PortBindingManager.GetSteamIdByPort(port);
+
+                                if (!hostSteamId.HasValue)
+                                {
+                                    port = ByteHelpers.ReverseEndian16(port);
+                                    hostSteamId = PortBindingManager.GetSteamIdByPort(port);
+                                }
+
+                                if (hostSteamId.HasValue)
+                                    utf8value = utf8value.Replace(HOST_ADDRESS_TOKEN + portString, HOST_ADDRESS_TOKEN + hostSteamId.Value.m_SteamID);
                             }
 
                             var index = utf8value.IndexOf("#GSP!whamdowfr!", StringComparison.OrdinalIgnoreCase);
@@ -396,7 +436,7 @@ namespace GSMasterServer.Servers
                                 var encodedEndPoint = utf8value.Substring(index + 15, 10);
 
                                 CSteamID steamId;
-                                
+
                                 if (ServerListReport.CurrentUserRoomHash == encodedEndPoint)
                                 {
                                     steamId = SteamUser.GetSteamID();
@@ -411,11 +451,14 @@ namespace GSMasterServer.Servers
                                 }
 
                                 utf8value = utf8value.Replace(encodedEndPoint, steamId.m_SteamID.ToString());
-                                
+
                                 SendToServerSocket(ref state, Encoding.UTF8.GetBytes(utf8value));
 
                                 goto CONTINUE;
                             }
+
+                            //  16777343 ~ 1.0.0.127  inversed port 63349 port
+                            // :QWEQWE!X44vf1Wf1X|6@91.215.89.240 PRIVMSG elamaunt :ACTION 7; 16777343; 63349; 16777343; 63349; 1;
                             
                             SendToServerSocket(ref state, bytes);
                         }
@@ -460,6 +503,32 @@ namespace GSMasterServer.Servers
 
             // and we wait for more data...
             CONTINUE: WaitForGameData(state);
+        }
+
+        private ulong CutULongValue(string utf8value, int index, out string idString)
+        {
+            var start = index;
+            for (; index < utf8value.Length; index++)
+            {
+                if (!char.IsDigit(utf8value[index]))
+                    break;
+            }
+
+            idString = utf8value.Substring(start, index - start);
+            return ulong.Parse(idString);
+        }
+
+        private ushort CutPortValue(string utf8value, int index, out string portString)
+        {
+            var start = index;
+            for (; index < utf8value.Length; index++)
+            {
+                if (!char.IsDigit(utf8value[index]))
+                    break;
+            }
+
+            portString = utf8value.Substring(start, index - start);
+            return ushort.Parse(portString);
         }
 
         public void SendGPGRoomsCountsRequest()

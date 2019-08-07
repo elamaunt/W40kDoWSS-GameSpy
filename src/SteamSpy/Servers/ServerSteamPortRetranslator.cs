@@ -169,11 +169,11 @@ namespace GSMasterServer.Servers
                 byte[] receivedBytes = new byte[e.BytesTransferred];
                 Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
 
-                //var str = Encoding.UTF8.GetString(receivedBytes);
+                var str = Encoding.UTF8.GetString(receivedBytes);
 
                 // there by a bunch of different message formats...
-                //Log(Category, $">> {RemoteUserSteamId} "+str);
-                //Log(Category, ">> BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
+                Log(Category, $">> {RemoteUserSteamId} "+str);
+                Log(Category, ">> BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
                 //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
 
@@ -270,23 +270,31 @@ namespace GSMasterServer.Servers
                 var s = (int)size;
                 var str = Encoding.UTF8.GetString(buffer, 0, s);
                 
-                //Log(Category, $"<= {RemoteUserSteamId} :: " + str);
+                Log(Category, $"<= {RemoteUserSteamId} :: " + str);
 
                 // there by a bunch of different message formats...
-                //Log(Category,"<= BYTES:"+ string.Join(" ", buffer.Where((b,i) => i< size).Select(x => x.ToString())));
+                Log(Category,"<= BYTES:"+ string.Join(" ", buffer.Where((b,i) => i< size).Select(x => x.ToString())));
 
                 int m = 0;
                 if (size > 4 &&
-                    buffer[m++] == 254 &&
-                    buffer[m++] == 254 &&
-                    buffer[m++] == 0 &&
-                    buffer[m++] == 0)
+                    buffer[0] == 254 &&
+                    buffer[1] == 254 &&
+                  
+                   (//(buffer[2] == 2 && buffer[3] == 0) ||
+                    (buffer[2] == 3 && buffer[3] == 0) || 
+                    (buffer[2] == 4 && buffer[3] == 0)))
+                    //(buffer[2] == 5 && buffer[3] == 0) || 
+                    //(buffer[2] == 6 && buffer[3] == 0) || 
+                    //(buffer[2] == 7 && buffer[3] == 0) || 
+                   // (buffer[2] == 8 && buffer[3] == 0)))
                 {
                     Console.WriteLine("JOINGAMEDATA " + str);
 
                     var clone = new byte[s];
 
                     Array.Copy(buffer, clone, s);
+
+                   //Log(Category, "<= BYTES:" + string.Join(" ", buffer.Where((b, i) => i < size).Select(x => x.ToString())));
 
                     HandleGamelobbyRequest(clone)
                         .ContinueWith(task =>
@@ -348,13 +356,16 @@ namespace GSMasterServer.Servers
             var nicks = new List<string>();
 
             // skip start information
-            for (int k = 50; k < bytes.Length - 3; k++)
+            for (int k = 10; k < bytes.Length - 3; k++)
             {
                 if (bytes[k] == 'K' &&
                     bytes[k + 1] == '0' &&
                     bytes[k + 2] == '4' &&
-                    bytes[k + 3] == 'W')
+                    bytes[k + 2] == '4')
                 {
+                    if (bytes[k + 3] != 'W')
+                        k--;
+
                     var nickLength = bytes[k + 4];
 
                     var nickStart = k + 4 + 3;
@@ -364,9 +375,11 @@ namespace GSMasterServer.Servers
 
                     if (!IdByNicksCache.ContainsKey(nick))
                         nicks.Add(GetUnicodeString(bytes, nickStart, nickEnd));
+
+                    k += nickLength + 4 + 6;
                 }
             }
-
+            
             if (nicks.Count > 0)
                 await LoadSteamIds(nicks);
 
@@ -375,9 +388,11 @@ namespace GSMasterServer.Servers
             {
                 if (bytes[k] == 'K' &&
                     bytes[k + 1] == '0' &&
-                    bytes[k + 2] == '4' &&
-                    bytes[k + 3] == 'W')
+                    bytes[k + 2] == '4')
                 {
+                    if (bytes[k + 3] != 'W')
+                        k--;
+
                     var nickLength = bytes[k + 4];
 
                     var nickStart = k + 4 + 3;
@@ -402,6 +417,8 @@ namespace GSMasterServer.Servers
                     }
                     else
                         throw new Exception("Unknown player nick - "+nick);
+
+                    k += nickLength + 4 + 6;
                 }
             }
 
