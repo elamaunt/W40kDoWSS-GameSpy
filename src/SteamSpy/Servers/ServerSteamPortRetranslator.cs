@@ -44,7 +44,6 @@ namespace GSMasterServer.Servers
 
         public ServerSteamPortRetranslator()
         {
-            GeoIP.Initialize(Log, Category);
             StartServer();
         }
 

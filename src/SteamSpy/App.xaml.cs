@@ -1,31 +1,42 @@
-﻿using GSMasterServer.Servers;
-using SteamSpy.StaticClasses;
+﻿using Framework;
+using Framework.WPF;
 using SteamSpy.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Reflection;
 using System.Windows;
+using ThunderHawk.Core;
 
 namespace SteamSpy
 {
-    public partial class App : Application
+    public partial class App
     {
+        public App()
+        {
+            InitializeComponent();
+        }
+
         public static bool Is64BitProcess
         {
             get { return IntPtr.Size == 8; }
         }
 
+        protected override IEnumerable<Module> CreateModules()
+        {
+            yield return new FrameworkModule();
+            yield return new FrameworkWPFModule();
+            yield return new ThunderHawkCoreModule();
+            yield return new ApplicationModule();
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Directory.GetCurrentDirectory() + "\\LauncherFiles\\NLog.config", true);
 
-            CoreContext.Start(IPAddress.Any);
+            CoreContext.Start(System.Net.IPAddress.Any);
 
-            SoulstormExtensions.Init();
+            StaticClasses.SoulstormExtensions.Init();
 
             //ModifyHostsFile(Entries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
 
@@ -33,7 +44,12 @@ namespace SteamSpy
                 File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api64.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api.dll"), true);
             else
                 File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api86.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api.dll"), true);
+
             base.OnStartup(e);
+
+            var window = WPFPageHelper.InstantiateWindow<MainWindowViewModel>();
+            window.Show();
+            MainWindow = window;
         }
 
         public static void ModifyHostsFile(List<string[]> entries)
@@ -53,7 +69,7 @@ namespace SteamSpy
                     {
                         var line = reader.ReadLine();
 
-                        if (line.IsNullOrWhiteSpace())
+                        if (string.IsNullOrWhiteSpace(line))
                             continue;
 
                         var commentStart = line.IndexOf("#");

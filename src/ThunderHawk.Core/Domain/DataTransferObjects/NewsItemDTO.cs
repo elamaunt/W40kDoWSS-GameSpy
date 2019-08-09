@@ -1,0 +1,20 @@
+﻿namespace ThunderHawk.Core
+{
+    public class NewsItemDTO
+    {
+        public string RussianTitle { get; set; }
+        public string RussianAnnotation { get; set; }
+        public string RussianText { get; set; }
+
+
+        public string EnglishTitle { get; set; }
+        public string EnglishAnnotation { get; set; }
+        public string EnglishText { get; set; }
+
+        public string ImagePath { get; set; }
+        public NewsType NewsType { get; set; }
+        public long NewsTime { get; set; }
+        public uint NewsId { get; set; }
+        public long NewsEditTime { get; set; }
+    }
+}

@@ -3,14 +3,11 @@ using SteamSpy.Tweaks;
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Windows;
 
 namespace SteamSpy.StaticClasses
 {
     public static class SoulstormExtensions
     {
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private static string GamePath { get; set; }
 
         public static void Init()
@@ -65,7 +62,7 @@ namespace SteamSpy.StaticClasses
             }
             catch (Exception ex)
             {
-                logger.Error(ex);
+                Console.WriteLine(ex);
             }
         }
     }

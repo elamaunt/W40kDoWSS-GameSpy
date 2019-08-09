@@ -1,8 +1,8 @@
-﻿<Application x:Class="SteamSpy.App"
+﻿<framework:BindableApplication x:Class="SteamSpy.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:SteamSpy"
-             StartupUri="Views/ShellWindow.xaml">
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -15,4 +15,4 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
-</Application>
+</framework:BindableApplication>

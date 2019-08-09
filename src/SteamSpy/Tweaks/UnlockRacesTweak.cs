@@ -1,34 +1,39 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace SteamSpy.Tweaks
 {
-    public class UnlockRacesTweak : ITweak
+    public class UnlockRacesTweak
     {
         private readonly string gamePath;
         public UnlockRacesTweak(string path)
         {
             gamePath = path;
         }
-        public Task ApplyTweak()
+        public void ApplyTweak()
         {
             var unlockerDir = Path.Combine(Directory.GetCurrentDirectory(), "LauncherFiles\\Unlocker");
+
             if (!Directory.Exists(unlockerDir))
                 throw new Exception("Could not find unlocker in LauncherFiles!");
+
             var targetDir = Path.Combine(gamePath, "Unlocker");
+
             if (!Directory.Exists(targetDir))
             {
                 Directory.CreateDirectory(targetDir);
             }
+
             var files = Directory.GetFiles(unlockerDir);
+
             foreach(var filePath in files)
             {
                 var fileName = filePath.Substring(unlockerDir.Length + 1);
                 File.Copy(Path.Combine(unlockerDir, fileName),
                     Path.Combine(targetDir, fileName), true);
             }
+
             string dowCdKey = "3697-5fd2-5a76-0e44";
             string waCdKey = "57a4-fae0-7611-1504-fa90";
             string dcCdKey = "8c34-5670-91a4-c2f2-bfca";
@@ -49,7 +54,6 @@ namespace SteamSpy.Tweaks
             ssReg.SetValue("w40kcdkey", dowCdKey);
             ssReg.SetValue("wxpcdkey", waCdKey);
             ssReg.SetValue("dxp2cdkey", dcCdKey);
-            return Task.CompletedTask;
         }
 
         public bool IsTweakApplied()
