@@ -4,7 +4,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
-namespace SteamSpy.Utils
+namespace ThunderHawk.Utils
 {
     public static class PortBindingManager
     {

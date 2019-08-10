@@ -1,10 +1,10 @@
 ﻿using NLog;
-using SteamSpy.Tweaks;
+using ThunderHawk.Tweaks;
 using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace SteamSpy.StaticClasses
+namespace ThunderHawk.StaticClasses
 {
     public static class SoulstormExtensions
     {

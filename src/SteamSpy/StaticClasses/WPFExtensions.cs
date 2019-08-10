@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Interop;
 
-namespace SteamSpy.StaticClasses
+namespace ThunderHawk.StaticClasses
 {
     internal static class WPFExtensions
     {

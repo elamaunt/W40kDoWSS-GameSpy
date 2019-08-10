@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    x:Class="SteamSpy.Styles.SettingsWindowStyle">
+                    x:Class="ThunderHawk.Styles.SettingsWindowStyle">
 
 
     <Style x:Key="SettingsWindowStyle" TargetType="{x:Type Window}">

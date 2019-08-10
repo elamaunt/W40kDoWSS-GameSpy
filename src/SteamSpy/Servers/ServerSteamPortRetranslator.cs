@@ -1,5 +1,5 @@
 ﻿using GSMasterServer.Data;
-using SteamSpy.Utils;
+using ThunderHawk.Utils;
 using Steamworks;
 using System;
 using System.Collections.Concurrent;

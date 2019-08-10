@@ -1,10 +1,10 @@
-﻿using SteamSpy.StaticClasses;
+﻿using ThunderHawk.StaticClasses;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 
-namespace SteamSpy.Styles
+namespace ThunderHawk.Styles
 {
     public partial class SettingsWindowStyle
     {

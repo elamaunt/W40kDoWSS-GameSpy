@@ -1,7 +1,7 @@
 ﻿using Framework;
 using ThunderHawk.Core;
 
-namespace SteamSpy
+namespace ThunderHawk
 {
     public class ApplicationModule : Module
     {

@@ -1,6 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    x:Class="SteamSpy.Styles.WindowStyle">
+                    x:Class="ThunderHawk.Styles.WindowStyle">
 
     <SolidColorBrush x:Key="BorderColor" Color="#BBBBBB" />
     <SolidColorBrush x:Key="BrushColor" Color="#FFFFFF" />

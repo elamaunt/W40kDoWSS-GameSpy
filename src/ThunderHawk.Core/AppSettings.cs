@@ -1,4 +1,4 @@
-﻿namespace SteamSpy.StaticClasses
+﻿namespace ThunderHawk.StaticClasses
 {
     public static class AppSettings
     {

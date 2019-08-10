@@ -1,6 +1,6 @@
 ﻿using Framework;
 using Framework.WPF;
-using SteamSpy.Utils;
+using ThunderHawk.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Windows;
 using ThunderHawk.Core;
 
-namespace SteamSpy
+namespace ThunderHawk
 {
     public partial class App
     {

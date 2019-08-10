@@ -3,7 +3,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace SteamSpy.StaticClasses
+namespace ThunderHawk.StaticClasses
 {
     public static class PathFinder
     {

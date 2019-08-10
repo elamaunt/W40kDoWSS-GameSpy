@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using Framework;
 using System.Linq;
-using Framework;
 
 namespace ThunderHawk.Core
 {
-    public class MainPageController : FrameController<MainPageViewModel>
+    public class MainPageController : BindingController<IMainPage, MainPageViewModel>
     {
         protected override void OnBind()
         {
@@ -22,6 +20,8 @@ namespace ThunderHawk.Core
 
         void LaunchGame()
         {
+
+            View.OpenWindow(new SettingsWindowViewModel());
             // TODO: launch SS1.2
         }
     }

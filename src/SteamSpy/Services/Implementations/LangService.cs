@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using ThunderHawk.Core;
 
-namespace SteamSpy
+namespace ThunderHawk
 {
     public class LangService : ILangService
     {

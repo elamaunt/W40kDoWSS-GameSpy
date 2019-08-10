@@ -2,7 +2,7 @@
 using System;
 using System.IO;
 
-namespace SteamSpy.Tweaks
+namespace ThunderHawk.Tweaks
 {
     public class UnlockRacesTweak
     {

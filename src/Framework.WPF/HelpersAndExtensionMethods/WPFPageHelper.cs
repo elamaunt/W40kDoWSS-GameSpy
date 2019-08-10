@@ -43,6 +43,13 @@ namespace Framework.WPF
             return page;
         }
 
+        public static BindableWindow InstantiateWindow(WindowViewModel viewModel)
+        {
+            var page = InstantiateWindow(PageHelper.GetPageViewModelName(viewModel));
+            page.ViewModel = viewModel;
+            return page;
+        }
+
         public static BindableWindow InstantiateWindow<T>()
             where T : WindowViewModel, new()
         {

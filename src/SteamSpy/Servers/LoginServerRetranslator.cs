@@ -1,6 +1,6 @@
 ﻿using GSMasterServer.Data;
 using Reality.Net.GameSpy.Servers;
-using SteamSpy.Utils;
+using ThunderHawk.Utils;
 using Steamworks;
 using System;
 using System.Collections.Generic;

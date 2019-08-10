@@ -1,4 +1,4 @@
-﻿namespace SteamSpy
+﻿namespace ThunderHawk
 {
     public static class Config
     {

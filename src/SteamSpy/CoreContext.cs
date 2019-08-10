@@ -2,7 +2,7 @@
 using System;
 using System.Net;
 
-namespace SteamSpy
+namespace ThunderHawk
 {
     internal static class CoreContext
     {

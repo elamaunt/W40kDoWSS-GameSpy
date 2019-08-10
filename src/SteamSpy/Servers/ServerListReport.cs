@@ -1,7 +1,7 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
-using SteamSpy;
-using SteamSpy.Utils;
+using ThunderHawk;
+using ThunderHawk.Utils;
 using System;
 using System.Linq;
 using System.Net;

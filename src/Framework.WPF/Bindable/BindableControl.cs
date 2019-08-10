@@ -15,5 +15,10 @@ namespace Framework.WPF
         {
             DataContextChanged += WPFBinder.OnDataContextChanged;
         }
+
+        ~BindableControl()
+        {
+            DataContextChanged -= WPFBinder.OnDataContextChanged;
+        }
     }
 }

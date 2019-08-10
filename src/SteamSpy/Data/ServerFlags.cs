@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SteamSpy.Data
+namespace ThunderHawk.Data
 {
     [Flags]
     public enum ServerFlags
