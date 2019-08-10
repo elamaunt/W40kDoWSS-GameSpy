@@ -14,6 +14,18 @@ namespace Framework
         static List<Type> s_itemViewTypes;
         static List<Type> s_abstractViewTypes;
 
+        public static string GetViewModelName(Type type)
+        {
+            var name = type.Name;
+
+            name = name.CutWhenEndsWith("WindowViewModel");
+            name = name.CutWhenEndsWith("PageViewModel");
+            name = name.CutWhenEndsWith("ItemViewModel");
+            name = name.CutWhenEndsWith("ViewModel");
+
+            return name;
+        }
+
         public static string GetPageViewModelName(Type type)
         {
             var name = type.Name;

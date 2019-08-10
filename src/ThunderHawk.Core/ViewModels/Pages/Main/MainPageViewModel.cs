@@ -2,15 +2,10 @@
 
 namespace ThunderHawk.Core
 {
-    public class MainPageViewModel : PageViewModel
+    public class MainPageViewModel : EmbeddedPageViewModel
     {
-        public TextFrame Title { get; } = new TextFrame();
+        public TextFrame Title { get; } = new TextFrame() { Text = "Main" };
         public ListFrame<NewsItemViewModel> News { get; } = new ListFrame<NewsItemViewModel>();
         public ActionFrame LaunchGame { get; } = new ActionFrame();
-
-        public override string GetPrefix()
-        {
-            return "element";
-        }
     }
 }

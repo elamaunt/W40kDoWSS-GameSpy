@@ -1,5 +1,6 @@
 ﻿using Framework;
 using Framework.WPF;
+using System.Windows;
 using ThunderHawk.Core;
 
 namespace ThunderHawk
@@ -8,7 +9,9 @@ namespace ThunderHawk
     {
         public void OpenWindow(WindowViewModel viewModel)
         {
-            WPFPageHelper.InstantiateWindow(viewModel).Show();
+            var window = WPFPageHelper.InstantiateWindow(viewModel);
+            window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            window.Show();
         }
     }
 }

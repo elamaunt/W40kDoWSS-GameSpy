@@ -13,6 +13,8 @@
             batch.RegisterControllerFactory(() => new ImageWithByteArrayFrameBinder());
             batch.RegisterControllerFactory(() => new LabelWithITextFrameBinder());
             batch.RegisterControllerFactory(() => new StackPanelWithListFrameBinder());
+            batch.RegisterControllerFactory(() => new TextBlockWithITextFrameBinder());
+            batch.RegisterControllerFactory(() => new ImageWithIUriFrameBinder());
         }
     }
 }

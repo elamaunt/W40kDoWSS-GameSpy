@@ -11,7 +11,10 @@ namespace ThunderHawk.Core
         {
             Pages.DataSource = new ObservableCollection<PageViewModel>()
             {
-                new MainPageViewModel()
+                new MainPageViewModel(),
+                new ChatPageViewModel(),
+                new ModificationsPageViewModel(),
+                new AllNewsPageViewModel()
             };
         }
     }

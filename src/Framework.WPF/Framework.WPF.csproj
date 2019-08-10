@@ -52,8 +52,10 @@
     <Compile Include="Controllers\Binders\ButtonWithIActionFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ButtonWithITextFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithByteArrayFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\ImageWithIUriFrameBinder.cs" />
     <Compile Include="Controllers\Binders\LabelWithITextFrameBinder.cs" />
     <Compile Include="Controllers\Binders\StackPanelWithListFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\TextBlockWithITextFrameBinder.cs" />
     <Compile Include="FrameworkWPFModule.cs" />
     <Compile Include="HelpersAndExtensionMethods\ImageHelper.cs" />
     <Compile Include="HelpersAndExtensionMethods\WPFBinder.cs" />
