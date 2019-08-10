@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
         xmlns:core="clr-namespace:ThunderHawk.Core;assembly=ThunderHawk.Core"
+        xmlns:local="clr-namespace:ThunderHawk"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
         xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         mc:Ignorable="d"
@@ -16,4 +17,5 @@
         Style="{DynamicResource WindowStyle}">
 
     <dragablz:TabablzControl framework:WPFBinder.Frame="Pages" Margin="0,0,0,0"/>
+    
 </framework:BindableWindow>

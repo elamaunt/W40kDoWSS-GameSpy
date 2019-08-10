@@ -89,6 +89,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="Controllers\Binders\TabablzControlWithListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TabItemWithPageViewModelBinder.cs" />
+    <Compile Include="Effects\RectBlurEffect.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="CoreContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />
@@ -210,6 +211,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Effects\RectBlurEffect.ps">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
     <None Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -241,6 +245,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Effects\RectBlurEffect.fx" />
+    <Resource Include="Effects\Compile.txt" />
     <Content Include="External\Reality.Net.dll" />
     <Resource Include="Images\search.ico" />
     <Resource Include="Images\launcher-background.jpg" />

@@ -13,8 +13,8 @@ namespace ThunderHawk.Core
             {
                 new MainPageViewModel(),
                 new ChatPageViewModel(),
-                new ModificationsPageViewModel(),
-                new AllNewsPageViewModel()
+                new ModificationsPageViewModel(){ Enabled = false },
+                new AllNewsPageViewModel(){ Enabled = false }
             };
         }
     }

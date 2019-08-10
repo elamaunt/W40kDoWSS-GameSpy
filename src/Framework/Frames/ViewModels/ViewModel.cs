@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Framework
 {
-    public class ViewModel : Frame
+    public class ViewModel : ControlFrame
     {
         private static readonly Dictionary<Type, Dictionary<string, Func<object, object>>> _gettersCache = new Dictionary<Type, Dictionary<string, Func<object, object>>>();
 

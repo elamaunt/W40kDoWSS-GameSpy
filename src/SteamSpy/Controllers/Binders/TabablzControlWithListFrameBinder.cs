@@ -19,7 +19,7 @@ namespace ThunderHawk
             {
                 InterTabClient = new DefaultInterTabClient() //new CustomTabClient()
             };
-
+            
             View.SelectedIndex = 0;
         }
 
