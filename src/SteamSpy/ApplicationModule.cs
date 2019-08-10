@@ -9,6 +9,7 @@ namespace ThunderHawk
         {
             batch.RegisterServiceFactory<ILangService>(() => new LangService());
             batch.RegisterControllerFactory(() => new TabablzControlWithListFrameBinder());
+            batch.RegisterControllerFactory(() => new TabItemWithPageViewModelBinder());
         }
     }
 }

@@ -44,7 +44,7 @@ namespace Framework
 
             return dict.GetOrDefault(name)?.Invoke(this);
         }
-
+        
         public virtual string GetName()
         {
             return PageHelper.GetViewModelName(GetType());

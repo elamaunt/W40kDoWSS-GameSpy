@@ -32,10 +32,9 @@ namespace ThunderHawk
 
         private TabItem CreateTabItem(ViewModel model)
         {
-            var item = new TabItem()
-            {
-                Header = model.GetName()
-            };
+            var item = new TabItem();
+
+            FrameBinder.Bind(item, model);
 
             var view = (IBindableView)Service<IViewFactory>.Get().CreateView(model.GetPrefix(), model.GetViewStyle());
             view.ViewModel = model;

@@ -88,6 +88,7 @@
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Controllers\Binders\TabablzControlWithListFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\TabItemWithPageViewModelBinder.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="CoreContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />

@@ -1,11 +1,13 @@
 ﻿namespace Framework
 {
     [PageViewModel]
-    public class PageViewModel : ViewModel
+    public abstract class PageViewModel : ViewModel
     {
         public IGlobalNavigationManager GlobalNavigationManager => Service<IGlobalNavigationManager>.Get();
 
         public IUserInteractions UserInteractions => GetExtension<IUserInteractions>();
+
+        public virtual ITextFrame Title { get; } = new TextFrame() { Text = "Page" };
 
         public PageViewModel()
         {
