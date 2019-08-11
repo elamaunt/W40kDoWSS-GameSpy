@@ -16,6 +16,6 @@
         Width="1180" 
         Style="{DynamicResource WindowStyle}">
 
-    <dragablz:TabablzControl framework:WPFBinder.Frame="Pages" Margin="0,0,0,0"/>
+    <dragablz:TabablzControl framework:WPFBinder.Frame="Pages"/>
 
 </framework:BindableWindow>

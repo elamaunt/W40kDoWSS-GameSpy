@@ -51,20 +51,20 @@
                                 BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Padding="0">
 
                                 <Grid>
-                                    <Image Source="/Images/launcher-background.jpg" 
+                                    <Image Source="/Images/launcher-background.png" 
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Top" 
-                                           Stretch="None">
+                                           Stretch="UniformToFill">
                                         <Image.Effect>
                                             <local:RectBlurEffect 
                                                 FrameworkElement="{Binding ElementName=Topbar, Mode=OneTime}"/>
                                         </Image.Effect>
                                     </Image>
-                                    <Image Source="/Images/bottom.png"
+                                    <!--Image Source="/Images/bottom.png"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Bottom" 
                                         Stretch="None">
-                                    </Image>
+                                    </-->
                                     <Grid>
                                         <Grid Name="Topbar"
                                               Height="40" 

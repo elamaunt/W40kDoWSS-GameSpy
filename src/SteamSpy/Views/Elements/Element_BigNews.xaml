@@ -12,17 +12,17 @@
         </Border.BitmapEffect>
         <Grid>
             <Image VerticalAlignment="Stretch" HorizontalAlignment="Stretch" framework:WPFBinder.Frame="Image" Stretch="UniformToFill"/>
-            <TextBlock
-                DockPanel.Dock="Bottom"
+            <TextBlock Margin="30,280,0,0"
                 framework:WPFBinder.Frame="Title"
                 TextWrapping="Wrap" 
                 Style="{DynamicResource BigTextStyle}"
                 Foreground="White"
-                FontSize="20">
+                FontSize="22">
                 <TextBlock.Effect>
-                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="1" BlurRadius="0.4" Opacity="0.1" />
+                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="1" BlurRadius="0.4" Opacity="0.25" />
                 </TextBlock.Effect>
             </TextBlock>
+            <Button Style="{DynamicResource CardViewBigButtonStyle}" Background="Transparent" Content=""/>
         </Grid>
     </Border>
 </framework:BindableControl>

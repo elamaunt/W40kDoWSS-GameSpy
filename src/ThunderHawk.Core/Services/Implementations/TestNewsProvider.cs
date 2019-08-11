@@ -10,29 +10,29 @@ namespace ThunderHawk.Core
                 {
                     new NewsItemDTO()
                     {
-                        RussianTitle = "Вышло обновление 6.2.3",
-                        RussianAnnotation = "Короче сегодня. Да-да именно сегодня вышло новое крутое обновление! Бегом скачивать!",
+                        RussianTitle = "Открытый бетатест сервера",
+                        RussianAnnotation = "Дорогие любители Soulstorm! Мы объявляем начало новой эры, эры рейтинга, статистики и скила. теперь все желающие могут играть в Warhammer 40k Soulstorm без многочисленных проблем Steam версии.",
                         RussianText = "тест тесттесттесттесттесттесттесттест",
-                        ImagePath = "/Images/test-news-image.jpg",
+                        ImagePath = "/Images/Primarismarines.jpg",
                         NewsTime = DateTime.Now
                     },
 
                     new NewsItemDTO()
                     {
-                        RussianTitle = "Турнир в честь великого Горка",
-                        RussianAnnotation = "Эй ты, эльдаровод! Там аннонсировали новый турнир! Бегом регистрироваться!",
+                        RussianTitle = "Гайд на орках от YbuBaKa",
+                        RussianAnnotation = "Теперь все наконец-то научатся играть за орков",
                         RussianText = "тест тесттесттесттесттесттесттесттест",
-                        ImagePath = "/Images/test-news-image.jpg",
-                        NewsTime = DateTime.Now
+                        ImagePath = "/Images/YbubakaGuide.png",
+                        NewsTime = DateTime.Now.AddDays(-20)
                     },
 
                     new NewsItemDTO()
                     {
-                        RussianTitle = "Вышло обновление 6.2.2",
-                        RussianAnnotation = "Короче сегодня. Да-да именно сегодня вышло новое крутое обновление! Бегом скачивать!",
+                        RussianTitle = "Найден лучший игрок в Soulstorm",
+                        RussianAnnotation = "Вы не поверите, но лучшим игроком в Soulstorm теперь признан...",
                         RussianText = "тест тесттесттесттесттесттесттесттест",
-                        ImagePath = "/Images/test-news-image.jpg",
-                        NewsTime = DateTime.Now
+                        ImagePath = "/Images/BestPlayer.png",
+                        NewsTime = DateTime.Now.AddDays(-100)
                     }
                 };
         }
