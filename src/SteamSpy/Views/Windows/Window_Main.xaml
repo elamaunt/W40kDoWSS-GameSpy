@@ -15,7 +15,6 @@
         MinWidth="1180"
         Width="1180" 
         Style="{DynamicResource WindowStyle}">
-
-    <dragablz:TabablzControl framework:WPFBinder.Frame="Pages"/>
-
+    
+    <StackPanel Orientation="Horizontal" framework:WPFBinder.Frame="Pages"/>
 </framework:BindableWindow>
