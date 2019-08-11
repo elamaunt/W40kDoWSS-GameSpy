@@ -16,11 +16,7 @@ namespace ThunderHawk
         
         public static readonly DependencyProperty InputProperty =
             ShaderEffect.RegisterPixelShaderSamplerProperty("Input", typeof(RectBlurEffect), 0);
-
-        /* public static readonly DependencyProperty BlurAmount =
-           DependencyProperty.Register("BlurAmount", typeof(float), typeof(RectBlurEffect),
-               new UIPropertyMetadata(1, PixelShaderConstantCallback(0)));*/
-
+        
         public static readonly DependencyProperty UpLeftCornerProperty =
             DependencyProperty.Register("UpLeftCorner", typeof(Point), typeof(RectBlurEffect),
                 new UIPropertyMetadata(new Point(0, 0), PixelShaderConstantCallback(0)));
@@ -29,9 +25,17 @@ namespace ThunderHawk
             DependencyProperty.Register("LowRightCorner", typeof(Point), typeof(RectBlurEffect),
                 new UIPropertyMetadata(new Point(1, 1), PixelShaderConstantCallback(1)));
 
+        public static readonly DependencyProperty Width =
+            DependencyProperty.Register("Width", typeof(float), typeof(RectBlurEffect),
+                new UIPropertyMetadata(1f, PixelShaderConstantCallback(2)));
+
+        public static readonly DependencyProperty Height =
+            DependencyProperty.Register("Height", typeof(float), typeof(RectBlurEffect),
+                new UIPropertyMetadata(1f, PixelShaderConstantCallback(3)));
+
         public static readonly DependencyProperty FrameworkElementProperty =
             DependencyProperty.Register("FrameworkElement", typeof(FrameworkElement), typeof(RectBlurEffect),
-            new PropertyMetadata(null, OnFrameworkElementPropertyChanged));
+                new PropertyMetadata(null, OnFrameworkElementPropertyChanged));
 
         static RectBlurEffect()
         {
@@ -106,6 +110,11 @@ namespace ThunderHawk
             {
                 origin = new Point(intersect.X, intersect.Y);
                 origin = under.PointFromScreen(origin);
+
+                SetValue(Width, (float)under.ActualWidth);
+                SetValue(Height, (float)under.ActualHeight);
+                UpdateShaderValue(Width);
+                UpdateShaderValue(Height);
 
                 UpLeftCorner = new Point(origin.X / under.ActualWidth,
                     origin.Y / under.ActualHeight);
