@@ -7,7 +7,6 @@ namespace Framework.WPF
     {
         public static readonly DependencyProperty FrameProperty = DependencyProperty.RegisterAttached("Frame", typeof(object), typeof(FrameworkElement), new PropertyMetadata(null, OnBind));
 
-
         private static void OnBind(DependencyObject target, DependencyPropertyChangedEventArgs args)
         {
             var binding = FrameBinder.GetBindedFrame(target);

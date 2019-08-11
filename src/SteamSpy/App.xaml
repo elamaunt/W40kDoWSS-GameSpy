@@ -57,6 +57,7 @@
 
             <!-- tell Dragablz tab control to use the Material Design theme -->
             <Style TargetType="{x:Type dragablz:TabablzControl}" BasedOn="{StaticResource MaterialDesignTabablzControlStyle}" />
+
         </ResourceDictionary>
     </Application.Resources>
 </framework:BindableApplication>
