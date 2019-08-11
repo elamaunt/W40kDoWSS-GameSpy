@@ -12,6 +12,8 @@ namespace ThunderHawk.Core
         
         public NewsItemDTO NewsItem { get; }
 
+        public bool Big { get; set; }
+
         public NewsItemViewModel(NewsItemDTO dto)
         {
             NewsItem = dto;
@@ -22,6 +24,14 @@ namespace ThunderHawk.Core
             Image.Text = dto.ImagePath;
         }
 
+        public override string GetViewStyle()
+        {
+            if (Big)
+                return "Big" + base.GetViewStyle();
+
+            return base.GetViewStyle();
+        }
+        
         private static string ConvertValueToText(DateTime date)
         {
             return date.ToLongDateString();

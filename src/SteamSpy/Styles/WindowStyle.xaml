@@ -53,12 +53,17 @@
                                 <Grid>
                                     <Image Source="/Images/launcher-background.jpg" 
                                            HorizontalAlignment="Center"
-                                           VerticalAlignment="Center" 
+                                           VerticalAlignment="Top" 
                                            Stretch="None">
                                         <Image.Effect>
                                             <local:RectBlurEffect 
                                                 FrameworkElement="{Binding ElementName=Topbar, Mode=OneTime}"/>
                                         </Image.Effect>
+                                    </Image>
+                                    <Image Source="/Images/bottom.png"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Bottom" 
+                                        Stretch="None">
                                     </Image>
                                     <Grid>
                                         <Grid Name="Topbar"

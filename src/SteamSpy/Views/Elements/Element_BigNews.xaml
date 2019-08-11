@@ -1,0 +1,28 @@
+﻿<framework:BindableControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+             mc:Ignorable="d">
+
+    <Border x:Name="ItemBorder" Height="324" Width="512" Margin="0 0 0 0" BorderThickness="1" BorderBrush="#22FFFFFF">
+        <Border.BitmapEffect>
+            <DropShadowBitmapEffect Color="Black" Direction="270" ShadowDepth="2" Opacity="1" Softness="2" />
+        </Border.BitmapEffect>
+        <Grid>
+            <Image VerticalAlignment="Stretch" HorizontalAlignment="Stretch" framework:WPFBinder.Frame="Image" Stretch="UniformToFill"/>
+            <TextBlock
+                DockPanel.Dock="Bottom"
+                framework:WPFBinder.Frame="Title"
+                TextWrapping="Wrap" 
+                Style="{DynamicResource BigTextStyle}"
+                Foreground="White"
+                FontSize="20">
+                <TextBlock.Effect>
+                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="1" BlurRadius="0.4" Opacity="0.1" />
+                </TextBlock.Effect>
+            </TextBlock>
+        </Grid>
+    </Border>
+</framework:BindableControl>

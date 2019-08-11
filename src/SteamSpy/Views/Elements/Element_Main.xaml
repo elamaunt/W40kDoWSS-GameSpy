@@ -5,15 +5,15 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
              mc:Ignorable="d">
-    <Grid Margin="60 0 0 0">
+    <Grid ClipToBounds="False" Margin="60 0 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
             <RowDefinition Height="10"></RowDefinition>
             <RowDefinition Height="Auto"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <Grid HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0">
-            <StackPanel Orientation="Horizontal" framework:WPFBinder.Frame="News"/>
+        <Grid ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0">
+            <StackPanel Orientation="Horizontal" ClipToBounds="False" framework:WPFBinder.Frame="News"/>
         </Grid>
 
 
@@ -56,8 +56,12 @@
             </ItemsControl>
         </-->
         <DockPanel Grid.Row="2" Margin="0 0 0 35" LastChildFill="False">
-            <Button DockPanel.Dock="Left" Width="250" Height="70" framework:WPFBinder.Frame="LaunchGame"
-                    Content="{DynamicResource LaunchGame}" Style="{DynamicResource LaunchButtonStyle}">
+            <Button DockPanel.Dock="Left"
+                    Width="250" 
+                    Height="70"
+                    framework:WPFBinder.Frame="LaunchGame"
+                    Content="{DynamicResource LaunchGame}"
+                    Style="{DynamicResource LaunchButtonStyle}">
             </Button>
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5 0 0 0">
                 <Image Source="{Binding GameStateImage}" Width="16" Height="16"></Image>

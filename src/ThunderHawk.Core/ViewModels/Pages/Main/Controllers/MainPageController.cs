@@ -13,9 +13,12 @@ namespace ThunderHawk.Core
 
             Frame.LaunchGame.Action = LaunchGame;
 
-            Frame.News.DataSource = CoreContext.NewsProvider.GetNews()
+            var newsSource = CoreContext.NewsProvider.GetNews()
                 .Select(x => new NewsItemViewModel(x))
                 .ToObservableCollection();
+
+            newsSource[0].Big = true;
+            Frame.News.DataSource = newsSource;
         }
 
         void LaunchGame()
