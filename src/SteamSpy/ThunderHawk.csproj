@@ -303,6 +303,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>move /y NLog.config LauncherFiles\</PostBuildEvent>
+    <PostBuildEvent>if not exist "LauncherFiles\" mkdir LauncherFiles
+move /y NLog.config LauncherFiles\</PostBuildEvent>
   </PropertyGroup>
 </Project>
