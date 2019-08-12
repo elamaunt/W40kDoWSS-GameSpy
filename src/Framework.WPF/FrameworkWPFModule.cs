@@ -15,6 +15,8 @@
             batch.RegisterControllerFactory(() => new StackPanelWithListFrameBinder());
             batch.RegisterControllerFactory(() => new TextBlockWithITextFrameBinder());
             batch.RegisterControllerFactory(() => new ImageWithIUriFrameBinder());
+            batch.RegisterControllerFactory(() => new RichTextBoxWithITextFrameBinder());
+            batch.RegisterControllerFactory(() => new TextBlockWithIActionFrameBinder());
         }
     }
 }

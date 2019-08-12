@@ -3,7 +3,7 @@
                     xmlns:local="clr-namespace:SteamSpy.Resources"
                     xmlns:system="clr-namespace:System;assembly=mscorlib">
     <!-- Page names -->
-    <system:String x:Key="MainPage">Основная</system:String>
+    <system:String x:Key="MainPage">Главная</system:String>
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Запустить игру</system:String>

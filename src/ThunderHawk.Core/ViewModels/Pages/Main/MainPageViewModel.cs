@@ -7,5 +7,9 @@ namespace ThunderHawk.Core
         public override ITextFrame Title { get; } = new TextFrame() { Text = "Main" };
         public ListFrame<NewsItemViewModel> News { get; } = new ListFrame<NewsItemViewModel>();
         public ActionFrame LaunchGame { get; } = new ActionFrame();
+
+        public ActionFrame FAQLabel { get; } = new ActionFrame();
+        public ActionFrame HelpingLabel { get; } = new ActionFrame();
+
     }
 }

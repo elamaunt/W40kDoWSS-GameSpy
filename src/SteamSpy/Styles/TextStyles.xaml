@@ -11,6 +11,10 @@
         <Setter Property="FontSize" Value="14" />
     </Style>
 
+    <Style x:Key="FreeTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource WhiteTextStyle}">
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
     <Style x:Key="BoldTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource RegularTextStyle}">
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
@@ -23,5 +27,14 @@
     <Style x:Key="SmallTextStyle" TargetType="{x:Type TextBlock}" BasedOn="{StaticResource WhiteTextStyle}">
         <Setter Property="FontSize" Value="11" />
         <Setter Property="FontWeight" Value="SemiBold" />
+    </Style>
+
+    <Style x:Key="LinkStyle" TargetType="Hyperlink">
+        <Setter Property="Foreground" Value="#00aeff" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Foreground" Value="DarkOrange" />
+            </Trigger>
+        </Style.Triggers>
     </Style>
 </ResourceDictionary>

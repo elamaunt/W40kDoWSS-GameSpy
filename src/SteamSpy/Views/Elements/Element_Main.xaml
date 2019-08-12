@@ -56,16 +56,38 @@
             </ItemsControl>
         </-->
         <DockPanel Grid.Row="2" Margin="0 0 0 35" LastChildFill="False">
+            <TextBlock framework:WPFBinder.Frame="FAQLabel" DockPanel.Dock="Top"  Margin="0 0 0 16" Style="{DynamicResource FreeTextStyle}">
+                <TextBlock.Effect>
+                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="4" Opacity="1" />
+                </TextBlock.Effect>
+                Есть вопросы? Ответы в
+                <Hyperlink Style="{DynamicResource LinkStyle}">
+                    FAQ
+                </Hyperlink>
+                .
+            </TextBlock>
             <Button DockPanel.Dock="Left"
                     Width="250" 
                     Height="70"
                     framework:WPFBinder.Frame="LaunchGame"
                     Content="{DynamicResource LaunchGame}"
                     Style="{DynamicResource LaunchButtonStyle}">
+                <Button.Effect>
+                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="10" Opacity="0.4" />
+                </Button.Effect>
             </Button>
+
             <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5 0 0 0">
-                <Image Source="{Binding GameStateImage}" Width="16" Height="16"></Image>
-                <TextBlock Text="{Binding GameStateText}" Margin="5 0 0 0" Style="{DynamicResource RegularTextStyle}"></TextBlock>
+                <!--Image Source="{Binding GameStateImage}" Width="16" Height="16"></-->
+                <TextBlock framework:WPFBinder.Frame="HelpingLabel" Style="{DynamicResource FreeTextStyle}" Margin="12 0 0 0">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="4" Opacity="1" />
+                    </TextBlock.Effect>
+                    Мы нашли несколько проблем с Вашей игрой.   
+                    <Hyperlink Style="{DynamicResource LinkStyle}">
+                        Исправить!
+                    </Hyperlink>
+                </TextBlock>
             </StackPanel>
         </DockPanel>
     </Grid>
