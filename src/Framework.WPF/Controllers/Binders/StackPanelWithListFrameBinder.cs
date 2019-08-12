@@ -8,8 +8,14 @@ namespace Framework.WPF
     {
         readonly List<IBindableView> _bindedElements = new List<IBindableView>();
 
+        string _itemPrefix;
+        string _itemStyle;
+
         protected override void OnBind()
         {
+            _itemPrefix = View.GetItemPrefix();
+            _itemStyle = View.GetItemStyle();
+
             SubscribeOnPropertyChanged(Frame, nameof(IListFrame.DataSource), OnDataSourceChanged);
             OnDataSourceChanged();
         }
@@ -23,7 +29,7 @@ namespace Framework.WPF
 
         private UIElement CreateItemCell(ViewModel model)
         {
-            var view = (IBindableView)Service<IViewFactory>.Get().CreateView(model.GetPrefix(), model.GetViewStyle());
+            var view = (IBindableView)Service<IViewFactory>.Get().CreateView(_itemPrefix ?? model.GetPrefix(), _itemStyle ?? model.GetViewStyle());
             view.ViewModel = model;
             _bindedElements.Add(view);
             return (UIElement)view;

@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace Framework.WPF
 {
-    public static class WPFBinder
+    public static partial class WPFBinder
     {
         public static readonly DependencyProperty FrameProperty = DependencyProperty.RegisterAttached("Frame", typeof(object), typeof(FrameworkElement), new PropertyMetadata(null, OnBind));
 

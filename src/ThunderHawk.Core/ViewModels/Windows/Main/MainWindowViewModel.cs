@@ -5,17 +5,19 @@ namespace ThunderHawk.Core
 {
     public class MainWindowViewModel : WindowViewModel
     {
-        public ListFrame<PageViewModel> Pages { get; } = new ListFrame<PageViewModel>();
+        public ListFrame<EmbeddedPageViewModel> Pages { get; } = new ListFrame<EmbeddedPageViewModel>();
 
         public MainWindowViewModel()
         {
-            Pages.DataSource = new ObservableCollection<PageViewModel>()
+            Pages.DataSource = new ObservableCollection<EmbeddedPageViewModel>()
             {
                 new MainPageViewModel(),
                 new ChatPageViewModel(),
                 new ModificationsPageViewModel(){ Enabled = false },
                 new AllNewsPageViewModel(){ Enabled = false }
             };
+
+            Pages.SelectedItem = Pages.DataSource[0];
         }
     }
 }

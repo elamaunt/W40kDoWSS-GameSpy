@@ -15,7 +15,15 @@
         Width="1180" 
         Style="{DynamicResource WindowStyle}">
 
-    <Grid Margin="5, 5, 5, 5">
-        <StackPanel framework:WPFBinder.Frame="Pages" Grid.Row="0" Orientation="Horizontal"/>
-    </Grid>
+    <StackPanel Margin="5, 5, 5, 5" Orientation="Vertical">
+        <StackPanel Name="Tabs"
+                framework:WPFBinder.ItemPrefix="Tab"
+                framework:WPFBinder.ItemStyle="Default"
+                framework:WPFBinder.Frame="Pages"
+                Orientation="Horizontal"/>
+
+        <ContentControl Name="Content"
+                        framework:WPFBinder.Frame="Pages"/>
+
+    </StackPanel>
 </framework:BindableWindow>

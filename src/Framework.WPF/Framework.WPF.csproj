@@ -51,6 +51,7 @@
     <Compile Include="Bindable\BindablePage.cs" />
     <Compile Include="Controllers\Binders\ButtonWithIActionFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ButtonWithITextFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\ContentControlWithIListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithByteArrayFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithIUriFrameBinder.cs" />
     <Compile Include="Controllers\Binders\LabelWithITextFrameBinder.cs" />
@@ -60,7 +61,9 @@
     <Compile Include="Controllers\Binders\TextBlockWithITextFrameBinder.cs" />
     <Compile Include="FrameworkWPFModule.cs" />
     <Compile Include="HelpersAndExtensionMethods\ImageHelper.cs" />
-    <Compile Include="HelpersAndExtensionMethods\WPFBinder.cs" />
+    <Compile Include="HelpersAndExtensionMethods\WPFBinder.ItemStyle.cs" />
+    <Compile Include="HelpersAndExtensionMethods\WPFBinder.ItemPrefix.cs" />
+    <Compile Include="HelpersAndExtensionMethods\WPFBinder.Frame.cs" />
     <Compile Include="HelpersAndExtensionMethods\WPFExtentionMethods.cs" />
     <Compile Include="HelpersAndExtensionMethods\WPFPageHelper.cs" />
     <Compile Include="IPageExtension.cs" />

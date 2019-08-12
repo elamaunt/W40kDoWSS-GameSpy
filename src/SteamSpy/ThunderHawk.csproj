@@ -124,9 +124,6 @@
     <Compile Include="Utils\SystemExtensionMethods.cs" />
     <Compile Include="Utils\TaskHelper.cs" />
     <Compile Include="Views\Elements\Element_Main.xaml.cs" />
-    <Compile Include="Views\Elements\Element_Tab.xaml.cs">
-      <DependentUpon>Element_Tab.xaml</DependentUpon>
-    </Compile>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -191,7 +188,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Elements\Element_Tab.xaml">
+    <Page Include="Views\Tabs\Tab_Default.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
