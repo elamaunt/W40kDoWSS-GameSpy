@@ -7,7 +7,6 @@
         xmlns:core="clr-namespace:ThunderHawk.Core;assembly=ThunderHawk.Core"
         xmlns:local="clr-namespace:ThunderHawk"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
-        xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         mc:Ignorable="d"
         Title="ThunderHawk Soulstorm Launcher"
         MinHeight="700" 
@@ -16,5 +15,5 @@
         Width="1180" 
         Style="{DynamicResource WindowStyle}">
 
-    <TabControl Style="{DynamicResource NavigationBarStyle}" framework:WPFBinder.Frame="Pages"/>
+    <TabControl framework:WPFBinder.Frame="Pages"/>
 </framework:BindableWindow>
