@@ -8,7 +8,7 @@ namespace ThunderHawk
         public override void RegisterComponents(ComponentBatch batch)
         {
             batch.RegisterServiceFactory<ILangService>(() => new LangService());
-            batch.RegisterControllerFactory(() => new TabablzControlWithListFrameBinder());
+            batch.RegisterControllerFactory(() => new TabControlWithListFrameBinder());
             batch.RegisterControllerFactory(() => new TabItemWithPageViewModelBinder());
         }
     }

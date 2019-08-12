@@ -1,12 +1,11 @@
-﻿using Dragablz;
-using Framework;
+﻿using Framework;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace ThunderHawk
 {
-    public class TabablzControlWithListFrameBinder : BindingController<TabablzControl, IListFrame>
+    public class TabControlWithListFrameBinder : BindingController<TabControl, IListFrame>
     {
         readonly List<IBindableView> _bindedElements = new List<IBindableView>();
 
@@ -14,11 +13,6 @@ namespace ThunderHawk
         {
             SubscribeOnPropertyChanged(Frame, nameof(IListFrame.DataSource), OnDataSourceChanged);
             OnDataSourceChanged();
-
-            View.InterTabController = new InterTabController()
-            {
-                InterTabClient = new DefaultInterTabClient() //new CustomTabClient()
-            };
             
             View.SelectedIndex = 0;
         }
@@ -51,33 +45,6 @@ namespace ThunderHawk
             _bindedElements.Clear();
 
             base.OnUnbind();
-        }
-
-        private class CustomTabClient : IInterTabClient
-        {
-            CustomTabHost _host;
-
-            public INewTabHost<Window> GetNewHost(IInterTabClient interTabClient, object partition, TabablzControl source)
-            {
-                return _host ?? (_host = new CustomTabHost(source));
-            }
-
-            public TabEmptiedResponse TabEmptiedHandler(TabablzControl tabControl, Window window)
-            {
-                return TabEmptiedResponse.CloseWindowOrLayoutBranch;
-            }
-
-            private class CustomTabHost : INewTabHost<Window>
-            {
-                readonly TabablzControl _source;
-                public Window Container { get; } = new Window();
-                public TabablzControl TabablzControl => _source;
-
-                public CustomTabHost(TabablzControl source)
-                {
-                    _source = source;
-                }
-            }
         }
     }
 }
