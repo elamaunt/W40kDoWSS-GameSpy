@@ -23,8 +23,6 @@ namespace ThunderHawk.Core
 
         void LaunchGame()
         {
-
-            View.OpenWindow(new SettingsWindowViewModel());
             // TODO: launch SS1.2
         }
     }

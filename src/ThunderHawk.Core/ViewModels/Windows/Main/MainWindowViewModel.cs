@@ -7,6 +7,8 @@ namespace ThunderHawk.Core
     {
         public ListFrame<EmbeddedPageViewModel> Pages { get; } = new ListFrame<EmbeddedPageViewModel>();
 
+        public ActionFrame OpenSettings { get; } = new ActionFrame();
+
         public MainWindowViewModel()
         {
             Pages.DataSource = new ObservableCollection<EmbeddedPageViewModel>()

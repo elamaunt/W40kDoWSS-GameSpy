@@ -124,6 +124,7 @@
     <Compile Include="Utils\SystemExtensionMethods.cs" />
     <Compile Include="Utils\TaskHelper.cs" />
     <Compile Include="Views\Elements\Element_Main.xaml.cs" />
+    <Compile Include="Views\Windows\Window_Main.xaml.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

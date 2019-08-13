@@ -11,6 +11,22 @@
         <Setter Property="Background" Value="Transparent" />
     </Style>
 
+    <Style x:Key="SettingsButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <ContentPresenter x:Name="Content" Opacity="0.7" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Content" Property="Opacity" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+
     <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
         <Setter Property="FontSize" Value="20"></Setter>
         <Setter Property="FontFamily" Value="{StaticResource MainFont}"></Setter>
