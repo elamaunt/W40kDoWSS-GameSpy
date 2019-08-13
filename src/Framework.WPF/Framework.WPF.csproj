@@ -47,11 +47,14 @@
   <ItemGroup>
     <Compile Include="Bindable\BindableApplication.cs" />
     <Compile Include="Bindable\BindableControl.cs" />
+    <Compile Include="Bindable\BindableTabItem.cs" />
     <Compile Include="Bindable\BindableWindow.cs" />
     <Compile Include="Bindable\BindablePage.cs" />
     <Compile Include="Controllers\Binders\ButtonWithIActionFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ButtonWithITextFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ContentControlWithIListFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\ToggleButtonWithIToggleFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\UIElementWithIControlFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithByteArrayFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithIUriFrameBinder.cs" />
     <Compile Include="Controllers\Binders\LabelWithITextFrameBinder.cs" />

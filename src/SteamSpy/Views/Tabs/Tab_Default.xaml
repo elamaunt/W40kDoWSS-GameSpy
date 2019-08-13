@@ -9,6 +9,6 @@
     mc:Ignorable="d" 
     d:DesignHeight="60" d:DesignWidth="100">        
     
-    <Button framework:WPFBinder.Frame="Title"
+    <ToggleButton framework:WPFBinder.Frame="Title"
             Style="{DynamicResource NavigationButtonStyle}"/>
 </framework:BindableControl>

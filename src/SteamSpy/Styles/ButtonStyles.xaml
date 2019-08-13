@@ -25,29 +25,30 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
 
-    <Style x:Key="NavigationButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+
+    <Style x:Key="NavigationButtonStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
         <Setter Property="FontSize" Value="20"></Setter>
         <Setter Property="FontFamily" Value="{StaticResource MainFont}"></Setter>
         <Setter Property="Foreground" Value="White"></Setter>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Grid Margin="0 0 0 0">
                         <Border BorderThickness="0" BorderBrush="{DynamicResource ElectricBlue}" x:Name="ButtonBorder"></Border>
-                        <ContentPresenter Margin="20 0 20 4" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <ContentPresenter Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.7" />
-                            <Setter TargetName="ButtonBorder" Property="BorderThickness" Value="0 0 0 2" />
+                            <Setter Property="Foreground" Value="#44ffffff" />
+                            <!--Setter TargetName="ButtonBorder" Property="BorderThickness" Value="0 0 0 3" /-->
                         </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ButtonBorder" Property="Opacity" Value="1" />
-                            <Setter TargetName="ButtonBorder" Property="BorderThickness" Value="0 0 0 2" />
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Foreground" Value="#ffff00" />
+                            <!--Setter TargetName="ButtonBorder" Property="Opacity" Value="1" />
+                            <Setter TargetName="ButtonBorder" Property="BorderThickness" Value="0 0 0 2" /-->
                         </Trigger>
-                    </ControlTemplate.Triggers>
+                        </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

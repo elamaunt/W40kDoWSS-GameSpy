@@ -18,6 +18,9 @@
             batch.RegisterControllerFactory(() => new RichTextBoxWithITextFrameBinder());
             batch.RegisterControllerFactory(() => new TextBlockWithIActionFrameBinder());
             batch.RegisterControllerFactory(() => new ContentControlWithIListFrameBinder());
+            batch.RegisterControllerFactory(() => new UIElementWithIControlFrameBinder());
+            batch.RegisterControllerFactory(() => new ToggleButtonWithIToggleFrameBinder());
         }
+        
     }
 }

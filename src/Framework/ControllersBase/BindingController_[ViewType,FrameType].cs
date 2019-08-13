@@ -70,9 +70,20 @@ namespace Framework
 
         public void Unbind()
         {
-            OnUnbind();
-            _usersTokenSource?.CancelWithoutDisposedException();
-            IsBinded = false;
+            try
+            {
+                if (_unbindActions != null)
+                    for (int i = 0; i < _unbindActions.Count; i++)
+                        _unbindActions[i]();
+
+                OnUnbind();
+                _usersTokenSource?.CancelWithoutDisposedException();
+            }
+            finally
+            {
+                _unbindActions = null;
+                IsBinded = false;
+            }
         }
 
         protected void SubscribeOnPropertyChanged(INotifyPropertyChanged implementor, string propertyName, Action handler)

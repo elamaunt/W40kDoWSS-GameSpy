@@ -5,7 +5,7 @@ namespace ThunderHawk.Core
     public abstract class EmbeddedPageViewModel : PageViewModel
     {
         public override ITextFrame Title => TitleButton;
-        public ButtonFrame TitleButton { get; } = new ButtonFrame();
+        public ToggleButtonFrame TitleButton { get; } = new ToggleButtonFrame();
 
         public override string GetPrefix()
         {

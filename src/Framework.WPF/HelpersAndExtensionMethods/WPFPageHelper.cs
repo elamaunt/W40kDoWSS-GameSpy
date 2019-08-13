@@ -17,19 +17,19 @@ namespace Framework.WPF
             PreloadXamlPaths();
         }
 
-        public static BindableControl InstantiateControl(string prefix, string name)
+        public static IBindableView InstantiateView(string prefix, string name)
         {
             var contentElementType = FindElementViewType(name);
 
             if (contentElementType != null)
-                return (BindableControl)Activator.CreateInstance(contentElementType);
+                return (IBindableView)Activator.CreateInstance(contentElementType);
 
             name = (prefix.ToLowerInvariant()) + "_" + (name.ToLowerInvariant());
 
             if (XamlResources.TryGetValue(name, out string path))
             {
                 var resourceLocater = new System.Uri($@"/{AssemblyName};component/{path}.xaml", System.UriKind.Relative);
-                return (BindableControl)Application.LoadComponent(resourceLocater);
+                return (IBindableView)Application.LoadComponent(resourceLocater);
             }
 
             throw new Exception($"Xaml resource was not found with name: {name}.xaml");

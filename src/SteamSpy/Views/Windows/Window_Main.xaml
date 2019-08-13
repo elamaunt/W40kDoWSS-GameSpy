@@ -24,15 +24,15 @@
                 <local:RectBlurEffect FrameworkElement="{Binding ElementName=TopBorder, Mode=OneTime}"/>
             </Image.Effect>
         </Image>
-        <StackPanel Margin="0, 0, 0, 0" Orientation="Vertical">
-            <Border BorderThickness="0 0 0 0" BorderBrush="White" x:Name="TopBorder" Height="80">
+        
+            <Border BorderThickness="0 0 0 0" x:Name="TopBorder"  VerticalAlignment="Top"  Height="60">
                 <Border.Background>
-                    <SolidColorBrush Color="#222222" Opacity="0.35"></SolidColorBrush>
+                    <SolidColorBrush Color="#22000000"></SolidColorBrush>
                 </Border.Background>
-                <DockPanel Margin="0 20 0 0" LastChildFill="False">
+                <DockPanel Margin="0 20 0 0" VerticalAlignment="Stretch" LastChildFill="False">
                     <StackPanel DockPanel.Dock="Left" Margin="10 0 0 0" Orientation="Horizontal" x:Name="TopBar" VerticalAlignment="Center">
-                        <Image Source="/Images/thunderhawk_full.jpg" Height="40"></Image>
-                        <StackPanel Margin="10 0 0 0" Name="Tabs"
+
+                        <StackPanel Margin="10 0 0 0" x:Name="Tabs"
                     framework:WPFBinder.ItemPrefix="Tab"
                     framework:WPFBinder.ItemStyle="Default"
                     framework:WPFBinder.Frame="Pages"
@@ -44,9 +44,9 @@
                 </DockPanel>
             </Border>
 
-            <ContentControl Margin="0 30 0 0" Name="Content"
+            <ContentControl Margin="0 30 0 0" Name="Content" VerticalAlignment="Stretch"
                         framework:WPFBinder.Frame="Pages"/>
-
-        </StackPanel>
+        <Polygon HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="#22000000" Points="170,0, 0,170, 0,170, 170,170, 170,170, 170,0"/>
+        <Image Source="/Images/thunderhawk_icon.png" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Height="74"/>
     </Grid>
 </framework:BindableWindow>

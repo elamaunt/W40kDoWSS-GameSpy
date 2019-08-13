@@ -49,7 +49,7 @@
                         <Grid TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display">
                             <Border x:Name="PartBorder" Width="Auto" Height="Auto" Background="{DynamicResource BackgroundColor}"
                                 BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Padding="0">
-                                <Grid>
+                                <Grid VerticalAlignment="Stretch">
                                     <Grid Name="Topbar"
                                             Height="30" 
                                             HorizontalAlignment="Stretch"
@@ -104,8 +104,6 @@
                                         </Border>
                                     </Grid>
                                     <ContentPresenter
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch" 
                                         Name="WindowContent"/>
                                 </Grid>
                             </Border>

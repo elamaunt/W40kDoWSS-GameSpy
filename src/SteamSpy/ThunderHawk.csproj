@@ -268,8 +268,9 @@
     <Resource Include="Images\Primarismarines.jpg" />
     <Resource Include="Images\BestPlayer.png" />
     <Resource Include="Images\YbubakaGuide.png" />
-    <Resource Include="Images\thunderhawk_full.jpg" />
     <Resource Include="Images\settings.png" />
+    <Resource Include="Images\thunderhawk_full.png" />
+    <Resource Include="Images\thunderhawk_icon.png" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
