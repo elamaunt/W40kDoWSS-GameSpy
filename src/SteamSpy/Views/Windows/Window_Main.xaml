@@ -30,15 +30,15 @@
                     <SolidColorBrush Color="#222222" Opacity="0.35"></SolidColorBrush>
                 </Border.Background>
                 <DockPanel Margin="0 20 0 0" LastChildFill="False">
-                    <StackPanel DockPanel.Dock="Left" Margin="5 0 0 0" Orientation="Horizontal" x:Name="TopBar" VerticalAlignment="Center">
+                    <StackPanel DockPanel.Dock="Left" Margin="10 0 0 0" Orientation="Horizontal" x:Name="TopBar" VerticalAlignment="Center">
                         <Image Source="/Images/thunderhawk_full.jpg" Height="40"></Image>
-                        <StackPanel Margin="15 0 0 0" Name="Tabs"
+                        <StackPanel Margin="10 0 0 0" Name="Tabs"
                     framework:WPFBinder.ItemPrefix="Tab"
                     framework:WPFBinder.ItemStyle="Default"
                     framework:WPFBinder.Frame="Pages"
                     Orientation="Horizontal"/>
                     </StackPanel>
-                    <Button DockPanel.Dock="Right" Width="24" Height="24" Margin="0 0 25 0" framework:WPFBinder.Frame="OpenSettings" Style="{DynamicResource SettingsButtonStyle}">
+                    <Button DockPanel.Dock="Right" Margin="0 0 15 0" framework:WPFBinder.Frame="OpenSettings" Style="{DynamicResource SettingsButtonStyle}">
                         <Image Height="24" Width="24" Source="/Images/settings.png"/>
                     </Button>
                 </DockPanel>
