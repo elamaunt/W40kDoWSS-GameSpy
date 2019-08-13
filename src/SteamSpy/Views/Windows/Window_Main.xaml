@@ -15,14 +15,19 @@
         Width="1180" 
         Style="{DynamicResource WindowStyle}">
 
-    <StackPanel Margin="5, 5, 5, 5" Orientation="Vertical">
-        <StackPanel Name="Tabs"
+    <StackPanel Margin="0, 0, 0, 0" Orientation="Vertical">
+        <Border BorderThickness="0 0 0 0.5" BorderBrush="White" Height="50">
+            <StackPanel Margin="5 0 0 0" Orientation="Horizontal" x:Name="TopBar" VerticalAlignment="Center">
+                <Image Source="/Images/thunderhawk_full.jpg" Height="40"></Image>
+                <StackPanel Margin="5 0 0 0" Name="Tabs"
                 framework:WPFBinder.ItemPrefix="Tab"
                 framework:WPFBinder.ItemStyle="Default"
                 framework:WPFBinder.Frame="Pages"
                 Orientation="Horizontal"/>
+            </StackPanel>
+        </Border>
 
-        <ContentControl Name="Content"
+        <ContentControl Margin="0 30 0 0" Name="Content"
                         framework:WPFBinder.Frame="Pages"/>
 
     </StackPanel>

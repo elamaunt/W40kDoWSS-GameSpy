@@ -13,8 +13,8 @@ namespace ThunderHawk.Core
             {
                 new MainPageViewModel(),
                 new ChatPageViewModel(),
-                new ModificationsPageViewModel(){ Enabled = false },
-                new AllNewsPageViewModel(){ Enabled = false }
+                //new ModificationsPageViewModel(){ Enabled = false },
+                //new AllNewsPageViewModel(){ Enabled = false }
             };
 
             Pages.SelectedItem = Pages.DataSource[0];

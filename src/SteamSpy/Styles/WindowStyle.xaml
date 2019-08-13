@@ -55,13 +55,7 @@
                                            HorizontalAlignment="Center"
                                            VerticalAlignment="Top" 
                                            Stretch="UniformToFill">
-
                                     </Image>
-                                    <!--Image Source="/Images/bottom.png"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Bottom" 
-                                        Stretch="None">
-                                    </-->
                                     <StackPanel Orientation="Vertical">
                                         <Grid Name="Topbar"
                                               Height="30" 
@@ -71,9 +65,7 @@
                                                     HorizontalAlignment="Stretch" 
                                                     VerticalAlignment="Stretch"
                                                     BorderBrush="#22ffffff"
-                                                    BorderThickness="0" 
-                                                    Opacity=".3" 
-                                                    Panel.ZIndex="20">
+                                                    BorderThickness="0">
                                                 <Grid>
                                                     <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
                                                         <Grid.ColumnDefinitions>
