@@ -1,5 +1,5 @@
 ﻿using GSMasterServer.Data;
-using SteamSpy.Utils;
+using ThunderHawk.Utils;
 using Steamworks;
 using System;
 using System.Collections.Concurrent;
@@ -44,7 +44,6 @@ namespace GSMasterServer.Servers
 
         public ServerSteamPortRetranslator()
         {
-            GeoIP.Initialize(Log, Category);
             StartServer();
         }
 

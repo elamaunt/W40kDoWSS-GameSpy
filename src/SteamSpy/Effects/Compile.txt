@@ -1,0 +1,1 @@
+﻿fxc /O0 /Fc /Zi /T ps_2_0 /Fo RectBlurEffect.ps RectBlurEffect.fx

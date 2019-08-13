@@ -1,6 +1,6 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
-using SteamSpy.Utils;
+using ThunderHawk.Utils;
 using Steamworks;
 using System;
 using System.IO;

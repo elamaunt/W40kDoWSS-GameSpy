@@ -1,7 +1,7 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
-using SteamSpy;
-using SteamSpy.Utils;
+using ThunderHawk;
+using ThunderHawk.Utils;
 using System;
 using System.Linq;
 using System.Net;
@@ -25,8 +25,6 @@ namespace GSMasterServer.Servers
         
         public ServerListReport(IPAddress listen, ushort port)
         {
-            GeoIP.Initialize(Log, Category);
-
             StartServer(new AddressInfo()
             {
                 Address = listen,
@@ -265,26 +263,7 @@ namespace GSMasterServer.Servers
             server["QueryPort"] = remote.Port.ToString();
             server["LastRefreshed"] = DateTime.UtcNow.ToString();
             server["LastPing"] = DateTime.UtcNow.ToString();
-
-
-
-            // set the country based off ip address
-            if (GeoIP.Instance == null || GeoIP.Instance.Reader == null)
-            {
-                server["country"] = "??";
-            }
-            else
-            {
-               /* try
-                {
-                    server["country"] = GeoIP.Instance.Reader.Omni(server.Get<string>("IPAddress")).Country.IsoCode.ToUpperInvariant();
-                }
-                catch (Exception e)
-                {
-                    LogError(Category, e.ToString());*/
-                    server["country"] = "??";
-                //}
-            }
+            server["country"] = "??";
             
             for (int i = 0; i < serverVarsSplit.Length - 1; i += 2)
             {

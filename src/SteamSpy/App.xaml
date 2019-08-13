@@ -1,9 +1,18 @@
-﻿<Application x:Class="SteamSpy.App"
+﻿<framework:BindableApplication x:Class="ThunderHawk.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:SteamSpy"
-             StartupUri="MainWindow.xaml">
+             xmlns:local="clr-namespace:ThunderHawk"
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF">
     <Application.Resources>
-         
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/WindowStyle.xaml" />
+                <ResourceDictionary Source="Styles/SettingsWindowStyle.xaml" />
+                <ResourceDictionary Source="Styles/ButtonStyles.xaml" />
+                <ResourceDictionary Source="Styles/TextStyles.xaml" />
+                <ResourceDictionary Source="Styles/CheckBoxStyles.xaml" />
+                <ResourceDictionary Source="Resources/English.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Application.Resources>
-</Application>
+</framework:BindableApplication>

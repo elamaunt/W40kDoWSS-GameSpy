@@ -2,9 +2,9 @@
 using GSMasterServer.Utils;
 using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
-using SteamSpy;
-using SteamSpy.Data;
-using SteamSpy.Utils;
+using ThunderHawk;
+using ThunderHawk.Data;
+using ThunderHawk.Utils;
 using Steamworks;
 using System;
 using System.Collections.Concurrent;

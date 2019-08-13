@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:SteamSpy.Resources"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    <!-- Page names -->
+    <system:String x:Key="MainPage">Главная</system:String>
+
+    <!-- Main Page -->
+    <system:String x:Key="LaunchGame">Запустить игру</system:String>
+    <system:String x:Key="GameStateSuccess">Ошибок не обнаружено!</system:String>
+    <system:String x:Key="GameStateWarning">Есть некоторые предупреждения!</system:String>
+    <system:String x:Key="GameStateErrors">Обнаружены ошибки!</system:String>
+    <system:String x:Key="GameStateCantRun">Путь к игре не был найден!</system:String>
+
+    <!-- Settings -->
+    <system:String x:Key="DisableFog">Отключить туман?</system:String>
+</ResourceDictionary>

@@ -6,7 +6,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SteamSpy.Utils
+namespace ThunderHawk.Utils
 {
     internal static class SteamApiHelper
     {

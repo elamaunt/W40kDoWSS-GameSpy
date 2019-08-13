@@ -1,4 +1,4 @@
-﻿namespace SteamSpy.Utils
+﻿namespace ThunderHawk.Utils
 {
     internal static class SteamConstants
     {

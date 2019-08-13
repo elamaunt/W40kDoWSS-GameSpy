@@ -1,0 +1,19 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:SteamSpy.Resources"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    
+    <!-- Page names -->
+    <system:String x:Key="MainPage">Main</system:String>
+
+    <!-- Main Page -->
+    <system:String x:Key="LaunchGame">Launch game</system:String>
+    <system:String x:Key="GameStateSuccess">No errors found!</system:String>
+    <system:String x:Key="GameStateWarning">There are some warnings!</system:String>
+    <system:String x:Key="GameStateErrors">Errors found!</system:String>
+    <system:String x:Key="GameStateCantRun">Path to the game was not found!</system:String>
+
+    <!-- Settings -->
+    <system:String x:Key="DisableFog">Disable fog?</system:String>
+
+</ResourceDictionary>

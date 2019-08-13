@@ -1,0 +1,11 @@
+﻿<framework:BindableControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+             mc:Ignorable="d">
+    <Grid Margin="0 0 0 0">
+        <Label HorizontalAlignment="Center" VerticalAlignment="Center" framework:WPFBinder.Frame="Title" Foreground="White" />
+    </Grid>
+</framework:BindableControl>

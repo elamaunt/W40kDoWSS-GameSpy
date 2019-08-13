@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using GameServer = GSMasterServer.Data.GameServer;
 
-namespace SteamSpy.Utils
+namespace ThunderHawk.Utils
 {
     public static class SteamLobbyManager
     {
