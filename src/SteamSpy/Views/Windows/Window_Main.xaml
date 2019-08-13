@@ -39,7 +39,7 @@
                     Orientation="Horizontal"/>
                     </StackPanel>
                     <Button DockPanel.Dock="Right" Margin="0 0 15 0" framework:WPFBinder.Frame="OpenSettings" Style="{DynamicResource SettingsButtonStyle}">
-                        <Image Height="24" Width="24" Source="/Images/settings.png"/>
+                        <Image Height="16" Width="16" Source="/Images/settings.png"/>
                     </Button>
                 </DockPanel>
             </Border>
