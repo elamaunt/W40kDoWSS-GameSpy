@@ -4,6 +4,9 @@ namespace ThunderHawk.Core
 {
     public class ModificationsPageViewModel : EmbeddedPageViewModel
     {
-        public override ITextFrame Title { get; } = new TextFrame() { Text = "Modifications" };
+        public ModificationsPageViewModel()
+        {
+            TitleButton.Text = "Modifications";
+        }
     }
 }

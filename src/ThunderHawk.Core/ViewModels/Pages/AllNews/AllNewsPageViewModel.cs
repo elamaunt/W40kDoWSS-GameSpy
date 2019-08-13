@@ -4,6 +4,9 @@ namespace ThunderHawk.Core
 {
     public class AllNewsPageViewModel : EmbeddedPageViewModel
     {
-        public override ITextFrame Title { get; } = new TextFrame() { Text = "All News" };
+        public AllNewsPageViewModel()
+        {
+            TitleButton.Text = "All News";
+        }
     }
 }

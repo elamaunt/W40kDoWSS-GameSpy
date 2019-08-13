@@ -7,7 +7,6 @@
         xmlns:core="clr-namespace:ThunderHawk.Core;assembly=ThunderHawk.Core"
         xmlns:local="clr-namespace:ThunderHawk"
         FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
-        xmlns:dragablz="clr-namespace:Dragablz;assembly=Dragablz"
         mc:Ignorable="d"
         Title="ThunderHawk Soulstorm Launcher"
         MinHeight="700" 
@@ -16,6 +15,38 @@
         Width="1180" 
         Style="{DynamicResource WindowStyle}">
 
-    <dragablz:TabablzControl framework:WPFBinder.Frame="Pages"/>
+    <Grid>
+        <Image Source="/Images/launcher-background.png"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Top" 
+                                           Stretch="UniformToFill">
+            <Image.Effect>
+                <local:RectBlurEffect FrameworkElement="{Binding ElementName=TopBorder, Mode=OneTime}"/>
+            </Image.Effect>
+        </Image>
+        <StackPanel Margin="0, 0, 0, 0" Orientation="Vertical">
+            <Border BorderThickness="0 0 0 0" BorderBrush="White" x:Name="TopBorder" Height="80">
+                <Border.Background>
+                    <SolidColorBrush Color="#222222" Opacity="0.35"></SolidColorBrush>
+                </Border.Background>
+                <DockPanel Margin="0 20 0 0" LastChildFill="False">
+                    <StackPanel DockPanel.Dock="Left" Margin="10 0 0 0" Orientation="Horizontal" x:Name="TopBar" VerticalAlignment="Center">
+                        <Image Source="/Images/thunderhawk_full.jpg" Height="40"></Image>
+                        <StackPanel Margin="10 0 0 0" Name="Tabs"
+                    framework:WPFBinder.ItemPrefix="Tab"
+                    framework:WPFBinder.ItemStyle="Default"
+                    framework:WPFBinder.Frame="Pages"
+                    Orientation="Horizontal"/>
+                    </StackPanel>
+                    <Button DockPanel.Dock="Right" Margin="0 0 15 0" framework:WPFBinder.Frame="OpenSettings" Style="{DynamicResource SettingsButtonStyle}">
+                        <Image Height="24" Width="24" Source="/Images/settings.png"/>
+                    </Button>
+                </DockPanel>
+            </Border>
 
+            <ContentControl Margin="0 30 0 0" Name="Content"
+                        framework:WPFBinder.Frame="Pages"/>
+
+        </StackPanel>
+    </Grid>
 </framework:BindableWindow>
