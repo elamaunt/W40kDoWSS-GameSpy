@@ -15,20 +15,36 @@
         Width="1180" 
         Style="{DynamicResource WindowStyle}">
 
-    <StackPanel Margin="0, 0, 0, 0" Orientation="Vertical">
-        <Border BorderThickness="0 0 0 0.5" BorderBrush="White" Height="50">
-            <StackPanel Margin="5 0 0 0" Orientation="Horizontal" x:Name="TopBar" VerticalAlignment="Center">
-                <Image Source="/Images/thunderhawk_full.jpg" Height="40"></Image>
-                <StackPanel Margin="5 0 0 0" Name="Tabs"
-                framework:WPFBinder.ItemPrefix="Tab"
-                framework:WPFBinder.ItemStyle="Default"
-                framework:WPFBinder.Frame="Pages"
-                Orientation="Horizontal"/>
-            </StackPanel>
-        </Border>
+    <Grid>
+        <Image Source="/Images/launcher-background.png"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Top" 
+                                           Stretch="UniformToFill">
+            <Image.Effect>
+                <local:RectBlurEffect FrameworkElement="{Binding ElementName=TopBorder, Mode=OneTime}"/>
+            </Image.Effect>
+        </Image>
+        <StackPanel Margin="0, 0, 0, 0" Orientation="Vertical">
+            <Border BorderThickness="0 0 0 0" BorderBrush="White" x:Name="TopBorder" Height="80">
+                <Border.Background>
+                    <SolidColorBrush Color="#222222" Opacity="0.35"></SolidColorBrush>
+                </Border.Background>
+                <DockPanel Margin="0 20 0 0" LastChildFill="False">
+                    <StackPanel DockPanel.Dock="Left" Margin="5 0 0 0" Orientation="Horizontal" x:Name="TopBar" VerticalAlignment="Center">
+                        <Image Source="/Images/thunderhawk_full.jpg" Height="40"></Image>
+                        <StackPanel Margin="15 0 0 0" Name="Tabs"
+                    framework:WPFBinder.ItemPrefix="Tab"
+                    framework:WPFBinder.ItemStyle="Default"
+                    framework:WPFBinder.Frame="Pages"
+                    Orientation="Horizontal"/>
+                    </StackPanel>
+                    <Image DockPanel.Dock="Right" Height="32" Width="32" Source="/Images/settings.png"></Image>
+                </DockPanel>
+            </Border>
 
-        <ContentControl Margin="0 30 0 0" Name="Content"
+            <ContentControl Margin="0 30 0 0" Name="Content"
                         framework:WPFBinder.Frame="Pages"/>
 
-    </StackPanel>
+        </StackPanel>
+    </Grid>
 </framework:BindableWindow>

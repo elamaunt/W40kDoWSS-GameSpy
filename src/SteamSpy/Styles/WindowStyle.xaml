@@ -49,71 +49,64 @@
                         <Grid TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display">
                             <Border x:Name="PartBorder" Width="Auto" Height="Auto" Background="{DynamicResource BackgroundColor}"
                                 BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Padding="0">
-
                                 <Grid>
-                                    <Image Source="/Images/launcher-background.png" 
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Top" 
-                                           Stretch="UniformToFill">
-                                    </Image>
-                                    <StackPanel Orientation="Vertical">
-                                        <Grid Name="Topbar"
-                                              Height="30" 
-                                              HorizontalAlignment="Stretch"
-                                              VerticalAlignment="Top">
-                                            <Border Name="Border" 
-                                                    HorizontalAlignment="Stretch" 
-                                                    VerticalAlignment="Stretch"
-                                                    BorderBrush="#22ffffff"
-                                                    BorderThickness="0">
-                                                <Grid>
-                                                    <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
-                                                        <Grid.ColumnDefinitions>
-                                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                                            <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                                        </Grid.ColumnDefinitions>
-                                                        <Button x:Name="MinButton" Grid.Column="0" Width="32" Height="25" Style="{DynamicResource ButtonStyle}"
-                                                    Click="MinButtonClick" WindowChrome.IsHitTestVisibleInChrome="True">
-                                                            <Grid Width="32" Height="25" Background="Transparent">
-                                                                <Path
-                                                                Stroke="{StaticResource BrushColor}"
-                                                                StrokeThickness="2"
-                                                                Data="m10,16 h12 "/>
-                                                            </Grid>
-                                                        </Button>
-                                                        <Button x:Name="MaxButton" Grid.Column="1" Width="32" Height="25" Style="{DynamicResource ButtonStyle}"
-                                                    Click="MaxButtonClick" WindowChrome.IsHitTestVisibleInChrome="True">
-                                                            <Grid Width="32" Height="25" Background="Transparent">
-                                                                <Path
-                                                                Stroke="{StaticResource BrushColor}"
-                                                                StrokeThickness="2"
-                                                                Data="m12,9 h9 v7 h-9 v-8"/>
-                                                                <Path
-                                                                x:Name="MaxButtonAdditive"   
-                                                                Stroke="{StaticResource BrushColor}"
-                                                                StrokeThickness="1.5"
-                                                                Data=""/>
-                                                            </Grid>
-                                                        </Button>
-                                                        <Button x:Name="CloseButton" Grid.Column="2" Width="32" Height="25" Style="{DynamicResource ButtonStyle}"
-                                                    Click="CloseButtonClick" WindowChrome.IsHitTestVisibleInChrome="True">
-                                                            <Grid Width="32" Height="25" Background="Transparent">
-                                                                <Path
-                                                                Stroke="{StaticResource BrushColor}"
-                                                                StrokeThickness="2"
-                                                                Data="M10,7 L20,17 M10,17 L20,7"/>
-                                                            </Grid>
-                                                        </Button>
-                                                    </Grid>
-                                                </Grid>
-                                            </Border>
-                                        </Grid>
-                                        <ContentPresenter
+                                    <Grid Name="Topbar"
+                                            Height="30" 
                                             HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch" 
-                                            Name="WindowContent"/>
-                                    </StackPanel>
+                                            VerticalAlignment="Top"
+                                          Panel.ZIndex="10">
+                                        <Border Name="Border" 
+                                                HorizontalAlignment="Stretch" 
+                                                VerticalAlignment="Stretch"
+                                                BorderBrush="#22ffffff"
+                                                BorderThickness="0">
+                                            <Grid>
+                                                <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Button x:Name="MinButton" Grid.Column="0" Width="32" Height="25" Style="{DynamicResource ButtonStyle}"
+                                                Click="MinButtonClick" WindowChrome.IsHitTestVisibleInChrome="True">
+                                                        <Grid Width="32" Height="25" Background="Transparent">
+                                                            <Path
+                                                            Stroke="{StaticResource BrushColor}"
+                                                            StrokeThickness="2"
+                                                            Data="m10,16 h12 "/>
+                                                        </Grid>
+                                                    </Button>
+                                                    <Button x:Name="MaxButton" Grid.Column="1" Width="32" Height="25" Style="{DynamicResource ButtonStyle}"
+                                                Click="MaxButtonClick" WindowChrome.IsHitTestVisibleInChrome="True">
+                                                        <Grid Width="32" Height="25" Background="Transparent">
+                                                            <Path
+                                                            Stroke="{StaticResource BrushColor}"
+                                                            StrokeThickness="2"
+                                                            Data="m12,9 h9 v7 h-9 v-8"/>
+                                                            <Path
+                                                            x:Name="MaxButtonAdditive"   
+                                                            Stroke="{StaticResource BrushColor}"
+                                                            StrokeThickness="1.5"
+                                                            Data=""/>
+                                                        </Grid>
+                                                    </Button>
+                                                    <Button x:Name="CloseButton" Grid.Column="2" Width="32" Height="25" Style="{DynamicResource ButtonStyle}"
+                                                Click="CloseButtonClick" WindowChrome.IsHitTestVisibleInChrome="True">
+                                                        <Grid Width="32" Height="25" Background="Transparent">
+                                                            <Path
+                                                            Stroke="{StaticResource BrushColor}"
+                                                            StrokeThickness="2"
+                                                            Data="M10,7 L20,17 M10,17 L20,7"/>
+                                                        </Grid>
+                                                    </Button>
+                                                </Grid>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                    <ContentPresenter
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" 
+                                        Name="WindowContent"/>
                                 </Grid>
                             </Border>
                         </Grid>
