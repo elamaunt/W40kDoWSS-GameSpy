@@ -8,7 +8,8 @@ namespace ThunderHawk.Core
         {
             batch.RegisterControllerFactory(() => new MainPageController());
             batch.RegisterControllerFactory(() => new MainWindowTabsController());
-
+            batch.RegisterControllerFactory(() => new MainWindowController());
+            
             batch.RegisterServiceFactory<INewsProvider>(() => new TestNewsProvider());
         }
     }
