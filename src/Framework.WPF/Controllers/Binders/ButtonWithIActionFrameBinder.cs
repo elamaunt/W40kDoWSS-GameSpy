@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace Framework.WPF
 {
-    internal class ButtonWithIActionFrameBinder : BindingController<Button, IActionFrame>
+    internal class ButtonWithIActionFrameBinder : BindingController<ButtonBase, IActionFrame>
     {
         protected override void OnBind()
         {

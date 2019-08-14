@@ -13,5 +13,5 @@
     <system:String x:Key="GameStateCantRun">Путь к игре не был найден!</system:String>
 
     <!-- Settings -->
-    <system:String x:Key="DisableFog">Отключить туман?</system:String>
+    <system:String x:Key="DisableFog">Отключить туман</system:String>
 </ResourceDictionary>

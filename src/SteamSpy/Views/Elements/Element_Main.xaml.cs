@@ -1,7 +1,4 @@
-﻿using Framework;
-using Framework.WPF;
-using System.Windows;
-using ThunderHawk.Core;
+﻿using ThunderHawk.Core;
 
 namespace ThunderHawk
 {

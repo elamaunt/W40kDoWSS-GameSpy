@@ -9,7 +9,7 @@
                 case "element": return WPFPageHelper.InstantiateControl(name);
                 case "window": return WPFPageHelper.InstantiateWindow(name);
                 case "page": return WPFPageHelper.InstantiatePage(name);
-                default: return WPFPageHelper.InstantiateControl(prefix, name);
+                default: return WPFPageHelper.InstantiateView(prefix, name);
             }
         }
     }

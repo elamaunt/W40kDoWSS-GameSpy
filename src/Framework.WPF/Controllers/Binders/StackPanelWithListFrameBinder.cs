@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Framework.WPF
 {
@@ -20,16 +23,20 @@ namespace Framework.WPF
             OnDataSourceChanged();
         }
 
+
         private void OnDataSourceChanged()
         {
             View.Children.Clear();
+
+            int i = 0;
             foreach (ViewModel item in Frame.DataSource)
-                View.Children.Add(CreateItemCell(item));
+                View.Children.Add(CreateItemCell(item, i++));
         }
 
-        private UIElement CreateItemCell(ViewModel model)
+        private UIElement CreateItemCell(ViewModel model, int index)
         {
             var view = (IBindableView)Service<IViewFactory>.Get().CreateView(_itemPrefix ?? model.GetPrefix(), _itemStyle ?? model.GetViewStyle());
+
             view.ViewModel = model;
             _bindedElements.Add(view);
             return (UIElement)view;

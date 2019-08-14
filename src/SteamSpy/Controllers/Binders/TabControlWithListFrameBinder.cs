@@ -1,6 +1,5 @@
 ﻿using Framework;
 using System.Collections.Generic;
-using System.Windows;
 using System.Windows.Controls;
 
 namespace ThunderHawk
@@ -13,8 +12,6 @@ namespace ThunderHawk
         {
             SubscribeOnPropertyChanged(Frame, nameof(IListFrame.DataSource), OnDataSourceChanged);
             OnDataSourceChanged();
-            
-            View.SelectedIndex = 0;
         }
 
         private void OnDataSourceChanged()

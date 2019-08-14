@@ -86,7 +86,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="ApplicationModule.cs" />
-    <Compile Include="Config.cs" />
     <Compile Include="Controllers\Binders\TabControlWithListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TabItemWithPageViewModelBinder.cs" />
     <Compile Include="Effects\RectBlurEffect.cs" />
@@ -96,7 +95,11 @@
     <Compile Include="Data\GameServer.cs" />
     <Compile Include="Data\Race.cs" />
     <Compile Include="Data\ServerFlags.cs" />
-    <Compile Include="StaticClasses\SoulstormExtensions.cs" />
+    <Compile Include="Services\Implementations\LaunchService.cs" />
+    <Compile Include="StaticClasses\ExternalData.cs" />
+    <Compile Include="StaticClasses\Soulstorm\FogRemover.cs" />
+    <Compile Include="StaticClasses\ExternalMethods.cs" />
+    <Compile Include="StaticClasses\Soulstorm\ProcessFinder.cs" />
     <Compile Include="Services\Implementations\LangService.cs" />
     <Compile Include="StaticClasses\WPFExtensions.cs" />
     <Compile Include="Styles\SettingsWindowStyle.cs" />
@@ -108,7 +111,7 @@
     <Compile Include="Servers\ServerSteamPortRetranslator.cs" />
     <Compile Include="Servers\ServerListReport.cs" />
     <Compile Include="Servers\ServerListRetrieve.cs" />
-    <Compile Include="StaticClasses\PathFinder.cs" />
+    <Compile Include="StaticClasses\Soulstorm\PathFinder.cs" />
     <Compile Include="Styles\WindowStyle.cs" />
     <Compile Include="Utils\ByteHelpers.cs" />
     <Compile Include="Utils\ChatCrypt.cs" />
@@ -268,8 +271,9 @@
     <Resource Include="Images\Primarismarines.jpg" />
     <Resource Include="Images\BestPlayer.png" />
     <Resource Include="Images\YbubakaGuide.png" />
-    <Resource Include="Images\thunderhawk_full.jpg" />
     <Resource Include="Images\settings.png" />
+    <Resource Include="Images\thunderhawk_full.png" />
+    <Resource Include="Images\thunderhawk_icon.png" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

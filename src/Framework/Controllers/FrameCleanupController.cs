@@ -9,7 +9,7 @@
 
         protected override void OnUnbind()
         {
-            Frame.Cleanup();
+            Frame?.Cleanup();
             base.OnUnbind();
         }
     }

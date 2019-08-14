@@ -36,7 +36,7 @@ namespace ThunderHawk
 
             CoreContext.Start(System.Net.IPAddress.Any);
 
-            StaticClasses.SoulstormExtensions.Init();
+            StaticClasses.Soulstorm.PathFinder.Find();
 
             //ModifyHostsFile(Entries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
 

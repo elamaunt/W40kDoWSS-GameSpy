@@ -14,6 +14,6 @@
     <system:String x:Key="GameStateCantRun">Path to the game was not found!</system:String>
 
     <!-- Settings -->
-    <system:String x:Key="DisableFog">Disable fog?</system:String>
+    <system:String x:Key="DisableFog">Disable fog</system:String>
 
 </ResourceDictionary>
