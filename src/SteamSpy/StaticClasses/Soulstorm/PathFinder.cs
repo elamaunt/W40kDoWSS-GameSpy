@@ -1,16 +1,27 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.IO;
-using System.Linq;
 
-namespace ThunderHawk.StaticClasses
+namespace ThunderHawk.StaticClasses.Soulstorm
 {
     public static class PathFinder
     {
         private static readonly string defaultSteamPath = @"C:\Program Files (x86)\Steam\steamapps\common\Dawn of War Soulstorm";
         private static readonly string regSteamPath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Steam App 9450";
 
-        public static string FindSteamSoulstorm()
+        public static string GamePath { get; private set; }
+
+        public static bool IsPathFound()
+        {
+            return !string.IsNullOrWhiteSpace(GamePath);
+        }
+
+        public static void Find()
+        {
+            GamePath = FindSteamSoulstorm();
+        }
+
+        private static string FindSteamSoulstorm()
         {
             // First. Try to check THIS folder. Maybe user installed launcher to the game-folder.
             var currentDirectory = Directory.GetCurrentDirectory();

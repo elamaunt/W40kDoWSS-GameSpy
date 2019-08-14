@@ -23,7 +23,7 @@ namespace ThunderHawk.Core
 
         void LaunchGame()
         {
-            // TODO: launch SS1.2
+            CoreContext.LaunchService.LaunchGame();
         }
     }
 }

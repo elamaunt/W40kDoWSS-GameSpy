@@ -11,6 +11,7 @@ namespace ThunderHawk.Core
             batch.RegisterControllerFactory(() => new MainWindowController());
             
             batch.RegisterServiceFactory<INewsProvider>(() => new TestNewsProvider());
+            batch.RegisterServiceFactory<IOptionsService>(() => new OptionsProvider());
         }
     }
 }
