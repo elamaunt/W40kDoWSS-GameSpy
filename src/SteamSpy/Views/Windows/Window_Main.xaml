@@ -25,20 +25,19 @@
             </Image.Effect>
         </Image>
         
-            <Border BorderThickness="0 0 0 0" x:Name="TopBorder"  VerticalAlignment="Top"  Height="60">
+            <Border BorderThickness="0 0 0 0" x:Name="TopBorder"  VerticalAlignment="Top" Height="60">
                 <Border.Background>
                     <SolidColorBrush Color="#22000000"></SolidColorBrush>
                 </Border.Background>
                 <DockPanel Margin="0 20 0 0" VerticalAlignment="Stretch" LastChildFill="False">
-                    <StackPanel DockPanel.Dock="Left" Margin="10 0 0 0" Orientation="Horizontal" x:Name="TopBar" VerticalAlignment="Center">
-
-                        <StackPanel Margin="10 0 0 0" x:Name="Tabs"
+                <StackPanel DockPanel.Dock="Left" Margin="10 0 0 0" Orientation="Horizontal" x:Name="TopBar" VerticalAlignment="Top">
+                    <StackPanel Margin="10 0 0 0" x:Name="Tabs"
                     framework:WPFBinder.ItemPrefix="Tab"
                     framework:WPFBinder.ItemStyle="Default"
                     framework:WPFBinder.Frame="Pages"
                     Orientation="Horizontal"/>
                     </StackPanel>
-                    <Button DockPanel.Dock="Right" Margin="0 0 15 0" framework:WPFBinder.Frame="OpenSettings" Style="{DynamicResource SettingsButtonStyle}">
+                    <Button DockPanel.Dock="Right" Margin="0 0 15 0"  VerticalAlignment="Center" framework:WPFBinder.Frame="OpenSettings" Style="{DynamicResource SettingsButtonStyle}">
                         <Image Height="16" Width="16" Source="/Images/settings.png"/>
                     </Button>
                 </DockPanel>
