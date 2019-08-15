@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Windows;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 using ThunderHawk.Tweaks;
@@ -35,7 +34,8 @@ namespace ThunderHawk
                         UseShellExecute = true,
                         WorkingDirectory = PathFinder.GamePath
                     });
-                    //FogRemover.DisableFog(ssProc)
+                    if (Core.CoreContext.OptionsService.DisableFog)
+                        FogRemover.DisableFog(ssProc);
                 }
                 else
                 {

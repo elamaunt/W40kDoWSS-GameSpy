@@ -9,9 +9,10 @@ namespace ThunderHawk.Core
             batch.RegisterControllerFactory(() => new MainPageController());
             batch.RegisterControllerFactory(() => new MainWindowTabsController());
             batch.RegisterControllerFactory(() => new MainWindowController());
-            
+            batch.RegisterControllerFactory(() => new SettingsWindowController());
+
             batch.RegisterServiceFactory<INewsProvider>(() => new TestNewsProvider());
-            batch.RegisterServiceFactory<IOptionsService>(() => new OptionsProvider());
+            batch.RegisterServiceFactory<IOptionsService>(() => new OptionsService());
         }
     }
 }

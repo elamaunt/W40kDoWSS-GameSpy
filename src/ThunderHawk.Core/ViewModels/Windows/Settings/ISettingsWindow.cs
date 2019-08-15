@@ -1,6 +1,6 @@
 ﻿namespace ThunderHawk.Core
 {
-    class ISettingsWindow
+    public interface ISettingsWindow
     {
     }
 }
