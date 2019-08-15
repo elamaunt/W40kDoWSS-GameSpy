@@ -6,16 +6,23 @@ namespace Framework
 {
     public class NLoggerLogService : ILogService
     {
-        public void Write(object obj, string callerFilePath, string callerMemberName, int sourceLineNumber)
+        public void Write(object obj, LogLevel logLevel, string callerFilePath, string callerMemberName, int sourceLineNumber)
         {
             var name = $"{Path.GetFileName(callerFilePath)} / {callerMemberName} / {sourceLineNumber}";
             var logger = LogManager.GetLogger(name);
             var exception = obj as Exception;
 
-            if (exception != null)
-                logger.Error(exception);
-            else
-                logger.Log(LogLevel.Info, obj);
+            var logger = LogManager.GetLogger(frame.GetMethod().DeclaringType.FullName);
+
+            if (logLevel == null)
+            {
+                if (obj is Exception)
+                    logLevel = LogLevel.Error;
+                else
+                    logLevel = LogLevel.Info;
+            }
+
+            logger.Log(logLevel, obj);
         }
     }
 }

@@ -1,9 +1,10 @@
-﻿using System.Diagnostics;
+﻿using NLog;
+using System.Diagnostics;
 
 namespace Framework
 {
     public interface ILogService
     {
-        void Write(object obj, string callerFilePath, string callerMemberName, int sourceLineNumber);
+        void Write(object obj, LogLevel logLevel, string callerFilePath, string callerMemberName, int sourceLineNumber);
     }
 }
