@@ -10,9 +10,6 @@ namespace Framework
         {
             var name = $"{Path.GetFileName(callerFilePath)} / {callerMemberName} / {sourceLineNumber}";
             var logger = LogManager.GetLogger(name);
-            var exception = obj as Exception;
-
-            var logger = LogManager.GetLogger(frame.GetMethod().DeclaringType.FullName);
 
             if (logLevel == null)
             {

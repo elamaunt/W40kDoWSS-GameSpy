@@ -9,7 +9,7 @@ namespace ThunderHawk.Core
     {
        static ILogService LogService { get; } = Service<ILogService>.Get();
        
-        public static void Log(object obj, LogLevel logLevel = null
+        public static void Log(object obj, LogLevel logLevel = null,
             [CallerFilePath]string callerFilePath = "",
             [CallerMemberName]string callerMemberName = "", 
             [CallerLineNumber]int sourceLineNumber = 0)
