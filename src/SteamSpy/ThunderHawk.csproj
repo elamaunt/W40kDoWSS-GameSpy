@@ -124,7 +124,6 @@
     <Compile Include="Utils\SteamRichPresences.cs" />
     <Compile Include="Utils\SystemExtensionMethods.cs" />
     <Compile Include="Utils\TaskHelper.cs" />
-    <Compile Include="Views\Elements\Element_Main.xaml.cs" />
     <Compile Include="Views\Windows\Window_Main.xaml.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -165,6 +164,10 @@
     <Page Include="Styles\WindowStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Elements\Element_NewsViewer.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Elements\Element_Modifications.xaml">
       <Generator>MSBuild:Compile</Generator>

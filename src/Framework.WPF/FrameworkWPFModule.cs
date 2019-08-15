@@ -20,7 +20,7 @@
             batch.RegisterControllerFactory(() => new ContentControlWithIListFrameBinder());
             batch.RegisterControllerFactory(() => new UIElementWithIControlFrameBinder());
             batch.RegisterControllerFactory(() => new ToggleButtonWithIToggleFrameBinder());
+            batch.RegisterControllerFactory(() => new FrameWithIListFrameBinder());
         }
-        
     }
 }

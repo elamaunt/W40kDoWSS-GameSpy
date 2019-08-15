@@ -48,7 +48,7 @@
                     </DockPanel>
                 </Border>
             </StackPanel>
-            <Button Style="{DynamicResource CardViewSmallButtonStyle}" Background="Transparent" Content=""/>
+            <Button framework:WPFBinder.Frame="Navigate" Style="{DynamicResource CardViewSmallButtonStyle}" Background="Transparent" Content=""/>
         </Grid>
     </Border>
 </framework:BindableControl>

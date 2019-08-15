@@ -52,6 +52,7 @@
     <Compile Include="Bindable\BindablePage.cs" />
     <Compile Include="Controllers\Binders\ButtonWithIActionFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ButtonWithITextFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\FrameWithIListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ContentControlWithIListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ToggleButtonWithIToggleFrameBinder.cs" />
     <Compile Include="Controllers\Binders\UIElementWithIControlFrameBinder.cs" />

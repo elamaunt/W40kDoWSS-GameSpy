@@ -3,22 +3,33 @@ using System.Linq;
 
 namespace ThunderHawk.Core
 {
-    public class MainPageController : BindingController<IMainPage, MainPageViewModel>
+    public class MainPageController : FrameController<MainPageViewModel>
     {
         protected override void OnBind()
         {
-            // Logger.Log("Test log");
-
             Frame.Title.Text = CoreContext.LangService.GetString("MainPage");
 
             Frame.LaunchGame.Action = LaunchGame;
 
-            var newsSource = CoreContext.NewsProvider.GetNews()
-                .Select(x => new NewsItemViewModel(x))
-                .ToObservableCollection();
+            CoreContext.NewsProvider.GetNews()
+                .OnCompletedOnUi(news =>
+                {
+                    var newsSource = news.Select(x =>
+                    {
+                        var itemVM = new NewsItemViewModel(x);
 
-            newsSource[0].Big = true;
-            Frame.News.DataSource = newsSource;
+                        itemVM.Navigate.Action = () => Frame.GlobalNavigationManager?.OpenPage<NewsViewerPageViewModel>(bundle =>
+                        {
+                            bundle.SetString(nameof(NewsViewerPageViewModel.NewsItem), x.AsJson());
+                        });
+
+                        return itemVM;
+                    })
+                    .ToObservableCollection();
+
+                    newsSource[0].Big = true;
+                    Frame.News.DataSource = newsSource;
+                });
         }
 
         void LaunchGame()

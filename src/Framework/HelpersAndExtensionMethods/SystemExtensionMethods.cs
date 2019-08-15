@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading;
@@ -8,6 +9,22 @@ namespace Framework
 {
     public static class SystemExtensionMethods
     {
+        public static T OfJson<T>(this string value)
+        {
+            if (value.IsNullOrEmpty())
+                return default;
+
+            return JsonConvert.DeserializeObject<T>(value);
+        }
+
+        public static string AsJson(this object value)
+        {
+            if (value == null)
+                return null;
+
+            return JsonConvert.SerializeObject(value);
+        }
+
         public static bool IsZero(this IntPtr self)
         {
             return self == IntPtr.Zero;

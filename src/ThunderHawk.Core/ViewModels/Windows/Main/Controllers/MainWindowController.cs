@@ -2,7 +2,7 @@
 
 namespace ThunderHawk.Core
 {
-    class MainWindowController : BindingController<IMainWindow, MainWindowViewModel>
+    class MainWindowController : FrameController<MainWindowViewModel>
     {
         protected override void OnBind()
         {
@@ -11,7 +11,7 @@ namespace ThunderHawk.Core
 
         void OpenSettings()
         {
-            View.OpenWindow(new SettingsWindowViewModel());
+            Frame.GlobalNavigationManager.OpenWindow<SettingsWindowViewModel>();
         }
     }
 }

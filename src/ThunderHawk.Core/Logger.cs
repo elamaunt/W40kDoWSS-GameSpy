@@ -1,15 +1,17 @@
 ﻿using Framework;
-using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace ThunderHawk.Core
 {
     public static class Logger
     {
        static ILogService LogService { get; } = Service<ILogService>.Get();
-
-        public static void Log(object obj)
+        public static void Log(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "", 
+            [CallerLineNumber]int sourceLineNumber = 0)
         {
-            LogService.Write(obj, new StackFrame(1, false));
+            LogService.Write(obj, callerFilePath, callerMemberName, sourceLineNumber);
         }
     }
 }

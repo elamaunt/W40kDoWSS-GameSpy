@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace ThunderHawk.Core
 {
     public class ServerNewsProvider : INewsProvider
     {
-        public NewsItemDTO[] GetNews()
+        public Task<NewsItemDTO[]> GetNews()
         {
             throw new NotImplementedException();
         }

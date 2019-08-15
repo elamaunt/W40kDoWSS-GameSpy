@@ -2,7 +2,7 @@
 
 namespace Framework.WPF
 {
-    public partial class BindableWindow : Window, IBindableView
+    public partial class BindableWindow : Window, IBindableWindow
     {
         public WindowViewModel ViewModel
         {

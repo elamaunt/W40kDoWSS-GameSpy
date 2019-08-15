@@ -43,8 +43,7 @@
                 </DockPanel>
             </Border>
 
-            <ContentControl Margin="0 30 0 0" Name="Content" VerticalAlignment="Stretch"
-                        framework:WPFBinder.Frame="Pages"/>
+        <Frame Margin="0 30 0 0" NavigationUIVisibility="Hidden" Name="NavigationFrame" VerticalAlignment="Stretch" framework:WPFBinder.Frame="Pages"/>
         <Polygon HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="#22000000" Points="170,0, 0,170, 0,170, 170,170, 170,170, 170,0"/>
         <Image Source="/Images/thunderhawk_icon.png" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Height="74"/>
     </Grid>

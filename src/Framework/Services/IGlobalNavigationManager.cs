@@ -4,7 +4,12 @@ namespace Framework
 {
     public interface IGlobalNavigationManager
     {
-        void ShowWindow<WindowViewModelType>(Action<IDataBundle> inflateBundle = null)
+        void OpenPage<PageViewModelType>(Action<IDataBundle> inflateBundle = null)
+            where PageViewModelType : PageViewModel, new();
+
+        void GoBack();
+
+        IBindableWindow OpenWindow<WindowViewModelType>(Action<IDataBundle> inflateBundle = null)
             where WindowViewModelType : WindowViewModel, new();
     }
 }

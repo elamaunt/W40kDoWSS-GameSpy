@@ -1,11 +1,14 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace ThunderHawk.Core
 {
     class TestNewsProvider : INewsProvider
     {
-        public NewsItemDTO[] GetNews()
+        public async Task<NewsItemDTO[]> GetNews()
         {
+            await Task.Delay(3000).ConfigureAwait(false);
+
             return new NewsItemDTO[]
                 {
                     new NewsItemDTO()

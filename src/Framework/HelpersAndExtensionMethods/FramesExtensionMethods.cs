@@ -12,5 +12,10 @@ namespace Framework
             Dispatcher.RunOnMainThread(() => indicator.Visible = true);
             return task.OnContinueOnUi(() => indicator.Visible = false);
         }
+
+        public static object CreateView(this IViewFactory factory, ViewModel viewModel)
+        {
+            return factory.CreateView(viewModel.GetPrefix(), viewModel.GetName());
+        }
     }
 }

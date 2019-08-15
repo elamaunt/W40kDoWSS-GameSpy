@@ -22,7 +22,7 @@
                     <DropShadowEffect Color="Black" Direction="270" ShadowDepth="1" BlurRadius="0.4" Opacity="0.25" />
                 </TextBlock.Effect>
             </TextBlock>
-            <Button Style="{DynamicResource CardViewBigButtonStyle}" Background="Transparent" Content=""/>
+            <Button framework:WPFBinder.Frame="Navigate" Style="{DynamicResource CardViewBigButtonStyle}" Background="Transparent" Content=""/>
         </Grid>
     </Border>
 </framework:BindableControl>
