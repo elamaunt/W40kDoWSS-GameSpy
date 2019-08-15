@@ -1,4 +1,5 @@
 ﻿using Framework;
+using NLog;
 using System.Diagnostics;
 
 namespace ThunderHawk.Core
@@ -7,9 +8,9 @@ namespace ThunderHawk.Core
     {
        static ILogService LogService { get; } = Service<ILogService>.Get();
 
-        public static void Log(object obj)
+        public static void Log(object obj, LogLevel logLevel = null)
         {
-            LogService.Write(obj, new StackFrame(1, false));
+            LogService.Write(obj, new StackFrame(1, false), logLevel);
         }
     }
 }
