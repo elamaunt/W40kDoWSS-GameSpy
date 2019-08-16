@@ -8,17 +8,16 @@ namespace Framework
     {
         public void Write(object obj, LogLevel logLevel, string callerFilePath, string callerMemberName, int sourceLineNumber)
         {
-            var name = $"{Path.GetFileName(callerFilePath)} / {callerMemberName} / {sourceLineNumber}";
+            var name = $"{Path.GetFileName(callerFilePath)} line {sourceLineNumber} / {callerMemberName}";
             var logger = LogManager.GetLogger(name);
 
-            if (logLevel == null)
+            /*if (logLevel == null)
             {
                 if (obj is Exception)
                     logLevel = LogLevel.Error;
                 else
                     logLevel = LogLevel.Info;
-            }
-
+            }*/
             logger.Log(logLevel, obj);
         }
     }

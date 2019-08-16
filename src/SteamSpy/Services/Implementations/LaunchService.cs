@@ -44,7 +44,7 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
-                Logger.Log(ex);
+                Logger.Error(ex);
             }
         }
     }

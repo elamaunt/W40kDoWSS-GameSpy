@@ -13,7 +13,10 @@
                 <Border.Background>
                     <SolidColorBrush Color="#dd1c1a1b"/>
                 </Border.Background>
-                <Image Height="240" framework:WPFBinder.Frame="Image" Stretch="Uniform"/>
+                <DockPanel>
+                    <Image DockPanel.Dock="Left" Height="240" framework:WPFBinder.Frame="Image" Stretch="Uniform"/>
+                    
+                </DockPanel>
             </Border>
             <Border Height="240" Padding="16 16 16 8">
                 <Border.Background>
