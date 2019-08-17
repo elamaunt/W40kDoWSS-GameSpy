@@ -8,8 +8,11 @@ namespace ThunderHawk.Core
         public ActionFrame LaunchGame { get; } = new ActionFrame();
 
         public ActionFrame FAQLabel { get; } = new ActionFrame();
-        public ActionFrame HelpingLabel { get; } = new ActionFrame();
-        public ToggleFrame ErrorsFound { get; } = new ToggleFrame();
+
+        public TextFrame ErrorsType { get; } = new TextFrame();
+
+        public ActionFrame FoundErrors { get; } = new ActionFrame();
+
         public MainPageViewModel()
         {
             TitleButton.Text = "Main";

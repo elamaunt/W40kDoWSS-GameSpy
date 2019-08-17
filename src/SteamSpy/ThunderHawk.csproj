@@ -94,6 +94,7 @@
     <Compile Include="Data\Race.cs" />
     <Compile Include="Data\ServerFlags.cs" />
     <Compile Include="Services\Implementations\LaunchService.cs" />
+    <Compile Include="Services\Implementations\TweaksService.cs" />
     <Compile Include="StaticClasses\ExternalData.cs" />
     <Compile Include="StaticClasses\Soulstorm\FogRemover.cs" />
     <Compile Include="StaticClasses\ExternalMethods.cs" />

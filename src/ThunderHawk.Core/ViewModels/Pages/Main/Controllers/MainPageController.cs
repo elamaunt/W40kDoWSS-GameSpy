@@ -13,7 +13,14 @@ namespace ThunderHawk.Core
             Frame.LaunchGame.Action = LaunchGame;
             Frame.FAQLabel.Action = OpenFAQ;
 
-            Frame.ErrorsFound.Visible = false;
+            Frame.FoundErrors.Visible = false;
+
+            if (!CoreContext.TweaksService.Tweaks[0].CheckTweak())
+            {
+                Frame.FoundErrors.Visible = true;
+                Frame.ErrorsType.Text = "Найдены некоторые проблемы!";
+            }
+
 
             CoreContext.NewsProvider.GetNews()
                 .OnCompletedOnUi(news =>
