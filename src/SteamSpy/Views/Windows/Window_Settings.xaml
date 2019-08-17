@@ -7,7 +7,6 @@
         mc:Ignorable="d"
         Title="SettingsWindow" Height="140" Width="280" Style="{DynamicResource SettingsWindowStyle}">
     <Grid Margin="5, 5, 5, 5">
-        <CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" IsChecked="{Binding DisableFog}" 
-                  Content="{DynamicResource DisableFog}" Style="{DynamicResource SettingsCheckBoxStyle}"/>
+        <CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" framework:WPFBinder.Frame="DisableFog" Style="{DynamicResource SettingsCheckBoxStyle}"/>
     </Grid>
 </framework:BindableWindow>

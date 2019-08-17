@@ -2,7 +2,7 @@
 
 namespace ThunderHawk.Core
 {
-    class SettingsWindowController : BindingController<ISettingsWindow, SettingsWindowViewModel>
+    class SettingsWindowController : FrameController<SettingsWindowViewModel>
     {
         protected override void OnBind()
         {
