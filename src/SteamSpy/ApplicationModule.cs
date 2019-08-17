@@ -1,5 +1,7 @@
 ﻿using Framework;
 using ThunderHawk.Core;
+using ThunderHawk.Core.Services;
+using ThunderHawk.Tweaks;
 
 namespace ThunderHawk
 {
@@ -9,6 +11,9 @@ namespace ThunderHawk
         {
             batch.RegisterServiceFactory<ILangService>(() => new LangService());
             batch.RegisterServiceFactory<ILaunchService>(() => new LaunchService());
+
+            batch.RegisterServiceFactory<ITweakService>(() => new UnlockerService());
+
             batch.RegisterControllerFactory(() => new TabControlWithListFrameBinder());
             batch.RegisterControllerFactory(() => new TabItemWithPageViewModelBinder());
         }

@@ -9,7 +9,7 @@ namespace ThunderHawk.Core
 
         public ActionFrame FAQLabel { get; } = new ActionFrame();
         public ActionFrame HelpingLabel { get; } = new ActionFrame();
-
+        public ToggleFrame ErrorsFound { get; } = new ToggleFrame();
         public MainPageViewModel()
         {
             TitleButton.Text = "Main";

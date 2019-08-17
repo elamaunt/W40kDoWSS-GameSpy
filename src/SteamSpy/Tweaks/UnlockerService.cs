@@ -1,17 +1,13 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.IO;
+using ThunderHawk.Core.Services;
 
 namespace ThunderHawk.Tweaks
 {
-    public class UnlockRacesTweak
+    public class UnlockerService : ITweakService
     {
-        private readonly string gamePath;
-        public UnlockRacesTweak(string path)
-        {
-            gamePath = path;
-        }
-        public void ApplyTweak()
+        public void ApplyTweak(string gamePath)
         {
             var unlockerDir = Path.Combine(Directory.GetCurrentDirectory(), "LauncherFiles\\Unlocker");
 
@@ -56,7 +52,7 @@ namespace ThunderHawk.Tweaks
             ssReg.SetValue("dxp2cdkey", dcCdKey);
         }
 
-        public bool IsTweakApplied()
+        public bool CheckTweak()
         {
             var baseKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).CreateSubKey("Software\\thq");
             var dowReg = baseKey.CreateSubKey("Dawn Of War");

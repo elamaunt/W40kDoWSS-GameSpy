@@ -77,7 +77,7 @@
                 </Button.Effect>
             </Button>
 
-            <StackPanel DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5 0 0 0">
+            <StackPanel framework:WPFBinder.Frame="ErrorsFound" DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5 0 0 0">
                 <!--Image Source="{Binding GameStateImage}" Width="16" Height="16"></-->
                 <TextBlock framework:WPFBinder.Frame="HelpingLabel" Style="{DynamicResource FreeTextStyle}" Margin="12 0 0 0">
                     <TextBlock.Effect>

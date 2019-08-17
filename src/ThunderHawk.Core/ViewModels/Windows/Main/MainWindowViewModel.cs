@@ -9,6 +9,7 @@ namespace ThunderHawk.Core
 
         public ActionFrame OpenSettings { get; } = new ActionFrame();
 
+
         public MainWindowViewModel()
         {
             Pages.DataSource = new ObservableCollection<EmbeddedPageViewModel>()

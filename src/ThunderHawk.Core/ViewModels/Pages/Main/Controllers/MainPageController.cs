@@ -11,6 +11,8 @@ namespace ThunderHawk.Core
 
             Frame.LaunchGame.Action = LaunchGame;
 
+            Frame.ErrorsFound.Enabled = false;
+
             CoreContext.NewsProvider.GetNews()
                 .OnCompletedOnUi(news =>
                 {

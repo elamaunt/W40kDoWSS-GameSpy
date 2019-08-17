@@ -21,11 +21,6 @@ namespace ThunderHawk
 
             try
             {
-                var unlocker = new UnlockRacesTweak(PathFinder.GamePath);
-                if (!unlocker.IsTweakApplied())
-                {
-                    unlocker.ApplyTweak();
-                }
                 var exeFileName = PathFinder.GamePath + "\\LauncherFiles\\Patch1.2\\soulstorm.exe";
                 if (File.Exists(exeFileName))
                 {
