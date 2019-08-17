@@ -1,4 +1,5 @@
 ﻿using Framework;
+using System;
 using System.Linq;
 
 namespace ThunderHawk.Core
@@ -10,8 +11,9 @@ namespace ThunderHawk.Core
             Frame.Title.Text = CoreContext.LangService.GetString("MainPage");
 
             Frame.LaunchGame.Action = LaunchGame;
+            Frame.FAQLabel.Action = OpenFAQ;
 
-            Frame.ErrorsFound.Enabled = false;
+            Frame.ErrorsFound.Visible = false;
 
             CoreContext.NewsProvider.GetNews()
                 .OnCompletedOnUi(news =>
@@ -32,6 +34,11 @@ namespace ThunderHawk.Core
                     newsSource[0].Big = true;
                     Frame.News.DataSource = newsSource;
                 });
+        }
+
+        void OpenFAQ()
+        {
+            Frame.GlobalNavigationManager.OpenPage<FAQPageViewModel>();
         }
 
         void LaunchGame()

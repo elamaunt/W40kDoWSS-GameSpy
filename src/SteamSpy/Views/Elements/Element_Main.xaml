@@ -16,45 +16,6 @@
             <StackPanel Orientation="Horizontal" ClipToBounds="False" framework:WPFBinder.Frame="News"/>
         </Grid>
 
-
-        <!--Grid DataContext="{Binding News}" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0">
-            <ItemsControl ItemsSource="{Binding NewsList, Mode=OneWay}">
-            <ItemsControl>
-            
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border x:Name="ItemBorder" Width="256" Margin="25 0 0 0" BorderThickness="1" BorderBrush="Black">
-                            <StackPanel Orientation="Vertical">
-                                <Image Height="144" Source="{Binding Image, Mode=OneWay}" Stretch="Fill"></Image>
-                                <Border Height="180" Padding="5 10 5 5">
-                                    <Border.Background>
-                                        <SolidColorBrush Color="#222222"/>
-                                    </Border.Background>
-                                    <DockPanel LastChildFill="False">
-                                        <TextBlock DockPanel.Dock="Top" Text="{Binding Header, Mode=OneWay}" 
-                                                       TextWrapping="Wrap" Style="{DynamicResource BigTextStyle}"></TextBlock>
-                                        <TextBlock DockPanel.Dock="Top" Margin="0 5 0 0" Text="{Binding ShortText, Mode=OneWay}"
-                                                       TextWrapping="Wrap" Style="{DynamicResource RegularTextStyle}"></TextBlock>
-                                        <TextBlock DockPanel.Dock="Bottom" HorizontalAlignment="Right" Text="{Binding NewsTime, Mode=OneWay}" 
-                                                       Margin="0 0 2 0" Style="{DynamicResource RegularTextStyle}"/>
-                                    </DockPanel>
-                                </Border>
-                            </StackPanel>
-                        </Border>
-                        <DataTemplate.Triggers>
-                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource PreviousData}}" Value="{x:Null}">
-                                <Setter TargetName="ItemBorder" Property="Margin" Value="0 0 0 0"/>
-                            </DataTrigger>
-                        </DataTemplate.Triggers>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </-->
         <DockPanel Grid.Row="2" Margin="0 0 0 35" LastChildFill="False">
             <TextBlock framework:WPFBinder.Frame="FAQLabel" DockPanel.Dock="Top"  Margin="0 0 0 16" Style="{DynamicResource FreeTextStyle}">
                 <TextBlock.Effect>
