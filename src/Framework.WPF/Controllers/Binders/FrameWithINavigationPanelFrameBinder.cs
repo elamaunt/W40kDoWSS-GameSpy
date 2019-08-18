@@ -21,7 +21,13 @@ namespace Framework.WPF
 
         void OnNavigated(object sender, NavigationEventArgs e)
         {
-            Frame.CurrentContentViewModel = ((IBindableView)e.Content)?.ViewModel;
+            var view = e.Content as IBindableView;
+
+            if (view != null)
+                Frame.CurrentContentViewModel = view.ViewModel;
+            //else
+            //    Frame.CurrentContentViewModel = null;
+
             Frame.CanGoBack = View.CanGoBack;
             Frame.CanGoForward = View.CanGoForward;
         }

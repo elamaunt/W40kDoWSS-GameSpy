@@ -5,52 +5,61 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
              ClipToBounds="False"
-             mc:Ignorable="d">
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="400">
 
-    <Grid VerticalAlignment="Stretch"  Margin="0 30 0 120">
-        <StackPanel Orientation="Vertical">
-            <StackPanel Orientation="Horizontal">
-                <Image DockPanel.Dock="Left" Height="240" HorizontalAlignment="Left" framework:WPFBinder.Frame="Image" Stretch="Uniform"/>
-                <Border Height="240" HorizontalAlignment="Stretch" Padding="16 16 16 16">
-                    <TextBlock framework:WPFBinder.Frame="Title"
-                                   DockPanel.Dock="Top" 
-                                   TextWrapping="Wrap" 
-                                   Style="{DynamicResource BigTextStyle}">
-                        <TextBlock.Effect>
-                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="1" BlurRadius="0.4" Opacity="0.75" />
-                        </TextBlock.Effect>
-                    </TextBlock>
-                </Border>
-            </StackPanel>
-            <!--Border.Background>
+    <framework:BindableControl.Resources>
+        <FontFamily x:Key="Montserrat">pack://application:,,,/Fonts/Montserrat/#Montserrat</FontFamily>
+    </framework:BindableControl.Resources>
+
+    <Grid VerticalAlignment="Stretch"  Margin="0 30 0 0">
+        <Border Padding="40 24 120 16">
+            <Border.Background>
                 <SolidColorBrush Color="#aa000000"/>
-            </-->
+            </Border.Background>
+            <StackPanel Orientation="Vertical">
+                <TextBlock framework:WPFBinder.Frame="Title"
+                           FontFamily="Montserrat"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap" 
+                           FontSize="17"
+                           Style="{DynamicResource WhiteTextStyle}">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="0.4" Opacity="0.9" />
+                    </TextBlock.Effect>
+                </TextBlock>
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <TextBlock framework:WPFBinder.Frame="Author"
+                           Foreground="#03cffc"
+                           Style="{DynamicResource SmallTextStyle}">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="0.4" Opacity="0.9" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <TextBlock framework:WPFBinder.Frame="Date" Margin="6,0,0,0"
+                           Style="{DynamicResource SmallTextStyle}">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="0.4" Opacity="0.9" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                </StackPanel>
 
-            <Border Height="240" Padding="16 24 16 16">
-                <Border.Background>
-                    <SolidColorBrush Color="#cc000000"/>
-                </Border.Background>
-                <DockPanel LastChildFill="False">
-                    <TextBlock framework:WPFBinder.Frame="Annotation"
-                                   DockPanel.Dock="Top" 
-                                   Margin="0 5 0 0"     
+                <Border Margin="0,12,0,0" Height="340" HorizontalAlignment="Left" BorderThickness="1" BorderBrush="#33FFFFFF">
+                    <Grid>
+                        <Image framework:WPFBinder.Frame="Image" Stretch="Uniform"/>
+                    </Grid>
+                </Border>
+
+                <TextBlock framework:WPFBinder.Frame="Text"
+                                   Margin="0 22 0 0"     
                                    TextWrapping="Wrap" 
+                                   FontSize="16"
                                    Style="{DynamicResource RegularTextStyle}">
-                        <TextBlock.Effect>
-                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="1" BlurRadius="0.4" Opacity="0.75" />
-                        </TextBlock.Effect>
-                    </TextBlock>
-                    <TextBlock framework:WPFBinder.Frame="Date"
-                                   DockPanel.Dock="Bottom" 
-                                   HorizontalAlignment="Right"
-                                   Margin="0 0 2 0" 
-                                   Style="{DynamicResource SmallTextStyle}">
-                        <TextBlock.Effect>
-                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="1" BlurRadius="0.4" Opacity="0.75" />
-                        </TextBlock.Effect>
-                    </TextBlock>
-                </DockPanel>
-            </Border>
-        </StackPanel>
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="0.4" Opacity="0.9" />
+                    </TextBlock.Effect>
+                </TextBlock>
+            </StackPanel>
+        </Border>
     </Grid>
 </framework:BindableControl>

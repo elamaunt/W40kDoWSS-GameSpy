@@ -15,11 +15,11 @@ namespace ThunderHawk.Core
 
             Frame.FoundErrors.Visible = false;
 
-            if (!CoreContext.TweaksService.Tweaks[0].CheckTweak())
+            /*if (!CoreContext.TweaksService.Tweaks[0].CheckTweak())
             {
                 Frame.FoundErrors.Visible = true;
                 Frame.ErrorsType.Text = "Найдены некоторые проблемы!";
-            }
+            }*/
 
 
             if (Frame.News.DataSource.IsNullOrEmpty())

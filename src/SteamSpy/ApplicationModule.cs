@@ -13,7 +13,7 @@ namespace ThunderHawk
             batch.RegisterServiceFactory<ILaunchService>(() => new LaunchService());
 
             batch.RegisterServiceFactory<ITweaksService>(() => new TweaksService());
-
+            batch.RegisterServiceFactory<ISystemService>(() => new SystemService());
 
             batch.RegisterControllerFactory(() => new TabControlWithListFrameBinder());
             batch.RegisterControllerFactory(() => new TabItemWithPageViewModelBinder());

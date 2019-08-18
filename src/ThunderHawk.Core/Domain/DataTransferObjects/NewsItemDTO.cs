@@ -4,6 +4,7 @@ namespace ThunderHawk.Core
 {
     public class NewsItemDTO
     {
+        public string Author { get; set; }
         public string RussianTitle { get; set; }
         public string RussianAnnotation { get; set; }
         public string RussianText { get; set; }

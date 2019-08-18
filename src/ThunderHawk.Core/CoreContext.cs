@@ -5,6 +5,7 @@ namespace ThunderHawk.Core
 {
     public static class CoreContext
     {
+        public static ISystemService SystemService => Service<ISystemService>.Get();
         public static ILangService LangService => Service<ILangService>.Get();
         public static INewsProvider NewsProvider => Service<INewsProvider>.Get();
         public static IOptionsService OptionsService => Service<IOptionsService>.Get();

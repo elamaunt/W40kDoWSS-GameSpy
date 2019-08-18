@@ -29,7 +29,7 @@
 
 
     <Style x:Key="NavigationButtonStyle" TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
-        <Setter Property="FontSize" Value="21"/>
+        <Setter Property="FontSize" Value="24"/>
         <Setter Property="FontFamily" Value="{StaticResource Montserrat}"/>
         <Setter Property="FontWeight" Value="Regular"/>
         <Setter Property="Foreground" Value="White"/>

@@ -94,6 +94,7 @@
     <Compile Include="Data\Race.cs" />
     <Compile Include="Data\ServerFlags.cs" />
     <Compile Include="Services\Implementations\LaunchService.cs" />
+    <Compile Include="Services\Implementations\SystemService.cs" />
     <Compile Include="Services\Implementations\TweaksService.cs" />
     <Compile Include="StaticClasses\ExternalData.cs" />
     <Compile Include="StaticClasses\Soulstorm\FogRemover.cs" />
@@ -322,9 +323,9 @@
     <Resource Include="Images\BackButton_Disabled.png" />
     <Resource Include="Images\ForwardButton_Active.png" />
     <Resource Include="Images\ForwardButton_Disabled.png" />
-    <Resource Include="Images\Background_NewsViewer.png" />
     <Resource Include="Images\Background_Chat.png" />
     <Resource Include="Images\Background_FAQ.png" />
+    <Resource Include="Images\Background_NewsViewer.jpg" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

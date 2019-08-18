@@ -15,6 +15,8 @@ namespace ThunderHawk.Core
             SubscribeOnPropertyChanged(Frame.NavigationPanel, nameof(INavigationPanelFrame.CanGoBack), OnCanGoBackChanged);
             SubscribeOnPropertyChanged(Frame.NavigationPanel, nameof(INavigationPanelFrame.CanGoForward), OnCanGoForwardChanged);
             SubscribeOnPropertyChanged(Frame.NavigationPanel, nameof(INavigationPanelFrame.CurrentContentViewModel), OnCurrentViewModelChanged);
+
+            OnCurrentViewModelChanged();
         }
 
         void OnTabClicked(EmbeddedPageViewModel model)

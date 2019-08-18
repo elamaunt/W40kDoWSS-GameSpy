@@ -6,6 +6,7 @@ namespace ThunderHawk.Core
     public class NewsItemViewModel : ItemViewModel
     {
         public TextFrame Title { get; } = new TextFrame();
+        public TextFrame Author { get; } = new TextFrame();
         public TextFrame Annotation { get; } = new TextFrame();
         public ValueFrame<DateTime> Date { get; } = new ValueFrame<DateTime>() { ValueToTextConverter = ConvertValueToText };
         public UriFrame Image { get; } = new UriFrame();
@@ -23,6 +24,7 @@ namespace ThunderHawk.Core
             Annotation.Text = dto.RussianAnnotation;
             Date.Value = dto.NewsTime;
             Image.Text = dto.ImagePath;
+            Author.Text = dto.Author;
         }
 
         public override string GetViewStyle()
