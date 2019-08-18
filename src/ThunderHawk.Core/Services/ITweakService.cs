@@ -1,6 +1,6 @@
 ﻿namespace ThunderHawk.Core.Services
 {
-    public interface ITweakService
+    public interface ITweak
     {
         void ApplyTweak(string gamePath);
         bool CheckTweak();
