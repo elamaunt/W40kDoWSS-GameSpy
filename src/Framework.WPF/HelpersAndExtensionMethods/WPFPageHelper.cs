@@ -11,10 +11,22 @@ namespace Framework.WPF
     public static class WPFPageHelper
     {
         static readonly string AssemblyName = Application.Current.GetType().Assembly.GetName().Name;
+        static readonly Dictionary<string, string> XamlResources = new Dictionary<string, string>();
+        static readonly Dictionary<string, string> ImageResources = new Dictionary<string, string>();
 
         static WPFPageHelper()
         {
             PreloadXamlPaths();
+        }
+
+        public static bool IsImageExists(string name)
+        {
+            return ImageResources.ContainsKey(name?.ToLowerInvariant());
+        }
+
+        public static bool TryGetImagePath(string name, out string path)
+        {
+            return ImageResources.TryGetValue(name?.ToLowerInvariant(), out path);
         }
 
         public static IBindableView InstantiateView(string prefix, string name)
@@ -127,7 +139,6 @@ namespace Framework.WPF
             return PageHelper.FindItemViewType(typeName, "element");
         }
 
-        static readonly Dictionary<string, string> XamlResources = new Dictionary<string, string>();
 
 
         public static void PreloadXamlPaths()
@@ -142,8 +153,17 @@ namespace Framework.WPF
                     {
                         string str = (string)entry.Key;
 
-                        if (str.EndsWith(".baml"))
+                        if (str.EndsWith(".baml", StringComparison.OrdinalIgnoreCase))
+                        {
                             XamlResources[Path.GetFileNameWithoutExtension(str)] = str.Substring(0, str.Length - 5);
+                            continue;
+                        }
+
+                        if (str.EndsWith(".png", StringComparison.OrdinalIgnoreCase) || str.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase))
+                        {
+                            ImageResources[Path.GetFileNameWithoutExtension(str)] = "/" + str;
+                            continue;
+                        }
                     }
                 }
             }

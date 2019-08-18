@@ -15,25 +15,26 @@ namespace ThunderHawk.Core
 
             Frame.ErrorsFound.Visible = false;
 
-            CoreContext.NewsProvider.GetNews()
-                .OnCompletedOnUi(news =>
-                {
-                    var newsSource = news.Select(x =>
+            if (Frame.News.DataSource.IsNullOrEmpty())
+                CoreContext.NewsProvider.GetNews()
+                    .OnCompletedOnUi(news =>
                     {
-                        var itemVM = new NewsItemViewModel(x);
-
-                        itemVM.Navigate.Action = () => Frame.GlobalNavigationManager?.OpenPage<NewsViewerPageViewModel>(bundle =>
+                        var newsSource = news.Select(x =>
                         {
-                            bundle.SetString(nameof(NewsViewerPageViewModel.NewsItem), x.AsJson());
-                        });
+                            var itemVM = new NewsItemViewModel(x);
 
-                        return itemVM;
-                    })
-                    .ToObservableCollection();
+                            itemVM.Navigate.Action = () => Frame.GlobalNavigationManager?.OpenPage<NewsViewerPageViewModel>(bundle =>
+                            {
+                                bundle.SetString(nameof(NewsViewerPageViewModel.NewsItem), x.AsJson());
+                            });
 
-                    newsSource[0].Big = true;
-                    Frame.News.DataSource = newsSource;
-                });
+                            return itemVM;
+                        })
+                        .ToObservableCollection();
+
+                        newsSource[0].Big = true;
+                        Frame.News.DataSource = newsSource;
+                    });
         }
 
         void OpenFAQ()

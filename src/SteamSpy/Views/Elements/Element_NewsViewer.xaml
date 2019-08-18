@@ -7,22 +7,11 @@
              ClipToBounds="False"
              mc:Ignorable="d">
 
-    <Grid VerticalAlignment="Center" Margin="0 0 0 40">
+    <Grid VerticalAlignment="Stretch"  Margin="0 30 0 120">
         <StackPanel Orientation="Vertical">
-            <Border Height="240" Padding="8 8 8 8">
-                <Border.Background>
-                    <SolidColorBrush Color="#dd1c1a1b"/>
-                </Border.Background>
-                <DockPanel>
-                    <Image DockPanel.Dock="Left" Height="240" framework:WPFBinder.Frame="Image" Stretch="Uniform"/>
-                    
-                </DockPanel>
-            </Border>
-            <Border Height="240" Padding="16 16 16 8">
-                <Border.Background>
-                    <SolidColorBrush Color="#bb262324"/>
-                </Border.Background>
-                <DockPanel LastChildFill="False">
+            <StackPanel Orientation="Horizontal">
+                <Image DockPanel.Dock="Left" Height="240" HorizontalAlignment="Left" framework:WPFBinder.Frame="Image" Stretch="Uniform"/>
+                <Border Height="240" HorizontalAlignment="Stretch" Padding="16 16 16 16">
                     <TextBlock framework:WPFBinder.Frame="Title"
                                    DockPanel.Dock="Top" 
                                    TextWrapping="Wrap" 
@@ -31,6 +20,17 @@
                             <DropShadowEffect Color="Black" Direction="270" ShadowDepth="1" BlurRadius="0.4" Opacity="0.75" />
                         </TextBlock.Effect>
                     </TextBlock>
+                </Border>
+            </StackPanel>
+            <!--Border.Background>
+                <SolidColorBrush Color="#aa000000"/>
+            </-->
+
+            <Border Height="240" Padding="16 24 16 16">
+                <Border.Background>
+                    <SolidColorBrush Color="#cc000000"/>
+                </Border.Background>
+                <DockPanel LastChildFill="False">
                     <TextBlock framework:WPFBinder.Frame="Annotation"
                                    DockPanel.Dock="Top" 
                                    Margin="0 5 0 0"     

@@ -21,6 +21,7 @@
             batch.RegisterControllerFactory(() => new UIElementWithIControlFrameBinder());
             batch.RegisterControllerFactory(() => new ToggleButtonWithIToggleFrameBinder());
             batch.RegisterControllerFactory(() => new FrameWithIListFrameBinder());
+            batch.RegisterControllerFactory(() => new FrameWithINavigationPanelFrameBinder());
         }
     }
 }

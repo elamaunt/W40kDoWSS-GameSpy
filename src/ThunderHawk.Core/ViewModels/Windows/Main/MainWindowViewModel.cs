@@ -5,10 +5,14 @@ namespace ThunderHawk.Core
 {
     public class MainWindowViewModel : WindowViewModel
     {
+        public ActionFrame GoBack { get; } = new ActionFrame();
+        public ActionFrame GoForward { get; } = new ActionFrame();
+
         public ListFrame<EmbeddedPageViewModel> Pages { get; } = new ListFrame<EmbeddedPageViewModel>();
 
-        public ActionFrame OpenSettings { get; } = new ActionFrame();
+        public NavigationPanelFrame NavigationPanel { get; } = new NavigationPanelFrame();
 
+        public ActionFrame OpenSettings { get; } = new ActionFrame();
 
         public MainWindowViewModel()
         {
@@ -20,7 +24,7 @@ namespace ThunderHawk.Core
                 //new AllNewsPageViewModel(){ Enabled = false }
             };
 
-            Pages.SelectedItem = Pages.DataSource[0];
+            NavigationPanel.CurrentContentViewModel = Pages.SelectedItem = Pages.DataSource[0];
         }
     }
 }

@@ -28,9 +28,16 @@ namespace Framework.WPF
         {
             View.Children.Clear();
 
+            var ext = Frame.GetExtension<ICustomItemPresenter>();
             int i = 0;
             foreach (ViewModel item in Frame.DataSource)
-                View.Children.Add(CreateItemCell(item, i++));
+            {
+                var cell = CreateItemCell(item, i++);
+                View.Children.Add(cell);
+
+                if (ext != null)
+                    ext.Present(View, cell);
+            }
         }
 
         private UIElement CreateItemCell(ViewModel model, int index)

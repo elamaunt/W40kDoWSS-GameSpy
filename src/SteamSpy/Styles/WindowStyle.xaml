@@ -37,7 +37,7 @@
                     NonClientFrameEdges="None"
                     GlassFrameThickness="0"
                     ResizeBorderThickness="7"
-                    CaptionHeight="30"
+                    CaptionHeight="24"
                 />
             </Setter.Value>
         </Setter>

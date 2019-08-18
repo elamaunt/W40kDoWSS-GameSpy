@@ -2,6 +2,8 @@
 using Framework.WPF;
 using System;
 using System.Windows;
+using System.Windows.Media.Animation;
+using System.Windows.Navigation;
 
 namespace ThunderHawk
 {
@@ -25,9 +27,8 @@ namespace ThunderHawk
             var viewModel = new PageViewModelType();
             PassDataIfNeeded(viewModel, inflateBundle);
 
-            var view = (IBindableView)Service<IViewFactory>.Get().CreateView(viewModel);
-            view.ViewModel = viewModel;
-            NavigationFrame.Content = view;
+            var panelFrame = NavigationFrame.GetBindedFrame<INavigationPanelFrame>();
+            panelFrame.CurrentContentViewModel = viewModel;
         }
 
         public IBindableWindow OpenWindow<WindowViewModelType>(Action<IDataBundle> inflateBundle = null) 

@@ -16,10 +16,11 @@
         Style="{DynamicResource WindowStyle}">
 
     <Grid>
-        <Image Source="/Images/launcher-background.png"
-                                           HorizontalAlignment="Center"
-                                           VerticalAlignment="Top" 
-                                           Stretch="UniformToFill">
+        <Image x:Name="WindowBackground" 
+               Source="/Images/Background_Default.png"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Top" 
+               Stretch="UniformToFill">
             <Image.Effect>
                 <local:RectBlurEffect FrameworkElement="{Binding ElementName=TopBorder, Mode=OneTime}"/>
             </Image.Effect>
@@ -27,7 +28,7 @@
         
             <Border BorderThickness="0 0 0 0" x:Name="TopBorder"  VerticalAlignment="Top" Height="60">
                 <Border.Background>
-                    <SolidColorBrush Color="#22000000"></SolidColorBrush>
+                    <SolidColorBrush Color="#33000000"></SolidColorBrush>
                 </Border.Background>
                 <DockPanel Margin="0 20 0 0" VerticalAlignment="Stretch" LastChildFill="False">
                 <StackPanel DockPanel.Dock="Left" Margin="10 0 0 0" Orientation="Horizontal" x:Name="TopBar" VerticalAlignment="Top">
@@ -43,7 +44,7 @@
                 </DockPanel>
             </Border>
 
-        <Frame Margin="0 30 0 0" NavigationUIVisibility="Hidden" Name="NavigationFrame" VerticalAlignment="Stretch" framework:WPFBinder.Frame="Pages"/>
+        <Frame Margin="0 30 0 0" NavigationUIVisibility="Hidden" Name="NavigationFrame" VerticalAlignment="Stretch" framework:WPFBinder.Frame="NavigationPanel"/>
         <Polygon HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="#22000000" Points="170,0, 0,170, 0,170, 170,170, 170,170, 170,0"/>
         <Image Source="/Images/thunderhawk_icon.png" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Height="74"/>
     </Grid>

@@ -54,6 +54,7 @@
     <Compile Include="Controllers\Binders\ButtonWithITextFrameBinder.cs" />
     <Compile Include="Controllers\Binders\FrameWithIListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ContentControlWithIListFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\FrameWithINavigationPanelFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ToggleButtonWithIToggleFrameBinder.cs" />
     <Compile Include="Controllers\Binders\UIElementWithIControlFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithByteArrayFrameBinder.cs" />
@@ -63,6 +64,8 @@
     <Compile Include="Controllers\Binders\StackPanelWithListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TextBlockWithIActionFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TextBlockWithITextFrameBinder.cs" />
+    <Compile Include="Extensions\Base\ICustomContentPresenter.cs" />
+    <Compile Include="Extensions\Base\ICustomItemPresenter.cs" />
     <Compile Include="FrameworkWPFModule.cs" />
     <Compile Include="HelpersAndExtensionMethods\ImageHelper.cs" />
     <Compile Include="HelpersAndExtensionMethods\WPFBinder.ItemStyle.cs" />
