@@ -5,13 +5,12 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using GSMasterServer.Services;
 
 namespace GSMasterServer.Servers
 {
-    internal class CDKeyServer : Server
+    internal class CDKeyServer
     {
-        private const string Category = "CDKey";
-        
         Thread _thread;
 
         private const int BufferSize = 8192;
@@ -70,7 +69,7 @@ namespace GSMasterServer.Servers
         {
             AddressInfo info = (AddressInfo)parameter;
 
-            Log(Category, "Starting CD Key Server");
+            Logger.Info("Starting CD Key Server");
 
             try
             {
@@ -95,8 +94,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, String.Format("Unable to bind CD Key Server to {0}:{1}", info.Address, info.Port));
-                LogError(Category, e.ToString());
+                Logger.Error(e, $"Unable to bind CD Key Server to {info.Address}:{info.Port}");
                 return;
             }
 
@@ -114,9 +112,7 @@ namespace GSMasterServer.Servers
             }
             catch (SocketException e)
             {
-                LogError(Category, "Error receiving data");
-                LogError(Category, e.ToString());
-                return;
+                Logger.Error(e, "Error receiving data");
             }
         }
 
@@ -141,8 +137,7 @@ namespace GSMasterServer.Servers
 
                     if (m.Success)
                     {
-                        Log(Category, String.Format("Received request from: {0}:{1}", ((IPEndPoint)e.RemoteEndPoint).Address, ((IPEndPoint)e.RemoteEndPoint).Port));
-
+                        Logger.Info($"Received request from: {((IPEndPoint)e.RemoteEndPoint).Address}:{((IPEndPoint)e.RemoteEndPoint).Port}");
                         string reply = String.Format(_dataResponse, m.Groups["Challenge"].Value.Substring(0, 32), m.Groups["Key"].Value);
 
                         byte[] response = Encoding.UTF8.GetBytes(Xor(reply));

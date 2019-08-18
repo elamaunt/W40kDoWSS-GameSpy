@@ -5,13 +5,14 @@ using System.Net;
 using System.Web;
 using GSMasterServer.Data;
 using GSMasterServer.Servers;
+using GSMasterServer.Services;
+using NLog.Fluent;
 
 namespace GSMasterServer.Utils
 {
     
     public class Dowstats
     {
-        const string LogCategory = "DowstatsRequest";
         private static readonly string DowstatsConnectUrl;
         private static readonly string DowstatsVersion = Environment.GetEnvironmentVariable("dowstatsVersion") ?? "108";
         
@@ -94,7 +95,8 @@ namespace GSMasterServer.Utils
             var request = (HttpWebRequest)WebRequest.Create( updateRequestBuilder.Uri );
             request.Method = "get";
  
-            Server.Log( LogCategory,"Start request to" + DowstatsConnectUrl);
+            Logger.Info("Start request to" + DowstatsConnectUrl);
+            Logger.Debug($"request uri: {updateRequestBuilder.Uri}");
             request.BeginGetResponse( OnAsyncCallback, request );
             
         }
@@ -104,7 +106,7 @@ namespace GSMasterServer.Utils
             WebResponse response = httpWebRequest.EndGetResponse( asyncResult );
             var reader = new StreamReader( response.GetResponseStream() );
             string str = reader.ReadToEnd();
-            Server.Log( LogCategory,"Response from dowstats: " + str );
+            Logger.Info( "Response from dowstats: " + str );
         }
     }
 }

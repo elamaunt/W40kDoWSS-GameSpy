@@ -9,12 +9,13 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using GSMasterServer.Services;
+using NLog.Fluent;
 
 namespace GSMasterServer.Servers
 {
-    internal class ChatServer : Server
+    internal class ChatServer
     {
-        private const string Category = "Chat";
 
         Thread _thread;
         Socket _newPeerAceptingsocket;
@@ -42,7 +43,7 @@ namespace GSMasterServer.Servers
         {
             AddressInfo info = (AddressInfo)parameter;
 
-            Log(Category, "Init");
+            Logger.Info("Init chat server");
 
             try
             {
@@ -64,8 +65,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, String.Format("Unable to bind Server List Retrieval to {0}:{1}", info.Address, info.Port));
-                LogError(Category, e.ToString());
+                Logger.Error(e, $"Unable to bind Server List Retrieval to {info.Address}:{info.Port}");
                 return;
             }
 
@@ -111,9 +111,7 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode == SocketError.NotConnected)
                     return;
 
-                LogError(Category, "Error receiving data");
-                LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
-                return;
+                Logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
             }
         }
         
@@ -142,7 +140,7 @@ namespace GSMasterServer.Servers
                         {
                             var asciValue = reader.ReadToEnd();
 
-                             Log("CHATDATA", asciValue);
+                             Logger.Info($"CHATDATA: {asciValue}");
 
                              ms.Position = 0;
 
@@ -218,7 +216,7 @@ namespace GSMasterServer.Servers
 
                             var utf8alue = Encoding.UTF8.GetString(bytes);
 
-                            Log("CHATDATA", utf8alue);
+                            Logger.Info($"CHATDATA: {utf8alue}");
 
                             if (utf8alue.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase))
                             {
@@ -279,8 +277,7 @@ namespace GSMasterServer.Servers
                         state = null;
                         return;
                     default:
-                        LogError(Category, "Error receiving data");
-                        LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                        Logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
                         if (state != null)
                             state.Dispose();
                         state = null;
@@ -289,8 +286,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, "Error receiving data");
-                LogError(Category, e.ToString());
+                Logger.Error(e, "Error receiving data");
             }
 
             // and we wait for more data...
@@ -304,7 +300,7 @@ namespace GSMasterServer.Servers
             if (state.Disposing)
                 return 0;
 
-            Log("CHATRESP", message);
+            Logger.Info($"CHATRESP: {message}");
 
             var bytesToSend = Encoding.UTF8.GetBytes(message);
 
@@ -384,8 +380,7 @@ namespace GSMasterServer.Servers
                     case SocketError.Disconnecting:
                         return;
                     default:
-                        LogError(Category, "Error sending data");
-                        LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
+                        Logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
                         return;
                 }
             }

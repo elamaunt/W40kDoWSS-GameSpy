@@ -5,10 +5,12 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Caching;
 using System.Threading;
+using GSMasterServer.Services;
+using NLog.Fluent;
 
 namespace GSMasterServer.Servers
 {
-    internal class ServerSteamIdsRetrieve : Server
+    internal class ServerSteamIdsRetrieve
     {
         private const string Category = "NatNegotiation";
         
@@ -68,7 +70,7 @@ namespace GSMasterServer.Servers
         private void StartServer(object parameter)
         {
             AddressInfo info = (AddressInfo)parameter;
-            Log(Category, "Starting Steam Nat Neg Listener");
+            Logger.Info("Starting Steam Nat Neg Listener");
             try
             {
                 _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
@@ -95,8 +97,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                LogError(Category, String.Format("Unable to bind Server List Reporting to {0}:{1}", info.Address, info.Port));
-                LogError(Category, e.ToString());
+                Logger.Error(e, $"Unable to bind Server List Reporting to {info.Address}:{info.Port}");
                 return;
             }
 
@@ -115,9 +116,7 @@ namespace GSMasterServer.Servers
             }
             catch (SocketException e)
             {
-                LogError(Category, "Error receiving data");
-                LogError(Category, e.ToString());
-                return;
+                Logger.Error(e, "Error receiving data");
             }
         }
 
@@ -169,7 +168,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception ex)
             {
-                LogError(Category, ex.ToString());
+                Logger.Error(ex, "Error occured in data processing");
             }
 
             WaitForData();

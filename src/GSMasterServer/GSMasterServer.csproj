@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -32,6 +32,9 @@
     <None Remove="Resources\Pages\ComingSoon.html" />
     <None Remove="x64\SQLite.Interop.dll" />
     <None Remove="x86\SQLite.Interop.dll" />
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -64,6 +67,7 @@
 
   <ItemGroup>
     <PackageReference Include="LiteDB" Version="4.1.4" />
+    <PackageReference Include="NLog" Version="4.6.6" />
     <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
   </ItemGroup>
 
