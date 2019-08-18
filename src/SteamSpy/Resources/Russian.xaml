@@ -7,10 +7,9 @@
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Запустить игру</system:String>
-    <system:String x:Key="GameStateSuccess">Ошибок не обнаружено!</system:String>
-    <system:String x:Key="GameStateWarning">Есть некоторые предупреждения!</system:String>
-    <system:String x:Key="GameStateErrors">Обнаружены ошибки!</system:String>
-    <system:String x:Key="GameStateCantRun">Путь к игре не был найден!</system:String>
+    <system:String x:Key="FoundWarnings">Мы нашли некоторые неисправности с игрой. </system:String>
+    <system:String x:Key="FoundErrors">Мы нашли некоторые проблемы с игрой! </system:String>
+    <system:String x:Key="FixIt">Исправить!</system:String>
 
     <!-- Settings -->
     <system:String x:Key="DisableFog">Отключить туман</system:String>
