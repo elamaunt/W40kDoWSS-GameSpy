@@ -12,14 +12,16 @@ namespace ThunderHawk.Core
 
             Frame.LaunchGame.Action = LaunchGame;
             Frame.FAQLabel.Action = OpenFAQ;
+            Frame.Tweaks.Action = OpenTweaks;
+
 
             Frame.FoundErrors.Visible = false;
 
-            /*if (!CoreContext.TweaksService.Unlocker.CheckTweak())
+            if (CoreContext.TweaksService.Unlocker.CheckTweak())
             {
                 Frame.FoundErrors.Visible = true;
-                Frame.ErrorsType.Text = "Найдены некоторые проблемы!";
-            }*/
+                Frame.ErrorsType.Text = CoreContext.LangService.GetString("FoundErrors");
+            }
 
 
             if (Frame.News.DataSource.IsNullOrEmpty())
@@ -47,6 +49,11 @@ namespace ThunderHawk.Core
         void OpenFAQ()
         {
             Frame.GlobalNavigationManager.OpenPage<FAQPageViewModel>();
+        }
+
+        void OpenTweaks()
+        {
+            Frame.GlobalNavigationManager.OpenPage<TweaksPageViewModel>();
         }
 
         void LaunchGame()

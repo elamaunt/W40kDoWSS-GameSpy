@@ -8,12 +8,15 @@
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Launch game</system:String>
-    <system:String x:Key="FoundWarnings">We have detected some warnings. </system:String>
-    <system:String x:Key="FoundErrors">We have found errors! </system:String>
+    <system:String x:Key="FoundWarnings">There are some warnings. It may affect the comfort of your gameplay. </system:String>
+    <system:String x:Key="FoundErrors">We found some important problems with your game! </system:String>
     <system:String x:Key="FixIt">Fix it!</system:String>
 
+    <!-- Tweaks Page -->
+    <system:String x:Key="UnlockRaces">Unlock Races</system:String>
 
-   <!-- Settings -->
+
+    <!-- Settings -->
     <system:String x:Key="DisableFog">Disable fog</system:String>
 
 </ResourceDictionary>
