@@ -1,15 +1,18 @@
 ﻿using System;
-using System.Windows;
-using System.Windows.Media.Animation;
+using System.Runtime.CompilerServices;
 using System.Windows.Navigation;
 
 namespace Framework.WPF
 {
     public class FrameWithINavigationPanelFrameBinder : BindingController<System.Windows.Controls.Frame, INavigationPanelFrame>
     {
+        readonly ConditionalWeakTable<IBindableView, ViewModel> _viewmodelsHistoryCache = new ConditionalWeakTable<IBindableView, ViewModel>();
+
         IBindableView _currentView;
         protected override void OnBind()
         {
+            View.JournalOwnership = JournalOwnership.OwnsJournal;
+
             SubscribeOnPropertyChanged(Frame, nameof(INavigationPanelFrame.CurrentContentViewModel), UpdateFrameContent);
             UpdateFrameContent();
 
@@ -23,23 +26,43 @@ namespace Framework.WPF
         {
             var view = e.Content as IBindableView;
 
-            if (view != null)
-                Frame.CurrentContentViewModel = view.ViewModel;
-            //else
-            //    Frame.CurrentContentViewModel = null;
+            _currentView = view;
 
+            if (view != null)
+            {
+                if (view.ViewModel != null)
+                {
+                    _viewmodelsHistoryCache.Remove(view);
+                    _viewmodelsHistoryCache.Add(view, view.ViewModel);
+                }
+                else
+                {
+                    if (_viewmodelsHistoryCache.TryGetValue(view, out ViewModel viewModel))
+                        view.ViewModel = viewModel;
+                }
+
+                if (Frame.CurrentContentViewModel != view.ViewModel)
+                    Frame.CurrentContentViewModel = view.ViewModel;
+            }
+            
             Frame.CanGoBack = View.CanGoBack;
             Frame.CanGoForward = View.CanGoForward;
         }
 
         void UpdateFrameContent()
         {
-            if (_currentView != null)
-                _currentView.ViewModel = null;
-
             var model = Frame.CurrentContentViewModel;
 
             if (model == null)
+            {
+                if (_currentView != null)
+                    _currentView.ViewModel = null;
+
+                View.Content = null;
+                return;
+            }
+
+            if (_currentView?.ViewModel == model)
                 return;
 
             var view = _currentView = (IBindableView)Service<IViewFactory>.Get().CreateView(model.GetPrefix(), model.GetViewStyle());

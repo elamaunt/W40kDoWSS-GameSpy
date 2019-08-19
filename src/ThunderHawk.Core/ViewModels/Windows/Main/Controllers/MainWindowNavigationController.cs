@@ -17,6 +17,11 @@ namespace ThunderHawk.Core
             SubscribeOnPropertyChanged(Frame.NavigationPanel, nameof(INavigationPanelFrame.CurrentContentViewModel), OnCurrentViewModelChanged);
 
             OnCurrentViewModelChanged();
+            OnCanGoBackChanged();
+            OnCanGoForwardChanged();
+
+            Frame.GoBack.Action = () => Frame.NavigationPanel.GoBack?.Invoke();
+            Frame.GoForward.Action = () => Frame.NavigationPanel.GoForward?.Invoke();
         }
 
         void OnTabClicked(EmbeddedPageViewModel model)
@@ -34,12 +39,12 @@ namespace ThunderHawk.Core
             }
         }
 
-        void OnCanGoForwardChanged()
+        void OnCanGoBackChanged()
         {
             Frame.GoBack.Enabled = Frame.NavigationPanel.CanGoBack;
         }
 
-        void OnCanGoBackChanged()
+        void OnCanGoForwardChanged()
         {
             Frame.GoForward.Enabled = Frame.NavigationPanel.CanGoForward;
         }

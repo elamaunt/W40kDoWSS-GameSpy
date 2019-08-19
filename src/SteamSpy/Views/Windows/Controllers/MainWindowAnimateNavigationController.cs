@@ -17,6 +17,8 @@ namespace ThunderHawk
 
         string _currentPath = DefaultImagePath;
 
+        object _currentContent;
+
         protected override void OnBind()
         {
             Frame.NavigationPanel.SetExtension<ICustomContentPresenter>(this);
@@ -30,6 +32,11 @@ namespace ThunderHawk
         {
             var uiElement = (UIElement)e.Content;
 
+            if (_currentContent == uiElement)
+                return;
+
+            _currentContent = uiElement;
+
             if (uiElement != null)
             {
                 uiElement.Opacity = 0;
@@ -39,20 +46,23 @@ namespace ThunderHawk
 
         public void Present(System.Windows.Controls.Frame frame, IBindableView content)
         {
-            var currentContent = (UIElement)frame.Content;
+             var currentContent = (UIElement)frame.Content;
 
-            Action complete = () => frame.Content = content;
+            if (currentContent == content)
+                return;
 
-            if (currentContent != null)
-            {
-                var fadeOutAnimation = new DoubleAnimation(0d, TimeSpan.FromSeconds(0.25));
-                fadeOutAnimation.Completed += (s, e) => complete();
-                currentContent.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
-            }
-            else
-            {
-                complete();
-            }
+             Action complete = () => frame.Content = content;
+
+             if (currentContent != null)
+             {
+                 var fadeOutAnimation = new DoubleAnimation(0d, TimeSpan.FromSeconds(0.25));
+                 fadeOutAnimation.Completed += (s, e) => complete();
+                 currentContent.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
+             }
+             else
+             {
+                 complete();
+             }
         }
 
         void OnContentChanged()

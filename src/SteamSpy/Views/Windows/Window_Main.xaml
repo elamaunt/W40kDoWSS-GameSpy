@@ -32,7 +32,14 @@
             </Border.Background>
             
             <Grid>
-                <StackPanel Margin="20 0 0 0" 
+                <Button Margin="26 0 0 21" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                        framework:WPFBinder.Frame="GoBack"
+                        Height="14" Width="13"
+                        Style="{DynamicResource TopBarButtonStyle}">
+                    <Image Source="/Images/BackButton.png"/>
+                </Button>
+
+                <StackPanel Margin="60 0 0 0" 
                             x:Name="Tabs"
                             framework:WPFBinder.ItemPrefix="Tab"
                             framework:WPFBinder.ItemStyle="Default"
@@ -41,7 +48,7 @@
 
                 <Button Margin="0 0 12 12" VerticalAlignment="Bottom" HorizontalAlignment="Right"
                         framework:WPFBinder.Frame="OpenSettings"
-                        Style="{DynamicResource SettingsButtonStyle}">
+                        Style="{DynamicResource TopBarButtonStyle}">
                     <Image Height="16" Width="16" Source="/Images/settings.png"/>
                 </Button>
             </Grid>
@@ -51,5 +58,6 @@
         <Frame Margin="0 30 0 0" NavigationUIVisibility="Hidden" Name="NavigationFrame" VerticalAlignment="Stretch" framework:WPFBinder.Frame="NavigationPanel"/>
         <Polygon HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="#22000000" Points="170,0, 0,170, 0,170, 170,170, 170,170, 170,0"/>
         <Image Source="/Images/thunderhawk_icon.png" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Height="74"/>
+        <TextBlock framework:WPFBinder.Frame="Version" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,0" FontSize="9" Foreground="#44ffffff"/>
     </Grid>
 </framework:BindableWindow>

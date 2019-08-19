@@ -13,7 +13,8 @@ namespace ThunderHawk.Core
         public NavigationPanelFrame NavigationPanel { get; } = new NavigationPanelFrame();
 
         public ActionFrame OpenSettings { get; } = new ActionFrame();
-
+        public TextFrame Version { get; } = new TextFrame() { Text = "BETA 1.0" };
+        
         public MainWindowViewModel()
         {
             Pages.DataSource = new ObservableCollection<EmbeddedPageViewModel>()

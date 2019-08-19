@@ -319,13 +319,10 @@
     <Resource Include="Images\settings.png" />
     <Resource Include="Images\thunderhawk_full.png" />
     <Resource Include="Images\thunderhawk_icon.png" />
-    <Resource Include="Images\BackButton_Active.png" />
-    <Resource Include="Images\BackButton_Disabled.png" />
-    <Resource Include="Images\ForwardButton_Active.png" />
-    <Resource Include="Images\ForwardButton_Disabled.png" />
     <Resource Include="Images\Background_Chat.png" />
     <Resource Include="Images\Background_FAQ.png" />
     <Resource Include="Images\Background_NewsViewer.jpg" />
+    <Resource Include="Images\BackButton.png" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

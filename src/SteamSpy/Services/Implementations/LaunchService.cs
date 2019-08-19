@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
-using ThunderHawk.Tweaks;
 
 namespace ThunderHawk
 {
@@ -39,6 +38,7 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
+                System.Windows.MessageBox.Show(ex.Message);
                 Logger.Error(ex);
             }
         }

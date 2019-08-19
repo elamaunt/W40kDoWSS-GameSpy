@@ -2,8 +2,6 @@
 using Framework.WPF;
 using System;
 using System.Windows;
-using System.Windows.Media.Animation;
-using System.Windows.Navigation;
 
 namespace ThunderHawk
 {
