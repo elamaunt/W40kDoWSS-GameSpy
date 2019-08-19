@@ -12,7 +12,7 @@
         <FontFamily x:Key="Montserrat">pack://application:,,,/Fonts/Montserrat/#Montserrat</FontFamily>
     </framework:BindableControl.Resources>
 
-    <Grid VerticalAlignment="Stretch" Margin="0 30 0 0">
+    <Grid VerticalAlignment="Stretch">
         <Border Padding="40 24 120 16">
             <Border.Background>
                 <SolidColorBrush Color="#aa000000"/>
