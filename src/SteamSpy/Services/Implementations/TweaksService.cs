@@ -6,6 +6,6 @@ namespace ThunderHawk
 {
     public class TweaksService : ITweaksService
     {
-        public List<ITweakService> Tweaks { get; } = new List<ITweakService>() { new UnlockerService() };
+        public ITweak Unlocker { get; } = new Unlocker();
     }
 }

@@ -9,6 +9,8 @@ namespace ThunderHawk.Core
 
         public ActionFrame FAQLabel { get; } = new ActionFrame();
 
+        public ActionFrame Tweaks { get; } = new ActionFrame();
+
         public TextFrame ErrorsType { get; } = new TextFrame();
 
         public ActionFrame FoundErrors { get; } = new ActionFrame();

@@ -7,9 +7,12 @@
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Запустить игру</system:String>
-    <system:String x:Key="FoundWarnings">Мы нашли некоторые неисправности с игрой. </system:String>
-    <system:String x:Key="FoundErrors">Мы нашли некоторые проблемы с игрой! </system:String>
+    <system:String x:Key="FoundWarnings">Мы нашли некоторые неисправности с Вашей игрой. Это может сделать вашу игру менее комфортной. </system:String>
+    <system:String x:Key="FoundErrors">Мы нашли некоторые серьезные проблемы с Вашей игрой! </system:String>
     <system:String x:Key="FixIt">Исправить!</system:String>
+
+    <!-- Tweaks Page -->
+    <system:String x:Key="UnlockRaces">Разблокировать расы</system:String>
 
     <!-- Settings -->
     <system:String x:Key="DisableFog">Отключить туман</system:String>

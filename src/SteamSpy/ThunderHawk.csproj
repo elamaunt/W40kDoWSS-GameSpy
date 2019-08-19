@@ -103,7 +103,8 @@
     <Compile Include="Services\Implementations\LangService.cs" />
     <Compile Include="StaticClasses\WPFExtensions.cs" />
     <Compile Include="Styles\SettingsWindowStyle.cs" />
-    <Compile Include="Tweaks\UnlockerService.cs" />
+    <Compile Include="Tweaks\Camera.cs" />
+    <Compile Include="Tweaks\Unlocker.cs" />
     <Compile Include="Utils\ProcessHelper.cs" />
     <Compile Include="Servers\ChatServerRetranslator.cs" />
     <Compile Include="Servers\LoginServerRetranslator.cs" />
@@ -166,6 +167,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\WindowStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Elements\Element_Tweak.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Elements\Element_Tweaks.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
