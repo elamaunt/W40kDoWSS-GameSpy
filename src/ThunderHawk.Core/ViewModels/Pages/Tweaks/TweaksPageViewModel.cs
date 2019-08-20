@@ -16,19 +16,32 @@ namespace ThunderHawk.Core
             var wrongTweaks = CoreContext.TweaksService.GetWrongTweaks();
             RecommendedTweaks.DataSource = 
                 wrongTweaks.Select(x => new TweakItemViewModel(x, true)).ToObservableCollection();
-            RecommendedTweaksCount.Text = $" ({wrongTweaks.Length.ToString()})";
+
+            UpdateTweaksCount();
 
             ApplyRecommendedTweaks.Action = ApplyTweaksRecommend;
         }
 
         void ApplyTweaksRecommend()
         {
-            var tweaksToApply = RecommendedTweaks.DataSource.
-                Where(x => x.ShouldApplyTweak.IsChecked == true).Select(t => t.RawTweak);
+            var tweaksToApplyVM = RecommendedTweaks.DataSource.
+                Where(x => x.ShouldApplyTweak.IsChecked == true).ToList();
+            var tweaksToApply = tweaksToApplyVM.Select(x => x.RawTweak);
             foreach (var tweak in tweaksToApply)
             {
                 tweak.ApplyTweak();
             }
+            //not working
+            foreach (var tweakVM in tweaksToApplyVM)
+            {
+                RecommendedTweaks.DataSource.Remove(tweakVM);
+            }
+            UpdateTweaksCount();
+        }
+
+        void UpdateTweaksCount()
+        {
+            RecommendedTweaksCount.Text = $" ({RecommendedTweaks.ItemsCount.ToString()})";
         }
     }
 }
