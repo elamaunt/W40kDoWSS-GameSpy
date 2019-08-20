@@ -15,10 +15,10 @@
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPage">Tweak Manager</system:String>
-    <system:String x:Key="RecommendedTweaks">Recommended Tweaks</system:String>
-    <system:String x:Key="ApplyAlll">Apply all</system:String>
+    <system:String x:Key="ApplyRecommended">Apply all recommended</system:String>
     <system:String x:Key="ChooseTweaks">Or you can choose useful tweaks for you below</system:String>
-    <system:String x:Key="AllTweaks">All Tweaks</system:String>
+    <system:String x:Key="RecommendedToInstallation">Recommended for installation</system:String>
+
 
 
     <!-- Tweaks Description -->

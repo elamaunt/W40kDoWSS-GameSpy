@@ -18,12 +18,12 @@ namespace ThunderHawk.Core
             Frame.FoundErrors.Visible = false;
 
             var tweaksState = CoreContext.TweaksService.GetState();
-            if (tweaksState == TweakState.Error)
+            if (tweaksState == TweaksState.Error)
             {
                 Frame.FoundErrors.Visible = true;
                 Frame.ErrorsType.Text = CoreContext.LangService.GetString("FoundErrors");
             }
-            else if (tweaksState == TweakState.Warning)
+            else if (tweaksState == TweaksState.Warning)
             {
                 Frame.FoundErrors.Visible = true;
                 Frame.ErrorsType.Text = CoreContext.LangService.GetString("FoundWarnings");

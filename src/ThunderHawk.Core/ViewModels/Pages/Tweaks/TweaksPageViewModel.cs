@@ -5,7 +5,7 @@ namespace ThunderHawk.Core
 {
     public class TweaksPageViewModel: EmbeddedPageViewModel
     {
-        public ListFrame<TweakItemViewModel> RecommendedTweaks { get; } = new ListFrame<TweakItemViewModel>();
+        public ListFrame<TweakItemViewModel> Tweaks { get; } = new ListFrame<TweakItemViewModel>();
 
         public TextFrame RecommendedTweaksCount { get; } = new TextFrame();
 
@@ -14,7 +14,7 @@ namespace ThunderHawk.Core
         public TweaksPageViewModel()
         {
             var wrongTweaks = CoreContext.TweaksService.GetWrongTweaks();
-            RecommendedTweaks.DataSource = 
+            Tweaks.DataSource = 
                 wrongTweaks.Select(x => new TweakItemViewModel(x, true)).ToObservableCollection();
 
             UpdateTweaksCount();
@@ -24,7 +24,7 @@ namespace ThunderHawk.Core
 
         void ApplyTweaksRecommend()
         {
-            var tweaksToApplyVM = RecommendedTweaks.DataSource.
+            var tweaksToApplyVM = Tweaks.DataSource.
                 Where(x => x.ShouldApplyTweak.IsChecked == true).ToList();
             var tweaksToApply = tweaksToApplyVM.Select(x => x.RawTweak);
             foreach (var tweak in tweaksToApply)
@@ -34,14 +34,14 @@ namespace ThunderHawk.Core
             //not working
             foreach (var tweakVM in tweaksToApplyVM)
             {
-                RecommendedTweaks.DataSource.Remove(tweakVM);
+                Tweaks.DataSource.Remove(tweakVM);
             }
             UpdateTweaksCount();
         }
 
         void UpdateTweaksCount()
         {
-            RecommendedTweaksCount.Text = $" ({RecommendedTweaks.ItemsCount.ToString()})";
+            RecommendedTweaksCount.Text = $" ({Tweaks.ItemsCount.ToString()})";
         }
     }
 }

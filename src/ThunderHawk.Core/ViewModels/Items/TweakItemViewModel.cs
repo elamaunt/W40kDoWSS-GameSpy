@@ -8,7 +8,7 @@ namespace ThunderHawk.Core
         public TextFrame Name { get; } = new TextFrame();
         public TextFrame Description { get; } = new TextFrame();
         public ToggleFrame ShouldApplyTweak { get; } = new ToggleFrame();
-
+        public TextFrame IsRecommended { get; } = new TextFrame();
         public ITweak RawTweak { get; }
         //public TextFrame ApplyText { get; } = new TextFrame();
         //public TextFrame RestoreText { get; } = new TextFrame();
@@ -21,6 +21,7 @@ namespace ThunderHawk.Core
             ShouldApplyTweak.IsChecked = shouldApplyTweak;
             //ApplyText.Text = applyText;
             //RestoreText.Text = restoreText;
+            IsRecommended.Visible = false;
         }
     }
 }

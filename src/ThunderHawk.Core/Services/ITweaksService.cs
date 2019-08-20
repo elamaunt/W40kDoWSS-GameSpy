@@ -6,7 +6,7 @@ namespace ThunderHawk.Core.Services
     {
         ITweak Unlocker { get; }
 
-        TweakState GetState();
+        TweaksState GetState();
 
         ITweak[] GetWrongTweaks();
     }

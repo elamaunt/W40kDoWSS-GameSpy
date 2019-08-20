@@ -11,7 +11,10 @@
     <Border BorderBrush="White" BorderThickness="0 0 0 0" Margin="5 0 5 15">
         <DockPanel LastChildFill="False">
             <StackPanel DockPanel.Dock="Left" Width="680" Orientation="Vertical">
-                <TextBlock framework:WPFBinder.Frame="Name" Style="{DynamicResource BigTextStyle}"/>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock framework:WPFBinder.Frame="Name" Style="{DynamicResource BigTextStyle}"/>
+                    <TextBlock framework:WPFBinder.Frame="IsRecommended" Margin="5 0 0 0" Text="{DynamicResource RecommendedToInstallation}" Style="{DynamicResource BigTextStyle}"/>
+                </StackPanel>
                 <TextBlock Margin="0 3 0 0" TextWrapping="Wrap"
                        framework:WPFBinder.Frame="Description" Style="{DynamicResource RegularTextStyle}"/>
             </StackPanel>

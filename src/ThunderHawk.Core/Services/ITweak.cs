@@ -6,6 +6,6 @@
         bool CheckTweak();
         string Title { get;}
         string Description { get; }
-        TweakState TweakLevel { get; }
+        TweakLevel TweakLevel { get; }
     }
 }

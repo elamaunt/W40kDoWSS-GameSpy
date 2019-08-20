@@ -15,10 +15,9 @@
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPage">Менеджер Твиков</system:String>
-    <system:String x:Key="RecommendedTweaks">Рекоммендуется к установке</system:String>
-    <system:String x:Key="ApplyAlll">Применить все</system:String>
+    <system:String x:Key="ApplyRecommended">Применить все рекомендации</system:String>
     <system:String x:Key="ChooseTweaks">Либо выберите нужные для вас твики ниже</system:String>
-    <system:String x:Key="AllTweaks">Все твики</system:String>
+    <system:String x:Key="RecommendedToInstallation">Рекомендуется к установке</system:String>
 
     <!-- Tweaks Description -->
     <system:String x:Key="UnlockerTweakTitle">Разблокировщик рас</system:String>

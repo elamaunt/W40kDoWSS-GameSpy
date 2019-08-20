@@ -10,21 +10,21 @@ namespace ThunderHawk
     {
         public ITweak Unlocker { get; } = new Unlocker();
 
-        public TweakState GetState()
+        public TweaksState GetState()
         {
             var unSuccessfulTweaks = GetWrongTweaks();
             if (unSuccessfulTweaks.Length > 0)
             {
-                if (unSuccessfulTweaks.Any(x => x.TweakLevel == TweakState.Error))
+                if (unSuccessfulTweaks.Any(x => x.TweakLevel == TweakLevel.Important))
                 {
-                    return TweakState.Error;
+                    return TweaksState.Error;
                 }
-                else if (unSuccessfulTweaks.Any(x => x.TweakLevel == TweakState.Warning))
+                else if (unSuccessfulTweaks.Any(x => x.TweakLevel == TweakLevel.Recommended))
                 {
-                    return TweakState.Warning;
+                    return TweaksState.Warning;
                 }
             }
-            return TweakState.Success;
+            return TweaksState.Success;
         }
 
         public ITweak[] GetWrongTweaks()

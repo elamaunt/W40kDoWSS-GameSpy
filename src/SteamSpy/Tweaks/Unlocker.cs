@@ -9,7 +9,7 @@ namespace ThunderHawk.Tweaks
 {
     public class Unlocker : ITweak
     {
-        public TweakState TweakLevel { get; } = TweakState.Error;
+        public TweakLevel TweakLevel { get; } = TweakLevel.Important;
         public string Title => Core.CoreContext.LangService.GetString("UnlockerTweakTitle");
         public string Description => Core.CoreContext.LangService.GetString("UnlockerTweakDescription");
 
