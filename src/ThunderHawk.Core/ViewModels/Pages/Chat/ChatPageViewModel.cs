@@ -6,7 +6,8 @@ namespace ThunderHawk.Core
     {
         public ChatPageViewModel()
         {
-            TitleButton.Text = "Chat";
+            TitleButton.Text = CoreContext.LangService.GetString("ChatPage");
+
         }
     }
 }

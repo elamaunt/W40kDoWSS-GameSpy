@@ -11,6 +11,5 @@ namespace ThunderHawk.Core
         public static IOptionsService OptionsService => Service<IOptionsService>.Get();
         public static ILaunchService LaunchService => Service<ILaunchService>.Get();
         public static ITweaksService TweaksService => Service<ITweaksService>.Get();
-
     }
 }

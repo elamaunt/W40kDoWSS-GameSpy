@@ -1,15 +1,34 @@
 ﻿using Framework;
+using System.Linq;
 
 namespace ThunderHawk.Core
 {
     public class TweaksPageViewModel: EmbeddedPageViewModel
     {
-        public ListFrame<TweakItemViewModel> Tweaks { get; } = new ListFrame<TweakItemViewModel>();
+        public ListFrame<TweakItemViewModel> RecommendedTweaks { get; } = new ListFrame<TweakItemViewModel>();
+
+        public TextFrame RecommendedTweaksCount { get; } = new TextFrame();
+
+        public ActionFrame ApplyRecommendedTweaks { get; } = new ActionFrame();
 
         public TweaksPageViewModel()
         {
-            Tweaks.DataSource.Add(new TweakItemViewModel("Разблокировщик рас", "Мы заметили, что у вас доступны не все расы. " +
-                "Это может создать значительный дискомфорт в игре и неравные возможности с вашим противником.", "Разблокировать расы!", "Заблокировать расы обратно"));
+            var wrongTweaks = CoreContext.TweaksService.GetWrongTweaks();
+            RecommendedTweaks.DataSource = 
+                wrongTweaks.Select(x => new TweakItemViewModel(x, true)).ToObservableCollection();
+            RecommendedTweaksCount.Text = $" ({wrongTweaks.Length.ToString()})";
+
+            ApplyRecommendedTweaks.Action = ApplyTweaksRecommend;
+        }
+
+        void ApplyTweaksRecommend()
+        {
+            var tweaksToApply = RecommendedTweaks.DataSource.
+                Where(x => x.ShouldApplyTweak.IsChecked == true).Select(t => t.RawTweak);
+            foreach (var tweak in tweaksToApply)
+            {
+                tweak.ApplyTweak();
+            }
         }
     }
 }

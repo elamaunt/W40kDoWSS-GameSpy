@@ -1,4 +1,5 @@
 ﻿using Framework;
+using ThunderHawk.Core.Services;
 
 namespace ThunderHawk.Core
 {
@@ -6,15 +7,20 @@ namespace ThunderHawk.Core
     {
         public TextFrame Name { get; } = new TextFrame();
         public TextFrame Description { get; } = new TextFrame();
-        public TextFrame ApplyText { get; } = new TextFrame();
-        public TextFrame RestoreText { get; } = new TextFrame();
+        public ToggleFrame ShouldApplyTweak { get; } = new ToggleFrame();
 
-        public TweakItemViewModel(string name, string description, string applyText, string restoreText)
+        public ITweak RawTweak { get; }
+        //public TextFrame ApplyText { get; } = new TextFrame();
+        //public TextFrame RestoreText { get; } = new TextFrame();
+
+        public TweakItemViewModel(ITweak tweak, bool shouldApplyTweak/*, string applyText, string restoreText*/)
         {
-            Name.Text = name;
-            Description.Text = description;
-            ApplyText.Text = applyText;
-            RestoreText.Text = restoreText;
+            RawTweak = tweak;
+            Name.Text = tweak.Title;
+            Description.Text = tweak.Description;
+            ShouldApplyTweak.IsChecked = shouldApplyTweak;
+            //ApplyText.Text = applyText;
+            //RestoreText.Text = restoreText;
         }
     }
 }

@@ -17,12 +17,17 @@ namespace ThunderHawk.Core
 
             Frame.FoundErrors.Visible = false;
 
-            /*if (CoreContext.TweaksService.Unlocker.CheckTweak())
+            var tweaksState = CoreContext.TweaksService.GetState();
+            if (tweaksState == TweakState.Error)
             {
                 Frame.FoundErrors.Visible = true;
                 Frame.ErrorsType.Text = CoreContext.LangService.GetString("FoundErrors");
-            }*/
-
+            }
+            else if (tweaksState == TweakState.Warning)
+            {
+                Frame.FoundErrors.Visible = true;
+                Frame.ErrorsType.Text = CoreContext.LangService.GetString("FoundWarnings");
+            }
 
             if (Frame.News.DataSource.IsNullOrEmpty())
                 CoreContext.NewsProvider.GetNews()

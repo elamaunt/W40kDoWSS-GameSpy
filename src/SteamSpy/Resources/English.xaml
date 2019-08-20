@@ -5,15 +5,25 @@
     
     <!-- Page names -->
     <system:String x:Key="MainPage">Main</system:String>
+    <system:String x:Key="ChatPage">Chat</system:String>
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Launch game</system:String>
-    <system:String x:Key="FoundWarnings">There are some warnings. It may affect the comfort of your gameplay. </system:String>
+    <system:String x:Key="FoundWarnings">There are some warning with your game. </system:String>
     <system:String x:Key="FoundErrors">We found some important problems with your game! </system:String>
     <system:String x:Key="FixIt">Fix it!</system:String>
 
     <!-- Tweaks Page -->
-    <system:String x:Key="UnlockRaces">Unlock Races</system:String>
+    <system:String x:Key="TweaksPage">Tweak Manager</system:String>
+    <system:String x:Key="RecommendedTweaks">Recommended Tweaks</system:String>
+    <system:String x:Key="ApplyAlll">Apply all</system:String>
+    <system:String x:Key="ChooseTweaks">Or you can choose useful tweaks for you below</system:String>
+    <system:String x:Key="AllTweaks">All Tweaks</system:String>
+
+
+    <!-- Tweaks Description -->
+    <system:String x:Key="UnlockerTweakTitle">Race unlocker</system:String>
+    <system:String x:Key="UnlockerTweakDescription">Not all races are available for you to play in multiplayer. We recommend unlocking them. </system:String>
 
 
     <!-- Settings -->
