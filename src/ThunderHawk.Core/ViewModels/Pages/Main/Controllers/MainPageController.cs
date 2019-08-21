@@ -14,7 +14,6 @@ namespace ThunderHawk.Core
             Frame.FAQLabel.Action = OpenFAQ;
             Frame.Tweaks.Action = OpenTweaks;
 
-
             Frame.FoundErrors.Visible = true;
 
             var foundRecommendedTweaks = CoreContext.TweaksService.GetState();

@@ -43,7 +43,7 @@
                         <Image Source="/Images/BackButton.png"/>
                     </Button>
 
-                    <StackPanel Margin="60 0 0 0" 
+                    <StackPanel Margin="50 0 0 0" 
                             x:Name="Tabs"
                             framework:WPFBinder.ItemPrefix="Tab"
                             framework:WPFBinder.ItemStyle="Default"

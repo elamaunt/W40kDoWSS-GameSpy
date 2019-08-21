@@ -9,7 +9,6 @@ namespace ThunderHawk.Core
 
         public ListFrame<TweakItemViewModel> AllTweaks { get; } = new ListFrame<TweakItemViewModel>();
 
-
         public TextFrame RecommendedTweaksCount { get; } = new TextFrame();
 
         public ActionFrame ApplyRecommendedTweaks { get; } = new ActionFrame();
@@ -26,28 +25,28 @@ namespace ThunderHawk.Core
             UpdateTweaksCount();
 
             ApplyRecommendedTweaks.Action = ApplyTweaksRecommend;
+
+            RecommendedTweaks.DataSource.CollectionChanged += DataSource_CollectionChanged;
+        }
+
+        private void DataSource_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            UpdateTweaksCount();
         }
 
         void ApplyTweaksRecommend()
         {
-            /*var tweaksToApplyVM = Tweaks.DataSource.
-                Where(x => x.ShouldApplyTweak.IsChecked == true).ToList();
-            var tweaksToApply = tweaksToApplyVM.Select(x => x.RawTweak);
+            var tweaksToApply = RecommendedTweaks.DataSource.Where(t => !t.RawTweak.CheckTweak());
             foreach (var tweak in tweaksToApply)
             {
-                tweak.EnableTweak();
+                tweak.IsTweakEnabled.IsChecked = true;
             }
-            //not working
-            foreach (var tweakVM in tweaksToApplyVM)
-            {
-                Tweaks.DataSource.Remove(tweakVM);
-            }
-            UpdateTweaksCount();*/
         }
 
         void UpdateTweaksCount()
         {
-            RecommendedTweaksCount.Text = $" ({RecommendedTweaks.ItemsCount.ToString()})";
+            var tweaksCount = CoreContext.TweaksService.Tweaks.Where(t => t.IsRecommendedTweak).Where(t => !t.CheckTweak()).Count();
+            RecommendedTweaksCount.Text = $" ({tweaksCount.ToString()})";
         }
     }
 }

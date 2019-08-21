@@ -87,6 +87,7 @@
     <Compile Include="Controllers\Binders\TabControlWithListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TabItemWithPageViewModelBinder.cs" />
     <Compile Include="Effects\RectBlurEffect.cs" />
+    <Compile Include="ExplorerExtensions.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="CoreContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />

@@ -23,10 +23,12 @@ namespace ThunderHawk.Tweaks
 
             var targetDir = Path.Combine(gamePath, "Unlocker");
 
-            if (!Directory.Exists(targetDir))
+            if (Directory.Exists(targetDir))
             {
-                Directory.CreateDirectory(targetDir);
+                ExplorerExtensions.DeleteDirectory(targetDir);
             }
+            Directory.CreateDirectory(targetDir);
+
 
             var files = Directory.GetFiles(unlockerDir);
 
@@ -71,14 +73,14 @@ namespace ThunderHawk.Tweaks
 
             if (Directory.Exists(targetDir))
             {
-                Directory.Delete(targetDir);
+                ExplorerExtensions.DeleteDirectory(targetDir);
             }
 
-            var softwareKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("Software\\THQ");
+            var softwareKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("Software", true);
 
-            if (softwareKey.OpenSubKey("Dawn of War") != null)
+            if (softwareKey.OpenSubKey("THQ") != null)
             {
-                softwareKey.DeleteSubKeyTree("Dawn of War");
+                softwareKey.DeleteSubKeyTree("THQ");
             }
 
         }
