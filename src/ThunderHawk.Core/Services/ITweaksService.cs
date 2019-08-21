@@ -4,10 +4,8 @@ namespace ThunderHawk.Core.Services
 {
     public interface ITweaksService
     {
-        ITweak Unlocker { get; }
+        ITweak[] Tweaks { get; }
 
         TweaksState GetState();
-
-        ITweak[] GetWrongTweaks();
     }
 }

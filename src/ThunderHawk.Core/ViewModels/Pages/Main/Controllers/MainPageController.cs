@@ -15,7 +15,7 @@ namespace ThunderHawk.Core
             Frame.Tweaks.Action = OpenTweaks;
 
 
-            Frame.FoundErrors.Visible = false;
+            Frame.FoundErrors.Visible = true;
 
             var tweaksState = CoreContext.TweaksService.GetState();
             if (tweaksState == TweaksState.Error)

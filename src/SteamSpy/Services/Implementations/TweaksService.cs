@@ -8,11 +8,11 @@ namespace ThunderHawk
 {
     public class TweaksService : ITweaksService
     {
-        public ITweak Unlocker { get; } = new Unlocker();
+        public ITweak[] Tweaks { get; } = new ITweak[] { new Unlocker(), new FogSwitcher() };
 
         public TweaksState GetState()
         {
-            var unSuccessfulTweaks = GetWrongTweaks();
+            var unSuccessfulTweaks = GetFailedTweaks();
             if (unSuccessfulTweaks.Length > 0)
             {
                 if (unSuccessfulTweaks.Any(x => x.TweakLevel == TweakLevel.Important))
@@ -27,12 +27,15 @@ namespace ThunderHawk
             return TweaksState.Success;
         }
 
-        public ITweak[] GetWrongTweaks()
+        private ITweak[] GetFailedTweaks()
         {
             var retTweaks = new List<ITweak>();
 
-            if (!Unlocker.CheckTweak())
-                retTweaks.Add(Unlocker);
+            foreach(var tweak in Tweaks)
+            {
+                if (!tweak.CheckTweak())
+                    retTweaks.Add(tweak);
+            }
 
             return retTweaks.ToArray();
         }

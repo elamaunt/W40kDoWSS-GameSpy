@@ -2,10 +2,11 @@
 {
     public interface ITweak
     {
-        void ApplyTweak();
-        bool CheckTweak();
-        string Title { get;}
-        string Description { get; }
+        string TweakTitle { get; }
+        string TweakDescription { get; }
         TweakLevel TweakLevel { get; }
+        void EnableTweak();
+        void DisableTweak();
+        bool CheckTweak();
     }
 }

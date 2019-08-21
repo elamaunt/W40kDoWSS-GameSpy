@@ -10,16 +10,16 @@
 
     <Border BorderBrush="White" BorderThickness="0 0 0 0" Margin="5 0 5 15">
         <DockPanel LastChildFill="False">
-            <StackPanel DockPanel.Dock="Left" Width="680" Orientation="Vertical">
+            <StackPanel DockPanel.Dock="Left" Width="640" Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
+                    <TextBlock framework:WPFBinder.Frame="RecommendStar" Margin="5 0 0 0" Text="" Style="{DynamicResource BigTextStyle}"/>
                     <TextBlock framework:WPFBinder.Frame="Name" Style="{DynamicResource BigTextStyle}"/>
-                    <TextBlock framework:WPFBinder.Frame="IsRecommended" Margin="5 0 0 0" Text="{DynamicResource RecommendedToInstallation}" Style="{DynamicResource BigTextStyle}"/>
                 </StackPanel>
                 <TextBlock Margin="0 3 0 0" TextWrapping="Wrap"
                        framework:WPFBinder.Frame="Description" Style="{DynamicResource RegularTextStyle}"/>
             </StackPanel>
-            <CheckBox Margin="0 0 5 0" VerticalAlignment="Center" framework:WPFBinder.Frame="ShouldApplyTweak"
-                      DockPanel.Dock="Right" Style="{DynamicResource SettingsCheckBoxStyle}"></CheckBox>
+            <CheckBox Width="40" Margin="0 0 5 0" VerticalAlignment="Center" framework:WPFBinder.Frame="IsTweakEnabled"
+                      DockPanel.Dock="Right" Style="{DynamicResource SliderCheckBoxStyle}"></CheckBox>
         </DockPanel>
     </Border>
 

@@ -13,9 +13,9 @@ namespace ThunderHawk.Core
 
         public TweaksPageViewModel()
         {
-            var wrongTweaks = CoreContext.TweaksService.GetWrongTweaks();
-            Tweaks.DataSource = 
-                wrongTweaks.Select(x => new TweakItemViewModel(x, true)).ToObservableCollection();
+            var tweaks = CoreContext.TweaksService.Tweaks;
+            Tweaks.DataSource =
+                tweaks.Select(x => new TweakItemViewModel(x)).ToObservableCollection();
 
             UpdateTweaksCount();
 
@@ -24,19 +24,19 @@ namespace ThunderHawk.Core
 
         void ApplyTweaksRecommend()
         {
-            var tweaksToApplyVM = Tweaks.DataSource.
+            /*var tweaksToApplyVM = Tweaks.DataSource.
                 Where(x => x.ShouldApplyTweak.IsChecked == true).ToList();
             var tweaksToApply = tweaksToApplyVM.Select(x => x.RawTweak);
             foreach (var tweak in tweaksToApply)
             {
-                tweak.ApplyTweak();
+                tweak.EnableTweak();
             }
             //not working
             foreach (var tweakVM in tweaksToApplyVM)
             {
                 Tweaks.DataSource.Remove(tweakVM);
             }
-            UpdateTweaksCount();
+            UpdateTweaksCount();*/
         }
 
         void UpdateTweaksCount()

@@ -6,7 +6,7 @@ namespace ThunderHawk.Core
     {
         protected override void OnBind()
         {
-            Frame.DisableFog.IsChecked = true;
+            //Frame.DisableFog.IsChecked = true;
         }
     }
 }

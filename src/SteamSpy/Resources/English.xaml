@@ -23,7 +23,10 @@
 
     <!-- Tweaks Description -->
     <system:String x:Key="UnlockerTweakTitle">Race unlocker</system:String>
-    <system:String x:Key="UnlockerTweakDescription">Not all races are available for you to play in multiplayer. We recommend unlocking them. </system:String>
+    <system:String x:Key="UnlockerTweakDescription">If not all races are available for you to play in multiplayer, we recommend unlocking them. </system:String>
+    <system:String x:Key="FogTweakTitle">Fog Switcher</system:String>
+    <system:String x:Key="FogTweakDescription">You can disable fog which may bother you if you use an extended camera. </system:String>
+
 
 
     <!-- Settings -->

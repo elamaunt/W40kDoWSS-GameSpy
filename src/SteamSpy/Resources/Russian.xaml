@@ -21,7 +21,10 @@
 
     <!-- Tweaks Description -->
     <system:String x:Key="UnlockerTweakTitle">Разблокировщик рас</system:String>
-    <system:String x:Key="UnlockerTweakDescription">У вас доступны не все расы для игры в мультиплеере. Рекомендуем разблокировать их. </system:String>
+    <system:String x:Key="UnlockerTweakDescription">Если у вас доступны не все расы для игры по мультиплееру, то вы можете разблокировать их. </system:String>
+    <system:String x:Key="FogTweakTitle">Конфигуратор тумана</system:String>
+    <system:String x:Key="FogTweakDescription">Вы можете отключить туман который мешает в случае использования улучшенной камеры. </system:String>
+
 
     <!-- Settings -->
     <system:String x:Key="DisableFog">Отключить туман</system:String>
