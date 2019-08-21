@@ -13,17 +13,16 @@ namespace ThunderHawk.Tweaks
 
         public bool CheckTweak()
         {
-            return Core.CoreContext.OptionsService.DisableFog;
+            //TODO: Implement tweak logic
+            return true;
         }
 
         public void EnableTweak()
         {
-            Core.CoreContext.OptionsService.DisableFog = true;
         }
 
         public void DisableTweak()
         {
-            Core.CoreContext.OptionsService.DisableFog = false;
         }
     }
 }
