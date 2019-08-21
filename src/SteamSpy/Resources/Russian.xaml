@@ -14,8 +14,8 @@
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPage">Конфигуратор улучшений</system:String>
-    <system:String x:Key="ApplyRecommended">Применить рекомендации </system:String>
-    <system:String x:Key="ChooseTweaks">Либо выберите нужные для вас пункты ниже</system:String>
+    <system:String x:Key="ApplyRecommended">Применить рекомендации</system:String>
+    <system:String x:Key="ChooseTweaks">Либо выберите нужные для вас пункты ниже. Выделенные - рекомендуемые.</system:String>
     <system:String x:Key="RecommendedToInstallation">Рекомендуется к установке</system:String>
 
     <!-- Tweaks Description -->

@@ -14,8 +14,8 @@
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPage">Features Manager</system:String>
-    <system:String x:Key="ApplyRecommended">Apply recommended </system:String>
-    <system:String x:Key="ChooseTweaks">Or you can choose useful tweaks for you below</system:String>
+    <system:String x:Key="ApplyRecommended">Apply recommended</system:String>
+    <system:String x:Key="ChooseTweaks">Or you can apply tweaks manually below. Highlighted are recommended.</system:String>
     <system:String x:Key="RecommendedToInstallation">Recommended for installation</system:String>
 
 

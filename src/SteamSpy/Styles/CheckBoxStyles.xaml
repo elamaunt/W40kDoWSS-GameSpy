@@ -55,7 +55,7 @@
                             <Setter TargetName="OffCircle" Property="Visibility" Value="Visible"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="MainBorder" Property="Background" Value="#0a8fcc"/>
+                            <Setter TargetName="MainBorder" Property="Background" Value="{DynamicResource MainBlue}"/>
                             <Setter TargetName="OnCircle" Property="Visibility" Value="Visible"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
