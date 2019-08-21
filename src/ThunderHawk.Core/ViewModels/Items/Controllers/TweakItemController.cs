@@ -1,6 +1,4 @@
-﻿using System;
-using System.ComponentModel;
-using Framework;
+﻿using Framework;
 
 namespace ThunderHawk.Core
 {
@@ -9,19 +7,15 @@ namespace ThunderHawk.Core
         protected override void OnBind()
         {
             Frame.IsTweakEnabled.IsChecked = Frame.RawTweak.CheckTweak();
-            Frame.IsTweakEnabled.PropertyChanged += IsTweakEnabled_PropertyChanged;
+            SubscribeOnPropertyChanged(Frame.IsTweakEnabled, nameof(Frame.IsTweakEnabled.IsChecked), OnCheckedChanged);
         }
 
-        private void IsTweakEnabled_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        void OnCheckedChanged()
         {
-            if (Frame.IsTweakEnabled.IsChecked == true)
-            {
+            if (Frame.IsTweakEnabled.IsChecked ?? false)
                 Frame.RawTweak.EnableTweak();
-            }
-            else if (Frame.IsTweakEnabled.IsChecked == false)
-            {
+            else
                 Frame.RawTweak.DisableTweak();
-            }
         }
     }
 }

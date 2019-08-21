@@ -41,12 +41,12 @@ namespace ThunderHawk.Core
 
         void OnCanGoBackChanged()
         {
-            Frame.GoBack.Enabled = Frame.NavigationPanel.CanGoBack;
+            Frame.GoBack.Visible = Frame.NavigationPanel.CanGoBack;
         }
 
         void OnCanGoForwardChanged()
         {
-            Frame.GoForward.Enabled = Frame.NavigationPanel.CanGoForward;
+            Frame.GoForward.Visible = Frame.NavigationPanel.CanGoForward;
         }
     }
 }

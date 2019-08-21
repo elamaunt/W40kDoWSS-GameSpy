@@ -16,7 +16,7 @@ namespace ThunderHawk.Tweaks
         public void EnableTweak()
         {
             var gamePath = PathFinder.GamePath;
-            var unlockerDir = Path.Combine(Directory.GetCurrentDirectory(), "LauncherFiles\\Addons\\Unlocker");
+            var unlockerDir = Path.Combine("LauncherFiles", "Addons", "Unlocker");
 
             if (!Directory.Exists(unlockerDir))
                 throw new Exception("Could not find unlocker in LauncherFiles!");
