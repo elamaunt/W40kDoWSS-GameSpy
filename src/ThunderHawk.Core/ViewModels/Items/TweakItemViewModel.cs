@@ -8,7 +8,7 @@ namespace ThunderHawk.Core
         public TextFrame Name { get; } = new TextFrame();
         public TextFrame Description { get; } = new TextFrame();
         public ToggleFrame IsTweakEnabled { get; } = new ToggleFrame();
-        public TextFrame IsRecommended { get; } = new TextFrame();
+        //public TextFrame IsRecommended { get; } = new TextFrame();
         public ITweak RawTweak { get; }
 
         public TweakItemViewModel(ITweak tweak)
