@@ -27,6 +27,7 @@ namespace Framework.WPF
         protected override void OnUnbind()
         {
             View.Checked -= OnViewCheckedChanged;
+            View.Unchecked -= OnViewCheckedChanged;
             base.OnUnbind();
         }
     }
