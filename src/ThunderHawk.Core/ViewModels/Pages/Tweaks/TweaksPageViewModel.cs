@@ -5,7 +5,10 @@ namespace ThunderHawk.Core
 {
     public class TweaksPageViewModel: EmbeddedPageViewModel
     {
-        public ListFrame<TweakItemViewModel> Tweaks { get; } = new ListFrame<TweakItemViewModel>();
+        public ListFrame<TweakItemViewModel> RecommendedTweaks { get; } = new ListFrame<TweakItemViewModel>();
+
+        public ListFrame<TweakItemViewModel> AllTweaks { get; } = new ListFrame<TweakItemViewModel>();
+
 
         public TextFrame RecommendedTweaksCount { get; } = new TextFrame();
 
@@ -14,8 +17,11 @@ namespace ThunderHawk.Core
         public TweaksPageViewModel()
         {
             var tweaks = CoreContext.TweaksService.Tweaks;
-            Tweaks.DataSource =
-                tweaks.Select(x => new TweakItemViewModel(x)).ToObservableCollection();
+            RecommendedTweaks.DataSource = tweaks.Where(i => i.TweakLevel > 0).
+                Select(x => new TweakItemViewModel(x)).ToObservableCollection();
+
+            AllTweaks.DataSource = tweaks.Where(i => i.TweakLevel == 0).
+                Select(x => new TweakItemViewModel(x)).ToObservableCollection();
 
             UpdateTweaksCount();
 
@@ -41,7 +47,7 @@ namespace ThunderHawk.Core
 
         void UpdateTweaksCount()
         {
-            RecommendedTweaksCount.Text = $" ({Tweaks.ItemsCount.ToString()})";
+            RecommendedTweaksCount.Text = $" ({RecommendedTweaks.ItemsCount.ToString()})";
         }
     }
 }

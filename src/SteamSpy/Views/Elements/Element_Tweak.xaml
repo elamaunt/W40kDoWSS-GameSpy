@@ -12,7 +12,6 @@
         <DockPanel LastChildFill="False">
             <StackPanel DockPanel.Dock="Left" Width="640" Orientation="Vertical">
                 <StackPanel Orientation="Horizontal">
-                    <TextBlock framework:WPFBinder.Frame="RecommendStar" Margin="5 0 0 0" Text="" Style="{DynamicResource BigTextStyle}"/>
                     <TextBlock framework:WPFBinder.Frame="Name" Style="{DynamicResource BigTextStyle}"/>
                 </StackPanel>
                 <TextBlock Margin="0 3 0 0" TextWrapping="Wrap"

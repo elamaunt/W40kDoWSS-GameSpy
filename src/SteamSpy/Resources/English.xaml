@@ -14,8 +14,8 @@
     <system:String x:Key="FixIt">Fix it!</system:String>
 
     <!-- Tweaks Page -->
-    <system:String x:Key="TweaksPage">Tweak Manager</system:String>
-    <system:String x:Key="ApplyRecommended">Apply all recommended</system:String>
+    <system:String x:Key="TweaksPage">Features Manager</system:String>
+    <system:String x:Key="ApplyRecommended">Apply recommended </system:String>
     <system:String x:Key="ChooseTweaks">Or you can choose useful tweaks for you below</system:String>
     <system:String x:Key="RecommendedToInstallation">Recommended for installation</system:String>
 

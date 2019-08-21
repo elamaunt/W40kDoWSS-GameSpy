@@ -12,13 +12,12 @@
         <Grid.Background>
             <SolidColorBrush Color="Black" Opacity="0.6"></SolidColorBrush>
         </Grid.Background>
-        <StackPanel HorizontalAlignment="Center" Width="720"
+        <StackPanel HorizontalAlignment="Center" Width="700"
                     Orientation="Vertical" Margin="0 10 0 10">
             <TextBlock Text="{DynamicResource TweaksPage}" HorizontalAlignment="Center" Style="{DynamicResource ExtraBigTextStyle}"></TextBlock>
-            <StackPanel Margin="0 10 0 0" >
+            <StackPanel Margin="0 10 0 0">
                 <StackPanel Margin="0 5 0 0" Orientation="Horizontal">
-                    <Button framework:WPFBinder.Frame="ApplyRecommendedTweaks" HorizontalAlignment="Left" Style="{DynamicResource MiniButtonStyle}"
-                    Width="150" Height="25">
+                    <Button framework:WPFBinder.Frame="ApplyRecommendedTweaks" VerticalAlignment="Center" HorizontalAlignment="Center" Style="{DynamicResource NormalButtonStyle}" Height="40">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="{DynamicResource ApplyRecommended}"></TextBlock>
                             <TextBlock framework:WPFBinder.Frame="RecommendedTweaksCount"></TextBlock>
@@ -27,11 +26,28 @@
                     <TextBlock VerticalAlignment="Center" Text="{DynamicResource ChooseTweaks}"
                        Margin="10 0 0 0" Style="{DynamicResource FreeTextStyle}"></TextBlock>
                 </StackPanel>
-                <Border BorderBrush="White" BorderThickness="0" Margin="0 10 0 0">
+                
+                <StackPanel Orientation="Horizontal" Margin="0 10 0 0">
+                    <StackPanel Margin="-20 0 0 0" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="Рекомендуемые" Style="{DynamicResource RegularTextStyle}">
+                            <TextBlock.LayoutTransform>
+                                <RotateTransform Angle="270"/>
+                            </TextBlock.LayoutTransform>
+                        </TextBlock>
+                    </StackPanel>
+                    <Border BorderBrush="White" BorderThickness="1 0 0 0">
+                        <Border.Background>
+                            <SolidColorBrush Color="Black" Opacity="0"></SolidColorBrush>
+                        </Border.Background>
+                        <StackPanel framework:WPFBinder.Frame="RecommendedTweaks" Orientation="Vertical"/>
+                    </Border>
+                </StackPanel>
+
+                <Border Margin="0 15 0 0" BorderBrush="White" BorderThickness="0">
                     <Border.Background>
-                        <SolidColorBrush Color="Black" Opacity="0.5"></SolidColorBrush>
+                        <SolidColorBrush Color="Black" Opacity="0"></SolidColorBrush>
                     </Border.Background>
-                    <StackPanel framework:WPFBinder.Frame="Tweaks" Orientation="Vertical"/>
+                    <StackPanel framework:WPFBinder.Frame="AllTweaks" Orientation="Vertical"/>
                 </Border>
             </StackPanel>
             

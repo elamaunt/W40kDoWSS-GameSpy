@@ -332,6 +332,7 @@
     <Resource Include="Images\Background_FAQ.png" />
     <Resource Include="Images\Background_NewsViewer.jpg" />
     <Resource Include="Images\BackButton.png" />
+    <Resource Include="Images\star.png" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

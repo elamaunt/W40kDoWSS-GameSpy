@@ -13,8 +13,8 @@
     </Style>
 
 
-    <Style x:Key="MiniButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-        <Setter Property="FontSize" Value="14"></Setter>
+    <Style x:Key="NormalButtonStyle" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="FontSize" Value="17"></Setter>
         <Setter Property="FontFamily" Value="{StaticResource MainFont}"></Setter>
         <Setter Property="FontWeight" Value="SemiBold"></Setter>
         <Setter Property="Foreground" Value="White"></Setter>
@@ -22,7 +22,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Grid x:Name="ContentGrid" Background="#0a8fcc">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <ContentPresenter Margin="10 0 10 0" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
