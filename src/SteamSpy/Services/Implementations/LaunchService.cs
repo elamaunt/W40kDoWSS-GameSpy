@@ -20,7 +20,7 @@ namespace ThunderHawk
 
             try
             {
-                var exeFileName = PathFinder.GamePath + "\\LauncherFiles\\Patch1.2\\soulstorm.exe";
+                var exeFileName = PathFinder.GamePath + "\\LauncherFiles\\Addons\\Patch1.2\\soulstorm.exe";
                 if (File.Exists(exeFileName))
                 {
                     var ssProc = Process.Start(new ProcessStartInfo(exeFileName, $"-nomovies")

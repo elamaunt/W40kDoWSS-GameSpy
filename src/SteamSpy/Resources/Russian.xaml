@@ -9,8 +9,7 @@
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Запустить игру</system:String>
-    <system:String x:Key="FoundWarnings">Мы нашли незначительные неисправности с Вашей игрой. </system:String>
-    <system:String x:Key="FoundErrors">Мы нашли некоторые серьезные проблемы с Вашей игрой! </system:String>
+    <system:String x:Key="FoundErrors">Мы нашли некоторые проблемы с Вашей игрой!</system:String>
     <system:String x:Key="FixIt">Исправить!</system:String>
 
     <!-- Tweaks Page -->
@@ -24,7 +23,8 @@
     <system:String x:Key="UnlockerTweakDescription">Если у вас доступны не все расы для игры по мультиплееру, то вы можете разблокировать их. </system:String>
     <system:String x:Key="FogTweakTitle">Конфигуратор тумана</system:String>
     <system:String x:Key="FogTweakDescription">Вы можете отключить туман который мешает в случае использования улучшенной камеры. </system:String>
-
+    <system:String x:Key="HotKeysTweakTitle">GridKeys - горячие клавиши QWER</system:String>
+    <system:String x:Key="HotKeysTweakDescription">Вы можете установить улучшенные горячие клавиши, где клавиша каждой иконки соответствует ее положениею на экране. </system:String>
 
     <!-- Settings -->
     <system:String x:Key="DisableFog">Отключить туман</system:String>

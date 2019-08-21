@@ -4,7 +4,7 @@
     {
         string TweakTitle { get; }
         string TweakDescription { get; }
-        TweakLevel TweakLevel { get; }
+        bool IsRecommendedTweak { get; }
         void EnableTweak();
         void DisableTweak();
         bool CheckTweak();

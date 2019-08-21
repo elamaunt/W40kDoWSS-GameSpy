@@ -17,16 +17,11 @@ namespace ThunderHawk.Core
 
             Frame.FoundErrors.Visible = true;
 
-            var tweaksState = CoreContext.TweaksService.GetState();
-            if (tweaksState == TweaksState.Error)
+            var foundRecommendedTweaks = CoreContext.TweaksService.GetState();
+            if (foundRecommendedTweaks)
             {
                 Frame.FoundErrors.Visible = true;
                 Frame.ErrorsType.Text = CoreContext.LangService.GetString("FoundErrors");
-            }
-            else if (tweaksState == TweaksState.Warning)
-            {
-                Frame.FoundErrors.Visible = true;
-                Frame.ErrorsType.Text = CoreContext.LangService.GetString("FoundWarnings");
             }
 
             if (Frame.News.DataSource.IsNullOrEmpty())

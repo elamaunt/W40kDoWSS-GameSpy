@@ -333,3 +333,6 @@ ASALocalRun/
 *.db-wal
 
 src/GSMasterServer/Deploy/
+
+!src/SteamSpy/LauncherFiles/
+

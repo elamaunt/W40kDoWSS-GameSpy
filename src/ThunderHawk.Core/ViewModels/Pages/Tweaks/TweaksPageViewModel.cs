@@ -17,10 +17,10 @@ namespace ThunderHawk.Core
         public TweaksPageViewModel()
         {
             var tweaks = CoreContext.TweaksService.Tweaks;
-            RecommendedTweaks.DataSource = tweaks.Where(i => i.TweakLevel > 0).
+            RecommendedTweaks.DataSource = tweaks.Where(i => i.IsRecommendedTweak).
                 Select(x => new TweakItemViewModel(x)).ToObservableCollection();
 
-            AllTweaks.DataSource = tweaks.Where(i => i.TweakLevel == 0).
+            AllTweaks.DataSource = tweaks.Where(i => !i.IsRecommendedTweak).
                 Select(x => new TweakItemViewModel(x)).ToObservableCollection();
 
             UpdateTweaksCount();

@@ -10,7 +10,7 @@ namespace ThunderHawk.Tweaks
 
         public string TweakDescription => Core.CoreContext.LangService.GetString("FogTweakDescription");
 
-        public TweakLevel TweakLevel { get; } = TweakLevel.Normal;
+        public bool IsRecommendedTweak { get; } = false;
 
         public bool CheckTweak()
         {

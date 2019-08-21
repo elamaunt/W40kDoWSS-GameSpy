@@ -1,7 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.IO;
-using ThunderHawk.Core;
 using ThunderHawk.Core.Services;
 using ThunderHawk.StaticClasses.Soulstorm;
 
@@ -9,14 +8,15 @@ namespace ThunderHawk.Tweaks
 {
     public class Unlocker : ITweak
     {
-        public TweakLevel TweakLevel { get; } = TweakLevel.Important;
         public string TweakTitle => Core.CoreContext.LangService.GetString("UnlockerTweakTitle");
         public string TweakDescription => Core.CoreContext.LangService.GetString("UnlockerTweakDescription");
+        public bool IsRecommendedTweak { get; } = true;
+
 
         public void EnableTweak()
         {
             var gamePath = PathFinder.GamePath;
-            var unlockerDir = Path.Combine(Directory.GetCurrentDirectory(), "LauncherFiles\\Unlocker");
+            var unlockerDir = Path.Combine(Directory.GetCurrentDirectory(), "LauncherFiles\\Addons\\Unlocker");
 
             if (!Directory.Exists(unlockerDir))
                 throw new Exception("Could not find unlocker in LauncherFiles!");

@@ -9,8 +9,7 @@
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Launch game</system:String>
-    <system:String x:Key="FoundWarnings">There are some warning with your game. </system:String>
-    <system:String x:Key="FoundErrors">We found some important problems with your game! </system:String>
+    <system:String x:Key="FoundErrors">We detected some problems with your game!</system:String>
     <system:String x:Key="FixIt">Fix it!</system:String>
 
     <!-- Tweaks Page -->
@@ -20,12 +19,13 @@
     <system:String x:Key="RecommendedToInstallation">Recommended for installation</system:String>
 
 
-
     <!-- Tweaks Description -->
     <system:String x:Key="UnlockerTweakTitle">Race unlocker</system:String>
     <system:String x:Key="UnlockerTweakDescription">If not all races are available for you to play in multiplayer, we recommend unlocking them. </system:String>
     <system:String x:Key="FogTweakTitle">Fog Switcher</system:String>
     <system:String x:Key="FogTweakDescription">You can disable fog which may bother you if you use an extended camera. </system:String>
+    <system:String x:Key="HotKeysTweakTitle">Grid Keys (QWER HotKeys)</system:String>
+    <system:String x:Key="HotKeysTweakDescription">You can install custom hotkeys with q,w,e,r,a,s,d,f,z,x,c,v buttons</system:String>
 
 
 

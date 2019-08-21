@@ -8,26 +8,23 @@ namespace ThunderHawk
 {
     public class TweaksService : ITweaksService
     {
-        public ITweak[] Tweaks { get; } = new ITweak[] { new Unlocker(), new FogSwitcher() };
+        public ITweak[] Tweaks { get; } = new ITweak[]
+            { new Unlocker(), new FogSwitcher(), new GridHotkeys() };
 
-        public TweaksState GetState()
+        public bool GetState()
         {
-            var unSuccessfulTweaks = GetFailedTweaks();
-            if (unSuccessfulTweaks.Length > 0)
+            var disabledTweaks = GetDisabledTweaks();
+            if (disabledTweaks.Length > 0)
             {
-                if (unSuccessfulTweaks.Any(x => x.TweakLevel == TweakLevel.Important))
+                if (disabledTweaks.Any(x => x.IsRecommendedTweak))
                 {
-                    return TweaksState.Error;
-                }
-                else if (unSuccessfulTweaks.Any(x => x.TweakLevel == TweakLevel.Recommended))
-                {
-                    return TweaksState.Warning;
+                    return true;
                 }
             }
-            return TweaksState.Success;
+            return false;
         }
 
-        private ITweak[] GetFailedTweaks()
+        private ITweak[] GetDisabledTweaks()
         {
             var retTweaks = new List<ITweak>();
 
