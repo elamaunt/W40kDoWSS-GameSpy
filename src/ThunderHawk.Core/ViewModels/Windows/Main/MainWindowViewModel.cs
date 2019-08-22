@@ -20,7 +20,7 @@ namespace ThunderHawk.Core
             Pages.DataSource = new ObservableCollection<EmbeddedPageViewModel>()
             {
                 new MainPageViewModel(),
-                new ChatPageViewModel(),
+                new TweaksPageViewModel(),
                 //new ModificationsPageViewModel(){ Enabled = false },
                 //new AllNewsPageViewModel(){ Enabled = false }
             };

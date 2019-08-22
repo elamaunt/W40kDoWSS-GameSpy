@@ -5,6 +5,8 @@
     <!-- Page names -->
     <system:String x:Key="MainPage">Главная</system:String>
     <system:String x:Key="ChatPage">Чат</system:String>
+    <system:String x:Key="TweaksPage">Модификации</system:String>
+
 
 
     <!-- Main Page -->
@@ -13,7 +15,7 @@
     <system:String x:Key="FixIt">Исправить!</system:String>
 
     <!-- Tweaks Page -->
-    <system:String x:Key="TweaksPage">Конфигуратор улучшений</system:String>
+    <system:String x:Key="TweaksPageHeader">Конфигуратор улучшений</system:String>
     <system:String x:Key="ApplyRecommended">Применить рекомендации</system:String>
     <system:String x:Key="ChooseTweaks">Либо выберите нужные для вас пункты ниже. Выделенные - рекомендуемые.</system:String>
     <system:String x:Key="RecommendedToInstallation">Рекомендуется к установке</system:String>
@@ -21,6 +23,8 @@
     <!-- Tweaks Description -->
     <system:String x:Key="UnlockerTweakTitle">Разблокировщик рас</system:String>
     <system:String x:Key="UnlockerTweakDescription">Если у вас доступны не все расы для игры по мультиплееру, то вы можете разблокировать их. </system:String>
+    <system:String x:Key="CameraTweakTitle">Улучшенная камера</system:String>
+    <system:String x:Key="CameraTweakDescription">Улучшенная камера с повышенной дальностью видимости.</system:String>
     <system:String x:Key="FogTweakTitle">Конфигуратор тумана</system:String>
     <system:String x:Key="FogTweakDescription">Вы можете отключить туман который мешает в случае использования улучшенной камеры. </system:String>
     <system:String x:Key="HotKeysTweakTitle">GridKeys - горячие клавиши QWER</system:String>

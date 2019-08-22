@@ -1,4 +1,5 @@
 ﻿using Framework;
+using System;
 using ThunderHawk.Core.Services;
 
 namespace ThunderHawk.Core
@@ -9,7 +10,12 @@ namespace ThunderHawk.Core
         public TextFrame Description { get; } = new TextFrame();
         public ToggleFrame IsTweakEnabled { get; } = new ToggleFrame();
         //public TextFrame IsRecommended { get; } = new TextFrame();
+
+        public Action OnTweakChanged;
+
         public ITweak RawTweak { get; }
+
+        public ControlFrame GridMargin { get; } = new ControlFrame();
 
         public TweakItemViewModel(ITweak tweak)
         {

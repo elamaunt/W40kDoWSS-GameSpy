@@ -14,13 +14,17 @@ namespace ThunderHawk.Core
             Frame.FAQLabel.Action = OpenFAQ;
             Frame.Tweaks.Action = OpenTweaks;
 
-            Frame.FoundErrors.Visible = true;
 
             var foundRecommendedTweaks = CoreContext.TweaksService.GetState();
             if (foundRecommendedTweaks)
             {
                 Frame.FoundErrors.Visible = true;
                 Frame.ErrorsType.Text = CoreContext.LangService.GetString("FoundErrors");
+            }
+            else
+            {
+                Frame.FoundErrors.Visible = false;
+                Frame.ErrorsType.Text = "";
             }
 
             if (Frame.News.DataSource.IsNullOrEmpty())

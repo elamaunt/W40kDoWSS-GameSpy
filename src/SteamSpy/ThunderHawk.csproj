@@ -104,6 +104,7 @@
     <Compile Include="Services\Implementations\LangService.cs" />
     <Compile Include="StaticClasses\WPFExtensions.cs" />
     <Compile Include="Styles\SettingsWindowStyle.cs" />
+    <Compile Include="Tweaks\Camera.cs" />
     <Compile Include="Tweaks\FogSwitcher.cs" />
     <Compile Include="Tweaks\GridHotkeys.cs" />
     <Compile Include="Tweaks\Unlocker.cs" />

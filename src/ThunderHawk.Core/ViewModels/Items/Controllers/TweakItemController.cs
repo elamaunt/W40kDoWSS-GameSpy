@@ -1,4 +1,5 @@
 ﻿using Framework;
+using System;
 
 namespace ThunderHawk.Core
 {
@@ -16,6 +17,7 @@ namespace ThunderHawk.Core
                 Frame.RawTweak.EnableTweak();
             else
                 Frame.RawTweak.DisableTweak();
+            Frame.OnTweakChanged?.Invoke();
         }
     }
 }

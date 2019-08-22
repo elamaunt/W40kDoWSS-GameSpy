@@ -6,6 +6,7 @@
     <!-- Page names -->
     <system:String x:Key="MainPage">Main</system:String>
     <system:String x:Key="ChatPage">Chat</system:String>
+    <system:String x:Key="TweaksPage">Features</system:String>
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Launch game</system:String>
@@ -13,7 +14,7 @@
     <system:String x:Key="FixIt">Fix it!</system:String>
 
     <!-- Tweaks Page -->
-    <system:String x:Key="TweaksPage">Features Manager</system:String>
+    <system:String x:Key="TweaksPageHeader">Features Manager</system:String>
     <system:String x:Key="ApplyRecommended">Apply recommended</system:String>
     <system:String x:Key="ChooseTweaks">Or you can apply tweaks manually below. Highlighted are recommended.</system:String>
     <system:String x:Key="RecommendedToInstallation">Recommended for installation</system:String>
@@ -22,6 +23,8 @@
     <!-- Tweaks Description -->
     <system:String x:Key="UnlockerTweakTitle">Race unlocker</system:String>
     <system:String x:Key="UnlockerTweakDescription">If not all races are available for you to play in multiplayer, we recommend unlocking them. </system:String>
+    <system:String x:Key="CameraTweakTitle">Improved Camera</system:String>
+    <system:String x:Key="CameraTweakDescription">Improved camera with better visibility area.</system:String>
     <system:String x:Key="FogTweakTitle">Fog Switcher</system:String>
     <system:String x:Key="FogTweakDescription">You can disable fog which may bother you if you use an extended camera. </system:String>
     <system:String x:Key="HotKeysTweakTitle">Grid Keys (QWER HotKeys)</system:String>

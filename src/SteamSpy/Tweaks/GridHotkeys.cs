@@ -11,18 +11,21 @@ namespace ThunderHawk.Tweaks
 
         public bool IsRecommendedTweak { get; } = false;
 
+        private bool switcher = false;
         public bool CheckTweak()
         {
             //TODO: Implement tweak logic
-            return true;
+            return switcher;
         }
 
         public void EnableTweak()
         {
+            switcher = true;
         }
 
         public void DisableTweak()
         {
+            switcher = false;
         }
     }
 }
