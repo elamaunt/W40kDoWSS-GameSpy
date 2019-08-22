@@ -1,5 +1,4 @@
-﻿using GSMasterServer.Data;
-using GSMasterServer.Servers;
+﻿using GSMasterServer.Servers;
 using System;
 using System.Net;
 using System.Threading;

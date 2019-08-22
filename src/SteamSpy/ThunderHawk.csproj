@@ -86,6 +86,7 @@
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Controllers\Binders\TabControlWithListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TabItemWithPageViewModelBinder.cs" />
+    <Compile Include="Effects\IndicatorEffect.cs" />
     <Compile Include="Effects\RectBlurEffect.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="CoreContext.cs" />
@@ -282,6 +283,7 @@
   <ItemGroup>
     <None Include="Effects\RectBlurEffect.fx" />
     <Resource Include="Effects\Compile.txt" />
+    <None Include="Effects\IndicatorEffect.fx" />
     <Content Include="External\Reality.Net.dll" />
     <Resource Include="Fonts\Montserrat\Montserrat-Black.ttf" />
     <Resource Include="Fonts\Montserrat\Montserrat-BlackItalic.ttf" />
@@ -338,6 +340,7 @@
     <Resource Include="Images\Background_NewsViewer.jpg" />
     <Resource Include="Images\BackButton.png" />
     <Resource Include="Images\star.png" />
+    <Resource Include="Images\Indicator_Aquila.png" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
