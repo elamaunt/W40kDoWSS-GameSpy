@@ -41,7 +41,7 @@ DistRateWheelZoomOut = 1.3
 
 --	Distance range in metres
 DistMin = 5.0
-DistMax = 200.0
+DistMax = 100.0
 
 --	Declination speed
 DeclRateMouse = -5

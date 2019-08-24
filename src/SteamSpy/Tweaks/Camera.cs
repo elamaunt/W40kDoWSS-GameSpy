@@ -13,7 +13,7 @@ namespace ThunderHawk.Tweaks
 
         public bool IsRecommendedTweak { get; } = true;
 
-        private readonly string[] cameraFiles = new string[] { "camera_high.lua", "camera_me.lua", "camera_low.lua" }; 
+        private readonly string[] cameraFiles = new string[] { "camera_high.lua", /*"camera_me.lua",*/ "camera_low.lua" }; 
 
         private string[] CheckFolders(string gamePath)
         {

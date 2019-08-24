@@ -23,10 +23,10 @@
     <!-- Tweaks Description -->
     <system:String x:Key="UnlockerTweakTitle">Race unlocker</system:String>
     <system:String x:Key="UnlockerTweakDescription">If not all races are available for you to play in multiplayer, we recommend unlocking them. </system:String>
-    <system:String x:Key="CameraTweakTitle">Improved Camera</system:String>
-    <system:String x:Key="CameraTweakDescription">Improved camera with better visibility area.</system:String>
-    <system:String x:Key="FogTweakTitle">Fog Switcher</system:String>
-    <system:String x:Key="FogTweakDescription">You can disable fog which may bother you if you use an extended camera. </system:String>
+    <system:String x:Key="CameraTweakTitle">Extended Camera</system:String>
+    <system:String x:Key="CameraTweakDescription">A camera with better visibility area.</system:String>
+    <system:String x:Key="FogTweakTitle">Fog Remover</system:String>
+    <system:String x:Key="FogTweakDescription">You can disable fog which obscures the view when the camera is far away</system:String>
     <system:String x:Key="HotKeysTweakTitle">Grid Keys (QWER HotKeys)</system:String>
     <system:String x:Key="HotKeysTweakDescription">You can install custom hotkeys with q,w,e,r,a,s,d,f,z,x,c,v buttons</system:String>
 
