@@ -1,0 +1,144 @@
+-- This file is generated automatically by the Relic Audio Tool
+
+version = 9
+
+priority = 60
+volume = 1.000000
+volumeRand = -1.000000
+pitch = 1.000000
+pitchRand = 0.000000
+source = 0
+patch = 0
+numChannels = 1
+maxPolyphony = 3
+loopStart = 0
+loopEnd = -1
+startOffset = 0
+loopCount = 1
+loopCountRand = -1
+type3D = 0
+doppler = 0.000000
+coneMin = 0.000000
+coneMax = 0.000000
+envelope = {
+  {
+    distance = 0.000000,
+    volume = 1.000000,
+    reverb = 0.000000,
+    duration = 0,
+    equalizer = {
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+    }
+  },
+  {
+    distance = 50.000000,
+    volume = 1.000000,
+    reverb = 0.000000,
+    duration = 0,
+    equalizer = {
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+    }
+  },
+  {
+    distance = 100.000000,
+    volume = 1.000000,
+    reverb = 0.000000,
+    duration = 0,
+    equalizer = {
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+    }
+  },
+  {
+    distance = 150.000000,
+    volume = 1.000000,
+    reverb = 0.000000,
+    duration = 0,
+    equalizer = {
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+    }
+  },
+  {
+    distance = 200.000000,
+    volume = 0.000000,
+    reverb = 0.000000,
+    duration = 0,
+    equalizer = {
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+              1.000000,
+    }
+  },
+}
+effects = {
+  filterMinFreq = -1,
+  filterMaxFreq = -1,
+  toneMinFreq = -1,
+  toneMaxFreq = -1,
+  toneDuration = 0,
+  toneMute = 0,
+  toneCount = 0,
+  breakMaxRate = 0,
+  breakMaxDur = 0,
+  noiseMaxRate = 0,
+  noiseMaxDur = 0,
+  scaleLevel = 1.000000,
+  noiseLevel = 0.000000,
+  toneLevel = 0.000000,
+  limiterLevel = 1.000000,
+  pitchShift = 1.000000,
+  distance = 0.000000,
+  volume = 1.000000,
+  reverb = 0.000000,
+  duration = 0,
+  equalizer = {
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+            1.000000,
+  }
+}
+cardiodScale = 0.000000
+cardiodLowFreq = 0
+cardiodHighFreq = 0
+containerType = 0
+loopingContainer = 0
+silenceBreak = 0.000000
+silenceRandom = 0.000000
+weight = 1
