@@ -16,10 +16,28 @@ namespace Framework.WPF
             SubscribeOnPropertyChanged(Frame, nameof(INavigationPanelFrame.CurrentContentViewModel), UpdateFrameContent);
             UpdateFrameContent();
 
-            Frame.GoBack = View.GoBack;
-            Frame.GoForward = View.GoForward;
+            Frame.GoBack = GoBack;
+            Frame.GoForward = GoForward;
 
             View.Navigated += OnNavigated;
+        }
+
+        void GoForward()
+        {
+            var ext = Frame.GetExtension<ICustomContentPresenter>();
+            if (ext != null)
+                ext.GoForward(View);
+            else
+                View.GoForward();
+        }
+
+        void GoBack()
+        {
+            var ext = Frame.GetExtension<ICustomContentPresenter>();
+            if (ext != null)
+                ext.GoBack(View);
+            else
+                View.GoBack();
         }
 
         void OnNavigated(object sender, NavigationEventArgs e)

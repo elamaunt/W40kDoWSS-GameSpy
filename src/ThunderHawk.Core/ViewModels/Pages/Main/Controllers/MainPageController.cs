@@ -28,6 +28,7 @@ namespace ThunderHawk.Core
             }
 
             if (Frame.News.DataSource.IsNullOrEmpty())
+            {
                 CoreContext.NewsProvider.GetNews()
                     .OnCompletedOnUi(news =>
                     {
@@ -46,7 +47,9 @@ namespace ThunderHawk.Core
 
                         newsSource[0].Big = true;
                         Frame.News.DataSource = newsSource;
-                    });
+                    })
+                    .AttachIndicator(Frame.LoadingIndicator);
+            }
         }
 
         void OpenFAQ()

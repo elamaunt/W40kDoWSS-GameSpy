@@ -40,13 +40,13 @@ namespace Framework.WPF
             }
         }
 
-        private UIElement CreateItemCell(ViewModel model, int index)
+        private FrameworkElement CreateItemCell(ViewModel model, int index)
         {
             var view = (IBindableView)Service<IViewFactory>.Get().CreateView(_itemPrefix ?? model.GetPrefix(), _itemStyle ?? model.GetViewStyle());
 
             view.ViewModel = model;
             _bindedElements.Add(view);
-            return (UIElement)view;
+            return (FrameworkElement)view;
         }
 
         protected override void OnUnbind()

@@ -126,5 +126,43 @@ namespace ThunderHawk
             View.NavigationFrame.Navigated -= OnNavigated;
             base.OnUnbind();
         }
+
+        public void GoForward(System.Windows.Controls.Frame view)
+        {
+            var currentContent = (UIElement)view.Content;
+
+            if (currentContent == null)
+                return;
+
+            Frame.GoForward.Enabled = false;
+            var fadeOutAnimation = new DoubleAnimation(0d, TimeSpan.FromSeconds(0.25));
+
+            fadeOutAnimation.Completed += (o, e) =>
+            {
+                view.GoForward();
+                Frame.GoForward.Enabled = true;
+            };
+
+            currentContent.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
+        }
+
+        public void GoBack(System.Windows.Controls.Frame view)
+        {
+            var currentContent = (UIElement)view.Content;
+
+            if (currentContent == null)
+                return;
+
+            Frame.GoBack.Enabled = false;
+            var fadeOutAnimation = new DoubleAnimation(0d, TimeSpan.FromSeconds(0.25));
+
+            fadeOutAnimation.Completed += (o, e) =>
+            {
+                view.GoBack();
+                Frame.GoBack.Enabled = true;
+            };
+
+            currentContent.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
+        }
     }
 }
