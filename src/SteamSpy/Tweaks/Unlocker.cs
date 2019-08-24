@@ -15,28 +15,24 @@ namespace ThunderHawk.Tweaks
 
         public void EnableTweak()
         {
-            var gamePath = PathFinder.GamePath;
             var unlockerDir = Path.Combine("LauncherFiles", "Addons", "Unlocker");
 
             if (!Directory.Exists(unlockerDir))
                 throw new Exception("Could not find unlocker in LauncherFiles!");
 
+            var gamePath = PathFinder.GamePath;
             var targetDir = Path.Combine(gamePath, "Unlocker");
-
-            if (Directory.Exists(targetDir))
+            if (!Directory.Exists(targetDir))
             {
-                ExplorerExtensions.DeleteDirectory(targetDir);
+                Directory.CreateDirectory(targetDir);
             }
-            Directory.CreateDirectory(targetDir);
+            ExplorerExtensions.ClearFlags(targetDir);
 
+            var unlockerFiles = Directory.GetFiles(unlockerDir);
 
-            var files = Directory.GetFiles(unlockerDir);
-
-            foreach(var filePath in files)
+            foreach(var unlockerFile in unlockerFiles)
             {
-                var fileName = filePath.Substring(unlockerDir.Length + 1);
-                File.Copy(Path.Combine(unlockerDir, fileName),
-                    Path.Combine(targetDir, fileName), true);
+                File.Copy(unlockerFile, Path.Combine(targetDir, Path.GetFileName(unlockerFile)), true);
             }
 
             string dowCdKey = "3697-5fd2-5a76-0e44";
@@ -73,7 +69,8 @@ namespace ThunderHawk.Tweaks
 
             if (Directory.Exists(targetDir))
             {
-                ExplorerExtensions.DeleteDirectory(targetDir);
+                ExplorerExtensions.ClearFlags(targetDir);
+                Directory.Delete(targetDir, true);
             }
 
             var softwareKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("Software", true);
