@@ -4,6 +4,6 @@ namespace Framework.WPF
 {
     public interface ICustomItemPresenter
     {
-        void Present(FrameworkElement parent, UIElement cell);
+        void Present(FrameworkElement parent, FrameworkElement cell);
     }
 }

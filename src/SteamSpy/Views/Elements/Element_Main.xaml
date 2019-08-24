@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ThunderHawk"
              xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
              mc:Ignorable="d">
     <Grid ClipToBounds="False" Margin="60 0 0 0">
@@ -15,6 +16,12 @@
         <Grid ClipToBounds="False" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Row="0">
             <StackPanel Orientation="Horizontal" ClipToBounds="False" framework:WPFBinder.Frame="News"/>
         </Grid>
+
+        <Image VerticalAlignment="Center" HorizontalAlignment="Center" framework:WPFBinder.Frame="LoadingIndicator" Margin="-60,0,0,0" Width="80" Height="80" Source="/Images/Indicator_Aquila.png">
+            <Image.Effect>
+                <local:IndicatorEffect/>
+            </Image.Effect>
+        </Image>
 
         <DockPanel Grid.Row="2" Margin="0 0 0 35" LastChildFill="False">
             <TextBlock framework:WPFBinder.Frame="FAQLabel" DockPanel.Dock="Top"  Margin="0 0 0 16" Style="{DynamicResource FreeTextStyle}">

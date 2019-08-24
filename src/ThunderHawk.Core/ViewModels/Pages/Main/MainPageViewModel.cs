@@ -4,6 +4,7 @@ namespace ThunderHawk.Core
 {
     public class MainPageViewModel : EmbeddedPageViewModel
     {
+        public ControlFrame LoadingIndicator { get; } = new ControlFrame();
         public ListFrame<NewsItemViewModel> News { get; } = new ListFrame<NewsItemViewModel>();
         public ActionFrame LaunchGame { get; } = new ActionFrame();
 
@@ -18,6 +19,7 @@ namespace ThunderHawk.Core
         public MainPageViewModel()
         {
             TitleButton.Text = CoreContext.LangService.GetString("MainPage");
+            LoadingIndicator.Visible = false;
         }
     }
 }
