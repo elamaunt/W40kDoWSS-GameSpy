@@ -11,7 +11,7 @@
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Запустить игру</system:String>
-    <system:String x:Key="FoundErrors">Мы нашли некоторые проблемы с Вашей игрой!</system:String>
+    <system:String x:Key="FoundErrors">Есть некоторые рекомендации для повышения комфорта Вашей игры!</system:String>
     <system:String x:Key="FixIt">Исправить!</system:String>
 
     <!-- Tweaks Page -->
