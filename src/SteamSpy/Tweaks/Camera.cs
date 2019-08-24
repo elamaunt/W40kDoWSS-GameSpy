@@ -1,4 +1,7 @@
-﻿using ThunderHawk.Core.Services;
+﻿using System;
+using System.IO;
+using ThunderHawk.Core.Services;
+using ThunderHawk.StaticClasses.Soulstorm;
 
 namespace ThunderHawk.Tweaks
 {
@@ -10,22 +13,65 @@ namespace ThunderHawk.Tweaks
 
         public bool IsRecommendedTweak { get; } = true;
 
-        private bool switcher = false;
+        private readonly string[] cameraFiles = new string[] { "camera_high.lua", "camera_me.lua", "camera_low.lua" }; 
+
+        private string[] CheckFolders(string gamePath)
+        {
+            return new string[]
+            {
+                Path.Combine(gamePath, "W40k", "Data"),
+                Path.Combine(gamePath, "DXP2", "Data")
+            };
+        }
 
         public bool CheckTweak()
         {
-            //TODO: Implement tweak logic
-            return switcher;
+            var gamePath = PathFinder.GamePath;
+            var foundCamera = false;
+            foreach(var cFolder in CheckFolders(gamePath))
+            {
+                if (foundCamera)
+                    break;
+
+                foundCamera = true;
+                foreach(var cameraFile in cameraFiles)
+                {
+                    if (!File.Exists(Path.Combine(cFolder, cameraFile)))
+                        foundCamera = false;
+                }
+            }
+            return foundCamera;
         }
 
         public void EnableTweak()
         {
-            switcher = true;
+            var gamePath = PathFinder.GamePath;
+            var cameraDir = Path.Combine("LauncherFiles", "Addons", "Camera");
+            if (!Directory.Exists(cameraDir))
+                throw new Exception("Could not find Camera in LauncherFiles!");
+
+            var targetDir = CheckFolders(gamePath)[0]; // W40k/Data
+
+            var cameraFiles = Directory.GetFiles(cameraDir);
+            foreach (var cameraFile in cameraFiles)
+            {
+                File.Copy(cameraFile, Path.Combine(targetDir, Path.GetFileName(cameraFile)), true);
+            }
         }
 
         public void DisableTweak()
         {
-            switcher = false;
+            var gamePath = PathFinder.GamePath;
+            foreach (var cFolder in CheckFolders(gamePath))
+            {
+                foreach (var cameraFile in cameraFiles)
+                {
+                    var filePath = Path.Combine(cFolder, cameraFile);
+                    if (File.Exists(filePath))
+                        File.Delete(filePath);
+                }
+            }
+
         }
     }
 }
