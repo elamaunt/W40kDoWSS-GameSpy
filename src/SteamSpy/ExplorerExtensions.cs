@@ -4,7 +4,7 @@ namespace ThunderHawk
 {
     public static class ExplorerExtensions
     {
-        public static void ClearFlags(string targetDir)
+        public static void ClearFlagsInDirFiles(string targetDir)
         {
             string[] files = Directory.GetFiles(targetDir);
 

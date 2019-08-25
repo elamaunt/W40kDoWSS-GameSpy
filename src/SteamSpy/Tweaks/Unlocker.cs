@@ -12,6 +12,31 @@ namespace ThunderHawk.Tweaks
         public string TweakDescription => Core.CoreContext.LangService.GetString("UnlockerTweakDescription");
         public bool IsRecommendedTweak { get; } = true;
 
+        public bool CheckTweak()
+        {
+            var thqKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("Software\\THQ");
+            if (thqKey == null)
+                return false;
+
+            var dowReg = thqKey.OpenSubKey("Dawn Of War");
+            var dcReg = thqKey.OpenSubKey("Dawn Of War - Dark Crusade");
+            var ssReg = thqKey.OpenSubKey("Dawn Of War - Soulstorm");
+
+            if (dowReg == null || dcReg == null || ssReg == null)
+                return false;
+
+            string dowCdKey = (string)dowReg.GetValue("CDKEY");
+            string waCdKey = (string)dowReg.GetValue("CDKEY_WXP");
+            string dcCdKey = (string)dcReg.GetValue("CDKEY");
+            string ssCdKey = (string)ssReg.GetValue("CDKEY");
+
+
+            return dowCdKey?.Length == 19 && waCdKey?.Length == 24 && dcCdKey?.Length == 24 && ssCdKey?.Length == 24
+                && (string)dcReg.GetValue("w40kcdkey") == dowCdKey && (string)dcReg.GetValue("wxpcdkey") == waCdKey
+                && (string)ssReg.GetValue("w40kcdkey") == dowCdKey && (string)ssReg.GetValue("wxpcdkey") == waCdKey && (string)ssReg.GetValue("dxp2cdkey") == dcCdKey
+                && File.Exists(dowReg.GetValue("installlocation") + "w40k.exe") && File.Exists(dowReg.GetValue("installlocation") + "w40kwa.exe")
+                && (File.Exists(dcReg.GetValue("installlocation") + "DarkCrusade.exe") || File.Exists(dcReg.GetValue("installlocation") + "\\DarkCrusade.exe"));
+        }
 
         public void EnableTweak()
         {
@@ -26,7 +51,7 @@ namespace ThunderHawk.Tweaks
             {
                 Directory.CreateDirectory(targetDir);
             }
-            ExplorerExtensions.ClearFlags(targetDir);
+            ExplorerExtensions.ClearFlagsInDirFiles(targetDir);
 
             var unlockerFiles = Directory.GetFiles(unlockerDir);
 
@@ -69,7 +94,7 @@ namespace ThunderHawk.Tweaks
 
             if (Directory.Exists(targetDir))
             {
-                ExplorerExtensions.ClearFlags(targetDir);
+                ExplorerExtensions.ClearFlagsInDirFiles(targetDir);
                 Directory.Delete(targetDir, true);
             }
 
@@ -80,32 +105,6 @@ namespace ThunderHawk.Tweaks
                 softwareKey.DeleteSubKeyTree("THQ");
             }
 
-        }
-
-        public bool CheckTweak()
-        {
-            var thqKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("Software\\THQ");
-            if (thqKey == null)
-                return false;
-
-            var dowReg = thqKey.OpenSubKey("Dawn Of War");
-            var dcReg = thqKey.OpenSubKey("Dawn Of War - Dark Crusade");
-            var ssReg = thqKey.OpenSubKey("Dawn Of War - Soulstorm");
-
-            if (dowReg == null || dcReg == null || ssReg == null)
-                return false;
-
-            string dowCdKey = (string)dowReg.GetValue("CDKEY");
-            string waCdKey = (string)dowReg.GetValue("CDKEY_WXP");
-            string dcCdKey = (string)dcReg.GetValue("CDKEY");
-            string ssCdKey = (string)ssReg.GetValue("CDKEY");
-
-
-            return dowCdKey?.Length == 19 && waCdKey?.Length == 24 && dcCdKey?.Length == 24 && ssCdKey?.Length == 24
-                && (string)dcReg.GetValue("w40kcdkey") == dowCdKey && (string)dcReg.GetValue("wxpcdkey") == waCdKey
-                && (string)ssReg.GetValue("w40kcdkey") == dowCdKey && (string)ssReg.GetValue("wxpcdkey") == waCdKey && (string)ssReg.GetValue("dxp2cdkey") == dcCdKey
-                && File.Exists(dowReg.GetValue("installlocation") + "w40k.exe") && File.Exists(dowReg.GetValue("installlocation") + "w40kwa.exe")
-                && (File.Exists(dcReg.GetValue("installlocation") + "DarkCrusade.exe") || File.Exists(dcReg.GetValue("installlocation") + "\\DarkCrusade.exe"));
         }
     }
 }
