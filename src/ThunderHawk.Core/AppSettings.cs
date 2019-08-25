@@ -1,7 +1,15 @@
-﻿namespace ThunderHawk.StaticClasses
+﻿using Framework;
+
+namespace ThunderHawk.Core
 {
     public static class AppSettings
     {
-        public static bool DisableFog { get; set; } = true;
+        static IKeyValueStorage Storage { get; } = Service<IKeyValueStorage>.Get();
+
+        public static bool ThunderHawkModAutoSwitch
+        {
+            get => Storage.GetValue(nameof(ThunderHawkModAutoSwitch)).ConvertToOrDefault<bool>();
+            set => Storage.SetValue(nameof(ThunderHawkModAutoSwitch), value.ToString());
+        }
     }
 }

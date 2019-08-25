@@ -1,9 +1,13 @@
-﻿using System.Windows;
+﻿using System;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace Framework.WPF
 {
     public partial class BindableWindow : Window, IBindableWindow
     {
+        readonly TaskCompletionSource<SystemExtensionMethods.Void> _windowCloseCompletion = new TaskCompletionSource<SystemExtensionMethods.Void>();
+
         public WindowViewModel ViewModel
         {
             get => this.GetViewModel<WindowViewModel>();
@@ -24,6 +28,17 @@ namespace Framework.WPF
         ~BindableWindow()
         {
             DataContextChanged -= WPFBinder.OnDataContextChanged;
+        }
+
+        public Task CloseWaitingTask()
+        {
+            return _windowCloseCompletion.Task;
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            _windowCloseCompletion.TrySetResult(new SystemExtensionMethods.Void());
+            base.OnClosed(e);
         }
     }
 }

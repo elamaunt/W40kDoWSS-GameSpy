@@ -6,7 +6,10 @@ namespace ThunderHawk.Core
     {
         protected override void OnBind()
         {
-            //Frame.DisableFog.IsChecked = true;
+            Frame.ThunderHawkModAutoSwitch.IsChecked = AppSettings.ThunderHawkModAutoSwitch;
+
+            SubscribeOnPropertyChanged(Frame.ThunderHawkModAutoSwitch, nameof(IToggleFrame.IsChecked),
+                () => AppSettings.ThunderHawkModAutoSwitch = Frame.ThunderHawkModAutoSwitch.IsChecked ?? false);
         }
     }
 }

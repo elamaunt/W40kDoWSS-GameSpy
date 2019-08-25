@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
         mc:Ignorable="d"
-        Title="SettingsWindow" Height="140" Width="280" Style="{DynamicResource SettingsWindowStyle}">
-    <Grid Margin="5, 5, 5, 5">
-        <!--<CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" framework:WPFBinder.Frame="DisableFog" Style="{DynamicResource SettingsCheckBoxStyle}"/>-->
+        Title="Настройки" Height="340" Width="400" Style="{DynamicResource SettingsWindowStyle}">
+    <Grid Margin="16 16 16 16">
+        <CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" framework:WPFBinder.Frame="ThunderHawkModAutoSwitch" Style="{DynamicResource SettingsCheckBoxStyle}"/>
     </Grid>
 </framework:BindableWindow>

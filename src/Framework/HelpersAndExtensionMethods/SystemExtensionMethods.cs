@@ -9,6 +9,23 @@ namespace Framework
 {
     public static class SystemExtensionMethods
     {
+        public static T ConvertToOrDefault<T>(this string value)
+        {
+            if (value.IsNullOrWhiteSpace())
+                return default;
+
+            return (T)Convert.ChangeType(value, typeof(T));
+        }
+
+        public static void Replace(this string[] array, string searchValue, string newValue)
+        {
+            for (int i = 0; i < array.Length; i++)
+            {
+                if (Equals(array[i], searchValue))
+                    array[i] = newValue;
+            }
+        }
+
         public static T OfJson<T>(this string value)
         {
             if (value.IsNullOrEmpty())
@@ -121,6 +138,16 @@ namespace Framework
         {
             source?.Cancel();
             return new CancellationTokenSource();
+        }
+
+        public static Task OnContinueOnUi(this Task self, Action<Task> handler)
+        {
+            return self.ContinueWith(t =>
+            {
+                Dispatcher.RunOnMainThread(() => handler(t));
+                if (t.Exception != null)
+                    throw t.Exception;
+            });
         }
 
         public static Task OnContinueOnUi(this Task self, Action handler)

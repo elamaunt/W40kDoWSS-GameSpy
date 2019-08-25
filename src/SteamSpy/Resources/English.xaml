@@ -11,7 +11,7 @@
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Launch game</system:String>
     <system:String x:Key="FoundErrors">There are some recommendations for you!</system:String>
-    <system:String x:Key="FixIt">Fix it!</system:String>
+    <system:String x:Key="ShowIt">Show it!</system:String>
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPageHeader">Features Manager</system:String>

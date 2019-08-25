@@ -1,10 +1,9 @@
 ﻿using Framework;
-using System;
 
 namespace ThunderHawk.Core
 {
     public class SettingsWindowViewModel : WindowViewModel
     {
-        //public ToggleButtonFrame DisableFog { get; set; } = new ToggleButtonFrame() { Text="Disable fog in game"  };
+        public ToggleButtonFrame ThunderHawkModAutoSwitch { get; set; } = new ToggleButtonFrame() { Text = "Autoswitch to ThunderHawk mod on game launch" };
     }
 }

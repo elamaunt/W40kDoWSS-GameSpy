@@ -1,6 +1,7 @@
 ﻿using Framework;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ThunderHawk.Core
 {
@@ -50,6 +51,68 @@ namespace ThunderHawk.Core
                     })
                     .AttachIndicator(Frame.LoadingIndicator);
             }
+
+            var path = CoreContext.LaunchService.GamePath;
+
+            if (CoreContext.ThunderHawkModManager.CheckIsModExists(path))
+            {
+                CoreContext.ThunderHawkModManager.CheckIsLastVersion(path)
+                    .OnContinueOnUi(task =>
+                    {
+                        if (task.Status == TaskStatus.RanToCompletion)
+                        {
+                            if (task.Result)
+                            {
+                                Frame.LaunchGame.Text = "Launch game";
+                                Frame.LaunchGame.Action = LaunchGame;
+                            }
+                            else
+                            {
+                                Frame.LaunchGame.Text = "Update";
+                                Frame.LaunchGame.Action = UpdateMod;
+                            }
+                        }
+                        else
+                        {
+                            Frame.LaunchGame.Text = "Setup";
+                            Frame.LaunchGame.Action = SetupGameMod;
+                            // TODO: Validate game state
+                        }
+                    });
+            }
+            else
+            {
+                Frame.LaunchGame.Text = "Setup";
+                Frame.LaunchGame.Action = SetupGameMod;
+            }
+        }
+
+        void UpdateMod()
+        {
+            var path = CoreContext.LaunchService.GamePath;
+            CoreContext.ThunderHawkModManager.UpdateMod(path, RecreateToken())
+                .OnContinueOnUi(task =>
+                {
+                    if (task.Status == TaskStatus.RanToCompletion)
+                    {
+                        Frame.LaunchGame.Text = "Launch game";
+                        Frame.LaunchGame.Action = LaunchGame;
+                    }
+                });
+        }
+
+        void SetupGameMod()
+        {
+            var path = CoreContext.LaunchService.GamePath;
+            CoreContext.ThunderHawkModManager.DownloadMod(path, RecreateToken())
+                .OnContinueOnUi(task =>
+                {
+                    if(task.Status == TaskStatus.RanToCompletion)
+                    {
+                        Frame.LaunchGame.Text = "Launch game";
+                        Frame.LaunchGame.Action = LaunchGame;
+                    }
+                });
         }
 
         void OpenFAQ()
@@ -64,6 +127,9 @@ namespace ThunderHawk.Core
 
         void LaunchGame()
         {
+            if (AppSettings.ThunderHawkModAutoSwitch)
+                CoreContext.LaunchService.SwitchGameToMod(CoreContext.ThunderHawkModManager.ModName);
+
             CoreContext.LaunchService.LaunchGame();
         }
     }

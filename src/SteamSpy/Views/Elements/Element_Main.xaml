@@ -53,7 +53,7 @@
                     </TextBlock.Effect>
                     <TextBlock framework:WPFBinder.Frame="ErrorsType"></TextBlock>
                     <Hyperlink Style="{DynamicResource LinkStyle}">
-                        <TextBlock Text="{DynamicResource FixIt}"></TextBlock>
+                        <TextBlock Text="{DynamicResource ShowIt}"></TextBlock>
                     </Hyperlink>
                 </TextBlock>
             </StackPanel>

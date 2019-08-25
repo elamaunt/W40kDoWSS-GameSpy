@@ -56,6 +56,9 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationIcon>thunderhawk.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Reality.Net, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -95,8 +98,10 @@
     <Compile Include="Data\GameServer.cs" />
     <Compile Include="Data\Race.cs" />
     <Compile Include="Data\ServerFlags.cs" />
+    <Compile Include="Services\Implementations\ConfigKeyValueStorage.cs" />
     <Compile Include="Services\Implementations\LaunchService.cs" />
     <Compile Include="Services\Implementations\SystemService.cs" />
+    <Compile Include="Services\Implementations\ThunderHawkModManager.cs" />
     <Compile Include="Services\Implementations\TweaksService.cs" />
     <Compile Include="StaticClasses\ExternalData.cs" />
     <Compile Include="StaticClasses\Soulstorm\FogRemover.cs" />
@@ -255,6 +260,18 @@
     <None Include="Effects\IndicatorEffect.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="LauncherFiles\Addons\Camera\camera_high.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Camera\camera_low.lua">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\GridKeys\KEYDEFAULTS.LUA">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -286,6 +303,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="thunderhawk.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <None Include="Effects\RectBlurEffect.fx" />
     <Resource Include="Effects\Compile.txt" />
     <None Include="Effects\IndicatorEffect.fx" />
@@ -346,6 +366,99 @@
     <Resource Include="Images\BackButton.png" />
     <Resource Include="Images\star.png" />
     <Resource Include="Images\Indicator_Aquila.png" />
+    <None Include="LauncherFiles\Addons\Patch1.2\dbghelp.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\Debug.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\DivxDecoder.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\DivxMediaLib.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\DllTie.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\Dxtc.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\FileParser.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\Filesystem.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\GraphicsConfig.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\GSLobby.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\Localizer.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\luabind.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\LuaConfig.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\MathBox.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\Memory.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\NetConfig.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\Platform.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\PlatHook.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\Profiler.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\rsss.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\seInterface.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\SimEngine.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\Soulstorm.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\spDx9.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\STLPort.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\UserInterface.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\Util.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Patch1.2\WXPMod.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Unlocker\DarkCrusade.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Unlocker\W40k.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\Unlocker\W40kWA.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -357,6 +470,9 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="LibGit2Sharp">
+      <Version>0.26.1</Version>
+    </PackageReference>
     <PackageReference Include="NLog">
       <Version>4.6.6</Version>
     </PackageReference>

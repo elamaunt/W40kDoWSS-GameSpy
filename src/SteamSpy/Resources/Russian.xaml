@@ -11,8 +11,8 @@
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Запустить игру</system:String>
-    <system:String x:Key="FoundErrors">Есть некоторые рекомендации для повышения комфорта Вашей игры!</system:String>
-    <system:String x:Key="FixIt">Исправить!</system:String>
+    <system:String x:Key="FoundErrors">Есть несколько рекомендации для повышения комфорта Вашей игры!</system:String>
+    <system:String x:Key="ShowIt">Посмотреть!</system:String>
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPageHeader">Конфигуратор улучшений</system:String>
