@@ -9,7 +9,7 @@ namespace ThunderHawk
     public class TweaksService : ITweaksService
     {
         public ITweak[] Tweaks { get; } = new ITweak[]
-            { new Unlocker(), new Camera(),
+            { new Unlocker(), new Camera(), new RuFont(),
               new FogSwitcher(), new GridHotkeys()  };
 
         public bool GetState()

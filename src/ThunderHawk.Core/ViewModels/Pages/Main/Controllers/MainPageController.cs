@@ -120,8 +120,8 @@ namespace ThunderHawk.Core
 
         void LaunchGame()
         {
-            if (AppSettings.ThunderHawkModAutoSwitch)
-                CoreContext.LaunchService.SwitchGameToMod(CoreContext.ThunderHawkModManager.ModName);
+            //if (AppSettings.ThunderHawkModAutoSwitch)
+            //    CoreContext.LaunchService.SwitchGameToMod(CoreContext.ThunderHawkModManager.ModName);
 
             Frame.LaunchGame.Enabled = false;
             Frame.LaunchGame.Text = "Game launched";

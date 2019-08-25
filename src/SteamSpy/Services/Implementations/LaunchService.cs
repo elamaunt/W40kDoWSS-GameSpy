@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 
@@ -22,25 +23,17 @@ namespace ThunderHawk
 
             try
             {
-                var patch1_2path = Path.Combine("LauncherFiles", "Addons", "Patch1.2");
-                var exeFileName = Path.Combine(PathFinder.GamePath, patch1_2path, "soulstorm.exe");
-
-                if (!File.Exists(exeFileName))
-                {
-                    var gamePatch1_2path = Path.Combine(PathFinder.GamePath, patch1_2path);
-                    Directory.CreateDirectory(gamePatch1_2path);
-
-                    foreach (var file in Directory.EnumerateFiles(patch1_2path))
-                        File.Copy(file, Path.Combine(gamePatch1_2path, Path.GetFileName(file)));
-                }
-
-                var ssProc = Process.Start(new ProcessStartInfo(exeFileName, $"-nomovies -forcehighpoly")
+                var exeFileName = Path.Combine(Directory.GetCurrentDirectory(), "LauncherFiles", "Addons", "Patch1.2", "Soulstorm.exe");
+                var procParams = "-nomovies -forcehighpoly";
+                if (AppSettings.ThunderHawkModAutoSwitch)
+                    procParams += " -modname ThunderHawk";
+                var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
                 {
                     UseShellExecute = true,
                     WorkingDirectory = PathFinder.GamePath
                 });
 
-                if (Core.CoreContext.OptionsService.DisableFog)
+                if (AppSettings.DisableFog)
                     FogRemover.DisableFog(ssProc);
 
                 ssProc.Exited += (s, e) =>
@@ -50,7 +43,6 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show(ex.Message);
                 Logger.Error(ex);
                 tcs.TrySetException(ex);
             }
@@ -58,7 +50,7 @@ namespace ThunderHawk
             return tcs.Task;
         }
 
-        public void SwitchGameToMod(string modName)
+        /*public void SwitchGameToMod(string modName)
         {
             var localConfig = Path.Combine(GamePath, "Local.ini");
 
@@ -74,6 +66,6 @@ namespace ThunderHawk
             }
 
             File.WriteAllLines(localConfig, lines);
-        }
+        }*/
     }
 }

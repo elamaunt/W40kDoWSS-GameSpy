@@ -113,6 +113,7 @@
     <Compile Include="Tweaks\Camera.cs" />
     <Compile Include="Tweaks\FogSwitcher.cs" />
     <Compile Include="Tweaks\GridHotkeys.cs" />
+    <Compile Include="Tweaks\RuFont.cs" />
     <Compile Include="Tweaks\Unlocker.cs" />
     <Compile Include="Utils\ProcessHelper.cs" />
     <Compile Include="Servers\ChatServerRetranslator.cs" />
@@ -268,6 +269,84 @@
     </None>
     <None Include="LauncherFiles\Addons\GridKeys\KEYDEFAULTS.LUA">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\albertus extra bold12.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\albertus extra bold14.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\albertus extra bold16.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\ansnb___.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\engo.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\engravers old english mt30.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\gillsans_11.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\gillsans_11b.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\gillsans_16.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\gillsans_bold_16.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\gil_____.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\quorum medium bold13.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFontOriginal\quorum medium bold16.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\albertus extra bold12.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\albertus extra bold14.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\albertus extra bold16.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\ansnb___.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\engo.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\engravers old english mt30.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\gillsans_11.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\gillsans_11b.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\gillsans_16.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\gillsans_bold_16.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\gil_____.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\quorum medium bold13.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="LauncherFiles\Addons\RuFont\quorum medium bold16.fnt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="LauncherFiles\NLog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -498,7 +577,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if not exist "LauncherFiles\" mkdir LauncherFiles
-move /y NLog.config LauncherFiles\</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
 </Project>
