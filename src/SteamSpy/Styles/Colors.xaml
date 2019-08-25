@@ -2,5 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:ThunderHawk.Styles">
     <SolidColorBrush x:Key="MainBlue" Color="#0a8fcc" />
+    <SolidColorBrush x:Key="DarkMainBlue" Color="#266987" />
+    
     <SolidColorBrush x:Key="ElectricBlue" Color="#0a8fcc" />
 </ResourceDictionary>

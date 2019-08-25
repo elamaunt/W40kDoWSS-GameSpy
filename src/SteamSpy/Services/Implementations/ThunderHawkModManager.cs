@@ -16,6 +16,8 @@ namespace ThunderHawk
 
         public string ModName => "ThunderHawk";
 
+        public string ActiveModRevision { get; private set; } = "---";
+
         public bool CheckIsModExists(string gamePath)
         {
             if (!Repository.IsValid(ClonePath))
@@ -23,46 +25,67 @@ namespace ThunderHawk
 
             using (var repo = new Repository(ClonePath))
             {
-                var p = repo.Info.Path;
+                var originRemoteRep = repo.Network.Remotes["origin"];
+
+                ActiveModRevision = repo.Head.Commits.FirstOrDefault()?.Message;
+
+                if (originRemoteRep.PushUrl != RepositoryUrl)
+                    return false;
             }
 
             return true;
         }
 
-
-        public async Task<bool> CheckIsLastVersion(string gamePath)
-        {
-            if (!Repository.IsValid(ClonePath))
-                return false;
-
-            using (var repo = new Repository(ClonePath))
-            {
-                // git show-branch *master
-                var commits = repo.Head.Commits.ToArray();
-            }
-
-            return true;
-        }
-
-        public Task DownloadMod(string gamePath, CancellationToken token)
+        public Task DownloadMod(string gamePath, CancellationToken token, Action<float> progressReporter)
         {
             if (!Repository.IsValid(ClonePath))
                 return Task.Factory.StartNew(() =>
                 {
                     if (Directory.Exists(ClonePath))
                         Directory.Delete(ClonePath, true);
-                    Repository.Clone(RepositoryUrl, ClonePath);
+                    Repository.Clone(RepositoryUrl, ClonePath, new CloneOptions()
+                    {
+                        OnTransferProgress = progress =>
+                        {
+                            var percent = (float)progress.ReceivedObjects / progress.TotalObjects;
+                            progressReporter?.Invoke(percent);
+                            return true;
+                        }
+                    });
 
+                    using (var repo = new Repository(ClonePath))
+                        ActiveModRevision = repo.Head.Commits.FirstOrDefault()?.Message;
                     RewriteModModule(gamePath);
-                });
+                }, token);
 
             return Task.CompletedTask;
         }
 
-        public Task UpdateMod(string gamePath, CancellationToken token)
+        public Task UpdateMod(string gamePath, CancellationToken token, Action<float> progressReporter)
         {
-            RewriteModModule(gamePath);
-            return Task.CompletedTask;
+            return Task.Factory.StartNew(() =>
+            {
+                using (var repo = new Repository(ClonePath))
+                {
+                    var originRemoteRep = repo.Network.Remotes["origin"];
+
+                    Commands.Fetch(repo, originRemoteRep.Name, originRemoteRep.FetchRefSpecs.Select(x => x.Specification), new FetchOptions()
+                    {
+                        OnTransferProgress = progress =>
+                        {
+                            var percent = (float)progress.ReceivedObjects / progress.TotalObjects;
+                            progressReporter?.Invoke(percent);
+                            return true;
+                        }
+                    }, string.Empty);
+
+                    // TODO: merge?
+
+                    ActiveModRevision = repo.Head.Commits.FirstOrDefault()?.Message;
+                }
+
+                RewriteModModule(gamePath);
+            }, token);
         }
 
         void RewriteModModule(string gamePath)

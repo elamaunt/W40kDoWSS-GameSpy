@@ -1,5 +1,4 @@
-﻿using System;
-using Framework;
+﻿using Framework;
 
 namespace ThunderHawk.Core
 {
@@ -8,7 +7,7 @@ namespace ThunderHawk.Core
         protected override void OnBind()
         {
             foreach (var item in Frame.Pages.DataSource)
-                item.TitleButton.Action = () => OnTabClicked(item);
+                item.ViewModel.TitleButton.Action = () => OnTabClicked(item);
 
             OnTabClicked(Frame.Pages.SelectedItem);
 
@@ -24,9 +23,10 @@ namespace ThunderHawk.Core
             Frame.GoForward.Action = () => Frame.NavigationPanel.GoForward?.Invoke();
         }
 
-        void OnTabClicked(EmbeddedPageViewModel model)
+        void OnTabClicked(PageTabViewModel model)
         {
-            Frame.NavigationPanel.CurrentContentViewModel = Frame.Pages.SelectedItem = model;
+            Frame.Pages.SelectedItem = model;
+            Frame.NavigationPanel.CurrentContentViewModel = model.ViewModel;
         }
 
         void OnCurrentViewModelChanged()
@@ -34,8 +34,8 @@ namespace ThunderHawk.Core
             var model = Frame.NavigationPanel.CurrentContentViewModel;
             foreach (var item in Frame.Pages.DataSource)
             {
-                item.TitleButton.IsChecked = model == item;
-                item.TitleButton.Enabled = model != item;
+                item.ViewModel.TitleButton.IsChecked = model == item.ViewModel;
+                item.ViewModel.TitleButton.Enabled = model != item.ViewModel;
             }
         }
 

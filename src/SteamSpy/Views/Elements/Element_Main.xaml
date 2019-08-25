@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:ThunderHawk"
              xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
              mc:Ignorable="d">
+    
     <Grid ClipToBounds="False" Margin="60 0 0 0">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"></RowDefinition>
@@ -19,35 +20,72 @@
 
         <Image VerticalAlignment="Center" HorizontalAlignment="Center" framework:WPFBinder.Frame="LoadingIndicator" Margin="-60,0,0,0" Width="80" Height="80" Source="/Images/Indicator_Aquila.png">
             <Image.Effect>
-                <local:IndicatorEffect/>
+                <local:IndicatorEffect x:Name="IndicatorEffect"/>
             </Image.Effect>
+            <Image.Style>
+                <Style TargetType="{x:Type Image}">
+                    <Style.Triggers>
+                        <Trigger Property="Visibility" Value="Visible">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard Name="Time">
+                                    <Storyboard>
+                                        <SingleAnimation
+                                            Storyboard.TargetProperty="Effect.Time" 
+                                            From="0" To="1" Duration="0:0:1" RepeatBehavior="Forever" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+                            <Trigger.ExitActions>
+                                <StopStoryboard BeginStoryboardName="Time" />
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Image.Style>
         </Image>
 
-        <DockPanel Grid.Row="2" Margin="0 0 0 35" LastChildFill="False">
-            <TextBlock framework:WPFBinder.Frame="FAQLabel" DockPanel.Dock="Top"  Margin="0 0 0 16" Style="{DynamicResource FreeTextStyle}">
-                <TextBlock.Effect>
-                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="4" Opacity="1" />
-                </TextBlock.Effect>
-                Есть вопросы? Ответы в
-                <Hyperlink Style="{DynamicResource LinkStyle}">
-                    FAQ
-                </Hyperlink>
-                .
-            </TextBlock>
-            <Button DockPanel.Dock="Left"
-                    Width="250" 
-                    Height="70"
-                    framework:WPFBinder.Frame="LaunchGame"
-                    Content="{DynamicResource LaunchGame}"
-                    Style="{DynamicResource LaunchButtonStyle}">
-                <Button.Effect>
-                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="10" Opacity="0.4" />
-                </Button.Effect>
-            </Button>
+        <DockPanel Grid.Row="2" Margin="0 0 0 35">
 
-            <StackPanel framework:WPFBinder.Frame="FoundErrors" DockPanel.Dock="Left" Orientation="Horizontal" VerticalAlignment="Bottom" Margin="5 0 0 0">
+            <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
+                
+                <TextBlock framework:WPFBinder.Frame="FAQLabel"
+                           Margin="0 8 0 0"
+                           Style="{DynamicResource FreeTextStyle}">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="4" Opacity="1" />
+                    </TextBlock.Effect>
+                        Есть вопросы? Ответы в
+                        <Hyperlink Style="{DynamicResource LinkStyle}">
+                            FAQ
+                        </Hyperlink>
+                        .
+                </TextBlock>
+
+                <TextBlock framework:WPFBinder.Frame="ActiveModRevision"
+                           Margin="0 8 0 0"
+                           Style="{DynamicResource FreeTextStyle}"
+                           FontSize="12">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="4" Opacity="1" />
+                    </TextBlock.Effect>
+                </TextBlock>
+            
+                <Button 
+                        Margin="0 8 0 0"
+                        Width="250" 
+                        Height="70"
+                        framework:WPFBinder.Frame="LaunchGame"
+                        Content="{DynamicResource LaunchGame}"
+                        Style="{DynamicResource LaunchButtonStyle}">
+                    <Button.Effect>
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="10" Opacity="0.4" />
+                    </Button.Effect>
+                </Button>
+            </StackPanel>
+
+            <StackPanel DockPanel.Dock="Left" VerticalAlignment="Bottom"  Margin="18 0 0 0" framework:WPFBinder.Frame="FoundErrors" Orientation="Horizontal">
                 <!--Image Source="{Binding GameStateImage}" Width="16" Height="16"></-->
-                <TextBlock Style="{DynamicResource FreeTextStyle}" framework:WPFBinder.Frame="Tweaks" Margin="12 0 0 0">
+                <TextBlock Style="{DynamicResource FreeTextStyle}" framework:WPFBinder.Frame="Tweaks">
                     <TextBlock.Effect>
                         <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="4" Opacity="1" />
                     </TextBlock.Effect>

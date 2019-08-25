@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 
@@ -12,10 +13,12 @@ namespace ThunderHawk
 
         public string GamePath => PathFinder.GamePath;
 
-        public void LaunchGame()
+        public Task LaunchGameAndWait()
         {
             if (!CanLaunchGame)
-                return;
+                throw new Exception();
+
+            var tcs = new TaskCompletionSource<Process>();
 
             try
             {
@@ -39,12 +42,20 @@ namespace ThunderHawk
 
                 if (Core.CoreContext.OptionsService.DisableFog)
                     FogRemover.DisableFog(ssProc);
+
+                ssProc.Exited += (s, e) =>
+                {
+                    tcs.TrySetResult(ssProc);
+                };
             }
             catch (Exception ex)
             {
                 System.Windows.MessageBox.Show(ex.Message);
                 Logger.Error(ex);
+                tcs.TrySetException(ex);
             }
+
+            return tcs.Task;
         }
 
         public void SwitchGameToMod(string modName)

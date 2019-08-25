@@ -13,6 +13,8 @@ namespace Framework.WPF
         {
             View.JournalOwnership = JournalOwnership.OwnsJournal;
 
+            _currentView = View.Content as IBindableView;
+
             SubscribeOnPropertyChanged(Frame, nameof(INavigationPanelFrame.CurrentContentViewModel), UpdateFrameContent);
             UpdateFrameContent();
 

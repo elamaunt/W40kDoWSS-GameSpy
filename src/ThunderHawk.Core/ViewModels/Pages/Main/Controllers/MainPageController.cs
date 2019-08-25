@@ -7,6 +7,7 @@ namespace ThunderHawk.Core
 {
     public class MainPageController : FrameController<MainPageViewModel>
     {
+
         protected override void OnBind()
         {
             Frame.Title.Text = CoreContext.LangService.GetString("MainPage");
@@ -56,29 +57,7 @@ namespace ThunderHawk.Core
 
             if (CoreContext.ThunderHawkModManager.CheckIsModExists(path))
             {
-                CoreContext.ThunderHawkModManager.CheckIsLastVersion(path)
-                    .OnContinueOnUi(task =>
-                    {
-                        if (task.Status == TaskStatus.RanToCompletion)
-                        {
-                            if (task.Result)
-                            {
-                                Frame.LaunchGame.Text = "Launch game";
-                                Frame.LaunchGame.Action = LaunchGame;
-                            }
-                            else
-                            {
-                                Frame.LaunchGame.Text = "Update";
-                                Frame.LaunchGame.Action = UpdateMod;
-                            }
-                        }
-                        else
-                        {
-                            Frame.LaunchGame.Text = "Setup";
-                            Frame.LaunchGame.Action = SetupGameMod;
-                            // TODO: Validate game state
-                        }
-                    });
+                UpdateMod();
             }
             else
             {
@@ -89,30 +68,44 @@ namespace ThunderHawk.Core
 
         void UpdateMod()
         {
+            Frame.LaunchGame.Enabled = false;
             var path = CoreContext.LaunchService.GamePath;
-            CoreContext.ThunderHawkModManager.UpdateMod(path, RecreateToken())
+            CoreContext.ThunderHawkModManager.UpdateMod(path, RecreateToken(), ReportProgress)
                 .OnContinueOnUi(task =>
                 {
+                    Frame.LaunchGame.Enabled = true;
                     if (task.Status == TaskStatus.RanToCompletion)
                     {
                         Frame.LaunchGame.Text = "Launch game";
                         Frame.LaunchGame.Action = LaunchGame;
+                        UpdateActiveModState();
                     }
                 });
         }
 
         void SetupGameMod()
         {
+            Frame.LaunchGame.Enabled = false;
             var path = CoreContext.LaunchService.GamePath;
-            CoreContext.ThunderHawkModManager.DownloadMod(path, RecreateToken())
+            CoreContext.ThunderHawkModManager.DownloadMod(path, RecreateToken(), ReportProgress)
                 .OnContinueOnUi(task =>
                 {
-                    if(task.Status == TaskStatus.RanToCompletion)
+                    Frame.LaunchGame.Enabled = true;
+                    if (task.Status == TaskStatus.RanToCompletion)
                     {
                         Frame.LaunchGame.Text = "Launch game";
                         Frame.LaunchGame.Action = LaunchGame;
+                        UpdateActiveModState();
                     }
                 });
+        }
+
+        void ReportProgress(float percent)
+        {
+            RunOnUIThread(() =>
+            {
+                Frame.LaunchGame.Text = "Loading.. " + ((int)(percent * 100)) + "%";
+            });
         }
 
         void OpenFAQ()
@@ -130,7 +123,19 @@ namespace ThunderHawk.Core
             if (AppSettings.ThunderHawkModAutoSwitch)
                 CoreContext.LaunchService.SwitchGameToMod(CoreContext.ThunderHawkModManager.ModName);
 
-            CoreContext.LaunchService.LaunchGame();
+            Frame.LaunchGame.Enabled = false;
+            Frame.LaunchGame.Text = "Game launched";
+            CoreContext.LaunchService.LaunchGameAndWait()
+                .OnContinueOnUi(t =>
+                {
+                    Frame.LaunchGame.Enabled = true;
+                });
+        }
+
+        void UpdateActiveModState()
+        {
+            Frame.ActiveModRevision.Visible = true;
+            Frame.ActiveModRevision.Text = "Активная ревизия: <b>" + CoreContext.ThunderHawkModManager.ActiveModRevision?.Replace("\n", "")+"</b>";
         }
     }
 }

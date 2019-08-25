@@ -28,8 +28,7 @@
                             <Setter TargetName="ContentGrid" Property="Background" Value="#18aff4" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentGrid" Property="Opacity" Value="0.5" />
-                            <Setter TargetName="ContentGrid" Property="Background" Value="#4682b4" />
+                            <Setter TargetName="ContentGrid" Property="Background" Value="#bb4682b4" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -157,15 +156,14 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Grid x:Name="ContentGrid" Background="{DynamicResource MainBlue}">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <ContentPresenter x:Name="Content" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ContentGrid" Property="Background" Value="#18aff4" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentGrid" Property="Opacity" Value="0.5" />
-                            <Setter TargetName="ContentGrid" Property="Background" Value="#4682b4" />
+                            <Setter TargetName="ContentGrid" Property="Background" Value="{DynamicResource DarkMainBlue}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

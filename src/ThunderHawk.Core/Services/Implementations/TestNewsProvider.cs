@@ -7,7 +7,7 @@ namespace ThunderHawk.Core
     {
         public async Task<NewsItemDTO[]> GetNews()
         {
-            await Task.Delay(1000).ConfigureAwait(false);
+            await Task.Delay(2000).ConfigureAwait(false);
 
             return new NewsItemDTO[]
                 {

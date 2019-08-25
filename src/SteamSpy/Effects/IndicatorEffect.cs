@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
@@ -24,12 +23,6 @@ namespace ThunderHawk
             PixelShader = pixelShader;
             UpdateShaderValue(InputProperty);
             UpdateShaderValue(TimeProperty);
-            CompositionTarget.Rendering += OnRender;
-        }
-
-        ~IndicatorEffect()
-        {
-            CompositionTarget.Rendering -= OnRender;
         }
 
         public Brush Input
@@ -38,9 +31,10 @@ namespace ThunderHawk
             set { SetValue(InputProperty, value); }
         }
 
-        void OnRender(object sender, EventArgs e)
+        public float Time
         {
-            SetValue(TimeProperty, ((float)Environment.TickCount) / 1000f);
+            get { return (float)GetValue(TimeProperty); }
+            set { SetValue(TimeProperty, value); }
         }
     }
 }

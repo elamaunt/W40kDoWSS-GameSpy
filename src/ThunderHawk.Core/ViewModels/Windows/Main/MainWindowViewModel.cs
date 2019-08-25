@@ -8,7 +8,7 @@ namespace ThunderHawk.Core
         public ActionFrame GoBack { get; } = new ActionFrame();
         public ActionFrame GoForward { get; } = new ActionFrame();
 
-        public ListFrame<EmbeddedPageViewModel> Pages { get; } = new ListFrame<EmbeddedPageViewModel>();
+        public ListFrame<PageTabViewModel> Pages { get; } = new ListFrame<PageTabViewModel>();
 
         public NavigationPanelFrame NavigationPanel { get; } = new NavigationPanelFrame();
 
@@ -17,15 +17,16 @@ namespace ThunderHawk.Core
         
         public MainWindowViewModel()
         {
-            Pages.DataSource = new ObservableCollection<EmbeddedPageViewModel>()
+            Pages.DataSource = new ObservableCollection<PageTabViewModel>()
             {
-                new MainPageViewModel(),
-                new TweaksPageViewModel(),
+                new PageTabViewModel(new MainPageViewModel()),
+                new PageTabViewModel(new TweaksPageViewModel())
                 //new ModificationsPageViewModel(){ Enabled = false },
                 //new AllNewsPageViewModel(){ Enabled = false }
             };
 
-            NavigationPanel.CurrentContentViewModel = Pages.SelectedItem = Pages.DataSource[0];
+            Pages.SelectedItem = Pages.DataSource[0];
+            NavigationPanel.CurrentContentViewModel = Pages.DataSource[0].ViewModel;
         }
     }
 }

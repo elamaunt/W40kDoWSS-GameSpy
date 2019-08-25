@@ -4,7 +4,7 @@ namespace ThunderHawk.Core
 {
     public class MainPageViewModel : EmbeddedPageViewModel
     {
-        public ControlFrame LoadingIndicator { get; } = new ControlFrame();
+        public ControlFrame LoadingIndicator { get; } = new ControlFrame() { Visible = false };
         public ListFrame<NewsItemViewModel> News { get; } = new ListFrame<NewsItemViewModel>();
         public ButtonFrame LaunchGame { get; } = new ButtonFrame() { Text = "Launch game" };
 
@@ -14,12 +14,13 @@ namespace ThunderHawk.Core
 
         public TextFrame ErrorsType { get; } = new TextFrame();
 
+        public TextFrame ActiveModRevision { get; } = new TextFrame() { Visible = false };
+
         public ActionFrame FoundErrors { get; } = new ActionFrame();
 
         public MainPageViewModel()
         {
             TitleButton.Text = CoreContext.LangService.GetString("MainPage");
-            LoadingIndicator.Visible = false;
         }
     }
 }
