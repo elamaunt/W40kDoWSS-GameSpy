@@ -25,22 +25,16 @@
                            FontSize="17"
                            Style="{DynamicResource WhiteTextStyle}">
                     <TextBlock.Effect>
-                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="0.4" Opacity="0.9" />
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="1" Opacity="0.9" />
                     </TextBlock.Effect>
                 </TextBlock>
                 <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                     <TextBlock framework:WPFBinder.Frame="Author"
                            Foreground="#03cffc"
                            Style="{DynamicResource SmallTextStyle}">
-                        <TextBlock.Effect>
-                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="0.4" Opacity="0.9" />
-                        </TextBlock.Effect>
                     </TextBlock>
                     <TextBlock framework:WPFBinder.Frame="Date" Margin="6,0,0,0"
                            Style="{DynamicResource SmallTextStyle}">
-                        <TextBlock.Effect>
-                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="0.4" Opacity="0.9" />
-                        </TextBlock.Effect>
                     </TextBlock>
                 </StackPanel>
 
@@ -56,7 +50,7 @@
                                    FontSize="16"
                                    Style="{DynamicResource RegularTextStyle}">
                     <TextBlock.Effect>
-                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="0.4" Opacity="0.9" />
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="1" Opacity="0.9" />
                     </TextBlock.Effect>
                 </TextBlock>
             </StackPanel>

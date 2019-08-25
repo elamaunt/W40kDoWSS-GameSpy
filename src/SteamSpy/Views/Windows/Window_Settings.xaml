@@ -4,6 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+        TextOptions.TextRenderingMode="Auto"
+        TextOptions.TextFormattingMode="Ideal"
+        RenderOptions.ClearTypeHint="Auto"
         mc:Ignorable="d"
         Title="Настройки" Height="340" Width="400" Style="{DynamicResource SettingsWindowStyle}">
     <Grid Margin="16 16 16 16">

@@ -128,6 +128,7 @@ namespace ThunderHawk.Core
             CoreContext.LaunchService.LaunchGameAndWait()
                 .OnContinueOnUi(t =>
                 {
+                    Frame.LaunchGame.Text = "Launch game";
                     Frame.LaunchGame.Enabled = true;
                 });
         }

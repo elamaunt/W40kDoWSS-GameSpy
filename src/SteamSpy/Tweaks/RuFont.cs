@@ -17,7 +17,8 @@ namespace ThunderHawk.Tweaks
         {
             var gamePath = PathFinder.GamePath;
             var targetDir = Path.Combine(gamePath, "Engine", "Locale", "English", "data", "font");
-            return Directory.GetFiles(targetDir).Length >= 12; // Very rude check but fast
+
+            return Directory.Exists(targetDir) && Directory.GetFiles(targetDir).Length >= 12; // Very rude check but fast
         }
 
         public void EnableTweak()
