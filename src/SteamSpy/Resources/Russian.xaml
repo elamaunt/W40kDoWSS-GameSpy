@@ -8,7 +8,6 @@
     <system:String x:Key="TweaksPage">Модификации</system:String>
 
 
-
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Запустить игру</system:String>
     <system:String x:Key="FoundErrors">Есть несколько рекомендации для повышения комфорта Вашей игры!</system:String>
