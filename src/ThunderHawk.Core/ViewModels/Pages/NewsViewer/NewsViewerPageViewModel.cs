@@ -1,4 +1,5 @@
-﻿using Framework;
+﻿using ApiDomain;
+using Framework;
 using System;
 
 namespace ThunderHawk.Core
@@ -22,12 +23,12 @@ namespace ThunderHawk.Core
             {
                 Image.Text = NewsItem.ImagePath;
 
-                TitleButton.Text = NewsItem.RussianTitle?.ToUpperInvariant();
-                Annotation.Text = NewsItem.RussianAnnotation;
-                Text.Text = NewsItem.RussianText;
+                TitleButton.Text = NewsItem.Russian.Title?.ToUpperInvariant();
+                Annotation.Text = NewsItem.Russian.Annotation;
+                Text.Text = NewsItem.Russian.Body;
                 Author.Text = NewsItem.Author?.ToUpperInvariant();
 
-                Date.Value = NewsItem.NewsTime;
+                Date.Value = NewsItem.CreatedDate;
             }
 
             base.OnPassData(bundle);

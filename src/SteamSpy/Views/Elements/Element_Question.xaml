@@ -1,0 +1,27 @@
+﻿<framework:BindableControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+             ClipToBounds="False"
+             VerticalAlignment="Stretch"
+             HorizontalAlignment="Stretch"
+             mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <ToggleButton framework:WPFBinder.Frame="Question"/>
+
+            <TextBlock framework:WPFBinder.Frame="Answer"
+                       Margin="0 10 0 18"     
+                       TextWrapping="Wrap" 
+                       Style="{DynamicResource RegularTextStyle}">
+                <TextBlock.Effect>
+                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="3" BlurRadius="2" Opacity="0.75" />
+                </TextBlock.Effect>
+            </TextBlock>
+           
+        </StackPanel>
+    </Grid>
+</framework:BindableControl>

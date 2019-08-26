@@ -1,4 +1,5 @@
-﻿using Framework;
+﻿using ApiDomain;
+using Framework;
 using System;
 
 namespace ThunderHawk.Core
@@ -20,9 +21,9 @@ namespace ThunderHawk.Core
         {
             NewsItem = dto;
 
-            Title.Text = dto.RussianTitle;
-            Annotation.Text = dto.RussianAnnotation;
-            Date.Value = dto.NewsTime;
+            Title.Text = dto.Russian.Title;
+            Annotation.Text = dto.Russian.Annotation;
+            Date.Value = dto.CreatedDate;
             Image.Text = dto.ImagePath;
             Author.Text = dto.Author;
         }

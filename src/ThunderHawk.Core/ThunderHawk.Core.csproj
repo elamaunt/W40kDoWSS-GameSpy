@@ -8,7 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ApiDomain\ApiDomain.csproj" />
     <ProjectReference Include="..\Framework\Framework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Domain\" />
+    <Folder Include="Helpers\" />
   </ItemGroup>
 
 </Project>

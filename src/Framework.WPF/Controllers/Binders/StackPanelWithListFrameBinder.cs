@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 
 namespace Framework.WPF
 {
@@ -28,8 +25,16 @@ namespace Framework.WPF
         {
             View.Children.Clear();
 
+            int i;
+
+            for (i = 0; i < _bindedElements.Count; i++)
+                _bindedElements[i].ViewModel = null;
+
+            _bindedElements.Clear();
+
+            i = 0;
+
             var ext = Frame.GetExtension<ICustomItemPresenter>();
-            int i = 0;
             foreach (ViewModel item in Frame.DataSource)
             {
                 var cell = CreateItemCell(item, i++);

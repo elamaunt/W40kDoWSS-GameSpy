@@ -55,6 +55,7 @@
     <Compile Include="Controllers\Binders\FrameWithIListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ContentControlWithIListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\FrameWithINavigationPanelFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\ListViewWithIListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ToggleButtonWithIToggleFrameBinder.cs" />
     <Compile Include="Controllers\Binders\UIElementWithIControlFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithByteArrayFrameBinder.cs" />
@@ -64,6 +65,9 @@
     <Compile Include="Controllers\Binders\StackPanelWithListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TextBlockWithIActionFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TextBlockWithITextFrameBinder.cs" />
+    <Compile Include="Controls\ElementContainer.xaml.cs">
+      <DependentUpon>ElementContainer.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extensions\Base\ICustomContentPresenter.cs" />
     <Compile Include="Extensions\Base\ICustomItemPresenter.cs" />
     <Compile Include="FrameworkWPFModule.cs" />
@@ -79,6 +83,7 @@
     <Compile Include="ServiceImplementations\WPFBindingManager.cs" />
     <Compile Include="ServiceImplementations\WPFMainThreadDispatcher.cs" />
     <Compile Include="ServiceImplementations\WPFViewFactory.cs" />
+    <Compile Include="ViewModelTemplateSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Framework\Framework.csproj">
@@ -86,6 +91,11 @@
       <Name>Framework</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Page Include="Controls\ElementContainer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

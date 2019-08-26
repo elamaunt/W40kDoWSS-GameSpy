@@ -29,6 +29,16 @@ namespace Framework.WPF
             return ImageResources.TryGetValue(name?.ToLowerInvariant(), out path);
         }
 
+        public static bool TryGetXamlPath(string prefix, string style, out string path)
+        {
+            return TryGetXamlPath(prefix + "_" + style, out path);
+        }
+
+        public static bool TryGetXamlPath(string name, out string path)
+        {
+            return XamlResources.TryGetValue(name?.ToLowerInvariant(), out path);
+        }
+
         public static IBindableView InstantiateView(string prefix, string name)
         {
             var contentElementType = FindElementViewType(name);

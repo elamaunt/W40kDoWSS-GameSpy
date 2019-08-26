@@ -1,12 +1,16 @@
 ﻿using Framework;
 using Framework.WPF;
 using System;
+using System.Linq;
 using System.Windows;
+using ThunderHawk.Core;
 
 namespace ThunderHawk
 {
     public partial class Window_Main : IGlobalNavigationManager
     {
+        MainWindowViewModel ViewModel => base.ViewModel as MainWindowViewModel;
+
         public Window_Main()
         {
             Bootstrapper.CurrentBatch.RegisterServiceFactory<IGlobalNavigationManager>(() => this);
@@ -22,7 +26,9 @@ namespace ThunderHawk
         public void OpenPage<PageViewModelType>(Action<IDataBundle> inflateBundle = null)
             where PageViewModelType : PageViewModel, new()
         {
-            var viewModel = new PageViewModelType();
+            var tabPageVM = ViewModel.Pages.DataSource.Select(x => x.ViewModel).OfType<PageViewModelType>().FirstOrDefault();
+            var viewModel = tabPageVM ?? new PageViewModelType();
+
             PassDataIfNeeded(viewModel, inflateBundle);
 
             var panelFrame = NavigationFrame.GetBindedFrame<INavigationPanelFrame>();

@@ -497,7 +497,7 @@ namespace GSMasterServer.Servers
 
                         var newFriendId = long.Parse(keyValues["newprofileid"]);
 
-                        if (Database.UsersDBInstance.AddFriend(state.ProfileId, newFriendId))
+                        if (Database.MainDBInstance.AddFriend(state.ProfileId, newFriendId))
                         {
                             //var signature = (state.ProfileId.ToString() + newFriendId.ToString()).ToMD5();
                             // "\\bm\\%d\\f\\%d\\msg\\%s|signed|%s",GPI_BM_REQUEST,profileid,reason,signature);
@@ -516,7 +516,7 @@ namespace GSMasterServer.Servers
                         break;
                     case "delbuddy":
                         // \delbuddy\\sesskey\51437\delprofileid\1
-                        Database.UsersDBInstance.RemoveFriend(state.ProfileId, long.Parse(keyValues["delprofileid"]));
+                        Database.MainDBInstance.RemoveFriend(state.ProfileId, long.Parse(keyValues["delprofileid"]));
                         break;
                     case "getprofile":
                         SendToClient(ref state, LoginServerMessages.SendProfile(ref state, keyValues));
@@ -530,7 +530,7 @@ namespace GSMasterServer.Servers
 
                         var remoteEndPoint = ((IPEndPoint)state.Socket.RemoteEndPoint);
 
-                        var profile = Database.UsersDBInstance.GetProfileById(state.ProfileId);
+                        var profile = Database.MainDBInstance.GetProfileById(state.ProfileId);
 
                         if (profile == null)
                             return;

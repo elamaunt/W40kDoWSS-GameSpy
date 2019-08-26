@@ -7,9 +7,28 @@
              ClipToBounds="False"
              mc:Ignorable="d">
 
-    <Grid VerticalAlignment="Center" Margin="0 0 0 40">
-        <TextBlock Text="FAQ">
-           
-        </TextBlock>
+    <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Margin="30 20 30 140">
+        <ListView ClipToBounds="False"
+                  Background="Transparent"
+                  BorderThickness="0" 
+                  HorizontalContentAlignment="Stretch"
+                  VerticalContentAlignment="Stretch"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.PanningMode="VerticalOnly"
+                  framework:WPFBinder.Frame="Questions" >
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="IsSelected" Value="{Binding Content.IsSelected, Mode=TwoWay, RelativeSource={RelativeSource Self}}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
     </Grid>
 </framework:BindableControl>

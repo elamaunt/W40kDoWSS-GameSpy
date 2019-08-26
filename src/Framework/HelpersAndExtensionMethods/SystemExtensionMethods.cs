@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -211,5 +212,8 @@ namespace Framework
         {
 
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)] // Заставляет компилятор убрать вызов при оптимизации
+        public static void NoWarning(this Task task) { /* Не содержит кода */ }
     }
 }

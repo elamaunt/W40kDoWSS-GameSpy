@@ -7,22 +7,26 @@ using LiteDB;
 
 namespace GSMasterServer.Services.Implementations
 {
-    public class LiteDBProfilesDatabase : IProfilesDataBase
+    public class LiteDBMainDatabase : IMainDataBase
     {
-        private const string Category = "UsersDatabase";
-
         LiteDatabase _db;
 
-        LiteCollection<ProfileData> ProfilesTable => _db.GetCollection<ProfileData>("USERS");
+        LiteCollection<ProfileDBO> ProfilesTable => _db.GetCollection<ProfileDBO>("USERS");
+        LiteCollection<NewsDBO> NewsTable => _db.GetCollection<NewsDBO>("NEWS");
 
         public void Initialize(string databasePath)
         {
             _db = new LiteDatabase(databasePath);
             
-            _db.Engine.EnsureIndex("USERS", nameof(ProfileData.Name), true);
-            _db.Engine.EnsureIndex("USERS", nameof(ProfileData.Score1v1));
-            _db.Engine.EnsureIndex("USERS", nameof(ProfileData.Score2v2));
-            _db.Engine.EnsureIndex("USERS", nameof(ProfileData.Score3v3));
+            _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Name), true);
+            _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Score1v1));
+            _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Score2v2));
+            _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Score3v3));
+
+            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.Author), true);
+            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.CreatedDate), true);
+            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.EditedDate), true);
+            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.NewsType), true);
         }
 
         public bool IsInitialized => _db != null;
@@ -33,9 +37,9 @@ namespace GSMasterServer.Services.Implementations
             _db = null;
         }
 
-        public ProfileData CreateProfile(string username, string passwordEncrypted, ulong steamId, string email, string country, IPAddress address)
+        public ProfileDBO CreateProfile(string username, string passwordEncrypted, ulong steamId, string email, string country, IPAddress address)
         {
-            var data = new ProfileData()
+            var data = new ProfileDBO()
             {
                 Name = username,
                 LastIp = address.ToString(),
@@ -93,22 +97,22 @@ namespace GSMasterServer.Services.Implementations
                 ProfilesTable.Update(profile);
         }
 
-        public List<ProfileData> GetAllProfilesByEmailAndPass(string email, string passwordEncrypted)
+        public List<ProfileDBO> GetAllProfilesByEmailAndPass(string email, string passwordEncrypted)
         {
-            var emailQ = Query.EQ(nameof(ProfileData.Email), new BsonValue(email));
-            var passQuery = Query.EQ(nameof(ProfileData.Passwordenc), new BsonValue(email));
+            var emailQ = Query.EQ(nameof(ProfileDBO.Email), new BsonValue(email));
+            var passQuery = Query.EQ(nameof(ProfileDBO.Passwordenc), new BsonValue(email));
 
             var andQury = Query.And(emailQ, passQuery);
 
             return ProfilesTable.Find(andQury).ToList();
         }
         
-        public ProfileData GetProfileByName(string username)
+        public ProfileDBO GetProfileByName(string username)
         {
-            return ProfilesTable.FindOne(Query.EQ(nameof(ProfileData.Name), new BsonValue(username)));
+            return ProfilesTable.FindOne(Query.EQ(nameof(ProfileDBO.Name), new BsonValue(username)));
         }
 
-        public ProfileData GetProfileById(long profileId)
+        public ProfileDBO GetProfileById(long profileId)
         {
             return ProfilesTable.FindById(new BsonValue(profileId));
         }
@@ -126,25 +130,29 @@ namespace GSMasterServer.Services.Implementations
             ProfilesTable.Update(data);
         }
 
-        public void UpdateProfileData(ProfileData stats)
+        public void UpdateProfileData(ProfileDBO stats)
         {
             ProfilesTable.Update(stats);
         }
 
         public bool ProfileExists(string username)
         {
-           return ProfilesTable.Exists(Query.EQ(nameof(ProfileData.Name), new BsonValue(username)));
+           return ProfilesTable.Exists(Query.EQ(nameof(ProfileDBO.Name), new BsonValue(username)));
         }
 
-        public ProfileData[] Load1v1Top10()
+        public ProfileDBO[] Load1v1Top10()
         {
-            return ProfilesTable.Find(Query.All(nameof(ProfileData.Score1v1), Query.Descending), 0, 10).ToArray();
+            return ProfilesTable.Find(Query.All(nameof(ProfileDBO.Score1v1), Query.Descending), 0, 10).ToArray();
         }
 
-        public ProfileData[] LoadAllStats()
+        public ProfileDBO[] LoadAllStats()
         {
-            return ProfilesTable.Find(Query.All(nameof(ProfileData.Score1v1), Query.Descending), 0).ToArray();
+            return ProfilesTable.Find(Query.All(nameof(ProfileDBO.Score1v1), Query.Descending), 0).ToArray();
         }
 
+        public NewsDBO[] GetLastNews(int count)
+        {
+            return NewsTable.Find(Query.All(nameof(NewsDBO.CreatedDate), Query.Descending), 0, count).ToArray();
+        }
     }
 }

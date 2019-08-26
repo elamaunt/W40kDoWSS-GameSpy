@@ -21,6 +21,11 @@ namespace Framework
             }
         }
 
+        public bool HasServiceEntry<InterfaceType>()
+        {
+            return _serviceRegistrations.ContainsKey(typeof(InterfaceType).GetTypeInfo());
+        }
+
         public void RegisterControllerFactory<ViewType, FrameType>(Func<BindingController<ViewType, FrameType>> controllerFactory)
             where ViewType : class
             where FrameType : class

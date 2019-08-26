@@ -8,7 +8,7 @@ namespace GSMasterServer.Utils
     {
         static readonly MemoryCache ProfilesByIdCache = new MemoryCache("Profiles");
 
-        public static void UpdateProfilesCache(ProfileData profile)
+        public static void UpdateProfilesCache(ProfileDBO profile)
         {
             var idString = profile.Id.ToString();
 
@@ -21,15 +21,15 @@ namespace GSMasterServer.Utils
             });
         }
 
-        public static ProfileData GetProfileByPid(string pid)
+        public static ProfileDBO GetProfileByPid(string pid)
         {
             if (ProfilesByIdCache.Contains(pid))
             {
-                return (ProfileData)ProfilesByIdCache.Get(pid);
+                return (ProfileDBO)ProfilesByIdCache.Get(pid);
             }
             else
             {
-                var stats = Database.UsersDBInstance.GetProfileById(long.Parse(pid));
+                var stats = Database.MainDBInstance.GetProfileById(long.Parse(pid));
 
                 ProfilesByIdCache.Add(new CacheItem(stats.Id.ToString(), stats), new CacheItemPolicy()
                 {
@@ -40,9 +40,9 @@ namespace GSMasterServer.Utils
             }
         }
 
-        public static ProfileData GetProfileByName(string name)
+        public static ProfileDBO GetProfileByName(string name)
         {
-            var stats = Database.UsersDBInstance.GetProfileByName(name);
+            var stats = Database.MainDBInstance.GetProfileByName(name);
 
             ProfilesByIdCache.Add(new CacheItem(stats.Id.ToString(), stats), new CacheItemPolicy()
             {

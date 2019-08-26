@@ -59,7 +59,7 @@ namespace GSMasterServer.Servers
            // if (requiredValues != 3)
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
 
-            var clientData = Database.UsersDBInstance.GetProfileByName(state.Name);
+            var clientData = Database.MainDBInstance.GetProfileByName(state.Name);
 
             if (clientData != null)
             {
@@ -99,7 +99,7 @@ namespace GSMasterServer.Servers
 					LoginDatabase.Instance.SetData(state.Name, updateClientData);*/
                     state.ProfileId = clientData.Id;
 
-                    Database.UsersDBInstance.LogProfileLogin(state.Name, state.SteamId, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
+                    Database.MainDBInstance.LogProfileLogin(state.Name, state.SteamId, ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
 
                     state.State++;
                     return DataFunctions.StringToBytes(proof);
@@ -217,7 +217,7 @@ namespace GSMasterServer.Servers
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
             }
 
-            if (Database.UsersDBInstance.ProfileExists(state.Name))
+            if (Database.MainDBInstance.ProfileExists(state.Name))
             {
                 return DataFunctions.StringToBytes(@"\error\\err\516\fatal\\errmsg\This account name is already in use!\id\1\final\");
             }
@@ -225,7 +225,7 @@ namespace GSMasterServer.Servers
             {
                 string password = DecryptPassword(state.PasswordEncrypted);
 
-                var clientData = Database.UsersDBInstance.CreateProfile(state.Name, password.ToMD5(), state.SteamId, state.Email, "??", ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
+                var clientData = Database.MainDBInstance.CreateProfile(state.Name, password.ToMD5(), state.SteamId, state.Email, "??", ((IPEndPoint)state.Socket.RemoteEndPoint).Address);
                 
                 if (clientData == null)
                 {
@@ -267,7 +267,7 @@ namespace GSMasterServer.Servers
 
             password = password.ToMD5();
 
-            var clientData = Database.UsersDBInstance.GetAllProfilesByEmailAndPass(keyValues["email"], password);
+            var clientData = Database.MainDBInstance.GetAllProfilesByEmailAndPass(keyValues["email"], password);
 
             if (clientData == null)
             {
@@ -323,7 +323,7 @@ namespace GSMasterServer.Servers
                 return DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\");
             }
 
-            var clientData = Database.UsersDBInstance.GetProfileByName(name);
+            var clientData = Database.MainDBInstance.GetProfileByName(name);
 
             if (clientData == null)
             {
@@ -370,7 +370,7 @@ namespace GSMasterServer.Servers
             return value.ToMD5();
         }
 
-        private static string GenerateResponseValueWithEmail(ref LoginSocketState state, ref ProfileData clientData)
+        private static string GenerateResponseValueWithEmail(ref LoginSocketState state, ref ProfileDBO clientData)
         {
             string value = state.PasswordEncrypted;
             value += new String(' ', 48);

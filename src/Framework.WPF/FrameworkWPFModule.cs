@@ -22,6 +22,7 @@
             batch.RegisterControllerFactory(() => new ToggleButtonWithIToggleFrameBinder());
             batch.RegisterControllerFactory(() => new FrameWithIListFrameBinder());
             batch.RegisterControllerFactory(() => new FrameWithINavigationPanelFrameBinder());
+            batch.RegisterControllerFactory(() => new ListViewWithIListFrameBinder());
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ThunderHawk.Core
+﻿namespace ApiDomain
 {
     public enum NewsType
     {

@@ -1,9 +1,8 @@
-﻿using LiteDB;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace GSMasterServer.Data
 {
-    public class ProfileData
+    public class ProfileDBO
     {
         public long Id { get; set; }
         public ulong SteamId { get; set; }

@@ -19,7 +19,7 @@ namespace GSMasterServer.Servers
     
     public class GameUserInfo
     {
-        public ProfileData Profile;
+        public ProfileDBO Profile;
         public Race Race;
         public int Team;
         public PlayerFinalState FinalState;
@@ -182,7 +182,7 @@ namespace GSMasterServer.Servers
                         var profileId = long.Parse(pid);
 
                         state.ProfileId = profileId;
-                        state.Nick = Database.UsersDBInstance.GetProfileById(profileId).Name;
+                        state.Nick = Database.MainDBInstance.GetProfileById(profileId).Name;
 
                         SendToClient(state, $@"\pauthr\{pid}\lid\1\final\");
                     }
@@ -454,8 +454,8 @@ namespace GSMasterServer.Servers
                                     var players1Team = groupedTeams[0];
                                     var players2Team = groupedTeams[1];
 
-                                    Func<ProfileData, long> scoreSelector = null;
-                                    Action<ProfileData, long> scoreUpdater = null;
+                                    Func<ProfileDBO, long> scoreSelector = null;
+                                    Action<ProfileDBO, long> scoreUpdater = null;
 
                                     ReatingGameType type = ReatingGameType.Unknown;
 
@@ -510,7 +510,7 @@ namespace GSMasterServer.Servers
                             var info = usersGameInfos[i];
                             var profile = info.Profile;
                             ProfilesCache.UpdateProfilesCache(profile);
-                            Database.UsersDBInstance.UpdateProfileData(profile);
+                            Database.MainDBInstance.UpdateProfileData(profile);
 
                             if (info.Delta != 0)
                             {

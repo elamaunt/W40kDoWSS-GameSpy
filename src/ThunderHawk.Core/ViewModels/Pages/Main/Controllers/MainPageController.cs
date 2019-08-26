@@ -29,9 +29,11 @@ namespace ThunderHawk.Core
                 Frame.ErrorsType.Text = "";
             }
 
+            RecreateToken();
+
             if (Frame.News.DataSource.IsNullOrEmpty())
             {
-                CoreContext.NewsProvider.GetNews()
+                CoreContext.NewsProvider.LoadLastNews(Token)
                     .OnCompletedOnUi(news =>
                     {
                         var newsSource = news.Select(x =>
@@ -70,7 +72,7 @@ namespace ThunderHawk.Core
         {
             Frame.LaunchGame.Enabled = false;
             var path = CoreContext.LaunchService.GamePath;
-            CoreContext.ThunderHawkModManager.UpdateMod(path, RecreateToken(), ReportProgress)
+            CoreContext.ThunderHawkModManager.UpdateMod(path, Token, ReportProgress)
                 .OnContinueOnUi(task =>
                 {
                     Frame.LaunchGame.Enabled = true;
@@ -87,7 +89,7 @@ namespace ThunderHawk.Core
         {
             Frame.LaunchGame.Enabled = false;
             var path = CoreContext.LaunchService.GamePath;
-            CoreContext.ThunderHawkModManager.DownloadMod(path, RecreateToken(), ReportProgress)
+            CoreContext.ThunderHawkModManager.DownloadMod(path, Token, ReportProgress)
                 .OnContinueOnUi(task =>
                 {
                     Frame.LaunchGame.Enabled = true;
@@ -120,9 +122,6 @@ namespace ThunderHawk.Core
 
         void LaunchGame()
         {
-            //if (AppSettings.ThunderHawkModAutoSwitch)
-            //    CoreContext.LaunchService.SwitchGameToMod(CoreContext.ThunderHawkModManager.ModName);
-
             Frame.LaunchGame.Enabled = false;
             Frame.LaunchGame.Text = "Game launched";
             CoreContext.LaunchService.LaunchGameAndWait()
