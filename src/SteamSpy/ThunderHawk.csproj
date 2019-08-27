@@ -107,7 +107,7 @@
     <Compile Include="StaticClasses\ExternalData.cs" />
     <Compile Include="StaticClasses\Soulstorm\FogRemover.cs" />
     <Compile Include="StaticClasses\ExternalMethods.cs" />
-    <Compile Include="StaticClasses\Soulstorm\ProcessFinder.cs" />
+    <Compile Include="StaticClasses\Soulstorm\ProcessManager.cs" />
     <Compile Include="Services\Implementations\LangService.cs" />
     <Compile Include="StaticClasses\WPFExtensions.cs" />
     <Compile Include="Styles\SettingsWindowStyle.cs" />

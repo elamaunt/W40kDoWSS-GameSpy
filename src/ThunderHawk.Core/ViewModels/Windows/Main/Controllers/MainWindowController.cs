@@ -7,7 +7,10 @@ namespace ThunderHawk.Core
         protected override void OnBind()
         {
             Frame.OpenSettings.Action = OpenSettings;
-            Frame.UserAccount.Text = CoreContext.SteamApi.NickName;
+            var nickText = CoreContext.SteamApi.NickName;
+            if (nickText == "")
+                nickText = CoreContext.LangService.GetString("SteamNotLaunched");
+            Frame.UserAccount.Text = nickText;
         }
 
         void OpenSettings()

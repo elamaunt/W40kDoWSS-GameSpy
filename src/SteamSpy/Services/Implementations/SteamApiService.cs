@@ -1,5 +1,6 @@
 ﻿using GSMasterServer.Data;
 using Steamworks;
+using System;
 using ThunderHawk.Core;
 using ThunderHawk.Utils;
 using GameServer = Steamworks.GameServer;
@@ -8,31 +9,40 @@ namespace ThunderHawk
 {
     public class SteamApiService : ISteamApiService
     {
-        public string NickName { get; }
+        public string NickName { get; } = "";
         public SteamApiService()
         {
-            if (SteamAPI.RestartAppIfNecessary(new AppId_t(9450)))
+            try
             {
-                Logger.Error("App Restart Requested!");
-            }
+                if (SteamAPI.RestartAppIfNecessary(new AppId_t(9450)))
+                {
+                    Logger.Error("App Restart Requested!");
+                }
 
-            if (!SteamAPI.Init())
+                if (!SteamAPI.Init())
+                {
+                    Logger.Error("Cant init SteamApi");
+                }
+
+                var appId = SteamUtils.GetAppID();
+                if (appId.m_AppId != 9450)
+                {
+                    Logger.Error("Wrong App Id!");
+                }
+
+                NickName = SteamFriends.GetPersonaName();
+
+
+                CoreContext.ServerListRetrieve.StartReloadingTimer();
+
+                GameServer.RunCallbacks();
+                SteamAPI.RunCallbacks();
+                PortBindingManager.UpdateFrame();
+            }
+            catch (Exception ex)
             {
-                Logger.Error("Cant init SteamApi");
+                Logger.Error(ex);
             }
-
-            var appId = SteamUtils.GetAppID();
-            if (appId.m_AppId != 9450)
-            {
-                Logger.Error("Wrong App Id!");
-            }
-            NickName = SteamFriends.GetPersonaName();
-
-            CoreContext.ServerListRetrieve.StartReloadingTimer();
-
-            GameServer.RunCallbacks();
-            SteamAPI.RunCallbacks();
-            PortBindingManager.UpdateFrame();
         }
     }
 }
