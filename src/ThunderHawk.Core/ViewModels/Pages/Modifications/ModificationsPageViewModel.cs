@@ -6,7 +6,7 @@ namespace ThunderHawk.Core
     {
         public ModificationsPageViewModel()
         {
-            TitleButton.Text = "Modifications";
+            TitleButton.Text = "MODIFICATIONS";
         }
     }
 }

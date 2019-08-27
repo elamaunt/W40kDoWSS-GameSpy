@@ -10,17 +10,26 @@
              mc:Ignorable="d">
 
     <Grid>
-        <StackPanel Orientation="Vertical">
-            <ToggleButton framework:WPFBinder.Frame="Question"/>
+        <StackPanel Orientation="Vertical" UseLayoutRounding="True">
+            <ToggleButton HorizontalAlignment="Left" 
+                          Margin="0 4 0 4" 
+                          framework:WPFBinder.Frame="Question" 
+                          Style="{StaticResource QuestionButtonStyle}"/>
 
-            <TextBlock framework:WPFBinder.Frame="Answer"
-                       Margin="0 10 0 18"     
-                       TextWrapping="Wrap" 
-                       Style="{DynamicResource RegularTextStyle}">
-                <TextBlock.Effect>
-                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="3" BlurRadius="2" Opacity="0.75" />
-                </TextBlock.Effect>
-            </TextBlock>
+            <TextBox   Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Answer"
+                       HorizontalAlignment="Left"
+                       MaxWidth="420"
+                       Margin="16 8 100 8"     
+                       IsReadOnly="True"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       Foreground="#75f4ff">
+                <TextBox.Effect>
+                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="3" Opacity="1" />
+                </TextBox.Effect>
+            </TextBox>
            
         </StackPanel>
     </Grid>

@@ -61,7 +61,7 @@
     <Compile Include="Controllers\Binders\ImageWithByteArrayFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithIUriFrameBinder.cs" />
     <Compile Include="Controllers\Binders\LabelWithITextFrameBinder.cs" />
-    <Compile Include="Controllers\Binders\RichTextBoxWithITextFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\TextBoxBaseWithITextFrameBinder.cs" />
     <Compile Include="Controllers\Binders\StackPanelWithListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TextBlockWithIActionFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TextBlockWithITextFrameBinder.cs" />

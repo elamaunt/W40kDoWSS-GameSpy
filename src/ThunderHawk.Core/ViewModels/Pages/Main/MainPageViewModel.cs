@@ -20,7 +20,7 @@ namespace ThunderHawk.Core
 
         public MainPageViewModel()
         {
-            TitleButton.Text = CoreContext.LangService.GetString("MainPage");
+            TitleButton.Text = CoreContext.LangService.GetString("MainPage").ToUpperInvariant();
         }
     }
 }

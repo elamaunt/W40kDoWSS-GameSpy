@@ -1,8 +1,9 @@
 ﻿using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 
 namespace Framework.WPF
 {
-    public class RichTextBoxWithITextFrameBinder : BindingController<RichTextBox, ITextFrame>
+    public class TextBoxBaseWithITextFrameBinder : BindingController<TextBoxBase, ITextFrame>
     {
         protected override void OnBind()
         {

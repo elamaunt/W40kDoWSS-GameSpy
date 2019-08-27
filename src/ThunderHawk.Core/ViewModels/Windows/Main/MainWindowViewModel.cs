@@ -20,7 +20,9 @@ namespace ThunderHawk.Core
             Pages.DataSource = new ObservableCollection<PageTabViewModel>()
             {
                 new PageTabViewModel(new MainPageViewModel()),
-                new PageTabViewModel(new TweaksPageViewModel())
+                new PageTabViewModel(new TweaksPageViewModel()),
+                new PageTabViewModel(new FAQPageViewModel())
+                
                 //new ModificationsPageViewModel(){ Enabled = false },
                 //new AllNewsPageViewModel(){ Enabled = false }
             };
