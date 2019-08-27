@@ -12,6 +12,8 @@
     <system:String x:Key="LaunchGame">Launch game</system:String>
     <system:String x:Key="FoundErrors">There are some recommendations for you!</system:String>
     <system:String x:Key="ShowIt">Show it!</system:String>
+    <system:String x:Key="SteamNotLaunched">Steam is not launched!</system:String>
+
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPageHeader">Features Manager</system:String>

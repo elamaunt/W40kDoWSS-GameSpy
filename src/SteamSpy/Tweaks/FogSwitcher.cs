@@ -1,6 +1,7 @@
 ﻿using System;
 using ThunderHawk.Core;
 using ThunderHawk.Core.Services;
+using ThunderHawk.StaticClasses.Soulstorm;
 
 namespace ThunderHawk.Tweaks
 {
@@ -20,11 +21,21 @@ namespace ThunderHawk.Tweaks
         public void EnableTweak()
         {
             AppSettings.DisableFog = true;
+            var proc = ProcessManager.GetGameProcess();
+            if (proc != null)
+            {
+                FogRemover.DisableFog(proc);
+            }
         }
 
         public void DisableTweak()
         {
             AppSettings.DisableFog = false;
+            var proc = ProcessManager.GetGameProcess();
+            if (proc != null)
+            {
+                FogRemover.EnableFog(proc);
+            }
         }
     }
 }

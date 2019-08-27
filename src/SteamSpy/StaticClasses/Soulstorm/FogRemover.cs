@@ -16,7 +16,6 @@ namespace ThunderHawk.StaticClasses.Soulstorm
         static readonly byte[] jmpFog = new byte[6] { 0xD9, 0x81, 0x60, 0x0C, 0x00, 0x00 };
         static readonly byte[] jmpMapSkyDistance = new byte[6] { 0xD9, 0x9B, 0x70, 0x0C, 0x00, 0x00 };
 
-
         public static bool DisableFog(Process process)
         {
             var pHandle = ExternalMethods.OpenProcess(ExternalData.PROCESS_WM_READ | 
@@ -26,9 +25,8 @@ namespace ThunderHawk.StaticClasses.Soulstorm
                 WriteFogCode(fogAddress12, nope6, pHandle);
                 WriteFogCode(float512Address12, float512, pHandle);
                 WriteFogCode(mapSkyDistanceAddress12, nope6, pHandle);
-                return true;
             }
-            return false;
+            return IsFogDisabled(pHandle);
         }
 
         public static bool EnableFog(Process process)
@@ -40,9 +38,8 @@ namespace ThunderHawk.StaticClasses.Soulstorm
                 WriteFogCode(fogAddress12, jmpFog, pHandle);
                 WriteFogCode(float512Address12, codeF512, pHandle);
                 WriteFogCode(mapSkyDistanceAddress12, jmpMapSkyDistance, pHandle);
-                return true;
             }
-            return false;
+            return IsFogEnabled(pHandle);
         }
 
 

@@ -10,7 +10,7 @@ namespace ThunderHawk
 {
     public class LaunchService : ILaunchService
     {
-        public bool CanLaunchGame => !ProcessFinder.IsProcessFound() && PathFinder.IsPathFound();
+        public bool CanLaunchGame => !ProcessManager.GameIsRunning() && PathFinder.IsPathFound();
 
         public string GamePath => PathFinder.GamePath;
 
@@ -33,8 +33,7 @@ namespace ThunderHawk
                     WorkingDirectory = PathFinder.GamePath
                 });
 
-                if (AppSettings.DisableFog)
-                    FogRemover.DisableFog(ssProc);
+                Task.Run(() => RemoveFogLoop(ssProc));
 
                 ssProc.Exited += (s, e) =>
                 {
@@ -48,6 +47,18 @@ namespace ThunderHawk
             }
 
             return tcs.Task;
+        }
+
+        private async Task RemoveFogLoop(Process ssProc)
+        {
+            while (true)
+            {
+                if (!AppSettings.DisableFog || FogRemover.DisableFog(ssProc))
+                {
+                    return;
+                }
+                await Task.Delay(1000);
+            }
         }
 
         /*public void SwitchGameToMod(string modName)
