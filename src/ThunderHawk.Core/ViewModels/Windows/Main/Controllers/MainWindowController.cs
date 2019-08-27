@@ -7,6 +7,7 @@ namespace ThunderHawk.Core
         protected override void OnBind()
         {
             Frame.OpenSettings.Action = OpenSettings;
+            Frame.UserAccount.Text = CoreContext.SteamApi.NickName;
         }
 
         void OpenSettings()

@@ -100,6 +100,7 @@
     <Compile Include="Data\ServerFlags.cs" />
     <Compile Include="Services\Implementations\ConfigKeyValueStorage.cs" />
     <Compile Include="Services\Implementations\LaunchService.cs" />
+    <Compile Include="Services\Implementations\SteamApiService.cs" />
     <Compile Include="Services\Implementations\SystemService.cs" />
     <Compile Include="Services\Implementations\ThunderHawkModManager.cs" />
     <Compile Include="Services\Implementations\TweaksService.cs" />
