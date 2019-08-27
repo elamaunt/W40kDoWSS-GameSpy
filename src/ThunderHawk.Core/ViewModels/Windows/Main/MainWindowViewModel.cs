@@ -14,7 +14,9 @@ namespace ThunderHawk.Core
 
         public ActionFrame OpenSettings { get; } = new ActionFrame();
         public TextFrame Version { get; } = new TextFrame() { Text = "BETA 1.0" };
-        
+
+        public TextFrame UserAccount { get; } = new TextFrame() { };
+
         public MainWindowViewModel()
         {
             Pages.DataSource = new ObservableCollection<PageTabViewModel>()

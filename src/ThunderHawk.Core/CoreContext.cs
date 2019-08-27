@@ -11,6 +11,9 @@ namespace ThunderHawk.Core
         public static INewsProvider NewsProvider => Service<INewsProvider>.Get();
         public static ILaunchService LaunchService => Service<ILaunchService>.Get();
         public static ITweaksService TweaksService => Service<ITweaksService>.Get();
+
+        public static ISteamApiService SteamApi => Service<ISteamApiService>.Get();
+
         public static IThunderHawkModManager ThunderHawkModManager => Service<IThunderHawkModManager>.Get();
     }
 }
