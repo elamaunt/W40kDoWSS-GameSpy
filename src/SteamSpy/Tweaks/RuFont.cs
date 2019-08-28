@@ -28,6 +28,9 @@ namespace ThunderHawk.Tweaks
             if (!Directory.Exists(fontsDir))
                 throw new Exception("Could not find RuFont in LauncherFiles!");
 
+            //TODO: Сделать более качественную проверку на наличие файлов в LauncherFiles
+
+
             var fontFiles = Directory.GetFiles(fontsDir);
             var gamePath = PathFinder.GamePath;
             var targetDir = Path.Combine(gamePath, "Engine", "Locale", "English", "data", "font");

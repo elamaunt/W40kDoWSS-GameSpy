@@ -7,8 +7,17 @@ namespace ThunderHawk.Core
     {
         protected override void OnBind()
         {
-            Frame.IsTweakEnabled.IsChecked = Frame.RawTweak.CheckTweak();
-            SubscribeOnPropertyChanged(Frame.IsTweakEnabled, nameof(Frame.IsTweakEnabled.IsChecked), OnCheckedChanged);
+            try
+            {
+                Frame.IsTweakEnabled.IsChecked = Frame.RawTweak.CheckTweak();
+                SubscribeOnPropertyChanged(Frame.IsTweakEnabled, nameof(Frame.IsTweakEnabled.IsChecked), OnCheckedChanged);
+            }
+            catch (Exception ex)
+            {
+                //TODO: Какое-нибудь оповещение для юзера что в твиках произошла ошибка. Скорее всего, из-за того что он удалил что-то из LauncherFiles.
+                Logger.Error(ex);
+                Frame.IsTweakEnabled.IsChecked = false;
+            }
         }
 
         void OnCheckedChanged()

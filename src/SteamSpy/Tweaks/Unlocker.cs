@@ -45,6 +45,9 @@ namespace ThunderHawk.Tweaks
             if (!Directory.Exists(unlockerDir))
                 throw new Exception("Could not find unlocker in LauncherFiles!");
 
+            //TODO: Сделать более качественную проверку на наличие файлов в LauncherFiles
+
+
             var gamePath = PathFinder.GamePath;
             var targetDir = Path.Combine(gamePath, "Unlocker");
             if (!Directory.Exists(targetDir))
@@ -52,6 +55,7 @@ namespace ThunderHawk.Tweaks
                 Directory.CreateDirectory(targetDir);
             }
             ExplorerExtensions.ClearFlagsInDirFiles(targetDir);
+
 
             var unlockerFiles = Directory.GetFiles(unlockerDir);
 

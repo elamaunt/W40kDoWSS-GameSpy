@@ -12,11 +12,7 @@ namespace ThunderHawk.Core
 
         public ActionFrame Tweaks { get; } = new ActionFrame();
 
-        public TextFrame ErrorsType { get; } = new TextFrame();
-
         public TextFrame ActiveModRevision { get; } = new TextFrame() { Visible = false };
-
-        public ActionFrame FoundErrors { get; } = new ActionFrame();
 
         public MainPageViewModel()
         {

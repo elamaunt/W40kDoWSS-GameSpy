@@ -1,5 +1,9 @@
-﻿using ThunderHawk.Core;
+﻿using System;
+using System.IO;
+using System.Linq;
+using ThunderHawk.Core;
 using ThunderHawk.Core.Services;
+using ThunderHawk.StaticClasses.Soulstorm;
 
 namespace ThunderHawk.Tweaks
 {
@@ -11,21 +15,66 @@ namespace ThunderHawk.Tweaks
 
         public bool IsRecommendedTweak { get; } = false;
 
-        private bool switcher = false;
+        private string GetCurrentProfileName(string gamePath)
+        {
+            var localConfig = Path.Combine(gamePath, "Local.ini");
+            if (!File.Exists(localConfig))
+                return "";
+
+            var profileLine = File.ReadAllLines(localConfig).FirstOrDefault(l => l.StartsWith("playerprofile"));
+            if (profileLine == null)
+                return "";
+            var equPos = profileLine.IndexOf('=');
+            var profileName = profileLine.Substring(equPos + 1);
+            return profileName;
+        }
         public bool CheckTweak()
         {
-            //TODO: Implement tweak logic
-            return switcher;
+            var gridKeys = Path.Combine("LauncherFiles", "Addons", "GridKeys", "KEYDEFAULTS.LUA");
+
+            if (!File.Exists(gridKeys))
+                throw new Exception("Could not find GridKeys in LauncherFiles!");
+
+            var gamePath = PathFinder.GamePath;
+            var profileName = GetCurrentProfileName(gamePath);
+            var profilePath = Path.Combine(gamePath, "Profiles", profileName, "thunderhawk");
+            var keyDefPath = Path.Combine(profilePath, "KEYDEFAULTS.LUA");
+
+            if (File.Exists(keyDefPath) && File.ReadLines(gridKeys).SequenceEqual(File.ReadLines(keyDefPath)))
+            {
+                return true;
+            }
+            return false;
+
         }
 
         public void EnableTweak()
         {
-            switcher = true;
+            var gridKeys = Path.Combine("LauncherFiles", "Addons", "GridKeys", "KEYDEFAULTS.LUA");
+
+            if (!File.Exists(gridKeys))
+                throw new Exception("Could not find GridKeys in LauncherFiles!");
+
+            var gamePath = PathFinder.GamePath;
+            var profileName = GetCurrentProfileName(gamePath);
+            var profilePath = Path.Combine(gamePath, "Profiles", profileName, "thunderhawk");
+            var keyDefPath = Path.Combine(profilePath, "KEYDEFAULTS.LUA");
+
+            if (!Directory.Exists(profilePath))
+                Directory.CreateDirectory(profilePath);
+            File.Copy(gridKeys, keyDefPath, true);
         }
 
         public void DisableTweak()
         {
-            switcher = false;
+            var gamePath = PathFinder.GamePath;
+            var profileName = GetCurrentProfileName(gamePath);
+            var profilePath = Path.Combine(gamePath, "Profiles", profileName, "thunderhawk");
+            var keyDefPath = Path.Combine(profilePath, "KEYDEFAULTS.LUA");
+
+            if (File.Exists(keyDefPath))
+                File.Delete(keyDefPath);
+
         }
     }
 }
