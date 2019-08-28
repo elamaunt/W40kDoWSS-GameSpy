@@ -30,10 +30,10 @@ namespace ThunderHawk.Tweaks
         }
         public bool CheckTweak()
         {
-            var gridKeys = Path.Combine("LauncherFiles", "Addons", "GridKeys", "KEYDEFAULTS.LUA");
+            var gridKeys = Path.Combine("GameFiles", "Tweaks", "GridKeys", "KEYDEFAULTS.LUA");
 
             if (!File.Exists(gridKeys))
-                throw new Exception("Could not find GridKeys in LauncherFiles!");
+                throw new Exception("Could not find GridKeys in GameFiles!");
 
             var gamePath = PathFinder.GamePath;
             var profileName = GetCurrentProfileName(gamePath);
@@ -50,10 +50,10 @@ namespace ThunderHawk.Tweaks
 
         public void EnableTweak()
         {
-            var gridKeys = Path.Combine("LauncherFiles", "Addons", "GridKeys", "KEYDEFAULTS.LUA");
+            var gridKeys = Path.Combine("GameFiles", "Tweaks", "GridKeys", "KEYDEFAULTS.LUA");
 
             if (!File.Exists(gridKeys))
-                throw new Exception("Could not find GridKeys in LauncherFiles!");
+                throw new Exception("Could not find GridKeys in GameFiles!");
 
             var gamePath = PathFinder.GamePath;
             var profileName = GetCurrentProfileName(gamePath);

@@ -47,12 +47,12 @@ namespace ThunderHawk.Tweaks
         public void EnableTweak()
         {
             var gamePath = PathFinder.GamePath;
-            var cameraDir = Path.Combine("LauncherFiles", "Addons", "Camera");
+            var cameraDir = Path.Combine("GameFiles", "Tweaks", "Camera");
             if (!Directory.Exists(cameraDir))
-                throw new Exception("Could not find Camera in LauncherFiles!");
+                throw new Exception("Could not find Camera in GameFiles!");
             var dirCameraFiles = Directory.GetFiles(cameraDir);
             if (!dirCameraFiles.Select(c => Path.GetFileName(c)).ToArray().SequenceEqual(cameraFiles))
-                throw new Exception("Could not find Camera Files in LauncherFiles!");
+                throw new Exception("Could not find Camera Files in GameFiles!");
 
             var targetDir = CheckFolders(gamePath)[0]; // W40k/Data
             if (!Directory.Exists(targetDir))

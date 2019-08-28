@@ -24,11 +24,11 @@ namespace ThunderHawk.Tweaks
         public void EnableTweak()
         {
 
-            var fontsDir = Path.Combine("LauncherFiles", "Addons", "RuFont");
+            var fontsDir = Path.Combine("GameFiles", "Tweaks", "RuFont");
             if (!Directory.Exists(fontsDir))
-                throw new Exception("Could not find RuFont in LauncherFiles!");
+                throw new Exception("Could not find RuFont in GameFiles!");
 
-            //TODO: Сделать более качественную проверку на наличие файлов в LauncherFiles
+            //TODO: Сделать более качественную проверку на наличие файлов в GameFiles
 
 
             var fontFiles = Directory.GetFiles(fontsDir);

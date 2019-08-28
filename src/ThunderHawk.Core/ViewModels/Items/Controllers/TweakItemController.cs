@@ -14,7 +14,7 @@ namespace ThunderHawk.Core
             }
             catch (Exception ex)
             {
-                //TODO: Какое-нибудь оповещение для юзера что в твиках произошла ошибка. Скорее всего, из-за того что он удалил что-то из LauncherFiles.
+                //TODO: Какое-нибудь оповещение для юзера что в твиках произошла ошибка. Скорее всего, из-за того что он удалил что-то из GameFiles.
                 Logger.Error(ex);
                 Frame.IsTweakEnabled.IsChecked = false;
             }

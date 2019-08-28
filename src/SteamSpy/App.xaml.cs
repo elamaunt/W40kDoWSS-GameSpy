@@ -30,10 +30,17 @@ namespace ThunderHawk
             yield return new ApplicationModule();
         }
 
+        private void CheckGameFiles()
+        {
+            if (!Directory.Exists("GameFiles"))
+            {
+                Logger.Fatal("There are missing game components! Launcher cannot work correctly!! Please, reinstall it!");
+                //TODO: Сказать юзеру что все плохо чтобы переустанавливал лаунчер
+            }
+        }
+
         protected override void OnStartup(StartupEventArgs e)
         {
-            NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Directory.GetCurrentDirectory() + "\\LauncherFiles\\NLog.config", true);
-
             CoreContext.Start(System.Net.IPAddress.Any);
 
             StaticClasses.Soulstorm.PathFinder.Find();
@@ -46,6 +53,8 @@ namespace ThunderHawk
                 File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api86.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api.dll"), true);
 
             base.OnStartup(e);
+
+            CheckGameFiles();
 
             var window = WPFPageHelper.InstantiateWindow<MainWindowViewModel>();
             window.Show();
