@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using ThunderHawk.Core;
 
 namespace GSMasterServer.Servers
 {
@@ -16,13 +17,13 @@ namespace GSMasterServer.Servers
     {
         public const string Category = "ServerReport";
         const int BufferSize = 65535;
-        
+
         Socket _socket;
         SocketAsyncEventArgs _socketReadEvent;
         byte[] _socketReceivedBuffer;
 
         public static string CurrentUserRoomHash { get; set; }
-        
+
         public ServerListReport(IPAddress listen, ushort port)
         {
             StartServer(new AddressInfo()
@@ -97,7 +98,7 @@ namespace GSMasterServer.Servers
 
             WaitForData();
         }
-        
+
         private void WaitForData()
         {
             Thread.Sleep(10);
@@ -113,6 +114,10 @@ namespace GSMasterServer.Servers
                 LogError(Category, "Error receiving data");
                 LogError(Category, e.ToString());
                 return;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
             }
         }
 

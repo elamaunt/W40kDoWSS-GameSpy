@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using ThunderHawk.Core;
 
 namespace GSMasterServer.Servers
 {
@@ -276,6 +277,10 @@ namespace GSMasterServer.Servers
                 state = null;
                 return;
             }
+            catch(Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private void OnConnect(IAsyncResult ar)
@@ -332,6 +337,12 @@ namespace GSMasterServer.Servers
                 state = null;
                 return false;
             }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+
+            return false;
         }
 
         private string AddSteamIdBeforeFinal(string str, string key)
@@ -371,6 +382,12 @@ namespace GSMasterServer.Servers
                 state = null;
                 return false;
             }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+
+            return false;
         }
 
         private void OnToServerSent(IAsyncResult async)
@@ -410,6 +427,10 @@ namespace GSMasterServer.Servers
                         return;
                 }
             }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private void OnToGameSent(IAsyncResult async)
@@ -448,6 +469,10 @@ namespace GSMasterServer.Servers
                         state = null;
                         return;
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
             }
         }
 
@@ -492,6 +517,10 @@ namespace GSMasterServer.Servers
                 state = null;
                 return;
             }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private void WaitForData(ref LoginSocketState state)
@@ -535,6 +564,10 @@ namespace GSMasterServer.Servers
                     state.Dispose();
                 state = null;
                 return;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
             }
         }
 
@@ -863,7 +896,7 @@ namespace GSMasterServer.Servers
                     // yeah yeah, this is terrible, but it stops a memory leak :|
                     GC.Collect();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
                 }
             }

@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using ThunderHawk.Core;
 
 namespace GSMasterServer.Servers
 {
@@ -151,6 +152,10 @@ namespace GSMasterServer.Servers
                 LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
                 return;
             }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
         private void WaitForServerData(SocketState state)
         {
@@ -170,6 +175,10 @@ namespace GSMasterServer.Servers
                 LogError(Category, "Error receiving data");
                 LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
                 return;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
             }
         }
 
@@ -585,32 +594,46 @@ namespace GSMasterServer.Servers
 
         private unsafe void SendToServerSocket(ref SocketState state, byte[] bytes)
         {
-            if (state.Disposing)
-                return;
-
-            if (state.SendingEncoded)
+            try
             {
-                fixed (byte* bytesToSendPtr = bytes)
-                    ChatCrypt.GSEncodeDecode(state.SendingServerKey, bytesToSendPtr, bytes.Length);
-            }
+                if (state.Disposing)
+                    return;
 
-            _serverSocket.Send(bytes, bytes.Length, SocketFlags.None);
+                if (state.SendingEncoded)
+                {
+                    fixed (byte* bytesToSendPtr = bytes)
+                        ChatCrypt.GSEncodeDecode(state.SendingServerKey, bytesToSendPtr, bytes.Length);
+                }
+
+                _serverSocket.Send(bytes, bytes.Length, SocketFlags.None);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private unsafe void SendToGameSocket(ref SocketState state, byte[] bytes)
         {
-            if (state.Disposing)
-                return;
-
-          //  Log(Category, "SERVER RESR: " + Encoding.UTF8.GetString(bytes));
-
-            if (state.ReceivingEncoded)
+            try
             {
-                fixed (byte* bytesToSendPtr = bytes)
-                    ChatCrypt.GSEncodeDecode(state.SendingGameKey, bytesToSendPtr, bytes.Length);
-            }
+                if (state.Disposing)
+                    return;
 
-            state.GameSocket.Send(bytes, bytes.Length, SocketFlags.None);
+                //  Log(Category, "SERVER RESR: " + Encoding.UTF8.GetString(bytes));
+
+                if (state.ReceivingEncoded)
+                {
+                    fixed (byte* bytesToSendPtr = bytes)
+                        ChatCrypt.GSEncodeDecode(state.SendingGameKey, bytesToSendPtr, bytes.Length);
+                }
+
+                state.GameSocket.Send(bytes, bytes.Length, SocketFlags.None);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         

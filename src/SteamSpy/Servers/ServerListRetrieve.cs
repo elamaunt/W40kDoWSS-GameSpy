@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using GameServer = GSMasterServer.Data.GameServer;
+using ThunderHawk.Core;
 
 namespace GSMasterServer.Servers
 {
@@ -175,6 +176,10 @@ namespace GSMasterServer.Servers
                 LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
                 return;
             }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private void OnDataReceived(IAsyncResult async)
@@ -287,6 +292,10 @@ namespace GSMasterServer.Servers
                         LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
                         return;
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
             }
             finally
             {
