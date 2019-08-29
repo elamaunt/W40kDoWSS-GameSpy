@@ -15,7 +15,7 @@ namespace ThunderHawk
             {
                 AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-                NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Path.Combine(Environment.CurrentDirectory, "LauncherFiles", "NLog.config"), true);
+                NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Path.Combine(Environment.CurrentDirectory, "NLog.config"), true);
 
                 new App().Run();
             }

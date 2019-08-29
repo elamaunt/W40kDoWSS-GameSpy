@@ -1,4 +1,5 @@
 ﻿using Framework;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,15 +15,9 @@ namespace ThunderHawk.Core
             Frame.FAQLabel.Action = OpenFAQ;
             Frame.Tweaks.Action = OpenTweaks;
 
-            Frame.Tweaks.Visible = false;
-
             try
             {
-                var foundRecommendedTweaks = CoreContext.TweaksService.GetState();
-                if (foundRecommendedTweaks)
-                {
-                    Frame.Tweaks.Visible = true;
-                }
+                Frame.Tweaks.Visible = CoreContext.TweaksService.RecommendedTweaksExists();
             }
             catch (Exception ex)
             {
@@ -140,7 +135,9 @@ namespace ThunderHawk.Core
         {
             Frame.LaunchGame.Enabled = false;
             Frame.LaunchGame.Text = "Game launched";
+
             CoreContext.LaunchService.LaunchGameAndWait()
+                .OnFaultOnUi(ex => Frame.UserInteractions.ShowErrorNotification(ex.Message))
                 .OnContinueOnUi(t =>
                 {
                     Frame.LaunchGame.Text = "Launch game";

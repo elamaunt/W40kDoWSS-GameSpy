@@ -89,10 +89,13 @@
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Controllers\Binders\TabControlWithListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TabItemWithPageViewModelBinder.cs" />
+    <Compile Include="Controllers\IControlExtension.cs" />
+    <Compile Include="Controllers\PageExtendingController.cs" />
     <Compile Include="Effects\IndicatorEffect.cs" />
     <Compile Include="Effects\RectBlurEffect.cs" />
     <Compile Include="ExplorerExtensions.cs" />
     <Compile Include="GameState.cs" />
+    <Compile Include="PageExtensions\UserInteractionsExtension.cs" />
     <Compile Include="ThunderHawk.cs" />
     <Compile Include="ServerContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />
@@ -140,6 +143,9 @@
     <Compile Include="Utils\SystemExtensionMethods.cs" />
     <Compile Include="Utils\TaskHelper.cs" />
     <Compile Include="Views\Elements\Controllers\MainNewsPresentingController.cs" />
+    <Compile Include="Views\ErrorNotificationWindow.xaml.cs">
+      <DependentUpon>ErrorNotificationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Windows\Controllers\MainWindowAnimateNavigationController.cs" />
     <Compile Include="Views\Windows\Window_Main.xaml.cs" />
     <Page Include="MainWindow.xaml">
@@ -227,6 +233,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Elements\Element_News.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ErrorNotificationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

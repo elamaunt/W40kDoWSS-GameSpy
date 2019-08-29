@@ -25,7 +25,7 @@
         protected override void OnUnbind()
         {
             Extension?.CleanUp();
-            base.Unbind();
+            base.OnUnbind();
         }
     }
 }

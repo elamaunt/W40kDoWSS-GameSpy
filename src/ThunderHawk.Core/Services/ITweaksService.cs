@@ -5,6 +5,6 @@ namespace ThunderHawk.Core.Services
     {
         ITweak[] Tweaks { get; }
 
-        bool GetState();
+        bool RecommendedTweaksExists();
     }
 }

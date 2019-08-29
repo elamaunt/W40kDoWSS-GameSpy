@@ -161,6 +161,32 @@ namespace Framework
             });
         }
 
+        public static Task OnFaultOnUi(this Task self, Action handler)
+        {
+            return self.ContinueWith(t =>
+            {
+                if (t.IsFaulted)
+                    Dispatcher.RunOnMainThread(handler);
+
+                if (t.Exception != null)
+                    throw t.Exception;
+            });
+        }
+
+        public static Task OnFaultOnUi(this Task self, Action<Exception> handler)
+        {
+            return self.ContinueWith(t =>
+            {
+                if (t.IsFaulted)
+                {
+                    var ex = t.Exception.GetLowestBaseException();
+                    Dispatcher.RunOnMainThread(() => handler(ex));
+                }
+                if (t.Exception != null)
+                    throw t.Exception;
+            });
+        }
+
         public static Task<ResultType> OnContinueOnUi<ResultType>(this Task<ResultType> self, Action handler)
         {
             return self.ContinueWith(t =>

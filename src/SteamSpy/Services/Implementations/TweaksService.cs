@@ -12,7 +12,7 @@ namespace ThunderHawk
             { new Unlocker(), new Camera(), new RuFont(),
               new FogSwitcher(), new GridHotkeys()  };
 
-        public bool GetState()
+        public bool RecommendedTweaksExists()
         {
             var disabledTweaks = GetDisabledTweaks();
             if (disabledTweaks.Length > 0)

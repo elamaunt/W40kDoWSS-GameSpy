@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace ThunderHawk.StaticClasses.Soulstorm
 {
@@ -6,41 +8,24 @@ namespace ThunderHawk.StaticClasses.Soulstorm
     {
         private static Process[] GetGameProcesses()
         {
-            return Process.GetProcessesByName("Soulstorm");
+            var current = Process.GetCurrentProcess();
+            return Process.GetProcessesByName("Soulstorm").Where(x => x.Id != current.Id).ToArray();
         }
 
         public static bool GameIsRunning()
         {
-            return GetGameProcesses().Length >= 1;
+            return GetGameProcesses().Length > 0;
         }
 
-        /// <summary>
-        /// Получает процесс игры только в случае если игра не багнулась(запущен лишь один процесс игры)
-        /// </summary>
-        /// <returns></returns>
         public static Process GetGameProcess()
         {
-            var gameProcs = GetGameProcesses();
-            if (gameProcs.Length == 1)
-            {
-                return gameProcs[0];
-            }
-            else
-            {
-                return null;
-            }
+            return GetGameProcesses().FirstOrDefault();
         }
 
-        public static void KillAllGameProccesses()
+        public static void KillAllGameProccessesWithoutWindow()
         {
-            var gameProcs = GetGameProcesses();
-            if (gameProcs.Length > 1)
-            {
-                foreach (var proc in gameProcs)
-                {
-                    proc.Kill();
-                }
-            }
+            foreach (var proc in GetGameProcesses().Where(x => x.MainWindowHandle != IntPtr.Zero))
+                proc.Kill();
         }
     }
 }

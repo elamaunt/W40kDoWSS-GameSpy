@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace GSMasterServer.Servers
 {
-    internal class ChatServerRetranslator : Server
+    internal class ChatServerRetranslator : Server, IDisposable
     {
         private const string Category = "Chat";
         
@@ -64,6 +64,18 @@ namespace GSMasterServer.Servers
             }
 
             RestartAcepting();
+        }
+
+        public void Dispose()
+        {
+            _newPeerAceptingsocket?.Dispose();
+            _newPeerAceptingsocket = null;
+
+            _serverSocket?.Dispose();
+            _serverSocket = null;
+
+            _currentClientState?.Dispose();
+            _currentClientState = null;
         }
 
         private void RestartAcepting()

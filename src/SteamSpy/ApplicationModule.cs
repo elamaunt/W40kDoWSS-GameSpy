@@ -1,7 +1,6 @@
 ﻿using Framework;
 using ThunderHawk.Core;
 using ThunderHawk.Core.Services;
-using ThunderHawk.Tweaks;
 
 namespace ThunderHawk
 {
@@ -24,6 +23,8 @@ namespace ThunderHawk
 
             batch.RegisterControllerFactory(() => new MainWindowBackgroundController());
             batch.RegisterControllerFactory(() => new MainNewsPresentingController());
+
+            batch.RegisterControllerFactory(() => new PageExtendingController<IUserInteractions, UserInteractionsExtension>());
         }
     }
 }
