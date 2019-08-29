@@ -149,8 +149,6 @@ namespace Framework.WPF
             return PageHelper.FindItemViewType(typeName, "element");
         }
 
-
-
         public static void PreloadXamlPaths()
         {
             var assembly = Application.Current.GetType().GetTypeInfo().Assembly;

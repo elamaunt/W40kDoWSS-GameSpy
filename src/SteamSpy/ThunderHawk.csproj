@@ -82,10 +82,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
+    <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </ApplicationDefinition>
+    </Page>
     <Compile Include="ApplicationModule.cs" />
     <Compile Include="Controllers\Binders\TabControlWithListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TabItemWithPageViewModelBinder.cs" />
@@ -93,7 +93,8 @@
     <Compile Include="Effects\RectBlurEffect.cs" />
     <Compile Include="ExplorerExtensions.cs" />
     <Compile Include="GameState.cs" />
-    <Compile Include="CoreContext.cs" />
+    <Compile Include="ThunderHawk.cs" />
+    <Compile Include="ServerContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />
     <Compile Include="Data\GameServer.cs" />
     <Compile Include="Data\Race.cs" />
@@ -387,6 +388,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ThunderHawk.RemoteLaunch.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Resource Include="thunderhawk.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>
@@ -543,15 +547,22 @@
     <None Include="LauncherFiles\Addons\Unlocker\W40kWA.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="SoulstormBackup\Soulstorm.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SoulstormBackup\steam_api64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="SoulstormBackup\steam_api86.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="steam_api86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="steam_appid.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
+    <Content Include="steam_appid.txt" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="LibGit2Sharp">

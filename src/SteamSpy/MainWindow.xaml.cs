@@ -62,7 +62,7 @@ namespace ThunderHawk
                 return;
             }*/
 
-            CoreContext.ServerListRetrieve.StartReloadingTimer();
+            ServerContext.ServerListRetrieve.StartReloadingTimer();
         }
 
         /*public static ulong[] RegisteredIds => new ulong[]

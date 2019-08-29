@@ -20,7 +20,7 @@
 
     <Grid>
         <Image x:Name="WindowBackground" 
-               Source="/Images/Background_Default.png"
+               Source="pack://application:,,,/ThunderHawk;component/Images/Background_Default.png"
                HorizontalAlignment="Center"
                VerticalAlignment="Top" 
                Stretch="UniformToFill">
@@ -42,7 +42,7 @@
                         framework:WPFBinder.Frame="GoBack"
                         Height="14" Width="13"
                         Style="{DynamicResource TopBarButtonStyle}">
-                    <Image Source="/Images/BackButton.png"/>
+                    <Image Source="pack://application:,,,/ThunderHawk;component/Images/BackButton.png"/>
                 </Button>
 
                 <DockPanel Margin="50 0 0 0" LastChildFill="False">
@@ -58,7 +58,7 @@
                         <Button Margin="10 0 0 0"  
                             framework:WPFBinder.Frame="OpenSettings"
                             Style="{DynamicResource TopBarButtonStyle}">
-                            <Image Height="16" Width="16" Source="/Images/settings.png"/>
+                            <Image Height="16" Width="16" Source="pack://application:,,,/ThunderHawk;component/Images/settings.png"/>
                         </Button>
                     </StackPanel>
                 </DockPanel>
@@ -68,7 +68,7 @@
             <Grid Grid.Row="1">
                 <Frame NavigationUIVisibility="Hidden" Name="NavigationFrame" VerticalAlignment="Stretch" framework:WPFBinder.Frame="NavigationPanel"/>
                 <Polygon HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="#22000000" Points="170,0, 0,170, 0,170, 170,170, 170,170, 170,0"/>
-                <Image Source="/Images/thunderhawk_icon.png" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Height="74"/>
+                <Image Source="pack://application:,,,/ThunderHawk;component/Images/thunderhawk_icon.png" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Height="74"/>
                 <TextBlock framework:WPFBinder.Frame="Version" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,0" FontSize="9" Foreground="#44ffffff"/>
             </Grid>
         </Grid>

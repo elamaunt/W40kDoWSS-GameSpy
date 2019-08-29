@@ -1,5 +1,4 @@
 ﻿using Framework;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,7 +11,6 @@ namespace ThunderHawk.Core
         {
             Frame.Title.Text = CoreContext.LangService.GetString("MainPage");
 
-            Frame.LaunchGame.Action = LaunchGame;
             Frame.FAQLabel.Action = OpenFAQ;
             Frame.Tweaks.Action = OpenTweaks;
 
@@ -70,19 +68,34 @@ namespace ThunderHawk.Core
 
         void UpdateMod()
         {
-            Frame.LaunchGame.Enabled = false;
-            var path = CoreContext.LaunchService.GamePath;
-            CoreContext.ThunderHawkModManager.UpdateMod(path, Token, ReportProgress)
+           // Frame.LaunchGame.Enabled = false;
+           // var path = CoreContext.LaunchService.GamePath;
+            /*CoreContext.ThunderHawkModManager.UpdateMod(path, Token, ReportProgress)
                 .OnContinueOnUi(task =>
                 {
                     Frame.LaunchGame.Enabled = true;
                     if (task.Status == TaskStatus.RanToCompletion)
                     {
-                        Frame.LaunchGame.Text = "Launch game";
-                        Frame.LaunchGame.Action = LaunchGame;
+                        SetGameLaunchState();
                         UpdateActiveModState();
                     }
-                });
+                });*/
+
+            SetGameLaunchState();
+        }
+
+        private void SetGameLaunchState()
+        {
+            if (CoreContext.SteamApi.IsInitialized)
+            {
+                Frame.LaunchGame.Text = "Launch game";
+                Frame.LaunchGame.Action = LaunchGame;
+            }
+            else
+            {
+                Frame.LaunchGame.Text = "Init Steam";
+                Frame.LaunchGame.Action = CoreContext.SteamApi.Initialize;
+            }
         }
 
         void SetupGameMod()

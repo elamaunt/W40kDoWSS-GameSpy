@@ -1,48 +1,50 @@
-﻿using GSMasterServer.Data;
-using Steamworks;
+﻿using Steamworks;
 using System;
+using System.IO;
 using ThunderHawk.Core;
-using ThunderHawk.Utils;
-using GameServer = Steamworks.GameServer;
 
 namespace ThunderHawk
 {
     public class SteamApiService : ISteamApiService
     {
-        public string NickName { get; } = "";
-        public SteamApiService()
+        public string NickName => IsInitialized ? SteamFriends.GetPersonaName() : string.Empty;
+
+        public bool IsInitialized { get; private set; }
+
+        public void Initialize()
         {
-            try
-            {
+           // try
+           // {
                 if (SteamAPI.RestartAppIfNecessary(new AppId_t(9450)))
                 {
-                    Logger.Error("App Restart Requested!");
+                    RestartAsSoulstormExe();
+                    return;
                 }
 
                 if (!SteamAPI.Init())
-                {
-                    Logger.Error("Cant init SteamApi");
-                }
+                     throw new Exception("Cant init SteamApi");
 
                 var appId = SteamUtils.GetAppID();
+
                 if (appId.m_AppId != 9450)
-                {
-                    Logger.Error("Wrong App Id!");
-                }
+                    throw new Exception("Wrong App Id!");
 
-                NickName = SteamFriends.GetPersonaName();
+                IsInitialized = true;
+           //}
+           // catch (Exception ex)
+           // {
+           //     Logger.Error(ex);
+           // }
+        }
 
+        private void RestartAsSoulstormExe()
+        {
+            var gamePath = CoreContext.LaunchService.GamePath;
 
-                CoreContext.ServerListRetrieve.StartReloadingTimer();
+            File.WriteAllText(Path.Combine(gamePath, ThunderHawk.PathContainerName), Environment.CurrentDirectory);
+            File.Copy(Path.Combine(Environment.CurrentDirectory, "ThunderHawk.RemoteLaunch.exe"), Path.Combine(gamePath, "Soulstorm.exe"), true);
 
-                GameServer.RunCallbacks();
-                SteamAPI.RunCallbacks();
-                PortBindingManager.UpdateFrame();
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex);
-            }
+            Environment.Exit(0);
         }
     }
 }

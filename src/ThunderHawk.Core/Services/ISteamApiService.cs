@@ -2,7 +2,9 @@
 {
     public interface ISteamApiService
     {
-        //void Initialize();
+        void Initialize();
+
+        bool IsInitialized { get; }
 
         string NickName { get; }
     }

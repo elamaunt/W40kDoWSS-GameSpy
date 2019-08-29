@@ -6,6 +6,7 @@ namespace ThunderHawk.Core
     {
         //void SwitchGameToMod(string modName);
         string GamePath { get; }
+        string LauncherPath { get; }
         bool CanLaunchGame { get; }
         Task LaunchGameAndWait();
     }

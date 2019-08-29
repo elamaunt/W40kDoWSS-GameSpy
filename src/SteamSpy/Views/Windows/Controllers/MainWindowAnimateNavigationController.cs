@@ -13,7 +13,7 @@ namespace ThunderHawk
 {
     public class MainWindowBackgroundController : BindingController<Window_Main, MainWindowViewModel>, ICustomContentPresenter
     {
-        const string DefaultImagePath = "/Images/Background_Default.png";
+        const string DefaultImagePath = "pack://application:,,,/ThunderHawk;component/Images/Background_Default.png";
 
         string _currentPath = DefaultImagePath;
 
@@ -23,7 +23,7 @@ namespace ThunderHawk
         {
             Frame.NavigationPanel.SetExtension<ICustomContentPresenter>(this);
             SubscribeOnPropertyChanged(Frame.NavigationPanel, nameof(INavigationPanelFrame.CurrentContentViewModel), OnContentChanged);
-            View.WindowBackground.Source = new BitmapImage(new Uri(DefaultImagePath, UriKind.Relative));
+            View.WindowBackground.Source = new BitmapImage(new Uri(DefaultImagePath, UriKind.RelativeOrAbsolute));
 
             View.NavigationFrame.Navigated += OnNavigated;
         }
@@ -94,7 +94,10 @@ namespace ThunderHawk
                 return;
 
             _currentPath = path;
-            ChangeSource(View.WindowBackground, new BitmapImage(new Uri(path, UriKind.Relative)), TimeSpan.FromSeconds(0.25), TimeSpan.FromSeconds(0.5));
+
+            if (!path.StartsWith("pack:"))
+                path = "pack://application:,,,/ThunderHawk;component/" + path;
+            ChangeSource(View.WindowBackground, new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute)), TimeSpan.FromSeconds(0.25), TimeSpan.FromSeconds(0.5));
         }
 
         public static void ChangeSource(Image image, ImageSource source, TimeSpan fadeOutTime, TimeSpan fadeInTime)

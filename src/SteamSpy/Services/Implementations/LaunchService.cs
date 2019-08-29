@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using System.Windows;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 
@@ -13,6 +12,20 @@ namespace ThunderHawk
         public bool CanLaunchGame => !ProcessManager.GameIsRunning() && PathFinder.IsPathFound();
 
         public string GamePath => PathFinder.GamePath;
+        public string LauncherPath
+        {
+            get
+            {
+                if (Environment.CurrentDirectory != PathFinder.GamePath)
+                    return Environment.CurrentDirectory;
+
+                var containerFile = Path.Combine(PathFinder.GamePath, ThunderHawk.PathContainerName);
+                if (File.Exists(containerFile))
+                    return File.ReadAllText(containerFile);
+
+                return null;
+            }
+        }
 
         public Task LaunchGameAndWait()
         {
@@ -23,17 +36,18 @@ namespace ThunderHawk
 
             try
             {
-                var exeFileName = Path.Combine(Directory.GetCurrentDirectory(), "LauncherFiles", "Addons", "Patch1.2", "Soulstorm.exe");
+                var exeFileName = Path.Combine(LauncherPath, "LauncherFiles", "Addons", "Patch1.2", "Soulstorm.exe");
                 var procParams = "-nomovies -forcehighpoly";
                 if (AppSettings.ThunderHawkModAutoSwitch)
                     procParams += " -modname ThunderHawk";
+
                 var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
                 {
                     UseShellExecute = true,
                     WorkingDirectory = PathFinder.GamePath
                 });
 
-                Task.Run(() => RemoveFogLoop(ssProc));
+                Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
 
                 ssProc.Exited += (s, e) =>
                 {
@@ -49,9 +63,9 @@ namespace ThunderHawk
             return tcs.Task;
         }
 
-        private async Task RemoveFogLoop(Process ssProc)
+        private async Task RemoveFogLoop(Task task, Process ssProc)
         {
-            while (true)
+            while (!task.IsCompleted)
             {
                 if (!AppSettings.DisableFog || FogRemover.DisableFog(ssProc))
                 {

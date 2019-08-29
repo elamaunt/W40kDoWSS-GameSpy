@@ -1,12 +1,13 @@
 ﻿using Framework;
 using Framework.WPF;
-using ThunderHawk.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using ThunderHawk.Core;
+using ThunderHawk.Utils;
+using Module = Framework.Module;
 
 namespace ThunderHawk
 {
@@ -15,11 +16,6 @@ namespace ThunderHawk
         public App()
         {
             InitializeComponent();
-        }
-
-        public static bool Is64BitProcess
-        {
-            get { return IntPtr.Size == 8; }
         }
 
         protected override IEnumerable<Module> CreateModules()
@@ -32,18 +28,18 @@ namespace ThunderHawk
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Directory.GetCurrentDirectory() + "\\LauncherFiles\\NLog.config", true);
-
-            CoreContext.Start(System.Net.IPAddress.Any);
+            //ServerContext.Start(System.Net.IPAddress.Any);
 
             StaticClasses.Soulstorm.PathFinder.Find();
 
             //ModifyHostsFile(Entries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries).Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
+          
 
-            if (Is64BitProcess)
-                File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api64.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api.dll"), true);
-            else
-                File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api86.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api.dll"), true);
+
+             if (Environment.Is64BitProcess)
+                 File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api64.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api.dll"), true);
+             else
+                 File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api86.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api.dll"), true);
 
             base.OnStartup(e);
 

@@ -215,5 +215,6 @@ namespace Framework
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)] // Заставляет компилятор убрать вызов при оптимизации
         public static void NoWarning(this Task task) { /* Не содержит кода */ }
+
     }
 }

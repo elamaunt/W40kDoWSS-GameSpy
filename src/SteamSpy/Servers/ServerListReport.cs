@@ -277,7 +277,7 @@ namespace GSMasterServer.Servers
 
             if (server.Get<string>("statechanged") == "3" && gamename.Equals("whamdowfram", StringComparison.Ordinal))
             {
-                CoreContext.ChatServer.SentServerMessageToClient("Вы создаете хост для игры в авто. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.\n\r");
+                ServerContext.ChatServer.SentServerMessageToClient("Вы создаете хост для игры в авто. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.\n\r");
             }
 
             server["hostport"] = remote.Port.ToString();
@@ -289,7 +289,7 @@ namespace GSMasterServer.Servers
             {
                 if (gamevariant != SteamConstants.GameVariant)
                 {
-                    CoreContext.ChatServer.SentServerMessageToClient("Вы используете не ту версию модификации. Вам необходимо использовать Soulstorm Bugfix Mod 1.56a.\r\n");
+                    ServerContext.ChatServer.SentServerMessageToClient("Вы используете не ту версию модификации. Вам необходимо использовать Soulstorm Bugfix Mod 1.56a.\r\n");
                 }
             }
 
@@ -329,7 +329,7 @@ namespace GSMasterServer.Servers
                 var hostname = server.Get<string>("hostname");
 
                 if (gamename == "whamdowfram")
-                    CoreContext.ChatServer.SendAutomatchGameBroadcast(hostname, int.Parse(server.Get<string>("maxplayers")));
+                    ServerContext.ChatServer.SendAutomatchGameBroadcast(hostname, int.Parse(server.Get<string>("maxplayers")));
             }
 
             return true;
