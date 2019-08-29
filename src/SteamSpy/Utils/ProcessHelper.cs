@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace SteamSpy.Utils
+namespace ThunderHawk.Utils
 {
     public static class ProcessHelper
     {

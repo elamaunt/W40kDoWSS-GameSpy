@@ -1,11 +1,11 @@
-﻿using SteamSpy.Utils;
+﻿using ThunderHawk.Utils;
 using Steamworks;
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-namespace SteamSpy
+namespace ThunderHawk
 {
     public partial class MainWindow : Window
     {
@@ -62,7 +62,7 @@ namespace SteamSpy
                 return;
             }*/
 
-            CoreContext.ServerListRetrieve.StartReloadingTimer();
+            ServerContext.ServerListRetrieve.StartReloadingTimer();
         }
 
         /*public static ulong[] RegisteredIds => new ulong[]

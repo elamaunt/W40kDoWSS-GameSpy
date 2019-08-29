@@ -1,0 +1,24 @@
+﻿<framework:BindableControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+             ClipToBounds="False"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="400">
+
+    <StackPanel>
+        <DockPanel LastChildFill="False">
+            <StackPanel DockPanel.Dock="Left" Width="640" Orientation="Vertical">
+                <TextBlock framework:WPFBinder.Frame="Name" Style="{DynamicResource BigTextStyle}"/>
+                <TextBlock Margin="0 3 0 0" TextWrapping="Wrap"
+                       framework:WPFBinder.Frame="Description" Style="{DynamicResource RegularTextStyle}"/>
+            </StackPanel>
+            <CheckBox Width="40" Margin="0 0 5 0" VerticalAlignment="Center" framework:WPFBinder.Frame="IsTweakEnabled"
+                      DockPanel.Dock="Right" Style="{DynamicResource SliderCheckBoxStyle}"></CheckBox>
+        </DockPanel>
+        <Grid Margin="0 0 0 15" framework:WPFBinder.Frame="GridMargin"></Grid>
+    </StackPanel>
+
+</framework:BindableControl>

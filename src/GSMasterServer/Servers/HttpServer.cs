@@ -1,7 +1,11 @@
-﻿using GSMasterServer.Data;
+﻿using ApiDomain;
+using GSMasterServer.Data;
 using GSMasterServer.Http;
+using GSMasterServer.Utils;
 using System;
+using System.Collections.Specialized;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -178,6 +182,12 @@ namespace GSMasterServer.Servers
 
                 using (var ms = new MemoryStream(state.Buffer))
                 {
+                    if (request.Url.StartsWith("/api/"))
+                    {
+                        HandleApiRequest(request, ms, ref state);
+                        goto END;
+                    }
+
                     if (request.Url.EndsWith("news.txt"))
                     {
                         HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/Russiandow_news.txt", Encoding.Unicode));
@@ -270,6 +280,91 @@ namespace GSMasterServer.Servers
             CONTINUE: WaitForData(ref state);
         }
 
+        private void HandleApiRequest(HttpRequest request, MemoryStream ms, ref HttpSocketState state)
+        {
+            var fullPath = request.Url.Substring(5);
+
+            var fullPathSplit = fullPath.Split('?');
+
+            var path = fullPathSplit[0];
+            var parametersPairs = fullPathSplit.ElementAtOrDefault(1)?.Split('&');
+            NameValueCollection parameters;
+
+            if (parametersPairs != null)
+            {
+                parameters = new NameValueCollection(parametersPairs.Length);
+
+                for (int i = 0; i < parametersPairs.Length; i++)
+                {
+                    var split = parametersPairs[i].Split('=');
+
+                    if (split.Length == 2)
+                        parameters[split[0]] = split[1];
+                    else
+                        parameters[split[0]] = string.Empty;
+                }
+            }
+
+
+            if (request.Method == "GET")
+            {
+                if (path == "lastnews")
+                {
+                    var lastNews = Database.MainDBInstance.GetLastNews(3);
+
+                    var lastNewsDTOs = lastNews.Select(x => new NewsItemDTO()
+                        {
+                            Id = x.Id,
+                            Author = x.Author,
+                            CreatedDate = x.CreatedDate,
+                            EditedDate = x.EditedDate,
+                            ImageBase64 = x.ImageBase64,
+                            ImagePath = x.ImagePath,
+                            NewsType = x.NewsType,
+
+                            English = Convert(x.English),
+                            Russian = Convert(x.Russian)
+                        }).ToArray();
+
+                    var bytes = lastNewsDTOs.AsJson().ToUTF8Bytes();
+                    ms.Write(bytes, 0, bytes.Length);
+                    return;
+                }
+
+                if (path == "allnews")
+                {
+
+                    return;
+                }
+
+                return;
+            }
+
+            if (request.Method == "POST")
+            {
+                if (path == "news")
+                {
+
+                    return;
+                }
+
+                return;
+            }
+        }
+
+        private NewsLanguageItemDTO Convert(NewsData newsData)
+        {
+            if (newsData == null)
+                return null;
+
+            return new NewsLanguageItemDTO()
+            {
+                Annotation = newsData.Annotation,
+                Body = newsData.Body,
+                Title = newsData.Title
+            };
+        }
+
         private HttpResponse BuildAllStatsResponce()
         {
             XElement ol;
@@ -289,7 +384,7 @@ namespace GSMasterServer.Servers
 
             var builder = new StringBuilder();
 
-            foreach (var item in Database.UsersDBInstance.LoadAllStats())
+            foreach (var item in Database.MainDBInstance.LoadAllStats())
             {
                 builder
                  .Append(item.Score1v1)
@@ -345,7 +440,7 @@ namespace GSMasterServer.Servers
 
             var builder = new StringBuilder();
 
-            foreach (var item in Database.UsersDBInstance.Load1v1Top10())
+            foreach (var item in Database.MainDBInstance.Load1v1Top10())
             {
                 builder
                 .Append(item.Score1v1)

@@ -222,7 +222,7 @@ namespace GSMasterServer.Servers
                             {
                                 var nick = utf8alue.Split(' ')[2];
 
-                                var profile = Database.UsersDBInstance.GetProfileByName(nick);
+                                var profile = Database.MainDBInstance.GetProfileByName(nick);
 
                                 state.UserInfo = IrcDaemon.RegisterNewUser(state.Socket, nick, profile.Id, state, SendToClient);
                                 

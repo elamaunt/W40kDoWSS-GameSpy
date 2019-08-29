@@ -34,16 +34,16 @@ namespace Steamworks {
 	[System.Security.SuppressUnmanagedCodeSecurity()]
 	internal static class NativeMethods {
 		#if STEAMWORKS_WIN && STEAMWORKS_X64
-			internal const string NativeLibraryName = "steam_api"; // хглемемн. ашкн steam_api64
+			internal const string NativeLibraryName = "steam_api_th"; // хглемемн. ашкн steam_api64
         internal const string NativeLibrary_SDKEncryptedAppTicket = "sdkencryptedappticket64";
-		#else
-			internal const string NativeLibraryName = "steam_api";
+#else
+			internal const string NativeLibraryName = "steam_api_th";
 			internal const string NativeLibrary_SDKEncryptedAppTicket = "sdkencryptedappticket";
-		#endif
+#endif
 
-#region steam_api.h
-		// Steam API setup & shutdown
-		[DllImport(NativeLibraryName, EntryPoint = "SteamAPI_Init", CallingConvention = CallingConvention.Cdecl)]
+        #region steam_api.h
+        // Steam API setup & shutdown
+        [DllImport(NativeLibraryName, EntryPoint = "SteamAPI_Init", CallingConvention = CallingConvention.Cdecl)]
 		[return: MarshalAs(UnmanagedType.I1)]
 		public static extern bool SteamAPI_Init();
 

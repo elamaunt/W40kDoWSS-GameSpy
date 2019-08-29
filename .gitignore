@@ -331,3 +331,8 @@ ASALocalRun/
 *.db
 *.db-shm
 *.db-wal
+
+src/GSMasterServer/Deploy/
+
+!src/SteamSpy/LauncherFiles/
+

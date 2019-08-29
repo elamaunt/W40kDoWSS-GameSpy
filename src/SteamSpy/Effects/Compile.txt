@@ -1,0 +1,2 @@
+﻿fxc /O0 /Fc /Zi /T ps_2_0 /Fo RectBlurEffect.ps RectBlurEffect.fx
+fxc /O0 /Fc /Zi /T ps_3_0 /Fo IndicatorEffect.ps IndicatorEffect.fx

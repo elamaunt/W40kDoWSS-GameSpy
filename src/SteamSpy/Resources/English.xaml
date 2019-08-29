@@ -1,0 +1,42 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:SteamSpy.Resources"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    
+    <!-- Page names -->
+    <system:String x:Key="MainPage">Main</system:String>
+    <system:String x:Key="ChatPage">Chat</system:String>
+    <system:String x:Key="TweaksPage">Features</system:String>
+
+    <!-- Main Page -->
+    <system:String x:Key="LaunchGame">Launch game</system:String>
+    <system:String x:Key="FoundErrors">There are some recommendations for you!</system:String>
+    <system:String x:Key="ShowIt">Show it!</system:String>
+    <system:String x:Key="SteamNotLaunched">Steam is not launched!</system:String>
+
+
+    <!-- Tweaks Page -->
+    <system:String x:Key="TweaksPageHeader">Features Manager</system:String>
+    <system:String x:Key="ApplyRecommended">Apply recommended</system:String>
+    <system:String x:Key="ChooseTweaks">Or you can apply tweaks manually below. Highlighted are recommended.</system:String>
+    <system:String x:Key="RecommendedToInstallation">Recommended for installation</system:String>
+
+
+    <!-- Tweaks Description -->
+    <system:String x:Key="UnlockerTweakTitle">Race unlocker</system:String>
+    <system:String x:Key="UnlockerTweakDescription">Allows you to play all 9 races in multiplayer.</system:String>
+    <system:String x:Key="CameraTweakTitle">Extended Camera</system:String>
+    <system:String x:Key="CameraTweakDescription">A camera with better visibility area.</system:String>
+    <system:String x:Key="RuFontTweakTitle">Russian Fonts</system:String>
+    <system:String x:Key="RuFontTweakDescription">Adds support for Russian text in the game chat.</system:String>
+    <system:String x:Key="FogTweakTitle">Fog Remover</system:String>
+    <system:String x:Key="FogTweakDescription">You can disable fog which obscures the view when the camera is far away</system:String>
+    <system:String x:Key="HotKeysTweakTitle">Grid Keys (QWER HotKeys)</system:String>
+    <system:String x:Key="HotKeysTweakDescription">You can install custom hotkeys with q,w,e,r,a,s,d,f,z,x,c,v buttons</system:String>
+
+
+
+    <!-- Settings -->
+    <system:String x:Key="DisableFog">Disable fog</system:String>
+
+</ResourceDictionary>

@@ -308,9 +308,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="..\Plugins\Steamworks.NET\redist\steam_api.dll">
+    <None Include="..\Plugins\Steamworks.NET\redist\steam_api.dll">
       <Link>Steamworks.NET\redist\steam_api.dll</Link>
-    </Content>
+    </None>
     <Content Include="..\Plugins\Steamworks.NET\redist\steam_appid.txt">
       <Link>Steamworks.NET\redist\steam_appid.txt</Link>
     </Content>

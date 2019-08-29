@@ -1,6 +1,6 @@
 ﻿using Steamworks;
 
-namespace SteamSpy.Utils
+namespace ThunderHawk.Utils
 {
     internal static class SteamExtensionMethods
     {

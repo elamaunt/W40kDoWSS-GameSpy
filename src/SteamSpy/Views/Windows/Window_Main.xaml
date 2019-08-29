@@ -1,0 +1,76 @@
+﻿<framework:BindableWindow  x:Class="ThunderHawk.Window_Main"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+        xmlns:core="clr-namespace:ThunderHawk.Core;assembly=ThunderHawk.Core"
+        xmlns:local="clr-namespace:ThunderHawk"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        mc:Ignorable="d"
+        Title="ThunderHawk Soulstorm Launcher"
+        TextOptions.TextRenderingMode="Auto"
+        TextOptions.TextFormattingMode="Ideal"
+        RenderOptions.ClearTypeHint="Auto"
+        MinHeight="700" 
+        Height="700" 
+        MinWidth="1180"
+        Width="1180" 
+        Style="{DynamicResource WindowStyle}">
+
+    <Grid>
+        <Image x:Name="WindowBackground" 
+               Source="pack://application:,,,/ThunderHawk;component/Images/Background_Default.png"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Top" 
+               Stretch="UniformToFill">
+            <Image.Effect>
+                <local:RectBlurEffect FrameworkElement="{Binding ElementName=TopBorder, Mode=OneTime}"/>
+            </Image.Effect>
+        </Image>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0" x:Name="TopBorder" VerticalAlignment="Top" Height="60">
+                <Grid.Background>
+                    <SolidColorBrush Color="#33000000"></SolidColorBrush>
+                </Grid.Background>
+                
+                <Button Margin="26 0 0 21" VerticalAlignment="Bottom" HorizontalAlignment="Left"
+                        framework:WPFBinder.Frame="GoBack"
+                        Height="14" Width="13"
+                        Style="{DynamicResource TopBarButtonStyle}">
+                    <Image Source="pack://application:,,,/ThunderHawk;component/Images/BackButton.png"/>
+                </Button>
+
+                <DockPanel Margin="50 0 0 0" LastChildFill="False">
+                    <StackPanel DockPanel.Dock="Left"
+                            x:Name="Tabs"
+                            framework:WPFBinder.ItemPrefix="Tab"
+                            framework:WPFBinder.ItemStyle="Default"
+                            framework:WPFBinder.Frame="Pages"
+                            Orientation="Horizontal"/>
+
+                    <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" Margin="0 18 12 0" VerticalAlignment="Center">
+                        <TextBlock Margin="0 2 0 0" Style="{DynamicResource RegularTextStyle}" framework:WPFBinder.Frame="UserAccount"></TextBlock>
+                        <Button Margin="10 0 0 0"  
+                            framework:WPFBinder.Frame="OpenSettings"
+                            Style="{DynamicResource TopBarButtonStyle}">
+                            <Image Height="16" Width="16" Source="pack://application:,,,/ThunderHawk;component/Images/settings.png"/>
+                        </Button>
+                    </StackPanel>
+                </DockPanel>
+
+            </Grid>
+
+            <Grid Grid.Row="1">
+                <Frame NavigationUIVisibility="Hidden" Name="NavigationFrame" VerticalAlignment="Stretch" framework:WPFBinder.Frame="NavigationPanel"/>
+                <Polygon HorizontalAlignment="Right" VerticalAlignment="Bottom" Fill="#22000000" Points="170,0, 0,170, 0,170, 170,170, 170,170, 170,0"/>
+                <Image Source="pack://application:,,,/ThunderHawk;component/Images/thunderhawk_icon.png" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,10,10" Height="74"/>
+                <TextBlock framework:WPFBinder.Frame="Version" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,0" FontSize="9" Foreground="#44ffffff"/>
+            </Grid>
+        </Grid>
+    </Grid>
+</framework:BindableWindow>

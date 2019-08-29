@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:SteamSpy.Resources"
+                    xmlns:system="clr-namespace:System;assembly=mscorlib">
+    <!-- Page names -->
+    <system:String x:Key="MainPage">Главная</system:String>
+    <system:String x:Key="ChatPage">Чат</system:String>
+    <system:String x:Key="TweaksPage">Модификации</system:String>
+
+
+    <!-- Main Page -->
+    <system:String x:Key="LaunchGame">Запустить игру</system:String>
+    <system:String x:Key="FoundErrors">Есть несколько рекомендации для повышения комфорта Вашей игры!</system:String>
+    <system:String x:Key="ShowIt">Посмотреть!</system:String>
+    <system:String x:Key="SteamNotLaunched">Стим не запущен!</system:String>
+
+    <!-- Tweaks Page -->
+    <system:String x:Key="TweaksPageHeader">Конфигуратор улучшений</system:String>
+    <system:String x:Key="ApplyRecommended">Применить рекомендации</system:String>
+    <system:String x:Key="ChooseTweaks">Либо выберите нужные для вас пункты ниже. Выделенные - рекомендуемые.</system:String>
+    <system:String x:Key="RecommendedToInstallation">Рекомендуется к установке</system:String>
+
+    <!-- Tweaks Description -->
+    <system:String x:Key="UnlockerTweakTitle">Разблокировка рас DOW, WA, DC</system:String>
+    <system:String x:Key="UnlockerTweakDescription">Делает доступными все 9 рас для игры по мультиплееру.</system:String>
+    <system:String x:Key="CameraTweakTitle">Расширенная камера</system:String>
+    <system:String x:Key="CameraTweakDescription">Камера с увеличенной дальностью видимости.</system:String>
+    <system:String x:Key="RuFontTweakTitle">Русские шрифты</system:String>
+    <system:String x:Key="RuFontTweakDescription">Добавляет поддержку русского текста в чате игры.</system:String>
+    <system:String x:Key="FogTweakTitle">Отключение тумана</system:String>
+    <system:String x:Key="FogTweakDescription">Отключает туман, который заслоняет обзор при сильном отдалении камеры.</system:String>
+    <system:String x:Key="HotKeysTweakTitle">GridKeys - горячие клавиши QWER</system:String>
+    <system:String x:Key="HotKeysTweakDescription">Вы можете установить улучшенные горячие клавиши, где клавиша каждой иконки соответствует ее положениею на экране. </system:String>
+
+    <!-- Settings -->
+    <system:String x:Key="DisableFog">Отключить туман</system:String>
+</ResourceDictionary>

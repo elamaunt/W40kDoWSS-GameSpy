@@ -1,0 +1,43 @@
+﻿<framework:BindableControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+             ClipToBounds="False"
+             mc:Ignorable="d">
+
+    <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch"  Margin="30 20 80 90">
+       
+        <TextBlock framework:WPFBinder.Frame="Quote"
+                   DockPanel.Dock="Top"
+                   FontFamily="Montserrat"
+                   TextWrapping="Wrap" 
+                   FontSize="14"
+                   Style="{DynamicResource WhiteTextStyle}">
+        </TextBlock>
+        <ListView Margin="0 12 0 0"
+                  ClipToBounds="False"
+                  Background="Transparent"
+                  BorderThickness="0" 
+                  HorizontalContentAlignment="Stretch"
+                  VerticalContentAlignment="Stretch"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.PanningMode="VerticalOnly"
+                  framework:WPFBinder.Frame="Questions" >
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="IsSelected" Value="{Binding Content.IsSelected, Mode=TwoWay, RelativeSource={RelativeSource Self}}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </DockPanel>
+</framework:BindableControl>

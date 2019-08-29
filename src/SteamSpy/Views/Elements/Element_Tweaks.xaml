@@ -1,0 +1,51 @@
+﻿<framework:BindableControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+             ClipToBounds="False"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="400">
+
+    <Grid Margin="0 20 0 20" Width="760">
+        <Grid.Background>
+            <SolidColorBrush Color="Black" Opacity="0.6"></SolidColorBrush>
+        </Grid.Background>
+        <StackPanel HorizontalAlignment="Center" Width="700"
+                    Orientation="Vertical" Margin="0 10 0 10">
+            <TextBlock Margin="0 10 0 0" Text="{DynamicResource TweaksPageHeader}" HorizontalAlignment="Center" Style="{DynamicResource ExtraBigTextStyle}"></TextBlock>
+            <StackPanel Margin="0 10 0 0">
+                <StackPanel Orientation="Horizontal" framework:WPFBinder.Frame="ApplyTweaksSP">
+                    <Button Margin="0 5 0 0" framework:WPFBinder.Frame="ApplyRecommendedTweaks"
+                            Style="{DynamicResource BigWideButtonStyle}" Height="35">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="{DynamicResource ApplyRecommended}"></TextBlock>
+                            <TextBlock framework:WPFBinder.Frame="RecommendedTweaksCount"></TextBlock>
+                        </StackPanel>
+                    </Button>
+                    <TextBlock Margin="12 0 0 0" Text="{DynamicResource ChooseTweaks}" Height="35" Width="300"
+                               TextWrapping="Wrap" Style="{DynamicResource RegularTextStyle}"></TextBlock>
+                </StackPanel>
+
+
+                <Border Margin="0 15 0 0" BorderBrush="{DynamicResource MainBlue}" BorderThickness="1 0 0 0">
+                    <StackPanel Margin="5 0 0 5" framework:WPFBinder.Frame="RecommendedTweaks" Orientation="Vertical"/>
+                </Border>
+
+                <Border Margin="5 15 0 0" BorderBrush="White" BorderThickness="0">
+                    <Border.Background>
+                        <SolidColorBrush Color="Black" Opacity="0"></SolidColorBrush>
+                    </Border.Background>
+                    <StackPanel framework:WPFBinder.Frame="AllTweaks" Orientation="Vertical"/>
+                </Border>
+            </StackPanel>
+            
+            <!--<StackPanel Margin="0 25 0 0">
+                <TextBlock Text="{DynamicResource AllTweaks}" Style="{DynamicResource BigTextStyle}"></TextBlock>
+            </StackPanel>-->
+        </StackPanel>
+    </Grid>
+
+
+</framework:BindableControl>

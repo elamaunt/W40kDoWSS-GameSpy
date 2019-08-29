@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <AssemblyName>GSMasterServer</AssemblyName>
     <RootNamespace>GSMasterServer</RootNamespace>
@@ -72,6 +72,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ApiDomain\ApiDomain.csproj" />
     <ProjectReference Include="..\IrcD.Net\IrcD.Net.csproj" />
   </ItemGroup>
 

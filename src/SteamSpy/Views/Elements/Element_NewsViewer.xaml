@@ -1,0 +1,59 @@
+﻿<framework:BindableControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+             ClipToBounds="False"
+             mc:Ignorable="d"
+             d:DesignHeight="400" d:DesignWidth="400">
+
+    <framework:BindableControl.Resources>
+        <FontFamily x:Key="Montserrat">pack://application:,,,/Fonts/Montserrat/#Montserrat</FontFamily>
+    </framework:BindableControl.Resources>
+
+    <Grid VerticalAlignment="Stretch">
+        <Border Padding="40 24 120 16">
+            <Border.Background>
+                <SolidColorBrush Color="#aa000000"/>
+            </Border.Background>
+            <StackPanel Orientation="Vertical">
+                <TextBlock framework:WPFBinder.Frame="Title"
+                           FontFamily="Montserrat"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap" 
+                           FontSize="17"
+                           Style="{DynamicResource WhiteTextStyle}">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="1" Opacity="0.9" />
+                    </TextBlock.Effect>
+                </TextBlock>
+                <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                    <TextBlock framework:WPFBinder.Frame="Author"
+                           Foreground="#03cffc"
+                           Style="{DynamicResource SmallTextStyle}">
+                    </TextBlock>
+                    <TextBlock framework:WPFBinder.Frame="Date" Margin="6,0,0,0"
+                           Style="{DynamicResource SmallTextStyle}">
+                    </TextBlock>
+                </StackPanel>
+
+                <Border Margin="0,12,0,0" Height="340" HorizontalAlignment="Left" BorderThickness="1" BorderBrush="#33FFFFFF">
+                    <Grid>
+                        <Image framework:WPFBinder.Frame="Image" Stretch="Uniform"/>
+                    </Grid>
+                </Border>
+
+                <TextBlock framework:WPFBinder.Frame="Text"
+                                   Margin="0 22 0 0"     
+                                   TextWrapping="Wrap" 
+                                   FontSize="16"
+                                   Style="{DynamicResource RegularTextStyle}">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="1" Opacity="0.9" />
+                    </TextBlock.Effect>
+                </TextBlock>
+            </StackPanel>
+        </Border>
+    </Grid>
+</framework:BindableControl>

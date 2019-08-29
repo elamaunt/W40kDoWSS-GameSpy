@@ -1,10 +1,27 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace System
 {
     public static class SystemExtensinoMethods
     {
+        public static T OfJson<T>(this string value)
+        {
+            if (value.IsNullOrEmpty())
+                return default;
+
+            return JsonConvert.DeserializeObject<T>(value);
+        }
+
+        public static string AsJson(this object value)
+        {
+            if (value == null)
+                return null;
+
+            return JsonConvert.SerializeObject(value);
+        }
+
         public static bool IsNullOrEmpty(this string self)
         {
             return string.IsNullOrEmpty(self);
