@@ -43,7 +43,11 @@ namespace ThunderHawk
                 if (!PathFinder.IsPathFound())
                     throw new Exception("Path to game not found in Steam");
 
-                try
+                var entry = Dns.GetHostEntry("gamespygp");
+                var address = IPAddress.Parse(GameConstants.SERVER_ADDRESS);
+                if (!entry.AddressList.Any(x => x.Equals(address)))
+                    throw new Exception("Invalid server address in HOSTS file");
+                /*try
                 {
                     ModifyHostsFile(Entries.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries)
                         .Where(x => !x.IsNullOrWhiteSpace()).Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
@@ -52,7 +56,7 @@ namespace ThunderHawk
                 {
                     Logger.Error(ex);
                     throw new Exception("Can not modify hosts file");
-                }
+                }*/
 
                 var tcs = new TaskCompletionSource<Process>();
 
@@ -123,84 +127,77 @@ namespace ThunderHawk
             File.WriteAllLines(localConfig, lines);
         }*/
 
-        void ModifyHostsFile(List<string[]> entries)
+        /*void ModifyHostsFile(List<string[]> entries)
         {
-            try
+            var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
+
+            if (!File.Exists(path))
+                File.Create(path);
+
+            var list = new List<string>();
+
+            using (var reader = File.OpenText(path))
             {
-                var path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), @"drivers\etc\hosts");
-
-                if (!File.Exists(path))
-                    File.Create(path);
-
-                var list = new List<string>();
-
-                using (var reader = File.OpenText(path))
+                while (!reader.EndOfStream)
                 {
-                    while (!reader.EndOfStream)
+                    var line = reader.ReadLine();
+
+                    if (string.IsNullOrWhiteSpace(line))
+                        continue;
+
+                    var commentStart = line.IndexOf("#");
+
+                    string[] parts;
+
+                    if (commentStart != -1)
                     {
-                        var line = reader.ReadLine();
+                        parts = line.Substring(0, commentStart).Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    }
+                    else
+                    {
+                        parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    }
 
-                        if (string.IsNullOrWhiteSpace(line))
-                            continue;
+                    if (parts.Length != 2)
+                    {
+                        list.Add(line);
+                        continue;
+                    }
 
-                        var commentStart = line.IndexOf("#");
+                    var hostName = parts[1];
+                    var address = parts[0];
 
-                        string[] parts;
+                    var entry = entries.FirstOrDefault(x => x[1] == hostName);
 
-                        if (commentStart != -1)
+                    if (entry != null)
+                    {
+                        entries.Remove(entry);
+
+                        if (entry[0] == address)
                         {
-                            parts = line.Substring(0, commentStart).Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            list.Add(line);
                         }
                         else
                         {
-                            parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                            list.Add(line.Replace(address, entry[0]));
                         }
-
-                        if (parts.Length != 2)
-                        {
-                            list.Add(line);
-                            continue;
-                        }
-
-                        var hostName = parts[1];
-                        var address = parts[0];
-
-                        var entry = entries.FirstOrDefault(x => x[1] == hostName);
-
-                        if (entry != null)
-                        {
-                            entries.Remove(entry);
-
-                            if (entry[0] == address)
-                            {
-                                list.Add(line);
-                            }
-                            else
-                            {
-                                list.Add(line.Replace(address, entry[0]));
-                            }
-                        }
-                    }
-
-                    for (int i = 0; i < entries.Count; i++)
-                    {
-                        var entry = entries[i];
-                        list.Add(entry[0] + " " + entry[1]);
                     }
                 }
 
-                using (var stream = File.Create(path))
+                for (int i = 0; i < entries.Count; i++)
                 {
-                    using (var writer = new StreamWriter(stream))
-                    {
-                        for (int i = 0; i < list.Count; i++)
-                            writer.WriteLine(list[i]);
-                    }
+                    var entry = entries[i];
+                    list.Add(entry[0] + " " + entry[1]);
                 }
             }
-            catch (Exception ex)
+
+            using (var stream = File.Create(path))
             {
-                Logger.Error(ex);
+                using (var writer = new StreamWriter(stream))
+                {
+                    for (int i = 0; i < list.Count; i++)
+                        writer.WriteLine(list[i]);
+                }
             }
         }
 
@@ -260,6 +257,6 @@ namespace ThunderHawk
 {GameConstants.SERVER_ADDRESS} thq.vo.llnwd.net
 {GameConstants.SERVER_ADDRESS} gamespyid.com
 127.0.0.1 nat.gamespy.com
-";
+";*/
     }
 }

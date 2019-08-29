@@ -59,6 +59,7 @@
   <PropertyGroup>
     <ApplicationIcon>thunderhawk.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="Reality.Net, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -464,7 +465,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="SteamSpy.manifest" />
+    <None Include="ThunderHawk.manifest" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

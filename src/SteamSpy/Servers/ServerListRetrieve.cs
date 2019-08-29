@@ -141,16 +141,23 @@ namespace GSMasterServer.Servers
 
         private void AcceptCallback(IAsyncResult ar)
         {
-            Socket listener = (Socket)ar.AsyncState;
-            Socket handler = listener.EndAccept(ar);
-
-            SocketState state = new SocketState()
+            try
             {
-                Socket = handler
-            };
+                Socket listener = (Socket)ar.AsyncState;
+                Socket handler = listener.EndAccept(ar);
 
-            WaitForData(state);
-            RestartClientAcepting();
+                SocketState state = new SocketState()
+                {
+                    Socket = handler
+                };
+
+                WaitForData(state);
+                RestartClientAcepting();
+            }
+            catch(Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private void WaitForData(SocketState state)

@@ -38,6 +38,8 @@
   <PropertyGroup>
     <ApplicationIcon>thunderhawk.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup />
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -77,6 +79,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="ThunderHawk.manifest" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

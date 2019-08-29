@@ -86,20 +86,26 @@ namespace GSMasterServer.Servers
 
         private void AcceptCallback(IAsyncResult ar)
         {
-            Socket listener = (Socket)ar.AsyncState;
-            Socket handler = listener.EndAccept(ar);
-
-            SocketState state = new SocketState()
+            try
             {
-                GameSocket = handler,
-                ServerSocket = _serverSocket
-            };
+                Socket listener = (Socket)ar.AsyncState;
+                Socket handler = listener.EndAccept(ar);
 
-            _currentClientState = state;
+                SocketState state = new SocketState()
+                {
+                    GameSocket = handler,
+                    ServerSocket = _serverSocket
+                };
 
-            RestartServerSocket(state);
-            
-            RestartAcepting();
+                _currentClientState = state;
+
+                RestartServerSocket(state);
+                RestartAcepting();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
         }
 
         private void RestartServerSocket(SocketState state)

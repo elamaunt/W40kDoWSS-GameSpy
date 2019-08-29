@@ -8,8 +8,18 @@
         xmlns:local="clr-namespace:ThunderHawk"
         mc:Ignorable="d"
         Height="127"
+        Title="Notification"
         Width="349">
-    <Grid>
-
-    </Grid>
+    <StackPanel Orientation="Vertical">
+        <TextBlock framework:WPFBinder.Frame="Message"
+                   Margin="12,12,12,12"
+                   VerticalAlignment="Center"
+                   HorizontalAlignment="Center"
+                           FontFamily="Montserrat"
+                           FontWeight="Bold"
+                           TextWrapping="Wrap" 
+                           FontSize="17"
+                   Foreground="Black">
+        </TextBlock>
+    </StackPanel>
 </framework:BindableWindow>
