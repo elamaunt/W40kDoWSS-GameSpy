@@ -1,4 +1,5 @@
 ﻿using Framework;
+using System;
 using System.Linq;
 
 namespace ThunderHawk.Core
@@ -42,10 +43,18 @@ namespace ThunderHawk.Core
 
         void UpdateTweaksCount()
         {
-            var tweaksCount = Frame.RecommendedTweaks.DataSource.Select(x => x.RawTweak).Where(t => !t.CheckTweak()).Count();
-            Frame.RecommendedTweaksCount.Text = $" ({tweaksCount.ToString()})";
+            try
+            {
+                var tweaksCount = Frame.RecommendedTweaks.DataSource.Select(x => x.RawTweak).Where(t => !t.CheckTweak()).Count();
+                Frame.RecommendedTweaksCount.Text = $" ({tweaksCount.ToString()})";
 
-            Frame.ApplyTweaksSP.Visible = tweaksCount != 0;
+                Frame.ApplyTweaksSP.Visible = tweaksCount != 0;
+            }
+            catch (Exception ex)
+            {
+                //TODO: Какое-нибудь оповещение для юзера что в твиках произошла ошибка. Скорее всего, из-за того что он удалил что-то из GameFiles.
+                Logger.Error(ex);
+            }
         }
     }
 }

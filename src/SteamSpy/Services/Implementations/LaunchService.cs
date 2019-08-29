@@ -36,7 +36,7 @@ namespace ThunderHawk
 
             try
             {
-                var exeFileName = Path.Combine(LauncherPath, "LauncherFiles", "Addons", "Patch1.2", "Soulstorm.exe");
+                var exeFileName = Path.Combine(LauncherPath, "GameFiles", "Patch1.2", "Soulstorm.exe");
                 var procParams = "-nomovies -forcehighpoly";
                 if (AppSettings.ThunderHawkModAutoSwitch)
                     procParams += " -modname ThunderHawk";

@@ -40,10 +40,13 @@ namespace ThunderHawk.Tweaks
 
         public void EnableTweak()
         {
-            var unlockerDir = Path.Combine("LauncherFiles", "Addons", "Unlocker");
+            var unlockerDir = Path.Combine("GameFiles", "Tweaks", "Unlocker");
 
             if (!Directory.Exists(unlockerDir))
-                throw new Exception("Could not find unlocker in LauncherFiles!");
+                throw new Exception("Could not find unlocker in GameFiles!");
+
+            //TODO: Сделать более качественную проверку на наличие файлов в GameFiles
+
 
             var gamePath = PathFinder.GamePath;
             var targetDir = Path.Combine(gamePath, "Unlocker");
@@ -52,6 +55,7 @@ namespace ThunderHawk.Tweaks
                 Directory.CreateDirectory(targetDir);
             }
             ExplorerExtensions.ClearFlagsInDirFiles(targetDir);
+
 
             var unlockerFiles = Directory.GetFiles(unlockerDir);
 

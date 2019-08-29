@@ -267,98 +267,188 @@
     <None Include="Effects\IndicatorEffect.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\Camera\camera_high.lua">
+    <None Include="GameFiles\Tweaks\Camera\camera_high.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Tweaks\Camera\camera_low.lua">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Tweaks\GridKeys\KEYDEFAULTS.LUA">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\dbghelp.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\Camera\camera_low.lua">
+    <None Include="GameFiles\Patch1.2\Debug.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\GridKeys\KEYDEFAULTS.LUA">
+    <None Include="GameFiles\Patch1.2\DivxDecoder.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\albertus extra bold12.fnt">
+    <None Include="GameFiles\Patch1.2\DivxMediaLib.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\DllTie.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\Dxtc.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\FileParser.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\Filesystem.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\GraphicsConfig.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\GSLobby.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\Localizer.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\luabind.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\LuaConfig.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\MathBox.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\Memory.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\NetConfig.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\Platform.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\PlatHook.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\Profiler.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\rsss.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\seInterface.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\SimEngine.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\Soulstorm.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\spDx9.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\STLPort.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\UserInterface.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\Util.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Patch1.2\WXPMod.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Tweaks\RuFontOriginal\albertus extra bold12.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\albertus extra bold14.fnt">
+    <None Include="GameFiles\Tweaks\RuFontOriginal\albertus extra bold14.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\albertus extra bold16.fnt">
+    <None Include="GameFiles\Tweaks\RuFontOriginal\albertus extra bold16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\ansnb___.ttf">
+    <Resource Include="GameFiles\Tweaks\RuFontOriginal\ansnb___.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="GameFiles\Tweaks\RuFontOriginal\engo.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <None Include="GameFiles\Tweaks\RuFontOriginal\engravers old english mt30.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\engo.ttf">
+    <None Include="GameFiles\Tweaks\RuFontOriginal\gillsans_11.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\engravers old english mt30.fnt">
+    <None Include="GameFiles\Tweaks\RuFontOriginal\gillsans_11b.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\gillsans_11.fnt">
+    <None Include="GameFiles\Tweaks\RuFontOriginal\gillsans_16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\gillsans_11b.fnt">
+    <None Include="GameFiles\Tweaks\RuFontOriginal\gillsans_bold_16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\gillsans_16.fnt">
+    <Resource Include="GameFiles\Tweaks\RuFontOriginal\gil_____.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <None Include="GameFiles\Tweaks\RuFontOriginal\quorum medium bold13.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\gillsans_bold_16.fnt">
+    <None Include="GameFiles\Tweaks\RuFontOriginal\quorum medium bold16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\gil_____.ttf">
+    <None Include="GameFiles\Tweaks\RuFont\albertus extra bold12.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\quorum medium bold13.fnt">
+    <None Include="GameFiles\Tweaks\RuFont\albertus extra bold14.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFontOriginal\quorum medium bold16.fnt">
+    <None Include="GameFiles\Tweaks\RuFont\albertus extra bold16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFont\albertus extra bold12.fnt">
+    <Resource Include="GameFiles\Tweaks\RuFont\ansnb___.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="GameFiles\Tweaks\RuFont\engo.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <None Include="GameFiles\Tweaks\RuFont\engravers old english mt30.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFont\albertus extra bold14.fnt">
+    <None Include="GameFiles\Tweaks\RuFont\gillsans_11.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFont\albertus extra bold16.fnt">
+    <None Include="GameFiles\Tweaks\RuFont\gillsans_11b.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFont\ansnb___.ttf">
+    <None Include="GameFiles\Tweaks\RuFont\gillsans_16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFont\engo.ttf">
+    <None Include="GameFiles\Tweaks\RuFont\gillsans_bold_16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFont\engravers old english mt30.fnt">
+    <Resource Include="GameFiles\Tweaks\RuFont\gil_____.ttf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
+    <None Include="GameFiles\Tweaks\RuFont\quorum medium bold13.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFont\gillsans_11.fnt">
+    <None Include="GameFiles\Tweaks\RuFont\quorum medium bold16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFont\gillsans_11b.fnt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="GameFiles\Tweaks\Unlocker\DarkCrusade.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFont\gillsans_16.fnt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Include="GameFiles\Tweaks\Unlocker\W40k.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="LauncherFiles\Addons\RuFont\gillsans_bold_16.fnt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\RuFont\gil_____.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\RuFont\quorum medium bold13.fnt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\RuFont\quorum medium bold16.fnt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\NLog.config">
+    <None Include="GameFiles\Tweaks\Unlocker\W40kWA.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -454,108 +544,6 @@
     <Resource Include="Images\BackButton.png" />
     <Resource Include="Images\star.png" />
     <Resource Include="Images\Indicator_Aquila.png" />
-    <None Include="LauncherFiles\Addons\Patch1.2\dbghelp.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\Debug.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\DivxDecoder.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\DivxMediaLib.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\DllTie.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\Dxtc.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\FileParser.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\Filesystem.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\GraphicsConfig.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\GSLobby.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\Localizer.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\luabind.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\LuaConfig.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\MathBox.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\Memory.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\NetConfig.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\Platform.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\PlatHook.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\Profiler.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\rsss.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\seInterface.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\SimEngine.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\Soulstorm.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\spDx9.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\STLPort.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\UserInterface.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\Util.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Patch1.2\WXPMod.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Unlocker\DarkCrusade.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Unlocker\W40k.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="LauncherFiles\Addons\Unlocker\W40kWA.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="SoulstormBackup\Soulstorm.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="SoulstormBackup\steam_api64.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="SoulstormBackup\steam_api86.dll">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

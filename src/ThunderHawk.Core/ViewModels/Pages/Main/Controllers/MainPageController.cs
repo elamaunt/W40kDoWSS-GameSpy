@@ -14,17 +14,20 @@ namespace ThunderHawk.Core
             Frame.FAQLabel.Action = OpenFAQ;
             Frame.Tweaks.Action = OpenTweaks;
 
+            Frame.Tweaks.Visible = false;
 
-            var foundRecommendedTweaks = CoreContext.TweaksService.GetState();
-            if (foundRecommendedTweaks)
+            try
             {
-                Frame.FoundErrors.Visible = true;
-                Frame.ErrorsType.Text = CoreContext.LangService.GetString("FoundErrors");
+                var foundRecommendedTweaks = CoreContext.TweaksService.GetState();
+                if (foundRecommendedTweaks)
+                {
+                    Frame.Tweaks.Visible = true;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                Frame.FoundErrors.Visible = false;
-                Frame.ErrorsType.Text = "";
+                //TODO: Какое-нибудь оповещение для юзера что в твиках произошла ошибка. Скорее всего, из-за того что он удалил что-то из GameFiles.
+                Logger.Error(ex);
             }
 
             RecreateToken();

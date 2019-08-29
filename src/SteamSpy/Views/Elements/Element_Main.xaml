@@ -83,18 +83,16 @@
                 </Button>
             </StackPanel>
 
-            <StackPanel DockPanel.Dock="Left" VerticalAlignment="Bottom"  Margin="18 0 0 0" framework:WPFBinder.Frame="FoundErrors" Orientation="Horizontal">
-                <!--Image Source="{Binding GameStateImage}" Width="16" Height="16"></-->
-                <TextBlock Style="{DynamicResource FreeTextStyle}" framework:WPFBinder.Frame="Tweaks">
-                    <TextBlock.Effect>
-                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="4" Opacity="1" />
-                    </TextBlock.Effect>
-                    <TextBlock framework:WPFBinder.Frame="ErrorsType"></TextBlock>
-                    <Hyperlink Style="{DynamicResource LinkStyle}">
-                        <TextBlock Text="{DynamicResource ShowIt}"></TextBlock>
-                    </Hyperlink>
-                </TextBlock>
-            </StackPanel>
+        <TextBlock DockPanel.Dock="Left" VerticalAlignment="Bottom" Margin="18 0 0 0" 
+                   Style="{DynamicResource FreeTextStyle}" framework:WPFBinder.Frame="Tweaks">
+            <TextBlock.Effect>
+                <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="4" Opacity="1" />
+            </TextBlock.Effect>
+                <TextBlock Text="{DynamicResource FoundErrors}"></TextBlock>
+                <Hyperlink Style="{DynamicResource LinkStyle}">
+                    <TextBlock Text="{DynamicResource ShowIt}"></TextBlock>
+                </Hyperlink>
+            </TextBlock>
         </DockPanel>
     </Grid>
 </framework:BindableControl>
