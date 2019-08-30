@@ -279,18 +279,27 @@ namespace GSMasterServer.Servers
             }
             catch(Exception ex)
             {
-                Logger.Error(ex);
+                LogError(Category, "Error receiving data");
+                LogError(Category, ex.ToString());
             }
         }
 
         private void OnConnect(IAsyncResult ar)
         {
-            var state = (LoginSocketState)ar.AsyncState;
+            try
+            {
+                var state = (LoginSocketState)ar.AsyncState;
 
-            state.ServerSocket.EndConnect(ar);
+                state.ServerSocket.EndConnect(ar);
 
-            WaitForServerData(ref state);
-            WaitForData(ref state);
+                WaitForServerData(ref state);
+                WaitForData(ref state);
+            }
+            catch (Exception ex)
+            {
+                LogError(Category, "Error receiving data");
+                LogError(Category, ex.ToString());
+            }
         }
 
         public bool SendToServer(ref LoginSocketState state, byte[] data, int count)
@@ -339,7 +348,8 @@ namespace GSMasterServer.Servers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                LogError(Category, "Error receiving data");
+                LogError(Category, ex.ToString());
             }
 
             return false;
@@ -384,7 +394,8 @@ namespace GSMasterServer.Servers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                LogError(Category, "Error receiving data");
+                LogError(Category, ex.ToString());
             }
 
             return false;
@@ -429,7 +440,8 @@ namespace GSMasterServer.Servers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                LogError(Category, "Error receiving data");
+                LogError(Category, ex.ToString());
             }
         }
 
@@ -472,7 +484,8 @@ namespace GSMasterServer.Servers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                LogError(Category, "Error receiving data");
+                LogError(Category, ex.ToString());
             }
         }
 
@@ -519,7 +532,8 @@ namespace GSMasterServer.Servers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                LogError(Category, "Error receiving data");
+                LogError(Category, ex.ToString());
             }
         }
 
@@ -567,7 +581,8 @@ namespace GSMasterServer.Servers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                LogError(Category, "Error receiving data");
+                LogError(Category, ex.ToString());
             }
         }
 

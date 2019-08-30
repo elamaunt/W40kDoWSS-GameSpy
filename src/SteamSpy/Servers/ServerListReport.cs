@@ -117,7 +117,8 @@ namespace GSMasterServer.Servers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                LogError(Category, "Error receiving data");
+                LogError(Category, ex.ToString());
             }
         }
 
