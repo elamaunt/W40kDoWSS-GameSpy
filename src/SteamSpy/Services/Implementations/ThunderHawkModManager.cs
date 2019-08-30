@@ -18,6 +18,8 @@ namespace ThunderHawk
 
         public string ActiveModRevision { get; private set; } = "---";
 
+        Task _currentLoadingTask;
+
         public bool CheckIsModExists(string gamePath)
         {
             if (!Repository.IsValid(ClonePath))
@@ -38,8 +40,11 @@ namespace ThunderHawk
 
         public Task DownloadMod(string gamePath, CancellationToken token, Action<float> progressReporter)
         {
+            if (_currentLoadingTask != null)
+                return _currentLoadingTask;
+
             if (!Repository.IsValid(ClonePath))
-                return Task.Factory.StartNew(() =>
+                return _currentLoadingTask = Task.Factory.StartNew(() =>
                 {
                     if (Directory.Exists(ClonePath))
                         Directory.Delete(ClonePath, true);
@@ -56,6 +61,7 @@ namespace ThunderHawk
                     using (var repo = new Repository(ClonePath))
                         ActiveModRevision = repo.Head.Commits.FirstOrDefault()?.Message;
                     RewriteModModule(gamePath);
+                    _currentLoadingTask = null;
                 }, token);
 
             return Task.CompletedTask;
@@ -63,7 +69,10 @@ namespace ThunderHawk
 
         public Task UpdateMod(string gamePath, CancellationToken token, Action<float> progressReporter)
         {
-            return Task.Factory.StartNew(() =>
+            if (_currentLoadingTask != null)
+                return _currentLoadingTask;
+
+            return _currentLoadingTask = Task.Factory.StartNew(() =>
             {
                 using (var repo = new Repository(ClonePath))
                 {
@@ -85,6 +94,7 @@ namespace ThunderHawk
                 }
 
                 RewriteModModule(gamePath);
+                _currentLoadingTask = null;
             }, token);
         }
 

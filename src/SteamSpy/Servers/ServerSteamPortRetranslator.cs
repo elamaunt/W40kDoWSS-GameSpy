@@ -171,8 +171,10 @@ namespace GSMasterServer.Servers
                 var str = Encoding.UTF8.GetString(receivedBytes);
 
                 // there by a bunch of different message formats...
-                Log(Category, $">> {RemoteUserSteamId} "+str);
-                Log(Category, ">> BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
+
+                //Log(Category, $">> {RemoteUserSteamId} "+str);
+                //Log(Category, ">> BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
+                
                 //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
 
@@ -197,7 +199,7 @@ namespace GSMasterServer.Servers
                         e.Buffer[9] == 255 &&
                         e.Buffer[10] == 1)
                     {
-                        Log(Category, ">> REQUEST BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
+                       // Log(Category, ">> REQUEST BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
 
                         var builder = new StringBuilder("\0$��Jsplitnum\0�");
 
@@ -269,17 +271,17 @@ namespace GSMasterServer.Servers
                 var s = (int)size;
                 var str = Encoding.UTF8.GetString(buffer, 0, s);
                 
-                Log(Category, $"<= {RemoteUserSteamId} :: " + str);
+               // Log(Category, $"<= {RemoteUserSteamId} :: " + str);
 
                 // there by a bunch of different message formats...
-                Log(Category,"<= BYTES:"+ string.Join(" ", buffer.Where((b,i) => i< size).Select(x => x.ToString())));
+                //Log(Category,"<= BYTES:"+ string.Join(" ", buffer.Where((b,i) => i< size).Select(x => x.ToString())));
 
                 int m = 0;
                 if (size > 4 &&
                     buffer[0] == 254 &&
                     buffer[1] == 254 &&
                   
-                   (//(buffer[2] == 2 && buffer[3] == 0) ||
+                   ((buffer[2] == 0 && buffer[3] == 0) ||
                     (buffer[2] == 3 && buffer[3] == 0) || 
                     (buffer[2] == 4 && buffer[3] == 0)))
                     //(buffer[2] == 5 && buffer[3] == 0) || 
@@ -359,7 +361,6 @@ namespace GSMasterServer.Servers
             {
                 if (bytes[k] == 'K' &&
                     bytes[k + 1] == '0' &&
-                    bytes[k + 2] == '4' &&
                     bytes[k + 2] == '4')
                 {
                     if (bytes[k + 3] != 'W')

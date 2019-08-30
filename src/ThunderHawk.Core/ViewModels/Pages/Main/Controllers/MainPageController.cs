@@ -66,9 +66,9 @@ namespace ThunderHawk.Core
 
         void UpdateMod()
         {
-           // Frame.LaunchGame.Enabled = false;
-           // var path = CoreContext.LaunchService.GamePath;
-            /*CoreContext.ThunderHawkModManager.UpdateMod(path, Token, ReportProgress)
+            Frame.LaunchGame.Enabled = false;
+            var path = CoreContext.LaunchService.GamePath;
+            CoreContext.ThunderHawkModManager.UpdateMod(path, Token, ReportProgress)
                 .OnContinueOnUi(task =>
                 {
                     Frame.LaunchGame.Enabled = true;
@@ -77,9 +77,7 @@ namespace ThunderHawk.Core
                         SetGameLaunchState();
                         UpdateActiveModState();
                     }
-                });*/
-
-            SetGameLaunchState();
+                });
         }
 
         private void SetGameLaunchState()
@@ -92,22 +90,29 @@ namespace ThunderHawk.Core
             else
             {
                 Frame.LaunchGame.Text = "Init Steam";
-                Frame.LaunchGame.Action = CoreContext.SteamApi.Initialize;
+                Frame.LaunchGame.Action = IniSteam;
             }
+        }
+
+        void IniSteam()
+        {
+            CoreContext.SteamApi.Initialize();
+            SetGameLaunchState();
         }
 
         void SetupGameMod()
         {
             Frame.LaunchGame.Enabled = false;
             var path = CoreContext.LaunchService.GamePath;
+
+            AppSettings.ThunderHawkModAutoSwitch = true;
             CoreContext.ThunderHawkModManager.DownloadMod(path, Token, ReportProgress)
                 .OnContinueOnUi(task =>
                 {
                     Frame.LaunchGame.Enabled = true;
                     if (task.Status == TaskStatus.RanToCompletion)
                     {
-                        Frame.LaunchGame.Text = "Launch game";
-                        Frame.LaunchGame.Action = LaunchGame;
+                        SetGameLaunchState();
                         UpdateActiveModState();
                     }
                 });

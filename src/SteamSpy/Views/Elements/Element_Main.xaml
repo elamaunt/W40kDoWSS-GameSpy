@@ -18,7 +18,7 @@
             <StackPanel Orientation="Horizontal" ClipToBounds="False" framework:WPFBinder.Frame="News"/>
         </Grid>
 
-        <Image VerticalAlignment="Center" HorizontalAlignment="Center" framework:WPFBinder.Frame="LoadingIndicator" Margin="-60,0,0,0" Width="80" Height="80" Source="/Images/Indicator_Aquila.png">
+        <Image VerticalAlignment="Center" HorizontalAlignment="Center" framework:WPFBinder.Frame="LoadingIndicator" Margin="-60,0,0,0" Width="80" Height="80" Source="pack://application:,,,/ThunderHawk;component/Images/Indicator_Aquila.png">
             <Image.Effect>
                 <local:IndicatorEffect x:Name="IndicatorEffect"/>
             </Image.Effect>

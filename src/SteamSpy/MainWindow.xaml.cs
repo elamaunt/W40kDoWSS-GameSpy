@@ -15,7 +15,7 @@ namespace ThunderHawk
         {
             InitializeComponent();
             
-            CompositionTarget.Rendering += OnRender;
+           // CompositionTarget.Rendering += OnRender;
 
 
             if (SteamAPI.RestartAppIfNecessary(new AppId_t(9450))) 

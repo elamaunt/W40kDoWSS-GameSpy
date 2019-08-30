@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 
 namespace ThunderHawk.Installer
 {
@@ -7,6 +8,21 @@ namespace ThunderHawk.Installer
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void Install_Click(object sender, RoutedEventArgs e)
+        {
+            var path = Path.Text;
+
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+
+        }
+
+        private void Browse_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

@@ -36,7 +36,7 @@ namespace ThunderHawk.Utils
             }
         }
 
-        public static Task<CSteamID> CreatePublicLobby(GameServer server, CancellationToken token)
+        public static Task<CSteamID> CreatePublicLobby(GameServer server, CancellationToken token, string indicator)
         {
             lock (LOCK)
             {
@@ -67,7 +67,7 @@ namespace ThunderHawk.Utils
                           _currentLobby = id;
                           _currentServer = server;
 
-                          UpdateCurrentLobby(server);
+                          UpdateCurrentLobby(server, indicator);
 
                           Console.WriteLine("Лобби успешно создано. ID: " + id.m_SteamID);
                           tcs.TrySetResult(id);
@@ -75,7 +75,7 @@ namespace ThunderHawk.Utils
             }
         }
 
-        public static void UpdateCurrentLobby(GameServer server)
+        public static void UpdateCurrentLobby(GameServer server, string indicator)
         {
             lock (LOCK)
             {
@@ -85,7 +85,7 @@ namespace ThunderHawk.Utils
                 var id = _currentLobby.Value;
 
                 SteamMatchmaking.SetLobbyJoinable(id, server.Valid);
-                SteamMatchmaking.SetLobbyData(id, LobbyDataKeys.STEAM_SPY_INDICATOR, SteamConstants.INDICATOR);
+                SteamMatchmaking.SetLobbyData(id, LobbyDataKeys.THUNDERHAWK_INDICATOR, indicator);
 
                 var hostId = SteamUser.GetSteamID().m_SteamID.ToString();
                 SteamMatchmaking.SetLobbyData(id, LobbyDataKeys.HOST_STEAM_ID, hostId);
@@ -104,20 +104,19 @@ namespace ThunderHawk.Utils
             }
         }
 
-        public static Task<GameServer[]> LoadLobbies()
+        public static Task<GameServer[]> LoadLobbies(string gameVariant = null, string indicator = null)
         {
             lock (LOCK)
             {
                 SteamApiHelper.CancelApiCall<LobbyMatchList_t>();
 
                 SteamMatchmaking.AddRequestLobbyListDistanceFilter(ELobbyDistanceFilter.k_ELobbyDistanceFilterWorldwide);
-                SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.STEAM_SPY_INDICATOR, SteamConstants.INDICATOR, ELobbyComparison.k_ELobbyComparisonEqual);
-                SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.GAME_VARIANT, SteamConstants.GameVariant, ELobbyComparison.k_ELobbyComparisonEqual);
-                /* SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.LOBBY_TYPE, SteamConstants.LOBBY_TYPE_DEFAULT, ELobbyComparison.k_ELobbyComparisonEqual);
-                 SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.GAME_VERSION, GameConstants.VERSION, ELobbyComparison.k_ELobbyComparisonEqual);
-                 SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.IS_IN_GAME, false.ToString(), ELobbyComparison.k_ELobbyComparisonEqual);
-                 SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.IS_AUTOMATCH, false.ToString(), ELobbyComparison.k_ELobbyComparisonEqual);
-                 SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.IS_DUEL, false.ToString(), ELobbyComparison.k_ELobbyComparisonEqual);*/
+
+                if (indicator != null)
+                    SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.THUNDERHAWK_INDICATOR, indicator, ELobbyComparison.k_ELobbyComparisonEqual);
+
+                if (gameVariant != null)
+                    SteamMatchmaking.AddRequestLobbyListStringFilter(LobbyDataKeys.GAME_VARIANT, gameVariant, ELobbyComparison.k_ELobbyComparisonEqual);
 
                 return SteamApiHelper.HandleApiCall<GameServer[], LobbyMatchList_t>(SteamMatchmaking.RequestLobbyList(), CancellationToken.None,
                     (tcs, result, bIOFailure) =>
@@ -132,7 +131,7 @@ namespace ThunderHawk.Utils
             }
         }
 
-        private static GameServer[] HandleGameLobbies(LobbyMatchList_t param)
+        private static GameServer[] HandleGameLobbies(LobbyMatchList_t param, string indicatorFilter = null)
         {
             var lobbies = new List<GameServer>();
 
@@ -142,9 +141,9 @@ namespace ThunderHawk.Utils
 
                 if (SteamMatchmaking.RequestLobbyData(lobbyId))
                 {
-                    var indicator = SteamMatchmaking.GetLobbyData(lobbyId, LobbyDataKeys.STEAM_SPY_INDICATOR);
+                    var indicator = SteamMatchmaking.GetLobbyData(lobbyId, LobbyDataKeys.THUNDERHAWK_INDICATOR);
 
-                    if (!indicator.IsNullOrEmpty() && indicator == SteamConstants.INDICATOR)
+                    if (!indicator.IsNullOrEmpty() && (indicatorFilter == null || indicator == indicatorFilter))
                     {
                         var ownerId = SteamMatchmaking.GetLobbyData(lobbyId, LobbyDataKeys.HOST_STEAM_ID);
                         var id = ownerId.ParseToUlongOrDefault();
@@ -183,7 +182,7 @@ namespace ThunderHawk.Utils
         
         static class LobbyDataKeys
         {
-            public const string STEAM_SPY_INDICATOR = "gameVersion";
+            public const string THUNDERHAWK_INDICATOR = "gameVersion";
             public const string HOST_STEAM_ID = "hostSteamId";
             public const string GAME_VARIANT = "gamevariant";
         }

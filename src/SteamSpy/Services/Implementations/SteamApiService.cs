@@ -1,6 +1,7 @@
 ﻿using Steamworks;
 using System;
 using System.IO;
+using System.Windows;
 using ThunderHawk.Core;
 
 namespace ThunderHawk
@@ -13,28 +14,29 @@ namespace ThunderHawk
 
         public void Initialize()
         {
-           // try
-           // {
-                if (SteamAPI.RestartAppIfNecessary(new AppId_t(9450)))
-                {
-                    RestartAsSoulstormExe();
-                    return;
-                }
+            var gamePath = CoreContext.LaunchService.GamePath;
 
-                if (!SteamAPI.Init())
-                     throw new Exception("Cant init SteamApi");
+            if (gamePath == null)
+            {
+                MessageBox.Show("Soulstorm steam game not found");
+                return;
+            }
 
-                var appId = SteamUtils.GetAppID();
+            if (SteamAPI.RestartAppIfNecessary(new AppId_t(9450)))
+            {
+                RestartAsSoulstormExe();
+                return;
+            }
 
-                if (appId.m_AppId != 9450)
-                    throw new Exception("Wrong App Id!");
+            if (!SteamAPI.Init())
+                throw new Exception("Cant init SteamApi");
 
-                IsInitialized = true;
-           //}
-           // catch (Exception ex)
-           // {
-           //     Logger.Error(ex);
-           // }
+            var appId = SteamUtils.GetAppID();
+
+            if (appId.m_AppId != 9450)
+                throw new Exception("Wrong App Id!");
+
+            IsInitialized = true;
         }
 
         private void RestartAsSoulstormExe()

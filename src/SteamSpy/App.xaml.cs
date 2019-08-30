@@ -3,10 +3,8 @@ using Framework.WPF;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using ThunderHawk.Core;
-using ThunderHawk.Utils;
 using Module = Framework.Module;
 
 namespace ThunderHawk
@@ -36,6 +34,8 @@ namespace ThunderHawk
                 File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api86.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api_th.dll"), true);
 
             base.OnStartup(e);
+
+            CoreContext.SteamApi.Initialize();
 
             var window = WPFPageHelper.InstantiateWindow<MainWindowViewModel>();
             window.Show();

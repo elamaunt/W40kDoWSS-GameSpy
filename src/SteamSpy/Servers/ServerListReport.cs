@@ -291,13 +291,13 @@ namespace GSMasterServer.Servers
 
             var gamevariant = server.Get<string>("gamevariant");
 
-            if (!gamevariant.IsNullOrWhiteSpace())
+            /*if (!gamevariant.IsNullOrWhiteSpace())
             {
                 if (gamevariant != SteamConstants.GameVariant)
                 {
                     ServerContext.ChatServer.SentServerMessageToClient("Вы используете не ту версию модификации. Вам необходимо использовать Soulstorm Bugfix Mod 1.56a.\r\n");
                 }
-            }
+            }*/
 
             // you've got to have all these properties in order for your server to be valid
             if (!String.IsNullOrWhiteSpace(server.Get<string>("hostname")) &&
@@ -328,7 +328,7 @@ namespace GSMasterServer.Servers
             PortBindingManager.ClearPortBindings();
 
             var wasJoinable = SteamLobbyManager.IsLobbyJoinable;
-            SteamLobbyManager.UpdateCurrentLobby(server);
+            SteamLobbyManager.UpdateCurrentLobby(server, CoreContext.ThunderHawkModManager.ActiveModRevision);
 
             if (!wasJoinable && SteamLobbyManager.IsLobbyJoinable)
             {
@@ -354,7 +354,7 @@ namespace GSMasterServer.Servers
             server["hostport"] = remote.Port.ToString();
             server["localport"] = remote.Port.ToString();
             
-            SteamLobbyManager.CreatePublicLobby(server, CancellationToken.None);
+            SteamLobbyManager.CreatePublicLobby(server, CancellationToken.None, CoreContext.ThunderHawkModManager.ActiveModRevision);
         }
     }
 }

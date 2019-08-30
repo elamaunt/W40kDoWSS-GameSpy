@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Steamworks;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Permissions;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Media;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 using ThunderHawk.Utils;
@@ -32,7 +33,6 @@ namespace ThunderHawk
             }
         }
 
-        //[PrincipalPermission(SecurityAction.Demand, Role = @"BUILTIN\Administrators")]
         public Task LaunchGameAndWait()
         {
             return Task.Factory.StartNew(async () =>
@@ -46,6 +46,7 @@ namespace ThunderHawk
                     throw new Exception("Path to game not found in Steam");
 
                 IPHostEntry entry = null;
+
 
                 try
                 {
@@ -67,6 +68,17 @@ namespace ThunderHawk
 
                 try
                 {
+                    Task.Factory.StartNew(() =>
+                    {
+                        while (!tcs.Task.IsCompleted)
+                        {
+                            GameServer.RunCallbacks();
+                            SteamAPI.RunCallbacks();
+                            PortBindingManager.UpdateFrame();
+                            Thread.Sleep(5);
+                        }
+                    }, TaskCreationOptions.LongRunning);
+
                     var exeFileName = Path.Combine(LauncherPath, "GameFiles", "Patch1.2", "Soulstorm.exe");
                     var procParams = "-nomovies -forcehighpoly";
                     if (AppSettings.ThunderHawkModAutoSwitch)
@@ -96,9 +108,7 @@ namespace ThunderHawk
                 }
 
                 await tcs.Task;
-
                 ServerContext.Stop();
-
             }).Unwrap();
         }
 
