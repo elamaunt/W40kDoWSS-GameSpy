@@ -380,12 +380,12 @@
     <None Include="GameFiles\Tweaks\RuFontOriginal\albertus extra bold16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Resource Include="GameFiles\Tweaks\RuFontOriginal\ansnb___.ttf">
+    <None Include="GameFiles\Tweaks\RuFontOriginal\ansnb___.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="GameFiles\Tweaks\RuFontOriginal\engo.ttf">
+    </None>
+    <None Include="GameFiles\Tweaks\RuFontOriginal\engo.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
     <None Include="GameFiles\Tweaks\RuFontOriginal\engravers old english mt30.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -401,9 +401,9 @@
     <None Include="GameFiles\Tweaks\RuFontOriginal\gillsans_bold_16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Resource Include="GameFiles\Tweaks\RuFontOriginal\gil_____.ttf">
+    <None Include="GameFiles\Tweaks\RuFontOriginal\gil_____.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
     <None Include="GameFiles\Tweaks\RuFontOriginal\quorum medium bold13.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -419,12 +419,12 @@
     <None Include="GameFiles\Tweaks\RuFont\albertus extra bold16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Resource Include="GameFiles\Tweaks\RuFont\ansnb___.ttf">
+    <None Include="GameFiles\Tweaks\RuFont\ansnb___.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
-    <Resource Include="GameFiles\Tweaks\RuFont\engo.ttf">
+    </None>
+    <None Include="GameFiles\Tweaks\RuFont\engo.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
     <None Include="GameFiles\Tweaks\RuFont\engravers old english mt30.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -440,9 +440,9 @@
     <None Include="GameFiles\Tweaks\RuFont\gillsans_bold_16.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <Resource Include="GameFiles\Tweaks\RuFont\gil_____.ttf">
+    <None Include="GameFiles\Tweaks\RuFont\gil_____.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Resource>
+    </None>
     <None Include="GameFiles\Tweaks\RuFont\quorum medium bold13.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
