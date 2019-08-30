@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3F0C33F2-BBB7-45F2-91BE-A604C36EA0FE}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>ThunderHawk</RootNamespace>
     <AssemblyName>ThunderHawk</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -59,6 +59,7 @@
   <PropertyGroup>
     <ApplicationIcon>thunderhawk.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup />
   <ItemGroup>
     <Reference Include="Reality.Net, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -489,6 +490,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ThunderHawk.HostsFixer.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ThunderHawk.RemoteLaunch.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
