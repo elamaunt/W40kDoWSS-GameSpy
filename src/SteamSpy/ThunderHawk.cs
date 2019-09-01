@@ -9,7 +9,7 @@ namespace ThunderHawk
         public const string PathContainerName = "LauncherPath.p";
 
         [STAThread]
-        static void Main()
+        public static void Main()
         {
             try
             {

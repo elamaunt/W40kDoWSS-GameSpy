@@ -15,7 +15,6 @@
                    Margin="12,12,12,12"
                    VerticalAlignment="Center"
                    HorizontalAlignment="Center"
-                           FontFamily="Montserrat"
                            FontWeight="Bold"
                            TextWrapping="Wrap" 
                            FontSize="17"

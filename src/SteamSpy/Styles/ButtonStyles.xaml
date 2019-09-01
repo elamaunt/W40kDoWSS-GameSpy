@@ -3,7 +3,7 @@
                     xmlns:local="clr-namespace:ThunderHawk.Styles">
 
     <FontFamily x:Key="MainFont">Segoe UI</FontFamily>
-    <FontFamily x:Key="Montserrat">pack://application:,,,/Fonts/Montserrat/#Montserrat</FontFamily>
+    <FontFamily x:Key="Montserrat">pack://application:,,,/ThunderHawk;component/Fonts/Montserrat/#Montserrat</FontFamily>
 
 
     <Style TargetType="{x:Type Button}">

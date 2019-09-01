@@ -78,17 +78,26 @@ namespace ThunderHawk
                 {
                     var originRemoteRep = repo.Network.Remotes["origin"];
 
-                    Commands.Fetch(repo, originRemoteRep.Name, originRemoteRep.FetchRefSpecs.Select(x => x.Specification), new FetchOptions()
+                    var pullOptions = new PullOptions()
                     {
-                        OnTransferProgress = progress =>
+                        FetchOptions = new FetchOptions()
                         {
-                            var percent = (float)progress.ReceivedObjects / progress.TotalObjects;
-                            progressReporter?.Invoke(percent);
-                            return true;
-                        }
-                    }, string.Empty);
+                            OnTransferProgress = progress =>
+                            {
+                                var percent = (float)progress.ReceivedObjects / progress.TotalObjects;
+                                progressReporter?.Invoke(percent);
+                                return true;
+                            }
+                        },
 
-                    // TODO: merge?
+                        MergeOptions = new MergeOptions()
+                        {
+                        }
+                    };
+
+                    var signature = new LibGit2Sharp.Signature(new Identity("Anonymous", "elamaunt@gmail.com"), DateTimeOffset.Now);
+
+                    Commands.Pull(repo, signature, pullOptions);
 
                     ActiveModRevision = repo.Head.Commits.FirstOrDefault()?.Message;
                 }

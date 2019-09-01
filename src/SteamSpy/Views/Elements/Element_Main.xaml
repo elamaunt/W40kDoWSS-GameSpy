@@ -62,6 +62,8 @@
                 </TextBlock>
 
                 <TextBlock framework:WPFBinder.Frame="ActiveModRevision"
+                           MaxWidth="250"
+                           TextWrapping="Wrap"
                            Margin="0 8 0 0"
                            Style="{DynamicResource FreeTextStyle}"
                            FontSize="12">

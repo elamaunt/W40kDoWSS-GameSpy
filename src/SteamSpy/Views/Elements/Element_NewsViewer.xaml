@@ -9,7 +9,7 @@
              d:DesignHeight="400" d:DesignWidth="400">
 
     <framework:BindableControl.Resources>
-        <FontFamily x:Key="Montserrat">pack://application:,,,/Fonts/Montserrat/#Montserrat</FontFamily>
+        <FontFamily x:Key="Montserrat">pack://application:,,,/ThunderHawk;component/Fonts/Montserrat/#Montserrat</FontFamily>
     </framework:BindableControl.Resources>
 
     <Grid VerticalAlignment="Stretch">

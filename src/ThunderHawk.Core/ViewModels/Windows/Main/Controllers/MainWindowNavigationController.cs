@@ -26,7 +26,7 @@ namespace ThunderHawk.Core
         void OnTabClicked(PageTabViewModel model)
         {
             Frame.Pages.SelectedItem = model;
-            Frame.NavigationPanel.CurrentContentViewModel = model.ViewModel;
+            Frame.NavigationPanel.CurrentContentViewModel = model?.ViewModel;
         }
 
         void OnCurrentViewModelChanged()
