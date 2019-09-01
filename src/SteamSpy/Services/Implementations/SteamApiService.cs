@@ -45,7 +45,7 @@ namespace ThunderHawk
             var gamePath = CoreContext.LaunchService.GamePath;
 
             //File.WriteAllText(Path.Combine(gamePath, ThunderHawk.PathContainerName), Environment.CurrentDirectory);
-            var regKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).CreateSubKey(ThunderHawk.RegistryKey);
+            var regKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).CreateSubKey(ThunderHawk.RegistryKey, RegistryKeyPermissionCheck.ReadWriteSubTree);
             regKey.SetValue("Path", Environment.CurrentDirectory);
 
             File.Copy(Path.Combine(Environment.CurrentDirectory, "ThunderHawk.RemoteLaunch.exe"), Path.Combine(gamePath, "Soulstorm.exe"), true);

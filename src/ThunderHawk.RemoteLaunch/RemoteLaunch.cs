@@ -1,9 +1,6 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.IO;
-using System.Reflection;
-using System.Security;
-using System.Security.Policy;
 
 namespace ThunderHawk.RemoteLaunch
 {
@@ -17,7 +14,7 @@ namespace ThunderHawk.RemoteLaunch
                 //AppDomain.CurrentDomain.AssemblyResolve += OnAssemblyResolve;
                 AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-                var regKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("Software\\ThunderHawk");
+                var regKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey("Software\\ThunderHawk");
                 string launcherPath = null;
                 if (regKey != null)
                 {
@@ -63,15 +60,16 @@ namespace ThunderHawk.RemoteLaunch
             }
 
           // var assembly = Assembly.LoadFile(Path.Combine(Environment.CurrentDirectory, "ThunderHawk.exe"));*/
-            AppDomain.CurrentDomain.SetPrincipalPolicy(System.Security.Principal.PrincipalPolicy.WindowsPrincipal);
+           // AppDomain.CurrentDomain.SetPrincipalPolicy(System.Security.Principal.PrincipalPolicy.WindowsPrincipal);
 
-            EvidenceBase[] hostEvidence = { new Zone(SecurityZone.MyComputer) };
-            Evidence e = new Evidence(hostEvidence, null);
+           // EvidenceBase[] hostEvidence = { new Zone(SecurityZone.MyComputer) };
+           // Evidence e = new Evidence(hostEvidence, null);
 
-            AppDomain.CurrentDomain.ExecuteAssembly("ThunderHawk.exe", e);
+           //AppDomain.CurrentDomain.ExecuteAssembly("ThunderHawk.exe", e);
+            AppDomain.CurrentDomain.ExecuteAssembly("ThunderHawk.exe");
         }
 
-        private static Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
+        /*private static Assembly OnAssemblyResolve(object sender, ResolveEventArgs args)
         {
 
             Assembly executingAssembly = Assembly.GetExecutingAssembly();
@@ -122,7 +120,7 @@ namespace ThunderHawk.RemoteLaunch
                 File.WriteAllText("AssemblyLoadException.ex", assemblyPath + " => " + ex.GetLowestBaseException().ToString());
                 throw;
             }
-        }
+        }*/
 
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {

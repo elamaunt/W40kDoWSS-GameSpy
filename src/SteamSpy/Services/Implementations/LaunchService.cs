@@ -27,7 +27,7 @@ namespace ThunderHawk
                 if (Environment.CurrentDirectory != PathFinder.GamePath)
                     return Environment.CurrentDirectory;
 
-                var regKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(ThunderHawk.RegistryKey);
+                var regKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(ThunderHawk.RegistryKey);
                 if (regKey != null)
                 {
                     var pathKey = (string)regKey.GetValue("Path");
