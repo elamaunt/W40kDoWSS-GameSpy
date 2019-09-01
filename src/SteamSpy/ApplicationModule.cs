@@ -11,7 +11,7 @@ namespace ThunderHawk
             batch.RegisterServiceFactory<ILangService>(() => new LangService());
             batch.RegisterServiceFactory<ILaunchService>(() => new LaunchService());
             batch.RegisterServiceFactory<ISteamApiService>(() => new SteamApiService());
-
+            batch.RegisterServiceFactory<IUpdaterService>(() => new UpdaterService());
 
             batch.RegisterServiceFactory<ITweaksService>(() => new TweaksService());
             batch.RegisterServiceFactory<ISystemService>(() => new SystemService());

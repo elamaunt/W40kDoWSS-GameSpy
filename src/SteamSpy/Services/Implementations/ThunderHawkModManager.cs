@@ -48,6 +48,9 @@ namespace ThunderHawk
                 {
                     if (Directory.Exists(ClonePath))
                         Directory.Delete(ClonePath, true);
+
+
+
                     Repository.Clone(RepositoryUrl, ClonePath, new CloneOptions()
                     {
                         OnTransferProgress = progress =>
@@ -60,6 +63,7 @@ namespace ThunderHawk
 
                     using (var repo = new Repository(ClonePath))
                         ActiveModRevision = repo.Head.Commits.FirstOrDefault()?.Message;
+
                     RewriteModModule(gamePath);
                     _currentLoadingTask = null;
                 }, token);
