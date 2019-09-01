@@ -1,4 +1,5 @@
 ﻿using Framework;
+using Microsoft.Win32;
 using System;
 using System.IO;
 
@@ -6,7 +7,7 @@ namespace ThunderHawk
 {
     public static class ThunderHawk
     {
-        public const string PathContainerName = "LauncherPath.p";
+        public const string RegistryKey = "SoftWare\\ThunderHawk";
 
         [STAThread]
         static void Main()

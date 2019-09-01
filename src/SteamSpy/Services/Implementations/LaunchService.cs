@@ -1,4 +1,5 @@
-﻿using Steamworks;
+﻿using Microsoft.Win32;
+using Steamworks;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -25,9 +26,12 @@ namespace ThunderHawk
                 if (Environment.CurrentDirectory != PathFinder.GamePath)
                     return Environment.CurrentDirectory;
 
-                var containerFile = Path.Combine(PathFinder.GamePath, ThunderHawk.PathContainerName);
-                if (File.Exists(containerFile))
-                    return File.ReadAllText(containerFile);
+                var regKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(ThunderHawk.RegistryKey);
+                if (regKey != null)
+                {
+                    var pathKey = (string)regKey.GetValue("Path");
+                    return pathKey;
+                }
 
                 return null;
             }
@@ -68,16 +72,16 @@ namespace ThunderHawk
 
                 try
                 {
-                    Task.Factory.StartNew(() =>
-                    {
-                        while (!tcs.Task.IsCompleted)
-                        {
-                            GameServer.RunCallbacks();
-                            SteamAPI.RunCallbacks();
-                            PortBindingManager.UpdateFrame();
-                            Thread.Sleep(5);
-                        }
-                    }, TaskCreationOptions.LongRunning);
+                    await Task.Factory.StartNew(() =>
+                     {
+                         while (!tcs.Task.IsCompleted)
+                         {
+                             GameServer.RunCallbacks();
+                             SteamAPI.RunCallbacks();
+                             PortBindingManager.UpdateFrame();
+                             Thread.Sleep(5);
+                         }
+                     }, TaskCreationOptions.LongRunning);
 
                     var exeFileName = Path.Combine(LauncherPath, "GameFiles", "Patch1.2", "Soulstorm.exe");
                     var procParams = "-nomovies -forcehighpoly";
@@ -94,7 +98,7 @@ namespace ThunderHawk
 
                     ssProc.EnableRaisingEvents = true;
 
-                    Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
+                    await Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
 
                     ssProc.Exited += (s, e) =>
                     {

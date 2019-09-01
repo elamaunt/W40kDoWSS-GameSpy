@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.IO;
 
 namespace ThunderHawk.RemoteLaunch
 {
     public static class RemoteLaunch
     {
-        public const string LauncherInstalledPathFileName = "LauncherPath.p";
-
         [STAThread]
         static void Main(string[] args)
         {
@@ -14,13 +13,20 @@ namespace ThunderHawk.RemoteLaunch
             {
                 AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-                if (!File.Exists(LauncherInstalledPathFileName))
+                var regKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey("Software\\ThunderHawk");
+                string launcherPath = null;
+                if (regKey != null)
+                {
+                    launcherPath = (string)regKey.GetValue("Path");
+                }
+
+                if (launcherPath == null)
                 {
                     Launch();
                     return;
                 }
 
-                var launcherPath = File.ReadAllText(LauncherInstalledPathFileName);
+
                 var launcherExePath = Path.Combine(launcherPath, "ThunderHawk.exe");
 
                 if (File.Exists(launcherExePath))
