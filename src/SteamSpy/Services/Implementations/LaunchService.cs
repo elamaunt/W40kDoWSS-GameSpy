@@ -1,4 +1,5 @@
-﻿using Steamworks;
+﻿using Microsoft.Win32;
+using Steamworks;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
@@ -25,9 +27,12 @@ namespace ThunderHawk
                 if (Environment.CurrentDirectory != PathFinder.GamePath)
                     return Environment.CurrentDirectory;
 
-                var containerFile = Path.Combine(PathFinder.GamePath, ThunderHawk.PathContainerName);
-                if (File.Exists(containerFile))
-                    return File.ReadAllText(containerFile);
+                var regKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).OpenSubKey(ThunderHawk.RegistryKey);
+                if (regKey != null)
+                {
+                    var pathKey = (string)regKey.GetValue("Path");
+                    return pathKey;
+                }
 
                 return null;
             }
@@ -38,6 +43,7 @@ namespace ThunderHawk
             return Task.Factory.StartNew(async () =>
             {
                 ProcessManager.KillAllGameProccessesWithoutWindow();
+
 
                 if (ProcessManager.GameIsRunning())
                    throw new Exception("Game is running");
@@ -54,8 +60,10 @@ namespace ThunderHawk
                 }
                 catch(Exception)
                 {
+
                     FixHosts();
                 }
+
 
                 if (entry != null)
                 {
@@ -69,15 +77,15 @@ namespace ThunderHawk
                 try
                 {
                     Task.Factory.StartNew(() =>
-                    {
-                        while (!tcs.Task.IsCompleted)
-                        {
-                            GameServer.RunCallbacks();
-                            SteamAPI.RunCallbacks();
-                            PortBindingManager.UpdateFrame();
-                            Thread.Sleep(5);
-                        }
-                    }, TaskCreationOptions.LongRunning);
+                     {
+                         while (!tcs.Task.IsCompleted)
+                         {
+                             GameServer.RunCallbacks();
+                             SteamAPI.RunCallbacks();
+                             PortBindingManager.UpdateFrame();
+                             Thread.Sleep(5);
+                         }
+                     }, TaskCreationOptions.LongRunning);
 
                     var exeFileName = Path.Combine(LauncherPath, "GameFiles", "Patch1.2", "Soulstorm.exe");
                     var procParams = "-nomovies -forcehighpoly";
@@ -89,6 +97,7 @@ namespace ThunderHawk
                         UseShellExecute = true,
                         WorkingDirectory = PathFinder.GamePath
                     });
+
 
                     ServerContext.Start(IPAddress.Any);
 

@@ -15,7 +15,7 @@ namespace ThunderHawk.HostsFixer
                 ModifyHostsFile(Entries.Split(new string[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
             }
-            catch (Exception ex)
+            catch
             {
                 return 1;
             }

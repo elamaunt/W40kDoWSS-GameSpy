@@ -24,7 +24,7 @@ namespace ThunderHawk.StaticClasses.Soulstorm
 
         public static void KillAllGameProccessesWithoutWindow()
         {
-            foreach (var proc in GetGameProcesses().Where(x => x.MainWindowHandle != IntPtr.Zero))
+            foreach (var proc in GetGameProcesses().Where(x => x.MainWindowHandle == IntPtr.Zero))
                 proc.Kill();
         }
     }

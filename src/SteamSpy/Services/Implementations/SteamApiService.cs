@@ -1,4 +1,5 @@
-﻿using Steamworks;
+﻿using Microsoft.Win32;
+using Steamworks;
 using System;
 using System.IO;
 using System.Windows;
@@ -43,7 +44,10 @@ namespace ThunderHawk
         {
             var gamePath = CoreContext.LaunchService.GamePath;
 
-            File.WriteAllText(Path.Combine(gamePath, ThunderHawk.PathContainerName), Environment.CurrentDirectory);
+            //File.WriteAllText(Path.Combine(gamePath, ThunderHawk.PathContainerName), Environment.CurrentDirectory);
+            var regKey = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32).CreateSubKey(ThunderHawk.RegistryKey);
+            regKey.SetValue("Path", Environment.CurrentDirectory);
+
             File.Copy(Path.Combine(Environment.CurrentDirectory, "ThunderHawk.RemoteLaunch.exe"), Path.Combine(gamePath, "Soulstorm.exe"), true);
 
             Environment.Exit(0);

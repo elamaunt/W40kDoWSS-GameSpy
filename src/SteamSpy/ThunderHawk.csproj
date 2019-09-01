@@ -487,6 +487,14 @@
       <Project>{69c70aed-568c-4033-9271-fe03052e89be}</Project>
       <Name>ThunderHawk.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ThunderHawk.HostsFixer\ThunderHawk.HostsFixer.csproj">
+      <Project>{e3499db1-43cb-4052-9cbf-91682ac8d53a}</Project>
+      <Name>ThunderHawk.HostsFixer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ThunderHawk.RemoteLaunch\ThunderHawk.RemoteLaunch.csproj">
+      <Project>{822e960d-c3e8-4b70-b583-860ff00508e3}</Project>
+      <Name>ThunderHawk.RemoteLaunch</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="ThunderHawk.HostsFixer.exe">
