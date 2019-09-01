@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
@@ -43,6 +44,7 @@ namespace ThunderHawk
             {
                 ProcessManager.KillAllGameProccessesWithoutWindow();
 
+
                 if (ProcessManager.GameIsRunning())
                    throw new Exception("Game is running");
 
@@ -58,8 +60,10 @@ namespace ThunderHawk
                 }
                 catch(Exception)
                 {
+
                     FixHosts();
                 }
+
 
                 if (entry != null)
                 {
@@ -72,7 +76,7 @@ namespace ThunderHawk
 
                 try
                 {
-                    await Task.Factory.StartNew(() =>
+                    Task.Factory.StartNew(() =>
                      {
                          while (!tcs.Task.IsCompleted)
                          {
@@ -94,11 +98,12 @@ namespace ThunderHawk
                         WorkingDirectory = PathFinder.GamePath
                     });
 
+
                     ServerContext.Start(IPAddress.Any);
 
                     ssProc.EnableRaisingEvents = true;
 
-                    await Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
+                    Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
 
                     ssProc.Exited += (s, e) =>
                     {
