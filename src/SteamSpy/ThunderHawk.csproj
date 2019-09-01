@@ -98,6 +98,7 @@
     <Compile Include="ExplorerExtensions.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="PageExtensions\UserInteractionsExtension.cs" />
+    <Compile Include="Services\Implementations\UpdaterService.cs" />
     <Compile Include="ThunderHawk.cs" />
     <Compile Include="ServerContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />
@@ -575,6 +576,9 @@
     <Content Include="steam_appid.txt" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Google.Apis.Docs.v1">
+      <Version>1.40.3.1699</Version>
+    </PackageReference>
     <PackageReference Include="LibGit2Sharp">
       <Version>0.26.1</Version>
     </PackageReference>
