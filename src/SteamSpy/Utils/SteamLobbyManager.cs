@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using ThunderHawk.Core;
 using GameServer = GSMasterServer.Data.GameServer;
 
 namespace ThunderHawk.Utils
@@ -19,20 +20,27 @@ namespace ThunderHawk.Utils
 
         public static void LeaveFromCurrentLobby()
         {
-            lock (LOCK)
+            try
             {
-                if (_currentLobby.HasValue)
+                lock (LOCK)
                 {
-                    var id = _currentLobby.Value;
+                    if (_currentLobby.HasValue)
+                    {
+                        var id = _currentLobby.Value;
 
-                    SteamMatchmaking.SetLobbyJoinable(id, false);
-                    SteamMatchmaking.SetLobbyData(id, LobbyDataKeys.HOST_STEAM_ID, "0");
+                        SteamMatchmaking.SetLobbyJoinable(id, false);
+                        SteamMatchmaking.SetLobbyData(id, LobbyDataKeys.HOST_STEAM_ID, "0");
 
-                    SteamMatchmaking.LeaveLobby(id);
-                    Console.WriteLine("Лобби покинуто " + id);
-                    _currentLobby = null;
-                    _currentServer = null;
+                        SteamMatchmaking.LeaveLobby(id);
+                        Console.WriteLine("Лобби покинуто " + id);
+                        _currentLobby = null;
+                        _currentServer = null;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
             }
         }
 
@@ -155,7 +163,16 @@ namespace ThunderHawk.Utils
 
                         if (ownerSteamId == SteamUser.GetSteamID())
                             continue;
-                       
+
+                        FriendGameInfo_t gameInfo;
+                        if (SteamFriends.GetFriendGamePlayed(ownerSteamId, out gameInfo))
+                        {
+                            if (gameInfo.m_gameID.AppID().m_AppId != SteamUtils.GetAppID().m_AppId)
+                                continue;
+                        }
+                        else
+                            continue;
+
                         var server = new GameServer();
 
                         server.HostSteamId = ownerSteamId;

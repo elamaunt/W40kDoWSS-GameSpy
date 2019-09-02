@@ -82,6 +82,9 @@ namespace IrcD.Commands
                     chanuser.Modes.Add(IrcDaemon.ModeFactory.GetChannelRank('o'));
                 }
 
+                // Для завершения игры в авто после входа в чат
+                info.Game?.SetPlayerAsLeft(info);
+
                 chan.UserPerChannelInfos[info.Nick] = chanuser;
                 info.UserPerChannelInfos.Add(chanuser);
                 Send(new JoinArgument(info, chan, chan));

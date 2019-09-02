@@ -321,6 +321,9 @@ namespace GSMasterServer.Servers
                 Log(Category, "RETRCHANGED >> " + str);
             }
 
+            if (str.StartsWith("\\logout\\"))
+                SteamLobbyManager.LeaveFromCurrentLobby();
+
             try
             {
                 state.ServerSocket.BeginSend(data, 0, count, SocketFlags.None, OnToServerSent, state);
@@ -908,6 +911,7 @@ namespace GSMasterServer.Servers
                         }
                     }
 
+                    SteamLobbyManager.LeaveFromCurrentLobby();
                     // yeah yeah, this is terrible, but it stops a memory leak :|
                     GC.Collect();
                 }

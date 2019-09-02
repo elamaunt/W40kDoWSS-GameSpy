@@ -426,12 +426,14 @@ namespace GSMasterServer.Servers
                         }
                     }
 
-                    IrcDaemon.RemoveUserFromAllChannels(UserInfo);
-
                     GC.Collect();
                 }
                 catch (Exception)
                 {
+                }
+                finally
+                {
+                    IrcDaemon.RemoveUserFromAllChannels(UserInfo);
                 }
             }
 

@@ -538,6 +538,12 @@ namespace IrcD.Core
 
         internal void RegisterRatingGame(UserInfo[] users)
         {
+            for (int i = 0; i < users.Length; i++)
+            {
+                var user = users[i];
+                user.Game?.SetPlayerAsLeft(user);
+            }
+
             Games.TryAdd(new Game(this, users), DateTime.Now);
         }
 

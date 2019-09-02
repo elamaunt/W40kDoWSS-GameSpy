@@ -7,8 +7,6 @@ using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Media;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 using ThunderHawk.Utils;
@@ -76,48 +74,55 @@ namespace ThunderHawk
 
                 try
                 {
-                    Task.Factory.StartNew(() =>
-                     {
-                         while (!tcs.Task.IsCompleted)
+                    try
+                    {
+                        Task.Factory.StartNew(() =>
                          {
-                             GameServer.RunCallbacks();
-                             SteamAPI.RunCallbacks();
-                             PortBindingManager.UpdateFrame();
-                             Thread.Sleep(5);
-                         }
-                     }, TaskCreationOptions.LongRunning);
+                             while (!tcs.Task.IsCompleted)
+                             {
+                                 GameServer.RunCallbacks();
+                                 SteamAPI.RunCallbacks();
+                                 PortBindingManager.UpdateFrame();
+                                 Thread.Sleep(5);
+                             }
+                         }, TaskCreationOptions.LongRunning);
 
-                    var exeFileName = Path.Combine(LauncherPath, "GameFiles", "Patch1.2", "Soulstorm.exe");
-                    var procParams = "-nomovies -forcehighpoly";
-                    if (AppSettings.ThunderHawkModAutoSwitch)
-                        procParams += " -modname ThunderHawk";
+                        var exeFileName = Path.Combine(LauncherPath, "GameFiles", "Patch1.2", "Soulstorm.exe");
+                        var procParams = "-nomovies -forcehighpoly";
+                        if (AppSettings.ThunderHawkModAutoSwitch)
+                            procParams += " -modname ThunderHawk";
 
-                    var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
+                        var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
+                        {
+                            UseShellExecute = true,
+                            WorkingDirectory = PathFinder.GamePath
+                        });
+
+
+                        ServerContext.Start(IPAddress.Any);
+
+                        ssProc.EnableRaisingEvents = true;
+
+                        Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
+
+                        ssProc.Exited += (s, e) =>
+                        {
+                            tcs.TrySetResult(ssProc);
+                        };
+                    }
+                    catch (Exception ex)
                     {
-                        UseShellExecute = true,
-                        WorkingDirectory = PathFinder.GamePath
-                    });
+                        Logger.Error(ex);
+                        tcs.TrySetException(ex);
+                    }
 
-
-                    ServerContext.Start(IPAddress.Any);
-
-                    ssProc.EnableRaisingEvents = true;
-
-                    Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
-
-                    ssProc.Exited += (s, e) =>
-                    {
-                        tcs.TrySetResult(ssProc);
-                    };
+                    await tcs.Task;
                 }
-                catch (Exception ex)
+                finally
                 {
-                    Logger.Error(ex);
-                    tcs.TrySetException(ex);
+                    ServerContext.Stop();
+                    SteamLobbyManager.LeaveFromCurrentLobby();
                 }
-
-                await tcs.Task;
-                ServerContext.Stop();
             }).Unwrap();
         }
 
