@@ -13,11 +13,15 @@ namespace GSMasterServer.Services.Implementations
 
         LiteCollection<ProfileDBO> ProfilesTable => _db.GetCollection<ProfileDBO>("USERS");
         LiteCollection<NewsDBO> NewsTable => _db.GetCollection<NewsDBO>("NEWS");
+        LiteCollection<Profile1X1DBO> Profiles1X1Table => _db.GetCollection<Profile1X1DBO>("PROFILES1X1");
+        LiteCollection<Profile2X2DBO> Profiles2X2Table => _db.GetCollection<Profile2X2DBO>("PROFILES2X2");
+        LiteCollection<Profile3X3DBO> Profiles3X3Table => _db.GetCollection<Profile3X3DBO>("PROFILES3X3");
+        LiteCollection<Profile4X4DBO> Profiles4X4Table => _db.GetCollection<Profile4X4DBO>("PROFILES4X4");
 
         public void Initialize(string databasePath)
         {
             _db = new LiteDatabase(databasePath);
-            
+
             _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Name), true);
             _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Score1v1));
             _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Score2v2));
@@ -27,17 +31,19 @@ namespace GSMasterServer.Services.Implementations
             _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.CreatedDate), true);
             _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.EditedDate), true);
             _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.NewsType), true);
+
         }
 
         public bool IsInitialized => _db != null;
-        
+
         public void Dispose()
         {
             _db?.Dispose();
             _db = null;
         }
 
-        public ProfileDBO CreateProfile(string username, string passwordEncrypted, ulong steamId, string email, string country, IPAddress address)
+        public ProfileDBO CreateProfile(string username, string passwordEncrypted, ulong steamId, string email,
+            string country, IPAddress address)
         {
             var data = new ProfileDBO()
             {
@@ -56,13 +62,13 @@ namespace GSMasterServer.Services.Implementations
             var idBson = ProfilesTable.Insert(data);
 
             data.Id = idBson.AsInt64;
-           
+
 
             ProfilesTable.Update(data);
-            
+
             return data;
         }
-        
+
         public bool AddFriend(long toProfileId, long friendProfileId)
         {
             var profile = ProfilesTable.FindById(new BsonValue(toProfileId));
@@ -106,7 +112,7 @@ namespace GSMasterServer.Services.Implementations
 
             return ProfilesTable.Find(andQury).ToList();
         }
-        
+
         public ProfileDBO GetProfileByName(string username)
         {
             return ProfilesTable.FindOne(Query.EQ(nameof(ProfileDBO.Name), new BsonValue(username)));
@@ -116,7 +122,7 @@ namespace GSMasterServer.Services.Implementations
         {
             return ProfilesTable.FindById(new BsonValue(profileId));
         }
-        
+
         public void LogProfileLogin(string name, ulong steamId, IPAddress address)
         {
             var data = GetProfileByName(name);
@@ -137,7 +143,7 @@ namespace GSMasterServer.Services.Implementations
 
         public bool ProfileExists(string username)
         {
-           return ProfilesTable.Exists(Query.EQ(nameof(ProfileDBO.Name), new BsonValue(username)));
+            return ProfilesTable.Exists(Query.EQ(nameof(ProfileDBO.Name), new BsonValue(username)));
         }
 
         public ProfileDBO[] Load1v1Top10()
@@ -149,6 +155,82 @@ namespace GSMasterServer.Services.Implementations
         {
             return ProfilesTable.Find(Query.All(nameof(ProfileDBO.Score1v1), Query.Descending), 0).ToArray();
         }
+
+        /*
+            detail stats tables api                                               
+         */
+        // 1x1 api
+        public Profile1X1DBO GetProfile1X1ByProfileId(long profileId)
+        {
+            return Profiles1X1Table.FindOne(Query.EQ(nameof(Profile1X1DBO.ProfileId), new BsonValue(profileId)));
+        }
+
+        public Profile1X1DBO CreateProfile1X1(long profileId)
+        {
+            var data = new Profile1X1DBO(profileId);
+            Profiles1X1Table.Insert(data);
+            return data;
+        }
+
+        public void UpdateProfile1X1(Profile1X1DBO profile1X1)
+        {
+            Profiles1X1Table.Update(profile1X1);
+        }
+
+        // 2x2 api
+        public Profile2X2DBO GetProfile2X2ByProfileId(long profileId)
+        {
+            return Profiles2X2Table.FindOne(Query.EQ(nameof(Profile2X2DBO.ProfileId), new BsonValue(profileId)));
+        }
+
+        public Profile2X2DBO CreateProfile2X2(long profileId)
+        {
+            var data = new Profile2X2DBO(profileId);
+            Profiles2X2Table.Insert(data);
+            return data;
+        }
+
+        public void UpdateProfile2X2(Profile2X2DBO profile2X2)
+        {
+            Profiles2X2Table.Update(profile2X2);
+        }
+
+        // 3x3 api
+        public Profile3X3DBO GetProfile3X3ByProfileId(long profileId)
+        {
+            return Profiles3X3Table.FindOne(Query.EQ(nameof(Profile3X3DBO.ProfileId), new BsonValue(profileId)));
+        }
+
+        public Profile3X3DBO CreateProfile3X3(long profileId)
+        {
+            var data = new Profile3X3DBO(profileId);
+            Profiles3X3Table.Insert(data);
+            return data;
+        }
+
+        public void UpdateProfile3X3(Profile3X3DBO profile3X3)
+        {
+            Profiles3X3Table.Update(profile3X3);
+        }
+
+        // 4x4 api
+        public Profile4X4DBO GetProfile4X4ByProfileId(long profileId)
+        {
+            return Profiles4X4Table.FindOne(Query.EQ(nameof(Profile4X4DBO.ProfileId), new BsonValue(profileId)));
+        }
+
+        public Profile4X4DBO CreateProfile4X4(long profileId)
+        {
+            var data = new Profile4X4DBO(profileId);
+            Profiles4X4Table.Insert(data);
+            return data;
+        }
+
+        public void UpdateProfile4X4(Profile4X4DBO profile4X4)
+        {
+            Profiles4X4Table.Update(profile4X4);
+        }
+
 
         public NewsDBO[] GetLastNews(int count)
         {
