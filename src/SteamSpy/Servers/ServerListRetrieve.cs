@@ -55,6 +55,7 @@ namespace GSMasterServer.Servers
 
         public void Dispose()
         {
+            _reloadLobbiesTimer?.Dispose();
             Dispose(true);
             GC.SuppressFinalize(this);
         }

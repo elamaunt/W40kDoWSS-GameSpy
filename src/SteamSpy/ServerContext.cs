@@ -20,6 +20,8 @@ namespace ThunderHawk
             ServerListRetrieve = new ServerListRetrieve(bind, 28910);
             LoginMasterServer = new LoginServerRetranslator(bind, 29900, 29901);
             ChatServer = new ChatServerRetranslator(bind, 6667);
+
+            ServerListRetrieve.StartReloadingTimer();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]

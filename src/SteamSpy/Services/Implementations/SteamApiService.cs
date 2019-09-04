@@ -38,7 +38,6 @@ namespace ThunderHawk
                 throw new Exception("Wrong App Id!");
 
             IsInitialized = true;
-            ServerContext.ServerListRetrieve.StartReloadingTimer();
         }
 
         private void RestartAsSoulstormExe()

@@ -276,6 +276,9 @@
     <EmbeddedResource Include="Effects\RectBlurEffect.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
+    <None Include="credentials.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Effects\IndicatorEffect.ps">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -467,6 +470,9 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ThunderHawk.manifest" />
+    <None Include="token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -496,8 +502,15 @@
       <Project>{822e960d-c3e8-4b70-b583-860ff00508e3}</Project>
       <Name>ThunderHawk.RemoteLaunch</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ThunderHawk.Updater\ThunderHawk.Updater.csproj">
+      <Project>{b7bbfdff-f2ce-4c85-924f-84ccc098b7b5}</Project>
+      <Name>ThunderHawk.Updater</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ThunderHawk.Updater.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ThunderHawk.HostsFixer.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -576,11 +589,14 @@
     <Content Include="steam_appid.txt" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Docs.v1">
-      <Version>1.40.3.1699</Version>
+    <PackageReference Include="Google.Apis.Drive.v3">
+      <Version>1.40.3.1694</Version>
     </PackageReference>
     <PackageReference Include="LibGit2Sharp">
       <Version>0.26.1</Version>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json">
+      <Version>10.0.1</Version>
     </PackageReference>
     <PackageReference Include="NLog">
       <Version>4.6.6</Version>

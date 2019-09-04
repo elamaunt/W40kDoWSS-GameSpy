@@ -13,7 +13,8 @@ namespace ThunderHawk.Core
         public static ITweaksService TweaksService => Service<ITweaksService>.Get();
 
         public static ISteamApiService SteamApi => Service<ISteamApiService>.Get();
-
+        public static IUpdaterService UpdaterService => Service<IUpdaterService>.Get();
+        
         public static IThunderHawkModManager ThunderHawkModManager => Service<IThunderHawkModManager>.Get();
     }
 }

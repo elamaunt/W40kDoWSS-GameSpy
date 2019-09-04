@@ -36,6 +36,7 @@ namespace ThunderHawk
             base.OnStartup(e);
 
             CoreContext.SteamApi.Initialize();
+            CoreContext.UpdaterService.CheckForUpdates();
 
             var window = WPFPageHelper.InstantiateWindow<MainWindowViewModel>();
             window.Show();

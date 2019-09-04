@@ -13,7 +13,7 @@ namespace ThunderHawk.Core
         public NavigationPanelFrame NavigationPanel { get; } = new NavigationPanelFrame();
 
         public ActionFrame OpenSettings { get; } = new ActionFrame();
-        public TextFrame Version { get; } = new TextFrame() { Text = "BETA 1.0" };
+        public TextFrame Version { get; } = new TextFrame() { Text = CoreContext.UpdaterService.CurrentVersionUI };
 
         public TextFrame UserAccount { get; } = new TextFrame();
 
