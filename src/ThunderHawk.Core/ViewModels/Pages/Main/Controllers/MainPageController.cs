@@ -59,7 +59,7 @@ namespace ThunderHawk.Core
             }
             else
             {
-                Frame.LaunchGame.Text = "Setup";
+                Frame.LaunchGame.Text = "Setup mod";
                 Frame.LaunchGame.Action = SetupGameMod;
             }
         }

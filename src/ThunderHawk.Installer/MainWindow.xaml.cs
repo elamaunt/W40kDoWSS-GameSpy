@@ -5,6 +5,7 @@ using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -35,11 +36,15 @@ namespace ThunderHawk.Installer
 
         private void Install_Click(object sender, RoutedEventArgs e)
         {
+            InstallButton.IsEnabled = false;
+
             var path = Path.Text;
+            InstallPath = path;
 
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
+            Indicator.Visibility = Visibility.Visible;
             StartLoading();
         }
 
@@ -47,13 +52,15 @@ namespace ThunderHawk.Installer
         {
             Task.Factory.StartNew(async () =>
             {
+                if (_service == null)
+                    _service = await CreateDriveService();
+
                 var listRequest = _service.Files.List();
                 listRequest.Q = "'1xi63t6lKE_EkldNWz9l-QM_8y99d_q9H' in parents";
 
                 var list = await listRequest.ExecuteAsync();
 
-                var files = list.Files.Where(x => x.MimeType == "application/rar").OrderByDescending(x => x.Name, new VersionComparerImpl()).ToArray();
-
+                var files = list.Files.Where(x => x.MimeType == "application/x-zip-compressed").OrderByDescending(x => x.Name, new VersionComparerImpl()).ToArray();
                 var newestVersionFile = files.FirstOrDefault();
 
                 var request = _service.Files.Get(newestVersionFile.Id);
@@ -77,6 +84,13 @@ namespace ThunderHawk.Installer
                                 }
                             case DownloadStatus.Failed:
                                 {
+                                    Dispatcher.Invoke(() =>
+                                    {
+                                        MessageBox.Show("Nothing to install. You can install launcher manually from https://drive.google.com/drive/folders/1xi63t6lKE_EkldNWz9l-QM_8y99d_q9H");
+                                        InstallButton.Content = "Install";
+                                        InstallButton.IsEnabled = true;
+                                        Indicator.Visibility = Visibility.Hidden;
+                                    });
                                     break;
                                 }
                         }
@@ -95,16 +109,22 @@ namespace ThunderHawk.Installer
 
             if (fileName == null)
             {
-                MessageBox.Show("Nothing to install. You can install launcher manually from https://drive.google.com/drive/folders/1xi63t6lKE_EkldNWz9l-QM_8y99d_q9H");
+                Dispatcher.Invoke(() =>
+                {
+                    MessageBox.Show("Nothing to install. You can install launcher manually from https://drive.google.com/drive/folders/1xi63t6lKE_EkldNWz9l-QM_8y99d_q9H");
+                    InstallButton.Content = "Install";
+                    InstallButton.IsEnabled = true;
+                    Indicator.Visibility = Visibility.Hidden;
+                });
                 return;
             }
 
             var archive = ZipFile.Open(fileName, ZipArchiveMode.Read);
 
             var previosDirectory = Environment.CurrentDirectory;
-            Environment.CurrentDirectory = InstallPath = Path.Text;
+            Environment.CurrentDirectory = InstallPath;
 
-            RemoveOldFiles();
+            //RemoveOldFiles();
 
             var entries = archive.Entries.ToArray();
 
@@ -114,14 +134,19 @@ namespace ThunderHawk.Installer
 
                 var path = entry.FullName;
 
-                if (path.StartsWith("ThunderHawk\\", System.StringComparison.OrdinalIgnoreCase))
-                    path = path.Substring("ThunderHawk\\".Length);
+                if (path.StartsWith("ThunderHawk/", System.StringComparison.OrdinalIgnoreCase))
+                    path = path.Substring("ThunderHawk/".Length);
 
                 if (string.IsNullOrWhiteSpace(path))
                     continue;
 
                 try
                 {
+                    var folder = System.IO.Path.GetDirectoryName(path);
+
+                    if (!string.IsNullOrWhiteSpace(folder))
+                        Directory.CreateDirectory(folder);
+
                     entry.ExtractToFile(path, true);
                 }
                 catch (Exception ex)
@@ -130,13 +155,30 @@ namespace ThunderHawk.Installer
                 }
             }
 
-            Environment.CurrentDirectory = previosDirectory;
-
             archive.Dispose();
             File.Delete(fileName);
+
+            Dispatcher.Invoke(() =>
+            {
+                InstallButton.Content = "Install";
+                InstallButton.IsEnabled = true;
+                MessageBox.Show("Launcher succesfully installed!");
+                Indicator.Visibility = Visibility.Hidden;
+
+                if (StartLauncher.IsChecked ?? false)
+                {
+                    Process.Start(new ProcessStartInfo(System.IO.Path.Combine(InstallPath, "ThunderHawk.exe"))
+                    {
+                        UseShellExecute = true,
+                        WorkingDirectory = InstallPath
+                    });
+
+                    Environment.Exit(0);
+                }
+            });
         }
 
-        void RemoveOldFiles()
+        /*void RemoveOldFiles()
         {
             foreach (var directory in Directory.EnumerateDirectories(Environment.CurrentDirectory).ToArray())
             {
@@ -168,7 +210,7 @@ namespace ThunderHawk.Installer
 
                 }
             }
-        }
+        }*/
 
         bool ShouldSkipDirectory(string directory)
         {

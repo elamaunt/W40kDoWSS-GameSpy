@@ -27,15 +27,21 @@
                 </TextBlock.Effect>
             </TextBlock>
 
-            <StackPanel Margin="0,50,0,0" Orientation="Horizontal" Background="#cc000000">
+            <StackPanel Margin="0,50,0,0" Orientation="Vertical" Background="#cc000000">
+                <CheckBox x:Name="StartLauncher" IsChecked="True" Margin="40,8,0,8" Content="Start the launcher after install. (Required Steam started and Soulstorm installed)" Foreground="White" />
+                <StackPanel Margin="0,0,0,0" Orientation="Horizontal" Background="#cc000000">
                 <TextBox Name="Path" Width="400" Background="Transparent" Text="C:/ThunderHawk launcher/" MaxLines="1" Padding="2,2,2,2" Foreground="White" Margin="40,8,0,8" HorizontalAlignment="Center" />
                 <Button Content="Browse" Foreground="White" Background="Transparent"  Margin="20,8,0,8"  Width="100" Height="30" Click="Browse_Click"/>
             </StackPanel>
-
-            <StackPanel Margin="0,30,0,0" Orientation="Horizontal" HorizontalAlignment="Center" Background="#77000000">
-                <Button Content="INSTALL" Background="#ff226622" FontSize="24" Foreground="White"  HorizontalAlignment="Center" Width="500" Height="50" Click="Install_Click"/>
+                
             </StackPanel>
 
+            <StackPanel Margin="0,30,0,0" Orientation="Horizontal" HorizontalAlignment="Center" Background="#77000000">
+                
+                <Button Name="InstallButton" Content="INSTALL" Background="#ff226622" FontSize="24" Foreground="White"  HorizontalAlignment="Center" Width="500" Height="50" Click="Install_Click"/>
+            </StackPanel>
+
+            <ProgressBar Visibility="Hidden" x:Name="Indicator" Margin="0,10,0,0" Height="20" IsIndeterminate="True"/>
         </StackPanel>
 
         <TextBlock Padding="18,8,18,8" Background="#77000000" Text="Made by elamaunt" TextAlignment="Right" VerticalAlignment="Bottom" TextWrapping="Wrap" FontSize="12"  Foreground="White" Height="26">
