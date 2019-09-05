@@ -5,68 +5,68 @@ using NLog;
 
 namespace GSMasterServer.Services
 {
-    class Logger
+    public static class Logger
     {
-        
-        public static void Trace(string message,
-            [CallerFilePath] string callerFilePath = "",
-            [CallerMemberName] string callerMemberName = "",
-            [CallerLineNumber] int sourceLineNumber = 0)
+        //LogLevel: 6
+        public static void Fatal(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
         {
-            getLogger(callerFilePath, callerMemberName, sourceLineNumber)
-                .Trace(message);
-        }
-        
-        public static void Debug(string message,
-            [CallerFilePath] string callerFilePath = "",
-            [CallerMemberName] string callerMemberName = "",
-            [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            getLogger(callerFilePath, callerMemberName, sourceLineNumber)
-                .Debug(message);
-        }
-        
-        public static void Info(string message,
-            [CallerFilePath] string callerFilePath = "",
-            [CallerMemberName] string callerMemberName = "",
-            [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            getLogger(callerFilePath, callerMemberName, sourceLineNumber)
-                .Info(message);
-        }
-        
-        public static void Warn(string message,
-            [CallerFilePath] string callerFilePath = "",
-            [CallerMemberName] string callerMemberName = "",
-            [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            getLogger(callerFilePath, callerMemberName, sourceLineNumber)
-                .Warn(message);
-        }
-        
-        public static void Error(Exception ex,
-            string message,
-            [CallerFilePath] string callerFilePath = "",
-            [CallerMemberName] string callerMemberName = "",
-            [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            getLogger(callerFilePath, callerMemberName, sourceLineNumber)
-                .Error($" {message}: {ex.StackTrace}");
-        }
-        
-        public static void Error(string message,
-            [CallerFilePath] string callerFilePath = "",
-            [CallerMemberName] string callerMemberName = "",
-            [CallerLineNumber] int sourceLineNumber = 0)
-        {
-            getLogger(callerFilePath, callerMemberName, sourceLineNumber)
-                .Error(message);
+            Write(obj, LogLevel.Fatal, callerFilePath, callerMemberName, sourceLineNumber);
         }
 
-        private static NLog.Logger getLogger(string callerFilePath, string callerMemberName, int sourceLineNumber)
+        //LogLevel: 5
+        public static void Error(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
         {
-            var name = $"{Path.GetFileName(callerFilePath)} / {callerMemberName} / {sourceLineNumber}";
-            return LogManager.GetLogger(name);
+            Write(obj, LogLevel.Error, callerFilePath, callerMemberName, sourceLineNumber);
+        }
+
+        //LogLevel: 4
+        public static void Warn(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
+        {
+            Write(obj, LogLevel.Warn, callerFilePath, callerMemberName, sourceLineNumber);
+        }
+
+        //LogLevel: 3
+        public static void Info(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
+        {
+            Write(obj, LogLevel.Info, callerFilePath, callerMemberName, sourceLineNumber);
+        }
+
+        //LogLevel: 2
+        public static void Debug(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
+        {
+            Write(obj, LogLevel.Debug, callerFilePath, callerMemberName, sourceLineNumber);
+        }
+
+        //LogLevel: 1
+        public static void Trace(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
+        {
+            Write(obj, LogLevel.Trace, callerFilePath, callerMemberName, sourceLineNumber);
+        }
+
+
+        private static void Write(object obj, LogLevel logLevel, string callerFilePath, string callerMemberName, int sourceLineNumber)
+        {
+            var name = $"{Path.GetFileName(callerFilePath)} line {sourceLineNumber} / {callerMemberName}";
+            var logger = LogManager.GetLogger(name);
+            logger.Log(logLevel, obj);
         }
     }
 }
