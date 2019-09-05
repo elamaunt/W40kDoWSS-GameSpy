@@ -12,6 +12,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms;
+using MessageBox = System.Windows.MessageBox;
 
 namespace ThunderHawk.Installer
 {
@@ -39,10 +41,6 @@ namespace ThunderHawk.Installer
                 Directory.CreateDirectory(path);
 
             StartLoading();
-
-           
-
-
         }
 
         private void StartLoading()
@@ -88,10 +86,10 @@ namespace ThunderHawk.Installer
             }).Unwrap();
         }
 
-        static string ArchivePath;
-        static string InstallPath;
+        string InstallPath;
+        string _lastOpenedFolderPath;
 
-        static void Install(string fileName)
+        void Install(string fileName)
         {
             Thread.Sleep(2000);
 
@@ -101,9 +99,10 @@ namespace ThunderHawk.Installer
                 return;
             }
 
-            ArchivePath = System.IO.Path.GetFullPath(fileName);
-
             var archive = ZipFile.Open(fileName, ZipArchiveMode.Read);
+
+            var previosDirectory = Environment.CurrentDirectory;
+            Environment.CurrentDirectory = InstallPath = Path.Text;
 
             RemoveOldFiles();
 
@@ -131,11 +130,13 @@ namespace ThunderHawk.Installer
                 }
             }
 
+            Environment.CurrentDirectory = previosDirectory;
+
             archive.Dispose();
             File.Delete(fileName);
         }
 
-        static void RemoveOldFiles()
+        void RemoveOldFiles()
         {
             foreach (var directory in Directory.EnumerateDirectories(Environment.CurrentDirectory).ToArray())
             {
@@ -169,7 +170,7 @@ namespace ThunderHawk.Installer
             }
         }
 
-        static bool ShouldSkipDirectory(string directory)
+        bool ShouldSkipDirectory(string directory)
         {
             if (directory.EndsWith("mod\\", StringComparison.OrdinalIgnoreCase))
                 return true;
@@ -180,7 +181,7 @@ namespace ThunderHawk.Installer
             return false;
         }
 
-        static bool ShouldSkipFile(string file)
+        bool ShouldSkipFile(string file)
         {
             if (System.IO.Path.GetFullPath(file) == InstallPath)
 
@@ -195,7 +196,21 @@ namespace ThunderHawk.Installer
 
         private void Browse_Click(object sender, RoutedEventArgs e)
         {
+            Path.Text = GetDirectoryByBrowser(_lastOpenedFolderPath);
+        }
+        public string GetDirectoryByBrowser(string root = null)
+        {
+            var folderDialog = new FolderBrowserDialog();
+            if (root == null)
+                folderDialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+            else
+                folderDialog.SelectedPath = root;
+            folderDialog.ShowDialog();
 
+            if (folderDialog.SelectedPath != null)
+                _lastOpenedFolderPath = folderDialog.SelectedPath;
+
+            return folderDialog.SelectedPath;
         }
 
         async Task<DriveService> CreateDriveService()

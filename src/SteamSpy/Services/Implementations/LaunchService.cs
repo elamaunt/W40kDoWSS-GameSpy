@@ -128,7 +128,7 @@ namespace ThunderHawk
 
         private void FixHosts()
         {
-            var process = Process.Start("ThunderHawk.HostsFixer.exe");
+            var process = Process.Start("ThunderHawk.HostsFixer.exe", GameConstants.SERVER_ADDRESS);
             process.WaitForExit();
 
             if (process.ExitCode == 1)
