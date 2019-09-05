@@ -4,8 +4,12 @@
     {
         public const string VERSION = "1.0";
 
+#if SPACEWAR
+        public const string SERVER_ADDRESS = "192.168.159.1";
+#else
         public const string SERVER_ADDRESS = "134.209.227.145";
-        //public const string SERVER_ADDRESS = "192.168.159.1";
+#endif
+
         //public const string SERVER_ADDRESS = "127.0.0.1";
 
         public const ushort IDS_REQUEST_PORT = 27902;
