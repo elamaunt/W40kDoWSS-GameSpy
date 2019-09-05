@@ -164,14 +164,14 @@ namespace ThunderHawk.Utils
                         if (ownerSteamId == SteamUser.GetSteamID())
                             continue;
 
-                        FriendGameInfo_t gameInfo;
+                        /*FriendGameInfo_t gameInfo;
                         if (SteamFriends.GetFriendGamePlayed(ownerSteamId, out gameInfo))
                         {
                             if (gameInfo.m_gameID.AppID().m_AppId != SteamUtils.GetAppID().m_AppId)
                                 continue;
                         }
                         else
-                            continue;
+                            continue;*/
 
                         var server = new GameServer();
 

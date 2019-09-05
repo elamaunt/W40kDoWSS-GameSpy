@@ -13,10 +13,11 @@ namespace Framework.WPF
         
         protected override void OnStartup(StartupEventArgs e)
         {
+#if !SPACEWAR
             ViewModel = CreateApplicationViewModel();
             Bootstrapper.Run(CreateModules().ToArray());
             FrameBinder.Bind(this, ViewModel);
-
+#endif
             base.OnStartup(e);
         }
         

@@ -328,7 +328,7 @@ namespace GSMasterServer.Servers
             PortBindingManager.ClearPortBindings();
 
             var wasJoinable = SteamLobbyManager.IsLobbyJoinable;
-            SteamLobbyManager.UpdateCurrentLobby(server, CoreContext.ThunderHawkModManager.ActiveModRevision);
+            SteamLobbyManager.UpdateCurrentLobby(server, GetIndicator());
 
             if (!wasJoinable && SteamLobbyManager.IsLobbyJoinable)
             {
@@ -354,7 +354,16 @@ namespace GSMasterServer.Servers
             server["hostport"] = remote.Port.ToString();
             server["localport"] = remote.Port.ToString();
             
-            SteamLobbyManager.CreatePublicLobby(server, CancellationToken.None, CoreContext.ThunderHawkModManager.ActiveModRevision);
+            SteamLobbyManager.CreatePublicLobby(server, CancellationToken.None, GetIndicator());
+        }
+
+        private string GetIndicator()
+        {
+#if SPACEWAR
+            return "SOULSTORM";
+#else
+            return CoreContext.ThunderHawkModManager.ActiveModRevision;
+#endif
         }
     }
 }

@@ -377,7 +377,12 @@ namespace GSMasterServer.Servers
         {
             if (_currentLobbiesTask != null)
                 return await _currentLobbiesTask;
-            var servers = await (_currentLobbiesTask = SteamLobbyManager.LoadLobbies());
+
+#if SPACEWAR
+            var servers = await (_currentLobbiesTask = SteamLobbyManager.LoadLobbies(null, "SOULSTORM"));
+#else
+           var servers = await (_currentLobbiesTask = SteamLobbyManager.LoadLobbies());
+#endif
             _currentLobbiesTask = null;
             return servers;
         }

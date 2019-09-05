@@ -1,21 +1,21 @@
  Привет! Вы на сервере elamaunt'а.
 .
+Добро пожаловать на бетатест сервера.
 Функционально сервер почти полностью готов. 
 Статистика начисляется только на последней версии мода ThunderHawk.
 .
-Карты в авто: 
+Текущие карты в авто: 
 .
 1на1
 - [TP MOD]edemus gamble
 - [TP MOD]galenas crusade
 - [TP MOD]shrine of excellion
-- [TP MOD]meeting of minds
+- 2P Meeting of Minds
 - 2P Battle Marshes
 - 2P Outer Reaches (доработанная Дэвилом)
 - 2P Blood River
 - 2P Fata Morgana
 - 2P Titan Fall (доработанная Дэвилом)
-- 2p velvet duress (доработанная Дэвилом)
 - 2P Tranquilitys End (доработанная  Дэвилом)
 - 2P FraziersDemise (доработанная Дэвилом)
 - 2P Moonbase (доработанная Дэвилом)

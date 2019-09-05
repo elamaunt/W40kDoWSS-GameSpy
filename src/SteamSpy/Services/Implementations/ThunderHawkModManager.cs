@@ -17,6 +17,7 @@ namespace ThunderHawk
         const string ClonePath = @"Mod";
 
         public string ModName => "ThunderHawk";
+        public string ModVersion { get; private set; } = "";
 
         public string ActiveModRevision { get; private set; } = "---";
 

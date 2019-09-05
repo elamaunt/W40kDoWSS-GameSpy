@@ -13,6 +13,12 @@ namespace ThunderHawk
 
         public bool IsInitialized { get; private set; }
 
+#if SPACEWAR
+        AppId_t AppId = AppId_t.Invalid;
+#else
+        AppId_t AppId = new AppId_t(9450);
+#endif
+
         public void Initialize()
         {
             var gamePath = CoreContext.LaunchService.GamePath;
@@ -23,7 +29,7 @@ namespace ThunderHawk
                 return;
             }
 
-            if (SteamAPI.RestartAppIfNecessary(new AppId_t(9450)))
+            if (SteamAPI.RestartAppIfNecessary(AppId))
             {
                 RestartAsSoulstormExe();
                 return;
@@ -34,7 +40,7 @@ namespace ThunderHawk
 
             var appId = SteamUtils.GetAppID();
 
-            if (appId.m_AppId != 9450)
+            if (appId.m_AppId != AppId.m_AppId)
                 throw new Exception("Wrong App Id!");
 
             IsInitialized = true;

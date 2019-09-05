@@ -9,14 +9,74 @@ namespace ThunderHawk.HostsFixer
     {
         static string IP;
 
-        [STAThread]
         static int Main(string[] args)
         {
             try
             {
                 IP = args[0];
 
-                ModifyHostsFile(Entries.Split(new string[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries)
+                string entries = $@"
+{IP} ocs.thq.com
+{IP} www.dawnofwargame.com
+{IP} gmtest.master.gamespy.com
+
+127.0.0.1 whamdowfr.master.gamespy.com
+127.0.0.1 whamdowfr.gamespy.com
+127.0.0.1 whamdowfr.ms9.gamespy.com
+127.0.0.1 whamdowfr.ms11.gamespy.com
+127.0.0.1 whamdowfr.available.gamespy.com
+127.0.0.1 whamdowfr.available.gamespy.com
+127.0.0.1 whamdowfr.natneg.gamespy.com
+127.0.0.1 whamdowfr.natneg0.gamespy.com
+127.0.0.1 whamdowfr.natneg1.gamespy.com
+127.0.0.1 whamdowfr.natneg2.gamespy.com
+127.0.0.1 whamdowfr.natneg3.gamespy.com
+{IP} whamdowfr.gamestats.gamespy.com
+
+127.0.0.1 whamdowfram.master.gamespy.com
+127.0.0.1 whamdowfram.gamespy.com
+127.0.0.1 whamdowfram.ms9.gamespy.com
+127.0.0.1 whamdowfram.ms11.gamespy.com
+127.0.0.1 whamdowfram.available.gamespy.com
+127.0.0.1 whamdowfram.available.gamespy.com
+127.0.0.1 whamdowfram.natneg.gamespy.com
+127.0.0.1 whamdowfram.natneg0.gamespy.com
+127.0.0.1 whamdowfram.natneg1.gamespy.com
+127.0.0.1 whamdowfram.natneg2.gamespy.com
+127.0.0.1 whamdowfram.natneg3.gamespy.com
+{IP} whamdowfram.gamestats.gamespy.com
+
+{IP} gamespy.net
+{IP} gamespygp
+{IP} motd.gamespy.com
+127.0.0.1 peerchat.gamespy.com
+{IP} gamestats.gamespy.com
+127.0.0.1 gpcm.gamespy.com
+127.0.0.1 gpsp.gamespy.com
+{IP} key.gamespy.com
+{IP} master.gamespy.com
+{IP} master0.gamespy.com
+127.0.0.1 natneg.gamespy.com
+127.0.0.1 natneg0.gamespy.com
+127.0.0.1 natneg1.gamespy.com
+127.0.0.1 natneg2.gamespy.com
+127.0.0.1 natneg3.gamespy.com
+127.0.0.1 chat.gamespynetwork.com
+{IP} available.gamespy.com
+{IP} gamespy.com
+{IP} gamespyarcade.com
+{IP} www.gamespy.com
+{IP} www.gamespyarcade.com
+127.0.0.1 chat.master.gamespy.com
+{IP} thq.vo.llnwd.net
+{IP} gamespyid.com
+127.0.0.1 nat.gamespy.com
+";
+
+                if (string.IsNullOrWhiteSpace(IP))
+                    return 1;
+
+                ModifyHostsFile(entries.Split(new string[] { "\n", "\r" }, StringSplitOptions.RemoveEmptyEntries)
                     .Select(x => x.Split(' ')).Where(x => x.Length == 2).ToList());
             }
             catch
@@ -100,64 +160,6 @@ namespace ThunderHawk.HostsFixer
                 }
             }
         }
-
-        static string Entries = $@"
-{IP} ocs.thq.com
-{IP} www.dawnofwargame.com
-{IP} gmtest.master.gamespy.com
-
-127.0.0.1 whamdowfr.master.gamespy.com
-127.0.0.1 whamdowfr.gamespy.com
-127.0.0.1 whamdowfr.ms9.gamespy.com
-127.0.0.1 whamdowfr.ms11.gamespy.com
-127.0.0.1 whamdowfr.available.gamespy.com
-127.0.0.1 whamdowfr.available.gamespy.com
-127.0.0.1 whamdowfr.natneg.gamespy.com
-127.0.0.1 whamdowfr.natneg0.gamespy.com
-127.0.0.1 whamdowfr.natneg1.gamespy.com
-127.0.0.1 whamdowfr.natneg2.gamespy.com
-127.0.0.1 whamdowfr.natneg3.gamespy.com
-{IP} whamdowfr.gamestats.gamespy.com
-
-127.0.0.1 whamdowfram.master.gamespy.com
-127.0.0.1 whamdowfram.gamespy.com
-127.0.0.1 whamdowfram.ms9.gamespy.com
-127.0.0.1 whamdowfram.ms11.gamespy.com
-127.0.0.1 whamdowfram.available.gamespy.com
-127.0.0.1 whamdowfram.available.gamespy.com
-127.0.0.1 whamdowfram.natneg.gamespy.com
-127.0.0.1 whamdowfram.natneg0.gamespy.com
-127.0.0.1 whamdowfram.natneg1.gamespy.com
-127.0.0.1 whamdowfram.natneg2.gamespy.com
-127.0.0.1 whamdowfram.natneg3.gamespy.com
-{IP} whamdowfram.gamestats.gamespy.com
-
-{IP} gamespy.net
-{IP} gamespygp
-{IP} motd.gamespy.com
-127.0.0.1 peerchat.gamespy.com
-{IP} gamestats.gamespy.com
-127.0.0.1 gpcm.gamespy.com
-127.0.0.1 gpsp.gamespy.com
-{IP} key.gamespy.com
-{IP} master.gamespy.com
-{IP} master0.gamespy.com
-127.0.0.1 natneg.gamespy.com
-127.0.0.1 natneg0.gamespy.com
-127.0.0.1 natneg1.gamespy.com
-127.0.0.1 natneg2.gamespy.com
-127.0.0.1 natneg3.gamespy.com
-127.0.0.1 chat.gamespynetwork.com
-{IP} available.gamespy.com
-{IP} gamespy.com
-{IP} gamespyarcade.com
-{IP} www.gamespy.com
-{IP} www.gamespyarcade.com
-127.0.0.1 chat.master.gamespy.com
-{IP} thq.vo.llnwd.net
-{IP} gamespyid.com
-127.0.0.1 nat.gamespy.com
-";
     }
 }
 

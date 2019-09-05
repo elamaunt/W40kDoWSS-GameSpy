@@ -288,6 +288,15 @@ namespace GSMasterServer.Servers
                         for (int i = 0; i < valuesList.Length; i += 2)
                             dictionary[valuesList[i]] = valuesList[i + 1];
 
+                        var mod = dictionary["Mod"];
+                        var modVersion = dictionary["ModVer"];
+
+                        if (!"ThunderHawk".Equals(mod, StringComparison.OrdinalIgnoreCase))
+                            return;
+
+                        if (!"1.0a".Equals(modVersion, StringComparison.OrdinalIgnoreCase))
+                            return;
+
                         var playersCount = int.Parse(dictionary["Players"]);
 
                         for (int i = 0; i < playersCount; i++)
@@ -300,9 +309,7 @@ namespace GSMasterServer.Servers
                         var gameInternalSession = dictionary["SessionID"];
                         var teamsCount = int.Parse(dictionary["Teams"]);
                         var version = dictionary["Version"];
-                        var mod = dictionary["Mod"];
-                        var modVersion = dictionary["ModVer"];
-
+                      
                         var uniqueGameSessionBuilder = new StringBuilder(gameInternalSession);
 
                         for (int i = 0; i < playersCount; i++)

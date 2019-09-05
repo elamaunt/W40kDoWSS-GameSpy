@@ -5,6 +5,7 @@
     <ApplicationIcon />
     <OutputType>Library</OutputType>
     <StartupObject />
+    <Configurations>Debug;Release;ThunderHawk;SpaceWar</Configurations>
   </PropertyGroup>
 
   <ItemGroup>

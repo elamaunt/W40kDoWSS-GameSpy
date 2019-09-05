@@ -35,12 +35,17 @@ namespace ThunderHawk
 
             base.OnStartup(e);
 
+#if SPACEWAR
+            MainWindow = new MainWindow();
+#else
             CoreContext.SteamApi.Initialize();
             CoreContext.UpdaterService.CheckForUpdates();
 
             var window = WPFPageHelper.InstantiateWindow<MainWindowViewModel>();
             window.Show();
             MainWindow = window;
+#endif
+
         }
     }
 }
