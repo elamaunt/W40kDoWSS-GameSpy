@@ -69,6 +69,24 @@ namespace ThunderHawk.StaticClasses.Soulstorm
 
             try
             {
+                var pathInSteam = Path.Combine(steamPath, "steamapps", "common");
+
+                foreach (var directory in Directory.EnumerateDirectories(pathInSteam))
+                {
+                    if (directory.IndexOf("soulstorm", StringComparison.OrdinalIgnoreCase) != -1)
+                    {
+                        if (IsSteamGameLocation(directory))
+                            return directory;
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+
+            try
+            {
                 var vdfsLines = File.ReadAllLines(Path.Combine(steamPath, "steamapps", "libraryfolders.vdf"));
 
                 for (int i = 0; i < vdfsLines.Length; i++)
