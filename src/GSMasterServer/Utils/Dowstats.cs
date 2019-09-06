@@ -179,6 +179,7 @@ namespace GSMasterServer.Utils
             var parameters = HttpUtility.ParseQueryString(string.Empty);// url params storage
             
             parameters["type"] = gameType.ToString();
+            parameters["serverId"] = profile.ProfileId.ToString();
             parameters["SmGamesCount"] = profile.SmGamesCount.ToString();
             parameters["CsmGamesCount"] = profile.CsmGamesCount.ToString();
             parameters["OrkGamesCount"] = profile.OrkGamesCount.ToString();
