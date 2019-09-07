@@ -69,6 +69,8 @@ namespace GSMasterServer
         private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             Logger.Fatal(e.ExceptionObject);
+
+            Directory.CreateDirectory("Crashes");
             File.WriteAllText(Path.Combine("Crashes","FatalException-"+DateTime.Now.ToLongTimeString()+".ex"), e.ExceptionObject.ToString());
         }
     }
