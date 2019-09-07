@@ -41,6 +41,15 @@ namespace ThunderHawk.Installer
             var path = Path.Text;
             InstallPath = path;
 
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                MessageBox.Show("Installation path must not be empty");
+                InstallButton.IsEnabled = true;
+                return;
+            }
+
+            path = path.Trim();
+
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
