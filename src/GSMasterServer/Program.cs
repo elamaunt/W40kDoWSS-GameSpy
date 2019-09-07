@@ -62,6 +62,9 @@ namespace GSMasterServer
             HttpServer httpServer = new HttpServer(bind, 80);
             StatsServer statsServer = new StatsServer(bind, 29920);
 
+            Logger.Info("Server is running...");
+            Console.WriteLine("Server is running...");
+
             while (true)
                 Thread.Sleep(1000);
         }
