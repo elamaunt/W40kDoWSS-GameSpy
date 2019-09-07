@@ -227,7 +227,7 @@ namespace GSMasterServer.Servers
                 var str = Encoding.UTF8.GetString(receivedBytes);
 
                 // there by a bunch of different message formats...
-                Logger.Info($"Data received: {str}");
+                Logger.Trace($"Data received: {str}");
                 
                 // Autom game
                 // \u0003\u0015?{?localip0\0192.168.159.1\0localip1\0192.168.58.1\0localip2\0192.168.97.2\0localip3\0192.168.56.1\0localip4\0192.168.1.21\0localport\06112\0natneg\01\0statechanged\02\0gamename\0whammer40kdcam\0\0
@@ -243,20 +243,20 @@ namespace GSMasterServer.Servers
                     byte[] response = new byte[] { 0xfe, 0xfd, 0x09, 0x00, 0x00, 0x00, 0x00 };
 
                     var resp = Encoding.UTF8.GetString(response);
-                    Logger.Info("RESPONCE SERVER CHECK:" + resp);
+                    Logger.Trace("RESPONCE SERVER CHECK:" + resp);
                     _socket.SendTo(response, remote);
                 }
                 else if (receivedBytes.Length > 5 && receivedBytes[0] == (byte)MessageType.HEARTBEAT)
                 {
-                    Logger.Info("========= SEVER DETAILS =========");
+                    Logger.Trace("========= SEVER DETAILS =========");
 
                     // this is where server details come in, it starts with 0x03, it happens every 60 seconds or so
 
                     byte[] uniqueId = new byte[4];
                     Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
 
-                    Logger.Info($"UNIQUEID: {BitConverter.ToInt32(uniqueId)}");
-                    Logger.Info($"UNIQUEID_INVERTED: {BitConverter.ToInt32(uniqueId.Reverse().ToArray())}");
+                    Logger.Trace($"UNIQUEID: {BitConverter.ToInt32(uniqueId)}");
+                    Logger.Trace($"UNIQUEID_INVERTED: {BitConverter.ToInt32(uniqueId.Reverse().ToArray())}");
 
                     if (!ParseServerDetails(remote, receivedBytes.Skip(5).ToArray()))
                     {
@@ -266,7 +266,7 @@ namespace GSMasterServer.Servers
                         // Рабочий вариант server challenge из кода сервака для Цивы 4
                         byte[] response = new byte[] { 0xfe, 0xfd, (byte)MessageType.CHALLENGE_RESPONSE, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3], 0x41, 0x43, 0x4E, 0x2B, 0x78, 0x38, 0x44, 0x6D, 0x57, 0x49, 0x76, 0x6D, 0x64, 0x5A, 0x41, 0x51, 0x45, 0x37, 0x68, 0x41, 0x00 };
 
-                        Logger.Info($"=========!!!! RESPONCE CHANNELGE: {Encoding.ASCII.GetString(response)}");
+                        Logger.Trace($"=========!!!! RESPONCE CHANNELGE: {Encoding.ASCII.GetString(response)}");
 
                         _socket.SendTo(response, remote);
                     }
@@ -295,7 +295,7 @@ namespace GSMasterServer.Servers
                     {
                         byte[] response = new byte[] { 0xfe, 0xfd, 0x0a, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3] };
 
-                        Logger.Info($"==========>>>>> RESPONCE VALIDATION: {Encoding.ASCII.GetString(response)}");
+                        Logger.Trace($"==========>>>>> RESPONCE VALIDATION: {Encoding.ASCII.GetString(response)}");
 
                         _socket.SendTo(response, remote);
 
@@ -308,14 +308,14 @@ namespace GSMasterServer.Servers
 
                     byte[] uniqueId = new byte[4];
                     Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
-                    Logger.Info($"==========>>>>> REFRESH SERVER PING: {remote}");
+                    Logger.Trace($"==========>>>>> REFRESH SERVER PING: {remote}");
 
                     RefreshServerPing(remote);
                 }
             }
             catch (Exception ex)
             {
-                Logger.Info(ex.ToString());
+                Logger.Error(ex.ToString());
             }
 
             WaitForData();

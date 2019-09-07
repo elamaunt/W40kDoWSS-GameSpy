@@ -165,7 +165,7 @@ namespace GSMasterServer.Servers
 
                 var receivedString = Encoding.ASCII.GetString(state.Buffer, 0, received);
 
-                Logger.Info($"Data received: {receivedString}");
+                Logger.Trace($"Data received: {receivedString}");
                 ParseRequest(state, receivedString);
             }
             catch (ObjectDisposedException)
@@ -238,7 +238,7 @@ namespace GSMasterServer.Servers
             try
             {
                 int sent = state.Socket.EndSend(async);
-                Logger.Info($"Sent {sent} byte response to: {((IPEndPoint)state.Socket.RemoteEndPoint).Address}:{((IPEndPoint)state.Socket.RemoteEndPoint).Port}");
+                Logger.Trace($"Sent {sent} byte response to: {((IPEndPoint)state.Socket.RemoteEndPoint).Address}:{((IPEndPoint)state.Socket.RemoteEndPoint).Port}");
             }
             catch (SocketException e)
             {

@@ -199,7 +199,7 @@ namespace GSMasterServer.Servers
 
                 state.Socket = client;
 
-                Logger.Info( $"[{state.Type}] New Client: { ((IPEndPoint)state.Socket.RemoteEndPoint).Address}:{((IPEndPoint)state.Socket.RemoteEndPoint).Port}");
+                Logger.Trace( $"[{state.Type}] New Client: { ((IPEndPoint)state.Socket.RemoteEndPoint).Address}:{((IPEndPoint)state.Socket.RemoteEndPoint).Port}");
 
                 if (state.Type == LoginSocketState.SocketType.Client)
                 {
@@ -240,7 +240,7 @@ namespace GSMasterServer.Servers
             if (data == null || state == null || state.Socket == null)
                 return false;
 
-            Logger.Info($"RESP: {DataFunctions.BytesToString(data)}");
+            Logger.Trace($"RESP: {DataFunctions.BytesToString(data)}");
 
             try
             {
@@ -278,7 +278,7 @@ namespace GSMasterServer.Servers
             try
             {
                 int sent = state.Socket.EndSend(async);
-                Logger.Info($"[{state.Type}] Sent {sent} byte response to: " +
+                Logger.Trace($"[{state.Type}] Sent {sent} byte response to: " +
                             $"{((IPEndPoint)state.Socket.RemoteEndPoint).Address}:{((IPEndPoint)state.Socket.RemoteEndPoint).Port}");
             }
             catch (NullReferenceException)
@@ -421,7 +421,7 @@ namespace GSMasterServer.Servers
         private void ParseMessage(ref LoginSocketState state, string message)
         {
             string query;
-            Logger.Info($"MESSAGE: {message}");
+            Logger.Trace($"MESSAGE: {message}");
 
             var keyValues = GetKeyValue(message, out query);
 
@@ -441,7 +441,7 @@ namespace GSMasterServer.Servers
                 }
             }
 
-            Logger.Info($"[{state.Type}] Received {query} query from: " +
+            Logger.Trace($"[{state.Type}] Received {query} query from: " +
                         $"{((IPEndPoint)state.Socket.RemoteEndPoint).Address}:{((IPEndPoint)state.Socket.RemoteEndPoint).Port}");
 
             /*if (!keyValues.ContainsKey("ka"))
@@ -733,7 +733,7 @@ namespace GSMasterServer.Servers
                 LoginSocketState state = this;
                 HeartbeatState++;
 
-                Console.WriteLine("sending keep alive");
+                Logger.Trace("sending keep alive");
                 if (!server.SendToClient(ref state, LoginServerMessages.SendKeepAlive()))
                 {
                     Dispose();
@@ -743,7 +743,7 @@ namespace GSMasterServer.Servers
                 // every 2nd keep alive request, we send an additional heartbeat
                 if (HeartbeatState % 2 == 0)
                 {
-                    Console.WriteLine("sending heartbeat");
+                    Logger.Trace("sending heartbeat");
                     if (!server.SendToClient(ref state, LoginServerMessages.SendHeartbeat()))
                     {
                         Dispose();

@@ -140,7 +140,7 @@ namespace GSMasterServer.Servers
                         {
                             var asciValue = reader.ReadToEnd();
 
-                             Logger.Info($"CHATDATA: {asciValue}");
+                             Logger.Trace($"CHATDATA: {asciValue}");
 
                              ms.Position = 0;
 
@@ -216,7 +216,7 @@ namespace GSMasterServer.Servers
 
                             var utf8alue = Encoding.UTF8.GetString(bytes);
 
-                            Logger.Info($"CHATDATA: {utf8alue}");
+                            Logger.Trace($"CHATDATA: {utf8alue}");
 
                             if (utf8alue.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase))
                             {
@@ -300,7 +300,7 @@ namespace GSMasterServer.Servers
             if (state.Disposing)
                 return 0;
 
-            Logger.Info($"CHATRESP: {message}");
+            Logger.Trace($"CHATRESP: {message}");
 
             var bytesToSend = Encoding.UTF8.GetBytes(message);
 

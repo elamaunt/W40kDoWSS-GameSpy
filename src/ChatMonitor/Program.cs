@@ -140,8 +140,8 @@ namespace ChatMonitor
 
                       var ipEndPoint = Between(bytes, pointStart, pointEnd);
 
-                      Console.WriteLine(nick);
-                      Console.WriteLine(ipEndPoint);
+                      //Console.WriteLine(nick);
+                      //Console.WriteLine(ipEndPoint);
                       // Console.WriteLine(Between(bytes, i + 4, i + 4 + 57));
                   }
               }
@@ -222,7 +222,7 @@ namespace ChatMonitor
             catch (SocketException ex)
             {
                 CONNECTED = false;
-                Console.WriteLine(ex);
+                //Console.WriteLine(ex);
                 Thread.Sleep(10000);
                 Main(null);
             }
@@ -239,7 +239,7 @@ namespace ChatMonitor
             {
                 var line = split[i];
 
-                Console.WriteLine("[IN]" + line);
+                //Console.WriteLine("[IN]" + line);
 
                 if (!line.Contains("PING") && CONNECTED && line.Contains("PRIVMSG"))
                 {
