@@ -1,6 +1,7 @@
 ﻿using GSMasterServer.Servers;
 using GSMasterServer.Services;
 using System;
+using System.IO;
 using System.Net;
 using System.Threading;
 
@@ -10,6 +11,8 @@ namespace GSMasterServer
 	{     
         static void Main(string[] args)
         {
+            AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
+
             args = new string[] { "+db", @"test.db" };
             
             IPAddress bind = IPAddress.Any;
@@ -62,5 +65,11 @@ namespace GSMasterServer
             while (true)
                 Thread.Sleep(1000);
         }
-	}
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Logger.Fatal(e.ExceptionObject);
+            File.WriteAllText(Path.Combine("Crashes","FatalException-"+DateTime.Now.ToLongTimeString()+".ex"), e.ExceptionObject.ToString());
+        }
+    }
 }

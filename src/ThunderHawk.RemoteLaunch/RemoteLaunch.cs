@@ -1,6 +1,9 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.IO;
+using System.Reflection;
+using System.Security;
+using System.Security.Permissions;
 
 namespace ThunderHawk.RemoteLaunch
 {
@@ -60,12 +63,22 @@ namespace ThunderHawk.RemoteLaunch
             }
 
           // var assembly = Assembly.LoadFile(Path.Combine(Environment.CurrentDirectory, "ThunderHawk.exe"));*/
-           // AppDomain.CurrentDomain.SetPrincipalPolicy(System.Security.Principal.PrincipalPolicy.WindowsPrincipal);
+            // AppDomain.CurrentDomain.SetPrincipalPolicy(System.Security.Principal.PrincipalPolicy.WindowsPrincipal);
 
-           // EvidenceBase[] hostEvidence = { new Zone(SecurityZone.MyComputer) };
-           // Evidence e = new Evidence(hostEvidence, null);
+            // EvidenceBase[] hostEvidence = { new Zone(SecurityZone.MyComputer) };
+            // Evidence e = new Evidence(hostEvidence, null);
 
-           //AppDomain.CurrentDomain.ExecuteAssembly("ThunderHawk.exe", e);
+            //AppDomain.CurrentDomain.ExecuteAssembly("ThunderHawk.exe", e);
+
+            /*PermissionSet permissionSet = new PermissionSet(PermissionState.Unrestricted);
+
+            AppDomainSetup setup = new AppDomainSetup();
+            setup.ApplicationBase = AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
+
+            AppDomain appDomain = AppDomain.CreateDomain("Trusted Domain", null, setup, permissionSet);*/
+
+           // appDomain.CreateInstance(Assembly.LoadFile("ThunderHawk.exe"), "ThunderHawk");
+
             AppDomain.CurrentDomain.ExecuteAssembly("ThunderHawk.exe");
         }
 
