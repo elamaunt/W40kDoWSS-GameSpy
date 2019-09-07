@@ -137,7 +137,7 @@ namespace GSMasterServer.Servers
 
                     if (m.Success)
                     {
-                        Logger.Info($"Received request from: {((IPEndPoint)e.RemoteEndPoint).Address}:{((IPEndPoint)e.RemoteEndPoint).Port}");
+                        Logger.Trace($"Received request from: {((IPEndPoint)e.RemoteEndPoint).Address}:{((IPEndPoint)e.RemoteEndPoint).Port}");
                         string reply = String.Format(_dataResponse, m.Groups["Challenge"].Value.Substring(0, 32), m.Groups["Key"].Value);
 
                         byte[] response = Encoding.UTF8.GetBytes(Xor(reply));

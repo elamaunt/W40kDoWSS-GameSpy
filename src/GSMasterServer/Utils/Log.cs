@@ -5,7 +5,7 @@ namespace GSMasterServer.Utils
 {
     public static class L
     {
-        public static void Log(string tag, string message)
+        /*public static void Log(string tag, string message)
         {
             Log(tag + ":" + message);
         }
@@ -25,6 +25,6 @@ namespace GSMasterServer.Utils
             Console.ForegroundColor = ConsoleColor.Red;
             Console.Error.WriteLine(String.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), message));
             Console.ForegroundColor = c;
-        }
+        }*/
     }
 }

@@ -177,7 +177,7 @@ namespace GSMasterServer.Servers
                 using (var ms = new MemoryStream(state.Buffer, 0, received))
                     request = HttpHelper.GetRequest(ms);
                 
-                Logger.Info("Data received: " + Encoding.UTF8.GetString(state.Buffer, 0, received).Replace('\n', ' ').Replace('\r', ' '));
+                Logger.Trace("Data received: " + Encoding.UTF8.GetString(state.Buffer, 0, received).Replace('\n', ' ').Replace('\r', ' '));
 
 
                 using (var ms = new MemoryStream(state.Buffer))

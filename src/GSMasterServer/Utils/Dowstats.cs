@@ -107,7 +107,7 @@ namespace GSMasterServer.Utils
             var request = (HttpWebRequest)WebRequest.Create( updateRequestBuilder.Uri );
             request.Method = "get";
  
-            Logger.Info("Start request to " + DowstatsUploadGameUrl);
+            Logger.Trace("Start request to " + DowstatsUploadGameUrl);
             Logger.Debug($"request uri: {updateRequestBuilder.Uri}");
             IAsyncResult result = request.BeginGetResponse( OnAsyncCallback, request );
             
@@ -225,7 +225,7 @@ namespace GSMasterServer.Utils
             var request = (HttpWebRequest)WebRequest.Create( updateRequestBuilder.Uri );
             request.Method = "get";
  
-            Logger.Info("Start request to " + DowstatsUploadPlayerStatsUrl);
+            Logger.Trace("Start request to " + DowstatsUploadPlayerStatsUrl);
             Logger.Debug($"request uri: {updateRequestBuilder.Uri}");
             IAsyncResult result = request.BeginGetResponse( OnAsyncCallback, request );
             ThreadPool.RegisterWaitForSingleObject (result.AsyncWaitHandle, TimeoutCallback, request, DefaultTimeout, true);
@@ -247,7 +247,7 @@ namespace GSMasterServer.Utils
             WebResponse response = httpWebRequest.EndGetResponse( asyncResult );
             var reader = new StreamReader( response.GetResponseStream() );
             string str = reader.ReadToEnd();
-            Logger.Info( "Response from dowstats: " + str );
+            Logger.Trace( "Response from dowstats: " + str );
         }
     }
 }

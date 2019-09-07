@@ -162,7 +162,7 @@ namespace GSMasterServer.Servers
 
                 var input = Encoding.UTF8.GetString(XorBytes(buffer, 0, received - 7, XorKEY), 0, received);
 
-                Logger.Info($"Receive data from the socket: {input}");
+                Logger.Trace($"Receive data from the socket: {input}");
 
                 if (input.StartsWith(@"\auth\\gamename\"))
                 {
@@ -440,7 +440,7 @@ namespace GSMasterServer.Servers
                             // For rated games
                             if (isRateGame)
                             {
-                                Console.WriteLine("UPDATE RATING GAME " + uniqueSession);
+                                Logger.Trace("UPDATE RATING GAME " + uniqueSession);
 
                                 chatUserInfo.Game = null;
 
