@@ -139,19 +139,19 @@ namespace GSMasterServer.Data
         {
             get
             {
-                if (WinsCount > 20 && WinRate > 0.85f)
+                if (WinsCount > 150 && WinRate > 0.85f)
                     return 5;
 
-                if (WinsCount > 10 && WinRate > 0.65f)
+                if (WinsCount > 100 && WinRate > 0.65f)
                     return 4;
 
-                if (WinsCount > 5 && WinRate > 0.5f)
+                if (WinsCount > 50 && WinRate > 0.5f)
                     return 3;
 
-                if (WinsCount > 5 )
+                if (WinsCount > 25 && WinRate > 0.4f)
                     return 2;
 
-                if (WinsCount > 1)
+                if (WinsCount > 10)
                     return 1;
 
                 return 0;
