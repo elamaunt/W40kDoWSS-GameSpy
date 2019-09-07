@@ -12,6 +12,16 @@ namespace ThunderHawk.StaticClasses.Soulstorm
             return Process.GetProcessesByName("Soulstorm").Where(x => x.Id != current.Id).ToArray();
         }
 
+
+        public static void KillDowStatsProccesses()
+        {
+            var procs = Process.GetProcessesByName("ssstats");
+            foreach(var proc in procs)
+            {
+                proc.Kill();
+            }
+        }
+
         public static bool GameIsRunning()
         {
             return GetGameProcesses().Length > 0;

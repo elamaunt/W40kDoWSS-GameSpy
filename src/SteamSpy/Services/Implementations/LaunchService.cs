@@ -92,6 +92,10 @@ namespace ThunderHawk
                         if (AppSettings.ThunderHawkModAutoSwitch)
                             procParams += " -modname ThunderHawk";
 
+                        CopyHotKeysIfFirstLaunch(GamePath);
+
+                        ProcessManager.KillDowStatsProccesses();
+
                         var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
                         {
                             UseShellExecute = true,
@@ -124,6 +128,28 @@ namespace ThunderHawk
                     SteamLobbyManager.LeaveFromCurrentLobby();
                 }
             }).Unwrap();
+        }
+
+
+        private void CopyHotKeysIfFirstLaunch(string gamePath)
+        {
+            var profiles = Directory.GetDirectories(Path.Combine(gamePath, "Profiles"));
+            foreach (var profile in profiles)
+            {
+                var hotKeysPath = Path.Combine(profile, "dxp2", "KEYDEFAULTS.LUA");
+                if (File.Exists(hotKeysPath))
+                {
+                    var targetDir = Path.Combine(profile, "thunderhawk");
+                    var targetPath = Path.Combine(targetDir, "KEYDEFAULTS.LUA");
+                    if (!File.Exists(targetPath))
+                    {
+                        if (!Directory.Exists(targetDir))
+                            Directory.CreateDirectory(targetDir);
+
+                        File.Copy(hotKeysPath, targetPath, true);
+                    }
+                }
+            }
         }
 
         private void FixHosts()
