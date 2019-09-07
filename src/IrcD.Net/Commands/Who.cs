@@ -54,7 +54,7 @@ namespace IrcD.Commands
 
             if (args.Count < 1 || args[0] == "0")
             {
-                whoList = IrcDaemon.Nicks.SelectMany(n => n.Value.UserPerChannelInfos);
+                whoList = IrcDaemon.Nicks.SelectMany(n => n.Value.UserPerChannelInfos.Values);
             }
             else if (args.Count > 0 && IrcDaemon.Channels.TryGetValue(args[0], out channel))
             {
@@ -68,7 +68,7 @@ namespace IrcD.Commands
             {
                 mask = args[0];
                 var wildCard = new WildCard(mask, WildcardMatch.Anywhere);
-                whoList = IrcDaemon.Nicks.Values.Where(u => wildCard.IsMatch(u.Usermask)).SelectMany(n => n.UserPerChannelInfos);
+                whoList = IrcDaemon.Nicks.Values.Where(u => wildCard.IsMatch(u.Usermask)).SelectMany(n => n.UserPerChannelInfos.Values);
             }
 
             if (filterInvisible)

@@ -20,6 +20,7 @@
  */
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -174,10 +175,9 @@ namespace IrcD.Core
         public DateTime LastPing { get; set; }
 
 
-        public List<UserPerChannelInfo> UserPerChannelInfos { get; } = new List<UserPerChannelInfo>();
+        public ConcurrentDictionary<string, UserPerChannelInfo> UserPerChannelInfos { get; } = new ConcurrentDictionary<string, UserPerChannelInfo>();
 
-        public IEnumerable<ChannelInfo> Channels => UserPerChannelInfos.Select(upci => upci.ChannelInfo);
-    
+        public IEnumerable<ChannelInfo> Channels => UserPerChannelInfos.Select(pair => pair.Value.ChannelInfo);
 
         public List<ChannelInfo> Invited { get; } = new List<ChannelInfo>();
 
@@ -229,15 +229,12 @@ namespace IrcD.Core
         public void Remove(string message)
         {
             // Clean up channels
-            foreach (var upci in UserPerChannelInfos.Reverse<UserPerChannelInfo>())
+            foreach (var upci in UserPerChannelInfos.Select(x => x.Value).Reverse<UserPerChannelInfo>())
             {
                 // Important: remove nick first! or we end in a exception-catch endless loop
                 upci.ChannelInfo.RemoveUser(this);
-
                 IrcDaemon.Commands.Send(new QuitArgument(this, upci.ChannelInfo, message));
             }
-
-            Debug.Assert(UserPerChannelInfos.Any() == false);
 
             // Clean up server
 

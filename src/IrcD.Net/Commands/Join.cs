@@ -50,7 +50,7 @@ namespace IrcD.Commands
             // info($@"{info.Nick} {string.Join(" подключение ", args)}");
 
             foreach (var channel in from temp in GetSubArgument(args[0])
-                                    where info.UserPerChannelInfos.All(upci => upci.ChannelInfo.Name != temp)
+                                    where info.UserPerChannelInfos.All(pair => pair.Value.ChannelInfo.Name != temp)
                                     select temp)
             {
                 if (IrcDaemon.Channels.TryGetValue(channel, out ChannelInfo chan))
@@ -86,7 +86,8 @@ namespace IrcD.Commands
                 info.Game?.SetPlayerAsLeft(info);
 
                 chan.UserPerChannelInfos[info.Nick] = chanuser;
-                info.UserPerChannelInfos.Add(chanuser);
+                info.UserPerChannelInfos[info.Nick] = chanuser;
+
                 Send(new JoinArgument(info, chan, chan));
                 SendTopic(info, chan);
                 IrcDaemon.Replies.SendNamesReply(chanuser.UserInfo, chan);

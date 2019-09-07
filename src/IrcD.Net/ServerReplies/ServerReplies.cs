@@ -824,7 +824,7 @@ namespace IrcD.ServerReplies
             _response.Append(who.Nick);
             _response.Append(" :");
 
-            SendSplitted(_response.ToString(), info, who.UserPerChannelInfos.Select(ucpi => ucpi.Modes.NickPrefix + ucpi.ChannelInfo.Name), null);
+            SendSplitted(_response.ToString(), info, who.UserPerChannelInfos.Select(pair => pair.Value.Modes.NickPrefix + pair.Value.ChannelInfo.Name), null);
         }
 
         /// <summary>
