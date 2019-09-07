@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using ThunderHawk.Core;
+using ThunderHawk.StaticClasses.Soulstorm;
 using Module = Framework.Module;
 
 namespace ThunderHawk
@@ -26,7 +27,18 @@ namespace ThunderHawk
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            StaticClasses.Soulstorm.PathFinder.Find();
+            PathFinder.Find();
+
+            if (PathFinder.GamePath != null)
+            {
+                var steamworksDllPathInGameFolder = Path.Combine(PathFinder.GamePath, "Steamworks.NET.dll");
+                if (File.Exists(steamworksDllPathInGameFolder))
+                    File.Delete(steamworksDllPathInGameFolder);
+
+                var steamworksPdbPathInGameFolder = Path.Combine(PathFinder.GamePath, "Steamworks.NET.pdb");
+                if (File.Exists(steamworksPdbPathInGameFolder))
+                    File.Delete(steamworksPdbPathInGameFolder);
+            }
 
             if (Environment.Is64BitProcess)
                 File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api64.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api_th.dll"), true);

@@ -44,8 +44,32 @@ namespace ThunderHawk.Installer
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
+            if (HasAnyCyrillicChars(path))
+            {
+                MessageBox.Show("Installation path must contains only English characters");
+                InstallButton.IsEnabled = true;
+                return;
+            }
+
+            if (HasAnyFilesOrFolders(path))
+            {
+                MessageBox.Show("Installation folder must be empty");
+                InstallButton.IsEnabled = true;
+                return;
+            }
+
             Indicator.Visibility = Visibility.Visible;
             StartLoading();
+        }
+
+        private bool HasAnyFilesOrFolders(string path)
+        {
+            return Directory.EnumerateFiles(path).Any() || Directory.EnumerateDirectories(path).Any();
+        }
+
+        private bool HasAnyCyrillicChars(string path)
+        {
+            return path.Any(x => "йцукенгшщзхъфывапролджэячсмитьбюё".Contains(char.ToLowerInvariant(x)));
         }
 
         private void StartLoading()
