@@ -61,7 +61,6 @@ namespace GSMasterServer
             ChatServer chatServer = new ChatServer(bind, 6668);
             HttpServer httpServer = new HttpServer(bind, 80);
             StatsServer statsServer = new StatsServer(bind, 29920);
-
             while (true)
                 Thread.Sleep(1000);
         }
