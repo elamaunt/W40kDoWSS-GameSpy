@@ -133,7 +133,6 @@ automatch_defaults_dxp2 =
 	automatch_maps2p = 
 	{
 		"[TP MOD]edemus gamble",
-		"[TP MOD]galenas_crusade",
 		"[TP MOD]shrine of excellion",
 		"2P_Meeting_of_Minds",
 		"2P_Battle_Marshes",

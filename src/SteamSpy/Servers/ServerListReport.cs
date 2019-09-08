@@ -137,6 +137,9 @@ namespace GSMasterServer.Servers
             {
                 IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
 
+                if (e.BytesTransferred == 0)
+                    return;
+
                 byte[] receivedBytes = new byte[e.BytesTransferred];
                 Array.Copy(e.Buffer, e.Offset, receivedBytes, 0, e.BytesTransferred);
 
@@ -224,6 +227,7 @@ namespace GSMasterServer.Servers
                 LogError(Category, ex.ToString());
             }
 
+        CONTINUE:
             WaitForData();
         }
 
