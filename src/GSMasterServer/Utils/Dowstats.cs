@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Web;
 using GSMasterServer.Data;
@@ -14,6 +15,8 @@ namespace GSMasterServer.Utils
     
     public class Dowstats
     {
+        static readonly HttpClient httpClient = new HttpClient();
+        
         private static readonly string DowstatsUploadGameUrl;
         private static readonly string DowstatsUploadPlayerStatsUrl;
         private static readonly string DowstatsVersion = Environment.GetEnvironmentVariable("dowstatsVersion") ?? "108";
@@ -110,9 +113,6 @@ namespace GSMasterServer.Utils
             Logger.Trace("Start request to " + DowstatsUploadGameUrl);
             Logger.Debug($"request uri: {updateRequestBuilder.Uri}");
             IAsyncResult result = request.BeginGetResponse( OnAsyncCallback, request );
-            
-            // this line implements the timeout, if there is a timeout, the callback fires and the request becomes aborted
-            ThreadPool.RegisterWaitForSingleObject (result.AsyncWaitHandle, TimeoutCallback, request, DefaultTimeout, true);
             
             for (int i = 0; i < gameUserInfo.Length; i++)
             {
@@ -228,26 +228,23 @@ namespace GSMasterServer.Utils
             Logger.Trace("Start request to " + DowstatsUploadPlayerStatsUrl);
             Logger.Debug($"request uri: {updateRequestBuilder.Uri}");
             IAsyncResult result = request.BeginGetResponse( OnAsyncCallback, request );
-            ThreadPool.RegisterWaitForSingleObject (result.AsyncWaitHandle, TimeoutCallback, request, DefaultTimeout, true);
         }
-
         
-        private static void TimeoutCallback(object state, bool timedOut)
-        {
-            HttpWebRequest request = state as HttpWebRequest;
-            if (request != null)
-            {
-                Logger.Warn("Can't deliver stats to dowstats");
-                request.Abort();
-            }
-        }
         
         private static void OnAsyncCallback( IAsyncResult asyncResult ) {
-            var httpWebRequest = (HttpWebRequest)asyncResult.AsyncState;
-            WebResponse response = httpWebRequest.EndGetResponse( asyncResult );
-            var reader = new StreamReader( response.GetResponseStream() );
-            string str = reader.ReadToEnd();
-            Logger.Trace( "Response from dowstats: " + str );
+            try
+            {
+                var httpWebRequest = (HttpWebRequest) asyncResult.AsyncState;
+                WebResponse response = httpWebRequest.EndGetResponse(asyncResult);
+                var reader = new StreamReader(response.GetResponseStream());
+                string str = reader.ReadToEnd();
+                Logger.Trace("Response from dowstats: " + str);
+                reader.Close();
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e.ToString());
+            }
         }
     }
 }
