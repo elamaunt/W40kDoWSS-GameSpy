@@ -246,7 +246,7 @@ namespace IrcD.Core
             IrcDaemon.Users.TryRemove(ProfileId, out info);
 
             // Close connection
-            Socket.Close();
+            (info?._state as IDisposable)?.Dispose();
 
             // Ready for destruction
         }

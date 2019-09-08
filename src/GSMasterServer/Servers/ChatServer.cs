@@ -343,15 +343,10 @@ namespace GSMasterServer.Servers
             {
                 return false;
             }
-            catch (SocketException e)
+            catch (Exception ex)
             {
-                if (e.SocketErrorCode != SocketError.ConnectionAborted &&
-                    e.SocketErrorCode != SocketError.ConnectionReset)
-                {
-                    //LogError(Category, "Error sending data");
-                    //LogError(Category, String.Format("{0} {1}", e.SocketErrorCode, e));
-                }
-                
+                Logger.Error(ex);
+                state.Dispose();
                 return false;
             }
         }
@@ -378,11 +373,18 @@ namespace GSMasterServer.Servers
                 {
                     case SocketError.ConnectionReset:
                     case SocketError.Disconnecting:
-                        return;
+                        break;
                     default:
-                        Logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
-                        return;
+                        Logger.Error(e);
+                        break;
                 }
+
+                state.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+                state.Dispose();
             }
         }
 
@@ -406,6 +408,8 @@ namespace GSMasterServer.Servers
 
             protected virtual void Dispose(bool disposing)
             {
+                if (Disposing)
+                    return;
                 Disposing = true;
                 try
                 {
