@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using GSMasterServer.Services;
+using IrcNet.Tools;
 using System;
 using System.IO;
 using System.Threading.Tasks;

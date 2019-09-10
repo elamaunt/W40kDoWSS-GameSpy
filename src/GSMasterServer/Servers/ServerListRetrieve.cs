@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using GSMasterServer.Services;
 using NLog.Fluent;
+using IrcNet.Tools;
 
 namespace GSMasterServer.Servers
 {

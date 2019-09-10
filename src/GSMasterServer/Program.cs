@@ -1,9 +1,9 @@
 ﻿using GSMasterServer.Servers;
-using GSMasterServer.Services;
 using System;
 using System.IO;
 using System.Net;
 using System.Threading;
+using IrcNet.Tools;
 
 namespace GSMasterServer
 {
@@ -61,7 +61,7 @@ namespace GSMasterServer
             ChatServer chatServer = new ChatServer(bind, 6668);
             HttpServer httpServer = new HttpServer(bind, 80);
             StatsServer statsServer = new StatsServer(bind, 29920);
-            DiscordServer discordServer = new DiscordServer();
+            //DiscordServer discordServer = new DiscordServer();
             while (true)
                 Thread.Sleep(1000);
         }

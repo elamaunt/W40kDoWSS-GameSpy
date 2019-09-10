@@ -31,6 +31,7 @@ using IrcD.Commands.Arguments;
 using IrcD.Core.Utils;
 using IrcD.Modes;
 using IrcD.Tools;
+using IrcNet.Tools;
 using Enumerable = System.Linq.Enumerable;
 
 namespace IrcD.Core
@@ -126,7 +127,7 @@ namespace IrcD.Core
 
         private void RegisterComplete()
         {
-            Logger.Log($"New User: {Usermask}");
+            Logger.Info($"New User: {Usermask}");
 
             //IrcDaemon.Replies.RegisterComplete(this);
             Registered = true;
@@ -207,7 +208,7 @@ namespace IrcD.Core
         public override int WriteLine(StringBuilder line)
         {
 #if DEBUG
-            Logger.Log(line.ToString(), location: "OUT:" + Nick);
+            Logger.Debug(line.ToString() + "OUT:" + Nick);
 #endif
             // Костыль дла переопределения отправки
             return _send(_state, line + IrcDaemon.ServerCrLf);

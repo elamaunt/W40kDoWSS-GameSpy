@@ -8,6 +8,7 @@ using System.Web;
 using GSMasterServer.Data;
 using GSMasterServer.Servers;
 using GSMasterServer.Services;
+using IrcNet.Tools;
 using NLog.Fluent;
 
 namespace GSMasterServer.Utils
@@ -243,7 +244,7 @@ namespace GSMasterServer.Utils
             }
             catch (Exception e)
             {
-                Logger.Warn(e.ToString());
+                Logger.Warn(e);
             }
         }
     }

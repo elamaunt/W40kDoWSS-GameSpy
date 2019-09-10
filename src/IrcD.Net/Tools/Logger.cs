@@ -1,54 +1,72 @@
-﻿/*
- *  The ircd.net project is an IRC deamon implementation for the .NET Plattform
- *  It should run on both .NET and Mono
- *  
- * Copyright (c) 2009-2017, Thomas Bruderer, apophis@apophis.ch All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- * * Redistributions of source code must retain the above copyright notice, this
- *   list of conditions and the following disclaimer.
- *   
- * * Redistributions in binary form must reproduce the above copyright notice,
- *   this list of conditions and the following disclaimer in the documentation
- *   and/or other materials provided with the distribution.
- *
- * * Neither the name of ArithmeticParser nor the names of its
- *   contributors may be used to endorse or promote products derived from
- *   this software without specific prior written permission.
- */
+﻿using NLog;
+using System;
+using System.IO;
+using System.Runtime.CompilerServices;
 
-using System.Diagnostics;
-using System.Text;
-
-namespace IrcD.Tools
+namespace IrcNet.Tools
 {
     public static class Logger
     {
-        public static void Log(string message, int level = 4, string location = null)
+        //LogLevel: 6
+        public static void Fatal(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
         {
-
-           //var stackTrace = new StackTrace();
-            //var callerFrame = stackTrace.GetFrame(1);
-
-            //Console.WriteLine("{0} in {2}: {1}", level, message, location ?? FormatLocation(callerFrame));
+            Write(obj, LogLevel.Fatal, callerFilePath, callerMemberName, sourceLineNumber);
         }
 
-        public static string FormatLocation(StackFrame frame)
+        //LogLevel: 5
+        public static void Error(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
         {
-            StringBuilder location = new StringBuilder();
+            Write(obj, LogLevel.Error, callerFilePath, callerMemberName, sourceLineNumber);
+        }
 
-            location.Append(frame.GetMethod().DeclaringType);
-            location.Append("=>");
-            location.Append(frame.GetMethod());
-            location.Append(" [");
-            location.Append(frame.GetILOffset());
-            location.Append(":");
-            location.Append(frame.GetNativeOffset());
-            location.Append("]");
+        //LogLevel: 4
+        public static void Warn(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
+        {
+            Write(obj, LogLevel.Warn, callerFilePath, callerMemberName, sourceLineNumber);
+        }
 
-            return location.ToString();
+        //LogLevel: 3
+        public static void Info(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
+        {
+            Write(obj, LogLevel.Info, callerFilePath, callerMemberName, sourceLineNumber);
+        }
+
+        //LogLevel: 2
+        public static void Debug(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
+        {
+            Write(obj, LogLevel.Debug, callerFilePath, callerMemberName, sourceLineNumber);
+        }
+
+        //LogLevel: 1
+        public static void Trace(object obj,
+            [CallerFilePath]string callerFilePath = "",
+            [CallerMemberName]string callerMemberName = "",
+            [CallerLineNumber]int sourceLineNumber = 0)
+        {
+            Write(obj, LogLevel.Trace, callerFilePath, callerMemberName, sourceLineNumber);
+        }
+
+
+        private static void Write(object obj, LogLevel logLevel, string callerFilePath, string callerMemberName, int sourceLineNumber)
+        {
+            var name = $"{Path.GetFileName(callerFilePath)} line {sourceLineNumber} / {callerMemberName}";
+            var logger = LogManager.GetLogger(name);
+            logger.Log(logLevel, obj);
         }
     }
 }

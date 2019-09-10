@@ -13,6 +13,7 @@ using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using GSMasterServer.Services;
+using IrcNet.Tools;
 
 namespace GSMasterServer.Servers
 {

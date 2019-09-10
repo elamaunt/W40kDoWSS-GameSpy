@@ -27,6 +27,7 @@ using IrcD.Core;
 using IrcD.Core.Utils;
 using IrcD.ServerReplies;
 using IrcD.Tools;
+using IrcNet.Tools;
 #if DEBUG
 using System.Text;
 
@@ -97,7 +98,7 @@ namespace IrcD.Commands
             else
             {
 #if DEBUG
-                Logger.Log("Command " + command + "is not yet implemented");
+                Logger.Warn("Command " + command + "is not yet implemented");
 #endif
 
                 if (info.Registered)
@@ -117,7 +118,7 @@ namespace IrcD.Commands
                 parsedLine.Append("-<" + arg + ">");
             }
 
-            Logger.Log(parsedLine.ToString());
+            Logger.Debug(parsedLine.ToString());
 #endif
         }
 

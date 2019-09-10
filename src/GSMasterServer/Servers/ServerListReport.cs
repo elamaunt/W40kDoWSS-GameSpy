@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using GSMasterServer.Services;
+using IrcNet.Tools;
 
 namespace GSMasterServer.Servers
 {

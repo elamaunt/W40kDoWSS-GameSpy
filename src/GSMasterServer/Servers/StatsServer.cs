@@ -15,6 +15,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using GSMasterServer.Services;
 using NLog.Fluent;
+using IrcNet.Tools;
+
 
 namespace GSMasterServer.Servers
 {
@@ -683,7 +685,7 @@ namespace GSMasterServer.Servers
                     case SocketError.Disconnecting:
                         return;
                     default:
-                        Logger.Error("Error sending data. SocketErrorCode: {e.SocketErrorCode}");
+                        Logger.Error($"Error sending data. SocketErrorCode: {e.SocketErrorCode}");
                         return;
                 }
             }

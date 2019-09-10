@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading;
 using GSMasterServer.Services;
 using NLog.Fluent;
+using IrcNet.Tools;
 
 namespace GSMasterServer.Servers
 {
@@ -66,7 +67,8 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Unable to bind Server List Retrieval to {info.Address}:{info.Port}");
+                var ex = new Exception($"Unable to bind Server List Retrieval to {info.Address}:{info.Port}", e);
+                Logger.Error(ex);
                 return;
             }
 
@@ -111,8 +113,8 @@ namespace GSMasterServer.Servers
             {
                 if (e.SocketErrorCode == SocketError.NotConnected)
                     return;
-
-                Logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
+                var ex = new Exception($"Error receiving data. SocketErrorCode: {e.SocketErrorCode}", e);
+                Logger.Error(ex);
             }
         }
         
@@ -278,7 +280,8 @@ namespace GSMasterServer.Servers
                         state = null;
                         return;
                     default:
-                        Logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
+                        var ex = new Exception($"Error receiving data. SocketErrorCode: {e.SocketErrorCode}", e);
+                        Logger.Error(ex);
                         if (state != null)
                             state.Dispose();
                         state = null;
@@ -287,7 +290,8 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Logger.Error(e, "Error receiving data");
+                var ex = new Exception("Error receiving data", e);
+                Logger.Error(ex);
             }
 
             // and we wait for more data...

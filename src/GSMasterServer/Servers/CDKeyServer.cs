@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using GSMasterServer.Services;
+using IrcNet.Tools;
 
 namespace GSMasterServer.Servers
 {
@@ -94,7 +95,8 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Unable to bind CD Key Server to {info.Address}:{info.Port}");
+                var ex = new Exception($"Unable to bind CD Key Server to {info.Address}:{info.Port}", e);
+                Logger.Error(ex);
                 return;
             }
 
@@ -112,7 +114,8 @@ namespace GSMasterServer.Servers
             }
             catch (SocketException e)
             {
-                Logger.Error(e, "Error receiving data");
+                var ex = new Exception("Error receiving data", e);
+                Logger.Error(ex);
             }
         }
 

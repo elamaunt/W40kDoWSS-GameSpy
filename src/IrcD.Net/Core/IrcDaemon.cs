@@ -28,6 +28,7 @@ using IrcD.Modes.ChannelRanks;
 using IrcD.Modes.UserModes;
 using IrcD.ServerReplies;
 using IrcD.Tools;
+using IrcNet.Tools;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -318,8 +319,8 @@ namespace IrcD.Core
             }
             catch (Exception e)
             {
-                Logger.Log("Unknown ERROR: " + e.Message, 4, "E2" + userInfo.Nick);
-                Logger.Log("Trace: " + e.StackTrace);
+                var ex = new Exception("Unknown error in ProcessSocketMessage", e);
+                Logger.Warn(ex);
             }
            
         }
@@ -351,7 +352,7 @@ namespace IrcD.Core
         {
 
 #if DEBUG
-            Logger.Log(line, location: "IN:" + info.Nick);
+            Logger.Debug(line + "IN: " + info.Nick);
 #endif
 
             if (line.Length > Options.MaxLineLength)
@@ -427,7 +428,7 @@ namespace IrcD.Core
             }
             catch (IndexOutOfRangeException)
             {
-                Logger.Log("Invalid Message: " + line);
+                Logger.Warn("Invalid Message: " + line);
                 // invalid message
             }
 
