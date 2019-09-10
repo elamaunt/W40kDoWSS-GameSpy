@@ -195,7 +195,8 @@ namespace GSMasterServer.Servers
                             }
                             else
                             {
-                                IrcDaemon.ProcessSocketMessage(state.UserInfo, asciValue);
+                                if (!state.Disposing && state.UserInfo != null)
+                                    IrcDaemon.ProcessSocketMessage(state.UserInfo, asciValue);
                             }
                         }
                     }
@@ -252,8 +253,9 @@ namespace GSMasterServer.Servers
                                 
                                 goto CONTINUE;
                             }
-                            
-                            IrcDaemon.ProcessSocketMessage(state.UserInfo, utf8alue);
+
+                            if (!state.Disposing && state.UserInfo != null)
+                                IrcDaemon.ProcessSocketMessage(state.UserInfo, utf8alue);
                         }
                     }
                 }

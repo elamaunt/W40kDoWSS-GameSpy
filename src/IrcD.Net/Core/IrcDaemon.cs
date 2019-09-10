@@ -327,7 +327,8 @@ namespace IrcD.Core
 
         public void RemoveUserFromAllChannels(UserInfo userInfo)
         {
-            ProcessSocketMessage(userInfo, "QUIT :Later!");
+            if (userInfo != null)
+                ProcessSocketMessage(userInfo, "QUIT :Later!");
         }
 
         public ChannelInfo[] GetAutoRooms()
