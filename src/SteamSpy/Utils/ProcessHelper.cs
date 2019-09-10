@@ -22,7 +22,7 @@ namespace ThunderHawk.Utils
                 return;
 
             for (int i = 0; i < processes.Length; i++)
-                ShowWindow(processes[i].MainWindowHandle, WindowShowStyle.Restore);
+                ShowWindow(processes[i].MainWindowHandle, WindowShowStyle.Show);
         }
 
         /// <summary>Enumeration of the different ways of showing a window using
