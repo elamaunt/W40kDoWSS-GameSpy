@@ -1,8 +1,9 @@
-﻿using GSMasterServer.Data;
+﻿extern alias reality;
+using GSMasterServer.Data;
 using GSMasterServer.Utils;
 using IrcD.Core;
 using IrcD.Core.Utils;
-using Reality.Net.GameSpy.Servers;
+using reality:: Reality.Net.GameSpy.Servers;
 using System;
 using System.IO;
 using System.Net;

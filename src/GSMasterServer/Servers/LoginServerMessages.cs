@@ -1,7 +1,8 @@
-﻿using GSMasterServer.Data;
+﻿extern alias reality;
+using GSMasterServer.Data;
 using GSMasterServer.Utils;
-using Reality.Net.Extensions;
-using Reality.Net.GameSpy.Servers;
+using reality::Reality.Net.Extensions;
+using reality::Reality.Net.GameSpy.Servers;
 using System;
 using System.Collections.Generic;
 using System.Net;

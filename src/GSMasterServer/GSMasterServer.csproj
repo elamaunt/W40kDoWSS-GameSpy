@@ -75,6 +75,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Discord.Net" Version="2.1.1" />
     <PackageReference Include="LiteDB" Version="4.1.4" />
     <PackageReference Include="NLog" Version="4.6.6" />
     <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
@@ -88,6 +89,7 @@
   <ItemGroup>
     <Reference Include="Reality.Net">
       <HintPath>External\Reality.Net.dll</HintPath>
+      <Aliases>reality</Aliases>
     </Reference>
   </ItemGroup>
 
