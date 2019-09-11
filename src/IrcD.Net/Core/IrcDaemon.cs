@@ -48,8 +48,6 @@ namespace IrcD.Core
         const char PrefixCharacter = ':';
         const int MaxBufferSize = 2048;
 
-        public ConcurrentDictionary<Game, DateTime> Games { get; } = new ConcurrentDictionary<Game, DateTime>();
-
         // Main Datastructures
         public ConcurrentDictionary<long, UserInfo> Users { get; } = new ConcurrentDictionary<long, UserInfo>();
 
@@ -101,8 +99,6 @@ namespace IrcD.Core
         }
 
         #endregion
-
-        public Action<Game> GameNoWinnersHandler { get; set; }
 
         public IrcDaemon(IrcMode ircMode = IrcMode.Rfc1459)
         {
@@ -291,11 +287,11 @@ namespace IrcD.Core
                 //info.WriteServerPrivateMessage($"Opened Automatchmaking rooms now {rooms.Length} with players {rooms.Sum(x => x.Value.Users.Count())}");
 
                 info.WriteServerPrivateMessage($"Добро пожаловать на сервер, {info.Nick}!");
-                info.WriteServerPrivateMessage($"Чтобы играть РЕЙТИНГОВЫЕ игры вам необходимо НЕ использовать галочку \"Игра на счет\" во время запуска системы автоматча.");
-                info.WriteServerPrivateMessage($"Статистика начисляется только на последней версии ThunderHawk мода при игре без игроков, управляемых компьютером.");
+                info.WriteServerPrivateMessage($"Поиск игр в автоподборе по параметру \"Игра на счет\" теперь исправлен и разделен. Рейтинг меняется, только в том случае, если галочка стоит.");
+                info.WriteServerPrivateMessage($"В оповещениях также указывается тип игры.");
+                info.WriteServerPrivateMessage($"Статистика начисляется на последней версии ThunderHawk мода при игре без игроков, управляемых компьютером.");
 
-                if (Games.Count > 0)
-                    info.WriteServerPrivateMessage($"Прямо сейчас идет игр в авто {Games.Count}, с участием игроков {Games.Sum(x => x.Key.Users.Count)}");
+                info.WriteServerPrivateMessage($"Всего игроков на сервере в данный момент {Users.Count}");
 
                 if (rooms.Length > 0)
                     info.WriteServerPrivateMessage($"Открытых игр в авто {rooms.Length}, количество игроков в поиске игры {rooms.Sum(x => x.Value.Users.Count())}");
@@ -333,12 +329,12 @@ namespace IrcD.Core
 
         public ChannelInfo[] GetAutoRooms()
         {
-            return Channels.Where(x => x.Key.StartsWith("#GSP")).Select(x => x.Value).ToArray();
+            return Channels.Where(x => x.Key.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase)).Select(x => x.Value).ToArray();
         }
 
         public ChannelInfo[] GetMainRooms()
         {
-            return Channels.Where(x => x.Key.StartsWith("#GPG")).Select(x => x.Value).ToArray();
+            return Channels.Where(x => x.Key.StartsWith("#GPG", StringComparison.OrdinalIgnoreCase)).Select(x => x.Value).ToArray();
         }
 
         public int GetChannelUsersCount(string channelName)
@@ -447,6 +443,23 @@ namespace IrcD.Core
             }
         }
 
+        public void SendToUserOrOnEnterInChat(long profileId, string message)
+        {
+            if (Users.TryGetValue(profileId, out UserInfo user))
+            {
+               var channel = user.UserPerChannelInfos.FirstOrDefault(x => x.Key?.StartsWith("#GPG", StringComparison.OrdinalIgnoreCase) ?? false).Value;
+
+               if (channel != null)
+               {
+                   user.WriteServerPrivateMessage(message);
+               }
+               else
+               {
+                   user.LobbyChatEntranceMessage = message;
+               }
+            }
+        }
+
         public void SendToUser(long profileId, string message)
         {
             if (Users.TryGetValue(profileId, out UserInfo user))
@@ -536,28 +549,6 @@ namespace IrcD.Core
         public void ConnectToServer()
         {
             //
-        }
-
-        internal void RegisterRatingGame(UserInfo[] users)
-        {
-            for (int i = 0; i < users.Length; i++)
-            {
-                var user = users[i];
-                user.Game?.SetPlayerAsLeft(user);
-            }
-
-            Games.TryAdd(new Game(this, users), DateTime.Now);
-        }
-
-        internal bool CleanGame(Game game)
-        {
-            return Games.TryRemove(game, out DateTime time);
-        }
-
-        internal void CleanGameWithoutWinners(Game game)
-        {
-            if (Games.TryRemove(game, out DateTime time))
-                GameNoWinnersHandler?.Invoke(game);
         }
     }
 }

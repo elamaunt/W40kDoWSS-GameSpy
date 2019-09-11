@@ -77,8 +77,6 @@ namespace IrcD.Core
         public string Host { get; private set; }
         public string AwayMessage { get; set; }
 
-        public Game Game { get; set; }
-
         public List<string> Capabilities { get; private set; }
 
         private IEnumerable<string> _languages = new List<string> { "en" };
@@ -189,6 +187,7 @@ namespace IrcD.Core
         public DateTime Created { get; private set; }
         public string UserFlags { get; set; }
         public string UserStats { get; set; }
+        public string LobbyChatEntranceMessage { get;  set; }
 
         public override string ToString()
         {

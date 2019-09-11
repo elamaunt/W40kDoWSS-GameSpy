@@ -283,6 +283,13 @@ namespace GSMasterServer.Servers
                     server.Set(serverVarsSplit[i], serverVarsSplit[i + 1]);
             }
 
+            var gameType = server["gametype"];
+
+            var isRanked = "ranked".Equals(gameType, StringComparison.OrdinalIgnoreCase);
+
+            if (isRanked)
+                server["score_"] = ServerContext.ChatServer?.CurrentRating ?? "1000";
+
             var gamename = server.Get<string>("gamename");
 
             if (server.Get<string>("statechanged") == "3" && gamename.Equals("whamdowfram", StringComparison.Ordinal))
@@ -339,7 +346,7 @@ namespace GSMasterServer.Servers
                 var hostname = server.Get<string>("hostname");
 
                 if (gamename == "whamdowfram")
-                    ServerContext.ChatServer.SendAutomatchGameBroadcast(hostname, int.Parse(server.Get<string>("maxplayers")));
+                    ServerContext.ChatServer.SendAutomatchGameBroadcast(hostname, int.Parse(server.Get<string>("maxplayers")), gameType);
             }
 
             return true;

@@ -17,7 +17,7 @@ namespace GSMasterServer.Utils
 
         public static long CalculateELOdelta(long teamOneRating, long teamTwoRating, GameOutcome gameResult)
         {
-            long eloK = 32L;
+            long eloK = 40L;
 
             return (long)(eloK * ((long)gameResult - ExpectationToWin(teamOneRating, teamTwoRating)));
         }

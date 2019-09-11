@@ -39,11 +39,6 @@ namespace IrcD.Commands
         {
             var message = args.Count > 0 ? args.First() : IrcDaemon.Options.StandardQuitMessage;
             info.Remove(message);
-
-            if (info.Game != null)
-            {
-                info.Game.SetPlayerAsLeft(info);
-            }
         }
 
         protected override int PrivateSend(CommandArgument commandArgument)

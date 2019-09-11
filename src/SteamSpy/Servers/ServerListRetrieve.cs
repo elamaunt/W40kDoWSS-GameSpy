@@ -532,9 +532,6 @@ namespace GSMasterServer.Servers
 
                 var channelHash = ChatCrypt.PiStagingRoomHash("127.0.0.1", "127.0.0.1", retranslationPort);
 
-                // start connection establishment
-                SteamNetworking.SendP2PPacket(server.HostSteamId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
-
                 IDByChannelCache[channelHash] = server.HostSteamId;
                 ChannelByIDCache[server.HostSteamId] = channelHash;
                 

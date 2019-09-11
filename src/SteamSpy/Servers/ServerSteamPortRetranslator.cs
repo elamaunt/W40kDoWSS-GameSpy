@@ -40,6 +40,9 @@ namespace GSMasterServer.Servers
             : this()
         {
             RemoteUserSteamId = userId;
+
+            // start connection establishment
+            SteamNetworking.SendP2PPacket(userId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
         }
 
         public ServerSteamPortRetranslator()
@@ -210,6 +213,7 @@ namespace GSMasterServer.Servers
                         AppendServerProperty(builder, "mapname");
                         AppendServerProperty(builder, "password");
                         AppendServerProperty(builder, "gamever");
+                        AppendServerProperty(builder, "gametype");
                         AppendServerProperty(builder, "numplayers");
                         AppendServerProperty(builder, "maxplayers");
                         AppendServerProperty(builder, "score_");

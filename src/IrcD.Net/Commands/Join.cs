@@ -22,6 +22,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using IrcD.Channel;
 using IrcD.Commands.Arguments;
 using IrcD.Core;
@@ -50,7 +51,7 @@ namespace IrcD.Commands
             // info($@"{info.Nick} {string.Join(" подключение ", args)}");
 
             foreach (var channel in from temp in GetSubArgument(args[0])
-                                    where info.UserPerChannelInfos.All(pair => pair.Value.ChannelInfo.Name != temp)
+                                    where info.UserPerChannelInfos.All(pair => pair.Key != temp)
                                     select temp)
             {
                 if (IrcDaemon.Channels.TryGetValue(channel, out ChannelInfo chan))
@@ -82,16 +83,23 @@ namespace IrcD.Commands
                     chanuser.Modes.Add(IrcDaemon.ModeFactory.GetChannelRank('o'));
                 }
 
-                // Для завершения игры в авто после входа в чат
-                info.Game?.SetPlayerAsLeft(info);
-
                 chan.UserPerChannelInfos[info.Nick] = chanuser;
-                info.UserPerChannelInfos[info.Nick] = chanuser;
+                info.UserPerChannelInfos[chan.Name] = chanuser;
 
                 Send(new JoinArgument(info, chan, chan));
                 SendTopic(info, chan);
                 IrcDaemon.Replies.SendNamesReply(chanuser.UserInfo, chan);
                 IrcDaemon.Replies.SendEndOfNamesReply(info, chan);
+
+                var message = info.LobbyChatEntranceMessage;
+                if (message != null)
+                {
+                    if (chan.Name?.StartsWith("#GPG", System.StringComparison.OrdinalIgnoreCase) ?? false)
+                    {
+                        info.LobbyChatEntranceMessage = null;
+                        Task.Delay(2000).ContinueWith(t => info.WriteServerPrivateMessage(message));
+                    }
+                }
             }
         }
 

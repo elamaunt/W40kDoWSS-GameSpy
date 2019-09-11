@@ -293,11 +293,13 @@ namespace GSMasterServer.Servers
                         var mod = dictionary["Mod"];
                         var modVersion = dictionary["ModVer"];
 
+#if !SPACEWAR
                         if (!"ThunderHawk".Equals(mod, StringComparison.OrdinalIgnoreCase))
                             return;
 
                         if (!"1.0a".Equals(modVersion, StringComparison.OrdinalIgnoreCase))
                             return;
+#endif
 
                         var playersCount = int.Parse(dictionary["Players"]);
 
@@ -432,83 +434,75 @@ namespace GSMasterServer.Servers
                             }
                         }
                         
-                        bool isRateGame = false;
+                        bool isRateGame = dictionary["Ladder"] == "1";
 
-                        if (ChatServer.IrcDaemon.Users.TryGetValue(state.ProfileId, out UserInfo chatUserInfo))
+                        if (isRateGame)
                         {
-                            var game = chatUserInfo.Game;
-                            isRateGame = game != null && game.Clean();
-
-                            // For rated games
-                            if (isRateGame)
+                            // Update winstreaks for 1v1 only
+                            if (usersGameInfos.Length == 2)
                             {
-                                Logger.Trace("UPDATE RATING GAME " + uniqueSession);
+                                UpdateStreak(usersGameInfos[0]);
+                                UpdateStreak(usersGameInfos[1]);
+                            }
 
-                                chatUserInfo.Game = null;
+                            var groupedTeams = usersGameInfos.GroupBy(x => x.Team).Select(x => x.ToArray()).ToArray();
 
-                                var usersInGame = game.UsersInGame;
+                            var players1Team = groupedTeams[0];
+                            var players2Team = groupedTeams[1];
 
-                                if (usersGameInfos.Select(x => x.Profile.Id).OrderBy(x => x).SequenceEqual(usersInGame.OrderBy(x => x)))
-                                {
-                                    // Update winstreaks for 1v1 only
-                                    if (usersInGame.Length == 2)
-                                    {
-                                        UpdateStreak(usersGameInfos[0]);
-                                        UpdateStreak(usersGameInfos[1]);
-                                    }
+                            Func<ProfileDBO, long> scoreSelector = null;
+                            Action<ProfileDBO, long> scoreUpdater = null;
 
-                                    var groupedTeams = usersGameInfos.GroupBy(x => x.Team).Select(x => x.ToArray()).ToArray();
+                            ReatingGameType type = ReatingGameType.Unknown;
 
-                                    var players1Team = groupedTeams[0];
-                                    var players2Team = groupedTeams[1];
+                            switch (usersGameInfos.Length)
+                            {
+                                case 2:
+                                    scoreSelector = StatsDelegates.Score1v1Selector;
+                                    scoreUpdater = StatsDelegates.Score1v1Updated;
+                                    type = ReatingGameType.Rating1v1;
+                                    break;
+                                case 4:
+                                    scoreSelector = StatsDelegates.Score2v2Selector;
+                                    scoreUpdater = StatsDelegates.Score2v2Updated;
+                                    type = ReatingGameType.Rating2v2;
+                                    break;
+                                case 6:
+                                case 8:
+                                    type = ReatingGameType.Rating3v3_4v4;
+                                    scoreSelector = StatsDelegates.Score3v3Selector;
+                                    scoreUpdater = StatsDelegates.Score3v3Updated;
+                                    break;
+                                default:
+                                    goto UPDATE;
+                            }
 
-                                    Func<ProfileDBO, long> scoreSelector = null;
-                                    Action<ProfileDBO, long> scoreUpdater = null;
+                            var team0score = (long)players1Team.Average(x => scoreSelector(x.Profile));
+                            var team1score = (long)players2Team.Average(x => scoreSelector(x.Profile));
 
-                                    ReatingGameType type = ReatingGameType.Unknown;
+                            var isFirstTeamResult = players1Team.Any(x => x.FinalState == PlayerFinalState.Winner);
+                            var delta = EloRating.CalculateELOdelta(team0score, team1score, isFirstTeamResult ? EloRating.GameOutcome.Win : EloRating.GameOutcome.Loss);
 
-                                    switch (usersInGame.Length)
-                                    {
-                                        case 2:
-                                            scoreSelector = StatsDelegates.Score1v1Selector;
-                                            scoreUpdater = StatsDelegates.Score1v1Updated;
-                                            type = ReatingGameType.Rating1v1;
-                                            break;
-                                        case 4:
-                                            scoreSelector = StatsDelegates.Score2v2Selector;
-                                            scoreUpdater = StatsDelegates.Score2v2Updated;
-                                            type = ReatingGameType.Rating2v2;
-                                            break;
-                                        case 6:
-                                        case 8:
-                                            type = ReatingGameType.Rating3v3_4v4;
-                                            scoreSelector = StatsDelegates.Score3v3Selector;
-                                            scoreUpdater = StatsDelegates.Score3v3Updated;
-                                            break;
-                                        default:
-                                            goto UPDATE;
-                                    }
+                            for (int i = 0; i < players1Team.Length; i++)
+                            {
+                                var rx = delta;
 
-                                    var team0score = (long)players1Team.Average(x => scoreSelector(x.Profile));
-                                    var team1score = (long)players2Team.Average(x => scoreSelector(x.Profile));
+                                rx = CorrectDelta(rx, team0score, team1score);
 
-                                    var isFirstTeamResult = players1Team.Any(x => x.FinalState == PlayerFinalState.Winner);
-                                    var delta = EloRating.CalculateELOdelta(team0score, team1score, isFirstTeamResult ? EloRating.GameOutcome.Win : EloRating.GameOutcome.Loss);
+                                players1Team[i].Delta = rx;
+                                players1Team[i].RatingGameType = type;
+                                scoreUpdater(players1Team[i].Profile, Math.Max(1000L, scoreSelector(players1Team[i].Profile) + rx));
+                            }
 
-                                    for (int i = 0; i < players1Team.Length; i++)
-                                    {
-                                        players1Team[i].Delta = delta;
-                                        players1Team[i].RatingGameType = type;
-                                        scoreUpdater(players1Team[i].Profile, Math.Max(1000L, scoreSelector(players1Team[i].Profile) + delta));
-                                    }
+                            for (int i = 0; i < players2Team.Length; i++)
+                            {
+                                var rx = -delta;
 
-                                    for (int i = 0; i < players2Team.Length; i++)
-                                    {
-                                        players2Team[i].Delta = -delta;
-                                        players2Team[i].RatingGameType = type;
-                                        scoreUpdater(players2Team[i].Profile, Math.Max(1000L, scoreSelector(players2Team[i].Profile) - delta));
-                                    }
-                                }
+                                rx = CorrectDelta(rx, team0score, team1score);
+
+                                players2Team[i].Delta = rx;
+                                players2Team[i].RatingGameType = type;
+                                scoreUpdater(players2Team[i].Profile, Math.Max(1000L, scoreSelector(players2Team[i].Profile) + rx));
                             }
                         }
 
@@ -529,13 +523,13 @@ namespace GSMasterServer.Servers
                                         case ReatingGameType.Unknown:
                                             break;
                                         case ReatingGameType.Rating1v1:
-                                            ChatServer.IrcDaemon.SendToUser(profile.Id, $@"Ваш рейтинг 1v1 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score1v1}.");
+                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChat(profile.Id, $@"Ваш рейтинг 1v1 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score1v1}.");
                                             break;
                                         case ReatingGameType.Rating2v2:
-                                            ChatServer.IrcDaemon.SendToUser(profile.Id, $@"Ваш рейтинг 2v2 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score2v2}.");
+                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChat(profile.Id, $@"Ваш рейтинг 2v2 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score2v2}.");
                                             break;
                                         case ReatingGameType.Rating3v3_4v4:
-                                            ChatServer.IrcDaemon.SendToUser(profile.Id, $@"Ваш рейтинг 3v3/4v4 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score3v3}.");
+                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChat(profile.Id, $@"Ваш рейтинг 3v3/4v4 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score3v3}.");
                                             break;
                                         default:
                                             break;
@@ -586,6 +580,34 @@ namespace GSMasterServer.Servers
 
             // and we wait for more data...
             CONTINUE: WaitForData(state);
+        }
+
+        private long CorrectDelta(long rx, long team0score, long team1score)
+        {
+            // Correct rating delta for good players which were beaten by smurfers
+
+            if (rx > 0)
+                return rx;
+
+            if (team0score < 1100 || team1score < 1100)
+            {
+                if (rx < -15)
+                    return -15;
+            }
+
+            if (team0score < 1200 || team1score < 1200)
+            {
+                if (rx < -20)
+                    return -20;
+            }
+
+            if (team0score < 1300 || team1score < 1300)
+            {
+                if (rx < -25)
+                    return -25;
+            }
+
+            return rx;
         }
 
         private string GetPidFromInput(string input, int start)

@@ -1,6 +1,5 @@
 ﻿using GSMasterServer.Data;
 using GSMasterServer.Utils;
-using ThunderHawk.Utils;
 using Steamworks;
 using System;
 using System.IO;
@@ -8,7 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using ThunderHawk.Core;
+using ThunderHawk.Utils;
 
 namespace GSMasterServer.Servers
 {
@@ -19,6 +18,7 @@ namespace GSMasterServer.Servers
         Socket _serverSocket;
         Socket _newPeerAceptingsocket;
 
+        public string CurrentRating { get; private set; }
         public string ChatNick { get; private set; }
         public readonly int[] ChatRoomPlayersCounts = new int[10];
 
@@ -27,6 +27,8 @@ namespace GSMasterServer.Servers
         
         SocketState _currentClientState;
         private const string HOST_ADDRESS_TOKEN = ";16777343;";
+
+
 
         public ChatServerRetranslator(IPAddress address, ushort port)
         {
@@ -218,8 +220,10 @@ namespace GSMasterServer.Servers
                 }
                 
                 var utf8value = Encoding.UTF8.GetString(bytes);
-
+                
                 Log(Category, utf8value);
+
+                // ":Bambochuk!Xu4FpqOa9X|2@192.168.159.128 JOIN #GSP!whamdowfr!76561198001658409\r\n:s 702 #GPG!1 #GPG!1 Bambochuk BCAST :\\b_flags\\s\r\n:s 702 #GSP!whamdowfr!76561198001658409 #GSP!whamdowfr!76561198001658409 Bambochuk BCAST :\\b_flags\\s\r\n:Bambochuk!Xu4FpqOa9X|2@192.168.159.128 PART #GSP!whamdowfr!76561198001658409 :Leaving\r\n:s 702 #GPG!1 #GPG!1 Bambochuk BCAST :\\b_flags\\\r\n"
 
                 if (utf8value.StartsWith(":s 705", StringComparison.OrdinalIgnoreCase))
                 {
@@ -266,7 +270,10 @@ namespace GSMasterServer.Servers
                     if (steamId != SteamUser.GetSteamID())
                     {
                         if (ServerListRetrieve.ChannelByIDCache.TryGetValue(steamId, out string roomHash))
+                        {
+                            PortBindingManager.AddOrUpdatePortBinding(steamId);
                             utf8value = utf8value.Replace(stringSteamId, ServerListRetrieve.ChannelByIDCache[steamId]);
+                        }
                         else
                             utf8value = utf8value.Replace(stringSteamId, ServerListReport.CurrentUserRoomHash);
                     }
@@ -421,8 +428,36 @@ namespace GSMasterServer.Servers
 
                             Log("CHATDATA", utf8value);
 
+                            // GETCKEY #GPG!1 * 026 0 :\\username\\b_flags\r\nSETCKEY #GPG!1 elamaunt :\\b_stats\\3|1000|0|\r\nGETCKEY #GPG!1 * 027 0 :\\b_stats\r\n
+
+                            if (utf8value.StartsWith("GETCKEY", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var split = utf8value.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                                if (split.Length > 2)
+                                {
+                                    var command = split[1];
+
+                                    split = command.Split(' ');
+
+                                    if (split.Length == 4 && split[0] == "SETCKEY" && split[3].StartsWith(":\\b_stats\\", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        split = split[3].Split('|');
+
+                                        if (split.Length > 1 && int.TryParse(split[1], out int rating))
+                                            CurrentRating = split[1];
+                                    }
+                                }
+
+                                SendToServerSocket(ref state, bytes);
+
+                                goto CONTINUE;
+                            }
+
                             if (utf8value.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase))
                             {
+                                CurrentRating = null;
+
                                 var nick = utf8value.Split(' ')[2];
 
                                 ChatNick = nick;
@@ -591,14 +626,14 @@ namespace GSMasterServer.Servers
             SendToServerSocket(ref state, $@"BROADCAST :{message}".ToUTF8Bytes());
         }
 
-        public void SendAutomatchGameBroadcast(string hostname, int maxPlayers)
+        public void SendAutomatchGameBroadcast(string hostname, int maxPlayers, string gameType)
         {
             var state = _currentClientState;
 
             if (state.Disposing)
                 return;
             
-            SendToServerSocket(ref state, $@"GAMEBROADCAST {hostname} {maxPlayers}".ToUTF8Bytes());
+            SendToServerSocket(ref state, $@"GAMEBROADCAST {hostname} {maxPlayers} {gameType}".ToUTF8Bytes());
         }
 
         private unsafe void SendToServerSocket(ref SocketState state, byte[] bytes)

@@ -24,11 +24,7 @@ namespace IrcD.Commands
             {
                 // elamaunt!Xv1sFqOa9X|17972147@192.168.1.31 UTM elamaunt :GML
 
-                // This code only for warhammer
-
                 var usersInGame = channel.Users.ToArray();
-
-                IrcDaemon.RegisterRatingGame(usersInGame);
 
                 for (int i = 0; i < usersInGame.Length; i++)
                 {

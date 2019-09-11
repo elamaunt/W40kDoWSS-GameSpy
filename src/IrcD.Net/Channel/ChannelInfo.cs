@@ -71,7 +71,7 @@ namespace IrcD.Channel
             var upci = UserPerChannelInfos[user.Nick];
 
             UserPerChannelInfos.TryRemove(user.Nick, out UserPerChannelInfo info);
-            user.UserPerChannelInfos.TryRemove(user.Nick, out info);
+            user.UserPerChannelInfos.TryRemove(Name, out info);
 
             if (UserPerChannelInfos.Count == 0)
                 IrcDaemon.Channels.TryRemove(Name, out ChannelInfo channel);

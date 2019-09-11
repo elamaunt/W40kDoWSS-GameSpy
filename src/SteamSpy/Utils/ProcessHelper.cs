@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace ThunderHawk.Utils
 {
@@ -22,7 +23,16 @@ namespace ThunderHawk.Utils
                 return;
 
             for (int i = 0; i < processes.Length; i++)
-                ShowWindow(processes[i].MainWindowHandle, WindowShowStyle.Show);
+            {
+                var process = processes[i];
+
+                if (process == Process.GetCurrentProcess())
+                    continue;
+
+                ShowWindow(process.MainWindowHandle, WindowShowStyle.Maximize);
+            }
+
+            Thread.Sleep(1000);
         }
 
         /// <summary>Enumeration of the different ways of showing a window using
