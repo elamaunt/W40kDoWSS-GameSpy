@@ -53,6 +53,8 @@ namespace ThunderHawk.Core
 
             var path = CoreContext.LaunchService.GamePath;
 
+            Frame.LaunchOriginalGame.Action = LaunchOriginalSoulstorm;
+
             if (CoreContext.ThunderHawkModManager.CheckIsModExists(path))
             {
                 UpdateMod();
@@ -62,6 +64,11 @@ namespace ThunderHawk.Core
                 Frame.LaunchGame.Text = "Setup mod";
                 Frame.LaunchGame.Action = SetupGameMod;
             }
+        }
+
+        void LaunchOriginalSoulstorm()
+        {
+            CoreContext.LaunchService.LaunchOriginalGame();
         }
 
         void UpdateMod()
@@ -84,7 +91,7 @@ namespace ThunderHawk.Core
         {
             if (CoreContext.SteamApi.IsInitialized)
             {
-                Frame.LaunchGame.Text = "Launch game";
+                Frame.LaunchGame.Text = "Launch Thunderhawk";
                 Frame.LaunchGame.Action = LaunchGame;
             }
             else
@@ -141,11 +148,11 @@ namespace ThunderHawk.Core
             Frame.LaunchGame.Enabled = false;
             Frame.LaunchGame.Text = "Game launched";
 
-            CoreContext.LaunchService.LaunchGameAndWait()
+            CoreContext.LaunchService.LaunchThunderHawkGameAndWait()
                 .OnFaultOnUi(ex => Frame.UserInteractions.ShowErrorNotification(ex.Message))
                 .OnContinueOnUi(t =>
                 {
-                    Frame.LaunchGame.Text = "Launch game";
+                    Frame.LaunchGame.Text = "Launch Thunderhawk";
                     Frame.LaunchGame.Enabled = true;
                 });
         }

@@ -8,6 +8,7 @@ namespace ThunderHawk.Core
         string GamePath { get; }
         string LauncherPath { get; }
         bool CanLaunchGame { get; }
-        Task LaunchGameAndWait();
+        Task LaunchThunderHawkGameAndWait();
+        void LaunchOriginalGame();
     }
 }

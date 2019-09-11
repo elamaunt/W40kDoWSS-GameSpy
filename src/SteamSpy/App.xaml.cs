@@ -27,8 +27,6 @@ namespace ThunderHawk
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            PathFinder.Find();
-
             if (PathFinder.GamePath != null)
             {
                 var steamworksDllPathInGameFolder = Path.Combine(PathFinder.GamePath, "Steamworks.NET.dll");

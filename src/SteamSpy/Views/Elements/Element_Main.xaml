@@ -64,6 +64,7 @@
                 <TextBlock framework:WPFBinder.Frame="ActiveModRevision"
                            MaxWidth="250"
                            TextWrapping="Wrap"
+                           HorizontalAlignment="Left"
                            Margin="0 8 0 0"
                            Style="{DynamicResource FreeTextStyle}"
                            FontSize="12">
@@ -71,22 +72,39 @@
                         <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="4" Opacity="1" />
                     </TextBlock.Effect>
                 </TextBlock>
-            
-                <Button 
+
+                <StackPanel Orientation="Horizontal">
+                    <Button 
                         Margin="0 8 0 0"
-                        Width="250" 
-                        Height="70"
+                        Padding="8 8 8 8"
+                        Width="200" 
+                        Height="52"
                         framework:WPFBinder.Frame="LaunchGame"
                         Content="{DynamicResource LaunchGame}"
                         Style="{DynamicResource LaunchButtonStyle}">
-                    <Button.Effect>
-                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="10" Opacity="0.4" />
-                    </Button.Effect>
-                </Button>
+                        <Button.Effect>
+                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="10" Opacity="0.4" />
+                        </Button.Effect>
+                    </Button>
+                    <Button 
+                        Margin="14 8 0 0"
+                        Padding="8 8 8 8"
+                        Width="200" 
+                        Height="52"
+                        framework:WPFBinder.Frame="LaunchOriginalGame"
+                        Content="{DynamicResource LaunchGame}"
+                        Style="{DynamicResource LaunchButtonStyle2}">
+                        <Button.Effect>
+                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="10" Opacity="0.4" />
+                        </Button.Effect>
+                    </Button>
+                </StackPanel>
+               
+                
             </StackPanel>
 
         <TextBlock DockPanel.Dock="Left" VerticalAlignment="Bottom" Margin="18 0 0 0" 
-                   Style="{DynamicResource FreeTextStyle}" framework:WPFBinder.Frame="Tweaks">
+                   Style="{DynamicResource FreeTextStyle}" framework:WPFBinder.Frame="Tweaks" TextWrapping="Wrap" MaxWidth="500" HorizontalAlignment="Left">
             <TextBlock.Effect>
                 <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="4" Opacity="1" />
             </TextBlock.Effect>

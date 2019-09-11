@@ -1,8 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:local="clr-namespace:ThunderHawk.Styles">
+    <SolidColorBrush x:Key="MainOrange" Color="#cc5c0a" />
     <SolidColorBrush x:Key="MainBlue" Color="#0a8fcc" />
     <SolidColorBrush x:Key="DarkMainBlue" Color="#266987" />
+    <SolidColorBrush x:Key="DarkMainOrange" Color="#67340f" />
     
     <SolidColorBrush x:Key="ElectricBlue" Color="#0a8fcc" />
 </ResourceDictionary>

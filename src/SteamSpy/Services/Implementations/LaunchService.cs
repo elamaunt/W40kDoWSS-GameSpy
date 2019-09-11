@@ -36,7 +36,7 @@ namespace ThunderHawk
             }
         }
 
-        public Task LaunchGameAndWait()
+        public Task LaunchThunderHawkGameAndWait()
         {
             return Task.Factory.StartNew(async () =>
             {
@@ -171,6 +171,19 @@ namespace ThunderHawk
                 }
                 await Task.Delay(1000);
             }
+        }
+
+        public void LaunchOriginalGame()
+        {
+            ProcessManager.KillDowStatsProccesses();
+
+            Process.Start(new ProcessStartInfo(Path.Combine(LauncherPath, "ThunderHawk.exe"), "-original")
+            {
+                UseShellExecute = true,
+                WorkingDirectory = LauncherPath
+            });
+
+            Environment.Exit(0);
         }
 
         /*public void SwitchGameToMod(string modName)

@@ -1,7 +1,10 @@
 ﻿using Framework;
 using Microsoft.Win32;
 using System;
+using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using ThunderHawk.StaticClasses.Soulstorm;
 
 namespace ThunderHawk
 {
@@ -10,10 +13,27 @@ namespace ThunderHawk
         public const string RegistryKey = "SoftWare\\ThunderHawk";
 
         [STAThread]
-        public static void Main()
+        public static void Main(string[] args)
         {
             try
             {
+                PathFinder.Find();
+
+                if (!args.IsNullOrEmpty() && args[0] == "-original")
+                {
+                    Thread.Sleep(2000);
+                    File.Copy(Path.Combine(Environment.CurrentDirectory, "SoulstormBackup", "Soulstorm.exe" ), Path.Combine(PathFinder.GamePath, "Soulstorm.exe"), true);
+                    Thread.Sleep(2000);
+                    Process.Start(new ProcessStartInfo(Path.Combine(PathFinder.GamePath, "Soulstorm.exe"), "-nomovies -forcehighpoly -modname dxp2")
+                    {
+                        UseShellExecute = true,
+                        WorkingDirectory = PathFinder.GamePath
+                    });
+
+                    Environment.Exit(0);
+                    return;
+                }
+
                 AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
                 NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(Path.Combine(Environment.CurrentDirectory, "NLog.config"), true);
