@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using ThunderHawk.Core;
 using ThunderHawk.Utils;
 
 namespace GSMasterServer.Servers
@@ -234,7 +235,9 @@ namespace GSMasterServer.Servers
                 }
 
                 if (utf8value.IndexOf($@"UTM #GSP!whamdowfr!", StringComparison.OrdinalIgnoreCase) != -1)
-                    ProcessHelper.RestoreGameWindow();
+                {
+                    ProcessHelper.RestoreGameWindow(CoreContext.LaunchService.GameProcess);
+                }
 
                 if (utf8value.StartsWith("ROOMCOUNTERS", StringComparison.OrdinalIgnoreCase))
                 {

@@ -18,6 +18,9 @@ namespace ThunderHawk
         public bool CanLaunchGame => !ProcessManager.GameIsRunning() && PathFinder.IsPathFound();
 
         public string GamePath => PathFinder.GamePath;
+
+        public Process GameProcess { get; private set; }
+
         public string LauncherPath
         {
             get
@@ -96,13 +99,14 @@ namespace ThunderHawk
 
                         ProcessManager.KillDowStatsProccesses();
 
+
                         var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
                         {
                             UseShellExecute = true,
                             WorkingDirectory = PathFinder.GamePath
                         });
 
-
+                        GameProcess = ssProc;
                         ServerContext.Start(IPAddress.Any);
 
                         ssProc.EnableRaisingEvents = true;
@@ -124,6 +128,7 @@ namespace ThunderHawk
                 }
                 finally
                 {
+                    GameProcess = null;
                     ServerContext.Stop();
                     SteamLobbyManager.LeaveFromCurrentLobby();
                 }

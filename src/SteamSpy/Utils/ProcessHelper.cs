@@ -15,9 +15,14 @@ namespace ThunderHawk.Utils
         [return: MarshalAs(UnmanagedType.Bool)]
         static extern bool ShowWindow(IntPtr hWnd, WindowShowStyle nCmdShow);
 
-        public static void RestoreGameWindow()
+        public static void RestoreGameWindow(Process gameProcess)
         {
-            var processes = Process.GetProcessesByName("Soulstorm");
+            if (gameProcess == null || gameProcess.MainWindowHandle == IntPtr.Zero)
+                return;
+
+            ShowWindow(gameProcess.MainWindowHandle, WindowShowStyle.Maximize);
+            
+          /*  var processes = Process.GetProcessesByName("Soulstorm");
 
             if (processes == null || processes.Length < 1)
                 return;
@@ -26,11 +31,11 @@ namespace ThunderHawk.Utils
             {
                 var process = processes[i];
 
-                if (process == Process.GetCurrentProcess())
+                if (process.Handle == Process.GetCurrentProcess().Handle)
                     continue;
 
-                ShowWindow(process.MainWindowHandle, WindowShowStyle.Maximize);
-            }
+                ShowWindow(process.Win, WindowShowStyle.Maximize);
+            }*/
 
             Thread.Sleep(1000);
         }

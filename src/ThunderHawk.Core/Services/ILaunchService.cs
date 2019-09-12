@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace ThunderHawk.Core
 {
@@ -8,6 +9,8 @@ namespace ThunderHawk.Core
         string GamePath { get; }
         string LauncherPath { get; }
         bool CanLaunchGame { get; }
+        Process GameProcess { get; }
+
         Task LaunchThunderHawkGameAndWait();
         void LaunchOriginalGame();
     }
