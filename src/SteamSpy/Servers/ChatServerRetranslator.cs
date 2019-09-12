@@ -18,7 +18,7 @@ namespace GSMasterServer.Servers
         Socket _serverSocket;
         Socket _newPeerAceptingsocket;
 
-        public string CurrentRating { get; private set; }
+        public int CurrentRating { get; private set; } = 1000;
         public string ChatNick { get; private set; }
         public readonly int[] ChatRoomPlayersCounts = new int[10];
 
@@ -445,7 +445,7 @@ namespace GSMasterServer.Servers
                                         split = split[3].Split('|');
 
                                         if (split.Length > 1 && int.TryParse(split[1], out int rating))
-                                            CurrentRating = split[1];
+                                            CurrentRating = rating;
                                     }
                                 }
 
@@ -456,7 +456,7 @@ namespace GSMasterServer.Servers
 
                             if (utf8value.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase))
                             {
-                                CurrentRating = null;
+                                CurrentRating = 1000;
 
                                 var nick = utf8value.Split(' ')[2];
 
@@ -513,6 +513,8 @@ namespace GSMasterServer.Servers
                                         ServerListReport.CurrentUserRoomHash = encodedEndPoint;
                                         steamId = SteamUser.GetSteamID();
                                     }
+                                    else
+                                        PortBindingManager.AddOrUpdatePortBinding(steamId);
                                 }
 
                                 utf8value = utf8value.Replace(encodedEndPoint, steamId.m_SteamID.ToString());

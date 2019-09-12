@@ -13,7 +13,7 @@
         </Border.BitmapEffect>
         <Grid>
             <StackPanel Orientation="Vertical">
-                <Image Height="144" framework:WPFBinder.Frame="Image" Stretch="Fill"></Image>
+                <Image Height="144" framework:WPFBinder.Frame="Image" Stretch="Fill" RenderOptions.BitmapScalingMode="HighQuality"></Image>
                 <Border Height="180" Padding="16 16 16 8">
                     <Border.Background>
                         <SolidColorBrush Color="#bb262324"/>

@@ -40,7 +40,7 @@
 
                 <Border Margin="0,12,0,0" Height="340" HorizontalAlignment="Left" BorderThickness="1" BorderBrush="#33FFFFFF">
                     <Grid>
-                        <Image framework:WPFBinder.Frame="Image" Stretch="Uniform"/>
+                        <Image framework:WPFBinder.Frame="Image" RenderOptions.BitmapScalingMode="HighQuality" Stretch="Uniform"/>
                     </Grid>
                 </Border>
 

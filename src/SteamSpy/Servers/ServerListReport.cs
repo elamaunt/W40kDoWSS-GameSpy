@@ -288,7 +288,7 @@ namespace GSMasterServer.Servers
             var isRanked = "ranked".Equals(gameType, StringComparison.OrdinalIgnoreCase);
 
             if (isRanked)
-                server["score_"] = ServerContext.ChatServer?.CurrentRating ?? "1000";
+                server["score_"] = (ServerContext.ChatServer?.CurrentRating ?? 1000).ToString();
 
             var gamename = server.Get<string>("gamename");
 

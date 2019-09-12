@@ -43,6 +43,17 @@ namespace GSMasterServer.Servers
 
             // start connection establishment
             SteamNetworking.SendP2PPacket(userId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
+
+            Task.Delay(2000).ContinueWith(t =>
+            {
+                if (SteamNetworking.GetP2PSessionState(userId, out P2PSessionState_t state))
+                {
+                    if (state.m_bConnectionActive == 0)
+                        SteamNetworking.SendP2PPacket(userId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
+                }
+                else
+                    SteamNetworking.SendP2PPacket(userId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
+            });
         }
 
         public ServerSteamPortRetranslator()

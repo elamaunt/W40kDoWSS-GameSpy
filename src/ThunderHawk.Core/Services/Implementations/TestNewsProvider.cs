@@ -19,6 +19,20 @@ namespace ThunderHawk.Core
 
                         Russian = new NewsLanguageItemDTO()
                         {
+                            Title = "Финал Soulstorm Map Contest 2019",
+                            Annotation = "Финал конкурса наступил и теперь судьям предстоит выбрать лучшие карты, которые имеют все шансы быть в автоподборе в ближайшем будущем!",
+                            Body =  "Финал конкурса наступил и теперь судьям предстоит выбрать лучшие карты, которые имеют все шансы быть в автоподборе в ближайшем будущем!\n\nВы можете также ознакомиться со всеми картами участников самостоятельно и проголосовать за приз зрительских симпатий по ссылке <href>http://forums.warforge.ru/index.php?showtopic=258595</href>. Победитель будет объявлен 15 Сентября, следите за новостями.",
+                        },
+
+                        ImagePath = "pack://application:,,,/ThunderHawk;component/Images/MapContest.png",
+                        CreatedDate = new DateTime(2019, 9, 12)
+                    },
+                    new NewsItemDTO()
+                    {
+                        Author = "elamaunt",
+
+                        Russian = new NewsLanguageItemDTO()
+                        {
                             Title = "Открытый бетатест сервера",
                             Annotation = "Этот день войдет в историю Soulstorm",
                             Body =  "<b>Дорогие любители Soulstorm!</b>\n\nЯ объявляю начало новой эры, эры рейтинга, статистики и скилла. Теперь все желающие могут играть в Warhammer 40k Soulstorm без многочисленных проблем Steam версии. Многое еще необходимо сделать, но с сегодняшнего дня я постараюсь поддерживать сервер в активном состоянии. Сражайтесь, набирайте рейтинг! Возможно, в конце бетатеста будут организованы призы для лучших игроков рейтинговой таблицы ;)",
@@ -41,21 +55,6 @@ namespace ThunderHawk.Core
 
                         ImagePath = "pack://application:,,,/ThunderHawk;component/Images/YbubakaGuide.png",
                         CreatedDate = new DateTime(2019, 7, 30)
-                    },
-
-                    new NewsItemDTO()
-                    {
-                        Author = "elamaunt",
-
-                        Russian = new NewsLanguageItemDTO()
-                        {
-                            Title = "Найден лучший игрок в Soulstorm",
-                            Annotation = "Вы не поверите, но лучшим игроком в Soulstorm теперь признан...",
-                            Body = "Вы не поверите, но лучшим игроком в Soulstorm теперь признан...\nНикто! Конечно, ведь чтобы определить лучшего, нам нужен был ладдер. И теперь он есть. Статистика также теперь работает, а значит, вы можете бороться за звание короля автоподбора. Кто же займет 1 место в конце бетатеста, это мы скоро узнаем. А пока оцените наш лаунчер!\n\nВсегда с вами, elamaunt.",
-                        },
-
-                        ImagePath = "pack://application:,,,/ThunderHawk;component/Images/BestPlayer.png",
-                        CreatedDate = new DateTime(2019, 8, 23)
                     }
                 };
         }

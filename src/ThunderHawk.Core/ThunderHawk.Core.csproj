@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Folder Include="Helpers\" />
+    <Folder Include="ViewModels\Pages\Donate\" />
   </ItemGroup>
 
 </Project>

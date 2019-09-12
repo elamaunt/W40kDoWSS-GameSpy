@@ -362,8 +362,18 @@ namespace GSMasterServer.Servers
                        return;
                    }
 
-                   var servers = task.Result;
-                   
+                   GameServer[] servers;
+
+                   var currentRating = ServerContext.ChatServer.CurrentRating;
+
+                   if (isAutomatch)
+                   {
+                       var groups = task.Result.GroupBy(s => s.GetByName("maxplayers") ?? string.Empty);
+                       servers = groups.SelectMany(x => x.OrderBy(s => Math.Abs(currentRating - GetServerRating(s))).Take(2)).ToArray();
+                   }
+                   else
+                       servers = task.Result;
+
                    string[] fields = data[5].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
                    
                    byte[] unencryptedServerList = PackServerList(state, servers, fields, isAutomatch);
@@ -381,10 +391,22 @@ namespace GSMasterServer.Servers
 #if SPACEWAR
             var servers = await (_currentLobbiesTask = SteamLobbyManager.LoadLobbies(null, "SOULSTORM"));
 #else
-           var servers = await (_currentLobbiesTask = SteamLobbyManager.LoadLobbies());
+            var servers = await (_currentLobbiesTask = SteamLobbyManager.LoadLobbies());
 #endif
             _currentLobbiesTask = null;
             return servers;
+        }
+
+        private static int GetServerRating(GameServer s)
+        {
+            var score = s.GetByName("_score");
+
+            if (score.IsNullOrWhiteSpace())
+                return 1000;
+
+            if (int.TryParse(score, out int value))
+                return value;
+            return 1000;
         }
 
         private void SendRooms(SocketState state, string validate)

@@ -11,7 +11,7 @@
             <DropShadowBitmapEffect Color="Black" Direction="270" ShadowDepth="2" Opacity="1" Softness="2" />
         </Border.BitmapEffect>
         <Grid>
-            <Image VerticalAlignment="Stretch" HorizontalAlignment="Stretch" framework:WPFBinder.Frame="Image" Stretch="UniformToFill"/>
+            <Image VerticalAlignment="Stretch" HorizontalAlignment="Stretch" framework:WPFBinder.Frame="Image" RenderOptions.BitmapScalingMode="HighQuality" Stretch="UniformToFill"/>
             <TextBlock Margin="30,280,0,0"
                 framework:WPFBinder.Frame="Title"
                 TextWrapping="Wrap" 
