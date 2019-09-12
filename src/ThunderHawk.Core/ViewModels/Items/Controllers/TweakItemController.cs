@@ -22,11 +22,20 @@ namespace ThunderHawk.Core
 
         void OnCheckedChanged()
         {
-            if (Frame.IsTweakEnabled.IsChecked ?? false)
-                Frame.RawTweak.EnableTweak();
-            else
-                Frame.RawTweak.DisableTweak();
-            Frame.OnTweakChanged?.Invoke();
+            try
+            {
+                if (Frame.IsTweakEnabled.IsChecked ?? false)
+                    Frame.RawTweak.EnableTweak();
+                else
+                    Frame.RawTweak.DisableTweak();
+                Frame.OnTweakChanged?.Invoke();
+            }
+            catch (Exception ex)
+            {
+                Frame.IsTweakEnabled.IsChecked = !Frame.IsTweakEnabled.IsChecked;
+                //TODO: Какое-нибудь оповещение для юзера что в твиках произошла ошибка. Скорее всего, из-за отсутствия прав админа или типа-того.
+                Logger.Error(ex);
+            }
         }
     }
 }
