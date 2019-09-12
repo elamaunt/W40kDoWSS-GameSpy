@@ -368,8 +368,9 @@ namespace GSMasterServer.Servers
 
                    if (isAutomatch)
                    {
-                       var groups = task.Result.GroupBy(s => s.GetByName("maxplayers") ?? string.Empty);
-                       servers = groups.SelectMany(x => x.OrderBy(s => Math.Abs(currentRating - GetServerRating(s))).Take(2)).ToArray();
+                      // var groups = task.Result.GroupBy(s => s.GetByName("maxplayers") ?? string.Empty);
+                       //servers = groups.SelectMany(x => x.OrderBy(s => Math.Abs(currentRating - GetServerRating(s))).Take(2)).ToArray();
+                       servers = task.Result.OrderBy(s => Math.Abs(currentRating - GetServerRating(s))).ToArray();
                    }
                    else
                        servers = task.Result;
