@@ -99,7 +99,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Unable to bind Server List Retrieval to {info.Address}:{info.Port}");
+                Logger.Error(new Exception($"Unable to bind Server List Retrieval to {info.Address}:{info.Port}", e));
                 return;
             }
 
@@ -145,7 +145,7 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode == SocketError.NotConnected)
                     return;
 
-                Logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
+                Logger.Error(new Exception($"Error receiving data. SocketErrorCode: {e.SocketErrorCode}", e));
             }
         }
 
@@ -193,7 +193,7 @@ namespace GSMasterServer.Servers
                         state = null;
                         return;
                     default:
-                        Logger.Error(e, $"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
+                        Logger.Error(new Exception($"Error receiving data. SocketErrorCode: {e.SocketErrorCode}", e));
                         if (state != null)
                             state.Dispose();
                         state = null;
@@ -202,7 +202,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Error receiving data");
+                Logger.Error(new Exception($"Error receiving data", e));
             }
 
             // and we wait for more data...
@@ -227,7 +227,7 @@ namespace GSMasterServer.Servers
             }
             catch (SocketException e)
             {
-                Logger.Error(e, $"Error sending data. SocketErrorCode: {e.SocketErrorCode}");
+                Logger.Error(new Exception($"Error sending data. SocketErrorCode: {e.SocketErrorCode}", e));
             }
         }
 
@@ -251,7 +251,7 @@ namespace GSMasterServer.Servers
                     case SocketError.Disconnecting:
                         return;
                     default:
-                        Logger.Error(e, $"Error sending data. SocketErrorCode: {e.SocketErrorCode}");
+                        Logger.Error(new Exception($"Error sending data. SocketErrorCode: {e.SocketErrorCode}", e));
                         return;
                 }
             }
@@ -674,7 +674,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Logger.Error(e.ToString());// это к СС-ке, похоже, не относится, ни разу сюда не провалился
+                Logger.Error(e);// это к СС-ке, похоже, не относится, ни разу сюда не провалился
             }
 
             // fix quotes inside quotes
@@ -686,7 +686,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Logger.Error(e.ToString());// это к СС-ке, похоже, не относится, ни разу сюда не провалился
+                Logger.Error(e);// это к СС-ке, похоже, не относится, ни разу сюда не провалился
             }
 
             // fix consecutive whitespace
