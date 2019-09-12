@@ -121,7 +121,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Unable to bind Login Server ClientManager to {info.Address}:{info.Port}");
+                Logger.Error(new Exception($"Unable to bind Login Server ClientManager to {info.Address}:{info.Port}", e));
                 return;
             }
 
@@ -166,7 +166,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Logger.Error(e, $"Unable to bind Login Server SearchManager to {info.Address}:{info.Port}");
+                Logger.Error(new Exception($"Unable to bind Login Server SearchManager to {info.Address}:{info.Port}", e));
                 return;
             }
 
@@ -228,7 +228,7 @@ namespace GSMasterServer.Servers
             }
             catch (SocketException e)
             {
-                Logger.Error(e, $"Error accepting client. SocketErrorCode: {e.SocketErrorCode}");
+                Logger.Error(new Exception($"Error accepting client. SocketErrorCode: {e.SocketErrorCode}", e));
                 if (state != null)
                     state.Dispose();
                 state = null;
@@ -262,7 +262,7 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode != SocketError.ConnectionAborted &&
                     e.SocketErrorCode != SocketError.ConnectionReset)
                 {
-                    Logger.Error(e, $"Error sending data. SocketErrorCode: {e.SocketErrorCode}");
+                    Logger.Error(new Exception($"Error sending data. SocketErrorCode: {e.SocketErrorCode}", e));
                 }
                 if (state != null)
                     state.Dispose();
@@ -301,7 +301,7 @@ namespace GSMasterServer.Servers
                         state = null;
                         return;
                     default:
-                        Logger.Error(e, $"Error sending data. SocketErrorCode: {e.SocketErrorCode}");
+                        Logger.Error(new Exception($"Error sending data. SocketErrorCode: {e.SocketErrorCode}", e));
                         if (state != null)
                             state.Dispose();
                         state = null;
@@ -343,7 +343,7 @@ namespace GSMasterServer.Servers
                 if (e.SocketErrorCode != SocketError.ConnectionAborted &&
                     e.SocketErrorCode != SocketError.ConnectionReset)
                 {
-                    Logger.Error(e,$"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
+                    Logger.Error(new Exception($"Error receiving data. SocketErrorCode: {e.SocketErrorCode}", e));
                 }
                 if (state != null)
                     state.Dispose();
@@ -405,7 +405,7 @@ namespace GSMasterServer.Servers
                         state = null;
                         return;
                     default:
-                        Logger.Error(e,$"Error receiving data. SocketErrorCode: {e.SocketErrorCode}");
+                        Logger.Error(new Exception($"Error receiving data. SocketErrorCode: {e.SocketErrorCode}", e));
                         if (state != null)
                             state.Dispose();
                         state = null;
@@ -414,7 +414,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception e)
             {
-                Logger.Error(e,$"Error receiving data");
+                Logger.Error(new Exception($"Error receiving data", e));
             }
 
             // and we wait for more data...
