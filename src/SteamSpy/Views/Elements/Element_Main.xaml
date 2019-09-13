@@ -54,7 +54,7 @@
                     <TextBlock.Effect>
                         <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="4" Opacity="1" />
                     </TextBlock.Effect>
-                        Есть вопросы? Ответы в
+                        <TextBlock Text="{DynamicResource FaqInfo}"></TextBlock>
                         <Hyperlink Style="{DynamicResource LinkStyle}">
                             FAQ
                         </Hyperlink>

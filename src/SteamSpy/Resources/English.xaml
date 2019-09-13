@@ -14,6 +14,7 @@
     <system:String x:Key="ShowIt">Show it!</system:String>
     <system:String x:Key="SteamNotLaunched">Steam is not launched!</system:String>
     <system:String x:Key="Active revision">Active revision:</system:String>
+    <system:String x:Key="FaqInfo">Have a question? Answer in </system:String>
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPageHeader">Features Manager</system:String>

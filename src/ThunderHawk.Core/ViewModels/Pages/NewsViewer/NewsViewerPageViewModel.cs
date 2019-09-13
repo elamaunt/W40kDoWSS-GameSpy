@@ -22,10 +22,6 @@ namespace ThunderHawk.Core
             if (NewsItem != null)
             {
                 Image.Text = NewsItem.ImagePath;
-
-                TitleButton.Text = NewsItem.Russian.Title?.ToUpperInvariant();
-                Annotation.Text = NewsItem.Russian.Annotation;
-                Text.Text = NewsItem.Russian.Body;
                 Author.Text = NewsItem.Author?.ToUpperInvariant();
 
                 Date.Value = NewsItem.CreatedDate;

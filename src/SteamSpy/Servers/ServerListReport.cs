@@ -289,7 +289,10 @@ namespace GSMasterServer.Servers
             var isRanked = "ranked".Equals(gameType, StringComparison.OrdinalIgnoreCase);
 
             if (isRanked)
-                server["score_"] = (ServerContext.ChatServer?.CurrentRating ?? 1000).ToString();
+            {
+                server["realscore"] = (ServerContext.ChatServer?.CurrentRating ?? 1000).ToString();
+                server["score_"] = "1000";
+            }
 
             var gamename = server.Get<string>("gamename");
 

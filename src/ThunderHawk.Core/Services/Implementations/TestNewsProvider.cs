@@ -28,7 +28,7 @@ namespace ThunderHawk.Core
                         {
                             Title = "Soulstorm Map Contest 2019 final",
                             Annotation = "The final competition has come and now the judges have to choose the best maps that have every chance of being in automatch in the near future!",
-                            Body =  "The final competition has come and now the judges have to choose the best maps that have every chance of being in automatch in the near future!\n\nYou can also familiarize yourself with all the maps of the participants yourself and vote for the audience’s prize at the link <href>http://forums.warforge.ru/index.php?showtopic=258595</href>. The winner will be announced on September 15th, so stay tuned.",
+                            Body =  "The final competition has come and now the judges have to choose the best maps that have every chance of being in automatch in the near future!\n\nYou can also familiarize yourself with all the maps of the participants yourself and vote for the community prize at the link <href>http://forums.warforge.ru/index.php?showtopic=258595</href>. The winner will be announced on September 15th, so stay tuned.",
                         },
 
                         ImagePath = "pack://application:,,,/ThunderHawk;component/Images/MapContest.png",

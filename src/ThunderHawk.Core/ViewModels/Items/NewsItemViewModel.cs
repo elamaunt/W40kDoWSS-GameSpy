@@ -20,9 +20,6 @@ namespace ThunderHawk.Core
         public NewsItemViewModel(NewsItemDTO dto)
         {
             NewsItem = dto;
-
-            Title.Text = dto.Russian.Title;
-            Annotation.Text = dto.Russian.Annotation;
             Date.Value = dto.CreatedDate;
             Image.Text = dto.ImagePath;
             Author.Text = dto.Author;
