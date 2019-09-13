@@ -242,7 +242,7 @@ namespace GSMasterServer.Servers
 
                 if (utf8value.StartsWith("ROOMCOUNTERS", StringComparison.OrdinalIgnoreCase))
                 {
-                    var values = utf8value.Split(new string[] { "ROOMCOUNTERS", " ", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+                    var values = utf8value.Split(new string[] { "ROOMCOUNTERS", " ", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
                     for (int i = 0; i < ChatRoomPlayersCounts.Length; i++)
                         ChatRoomPlayersCounts[i] = 0;
@@ -610,7 +610,7 @@ namespace GSMasterServer.Servers
             if (state.Disposing)
                 return;
 
-            SendToServerSocket(ref state, $@"ROOMCOUNTERS".ToAssciiBytes());
+            SendToServerSocket(ref state, "ROOMCOUNTERS".ToAssciiBytes());
         }
 
         public void SentServerMessageToClient(string message)
