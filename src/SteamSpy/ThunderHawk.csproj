@@ -119,6 +119,7 @@
     <Compile Include="Effects\RectBlurEffect.cs" />
     <Compile Include="ExplorerExtensions.cs" />
     <Compile Include="GameState.cs" />
+    <Compile Include="LogConfigurator.cs" />
     <Compile Include="PageExtensions\UserInteractionsExtension.cs" />
     <Compile Include="Services\Implementations\UpdaterService.cs" />
     <Compile Include="ThunderHawk.cs" />
@@ -602,7 +603,7 @@
     <Resource Include="Images\BackButton.png" />
     <Resource Include="Images\star.png" />
     <Resource Include="Images\Indicator_Aquila.png" />
-    <None Include="SoulstormBackup\Soulstorm.exe">
+    <None Include="GameFiles\SteamSSBackup\Soulstorm.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Resource Include="Images\MapContest.png" />
