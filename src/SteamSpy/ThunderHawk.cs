@@ -14,11 +14,6 @@ namespace ThunderHawk
         [STAThread]
         public static void Main(string[] args)
         {
-<<<<<<< HEAD
-=======
-            CultureInfo.CurrentCulture = new CultureInfo("en-EN");
-
->>>>>>> parent of 95d0d90... Changed SoulstormBackup directory, fix en-us
             try
             {
                 PathFinder.Find();
