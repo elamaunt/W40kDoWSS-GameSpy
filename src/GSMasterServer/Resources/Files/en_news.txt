@@ -1,0 +1,51 @@
+ Hello! You are on elamaunt's server THUNDERHAWK.
+.
+Wellcome on betatest.
+The server is almost complete. There are some minor bugs and the inability to play as a team of friends in automatch.
+Statistics changes only on the latest version of the ThunderHawk mod (automatically updates by launcher as startup).
+Bugfix mod 1.56a and pathfinding (for vehicle) fix are introduced in this mod. In the future there will be new changes for an auspicious game.
+.
+Current maps in automatch: 
+.
+1vs1
+- [TP MOD]edemus gamble
+- 2P Shrine of Excellion
+- 2P Meeting of Minds
+- 2P Battle Marshes
+- 2P Outer Reaches (fixed by Devil)
+- 2P Blood River
+- 2P Fata Morgana
+- 2P Titan Fall (fixed by Devil)
+- 2P Tranquilitys End (fixed by Devil)
+- 2P FraziersDemise (fixed by Devil)
+- 2P Moonbase (fixed by Devil)
+.
+2vs2
+- 4p murad swamplands (fixed by Devil)
+- 4p gurmuns pass
+- 4P Biffys Peril
+- 4P Gorhael Crater
+- 4P Ice Flow
+- 4P Doom Spiral
+- 4p panrea lowlands (fixed by Devil)
+- 4P Skerries (fixed by Devil)
+- 4p Saints Square 
+.
+3vs3
+- 6p Mortalis
+- 6P Alvarus
+- 6P Shakun Coast
+- 6P Fury Island
+- 6p paynes retribution
+.
+4на4
+- 8P Oasis of Sharr
+- 8P Forbidden Jungle
+- 8P Jalaganda Lowlands
+- 8p cerulea
+- 8p burial grounds
+- 8p thurabis plateau
+.
+.
+The server is being actively discussed here and on Discord.
+http://forums.warforge.ru/ (RUS)

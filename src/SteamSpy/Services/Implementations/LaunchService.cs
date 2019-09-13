@@ -163,7 +163,7 @@ namespace ThunderHawk
             process.WaitForExit();
 
             if (process.ExitCode == 1)
-                throw new Exception("Can not modify hosts file");
+                throw new Exception("Can not modify hosts file. You should modify HOSTS manually in C:\\Windows\\System32\\drivers\\etc. Use sample from discord https://discordapp.com/invite/Tfgf3yd");
         }
 
         private async Task RemoveFogLoop(Task task, Process ssProc)

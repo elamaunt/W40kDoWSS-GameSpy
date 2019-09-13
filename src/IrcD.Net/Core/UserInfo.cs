@@ -26,12 +26,15 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading.Tasks;
 using IrcD.Channel;
 using IrcD.Commands.Arguments;
 using IrcD.Core.Utils;
 using IrcD.Modes;
+using IrcD.Net.Tools;
 using IrcD.Tools;
 using IrcNet.Tools;
+using SharedServices;
 using Enumerable = System.Linq.Enumerable;
 
 namespace IrcD.Core
@@ -93,6 +96,7 @@ namespace IrcD.Core
             }
         }
 
+        public string FirstLanguage => Languages.First();
 
         public void InitNick(string nick)
         {
@@ -282,9 +286,15 @@ namespace IrcD.Core
             return parameter;
         }
 
-        public void WriteServerPrivateMessage(string message)
+        public void WriteServerPrivateMessage(string message, int randomDelay = 0)
         {
-            WriteLine($@":SERVER!XaaaaaaaaX|10008@127.0.0.1 PRIVMSG {Nick} :{message}");
+            if (randomDelay == 0)
+                WriteLine($@":SERVER!XaaaaaaaaX|10008@127.0.0.1 PRIVMSG {Nick} :{message}");
+            else
+                Task.Delay(RandomHelper.Next(randomDelay) * 1000).ContinueWith(t =>
+                {
+                    WriteLine($@":SERVER!XaaaaaaaaX|10008@127.0.0.1 PRIVMSG {Nick} :{message}");
+                });
         }
     }
 }

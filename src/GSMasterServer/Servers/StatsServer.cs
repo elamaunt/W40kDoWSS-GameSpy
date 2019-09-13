@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using GSMasterServer.Services;
 using NLog.Fluent;
 using IrcNet.Tools;
-
+using SharedServices;
 
 namespace GSMasterServer.Servers
 {
@@ -268,7 +268,7 @@ namespace GSMasterServer.Servers
                     var lid = input.Substring(lidIndex+5, 1);
 
                     var timeInSeconds = (ulong)((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
-
+                    // \setpd\\pid\3\ptype\1\dindex\0\kv\1\lid\1\length\413\data\\ckey\5604 - 7796 - 6425 - 0127 - DA96\system\Nr.Proc:8, Type: 586, GenuineIntel, unknown: f = 6,m = 12, Fam: 6, Mdl: 12, St: 3, Fe: 7, OS: 7, Ch: 15\speed\CPUSpeed: 3.5Mhz\os\OS NT 6.2\lang\Language: Русский(Россия), Country: Россия, User Language:Русский(Россия), User Country:Россия\vid\Card: Dx9: Hardware TnL, NVIDIA GeForce GTX 1080, \vidmod\Mode: 1920 x 1080 x 32\mem\2048Mb phys. memory
                     SendToClient(state, $@"\setpdr\1\lid\{lid}\pid\{pid}\mod\{timeInSeconds}\final\");
 
                     goto CONTINUE;
@@ -518,18 +518,18 @@ namespace GSMasterServer.Servers
                             {
                                 Task.Delay(5000).ContinueWith(task =>
                                 {
-                                    switch (info.RatingGameType)
-                                    {
-                                        case ReatingGameType.Unknown:
-                                            break;
-                                        case ReatingGameType.Rating1v1:
-                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChat(profile.Id, $@"Ваш рейтинг 1v1 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score1v1}.");
-                                            break;
-                                        case ReatingGameType.Rating2v2:
-                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChat(profile.Id, $@"Ваш рейтинг 2v2 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score2v2}.");
-                                            break;
-                                        case ReatingGameType.Rating3v3_4v4:
-                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChat(profile.Id, $@"Ваш рейтинг 3v3/4v4 изменился на {GetDeltaString(info.Delta)} и сейчас равен {info.Profile.Score3v3}.");
+                                switch (info.RatingGameType)
+                                {
+                                    case ReatingGameType.Unknown:
+                                        break;
+                                    case ReatingGameType.Rating1v1:
+                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, Messages.RATING_CHANGED, @"1v1", GetDeltaString(info.Delta), info.Profile.Score1v1);
+                                        break;
+                                    case ReatingGameType.Rating2v2:
+                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, Messages.RATING_CHANGED, @"2v2", GetDeltaString(info.Delta), info.Profile.Score2v2);
+                                        break;
+                                    case ReatingGameType.Rating3v3_4v4:
+                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, Messages.RATING_CHANGED, @"3v3/4v4", GetDeltaString(info.Delta), info.Profile.Score3v3);
                                             break;
                                         default:
                                             break;

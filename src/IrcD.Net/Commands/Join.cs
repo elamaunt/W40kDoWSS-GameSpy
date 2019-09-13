@@ -97,7 +97,7 @@ namespace IrcD.Commands
                     if (chan.Name?.StartsWith("#GPG", System.StringComparison.OrdinalIgnoreCase) ?? false)
                     {
                         info.LobbyChatEntranceMessage = null;
-                        Task.Delay(2000).ContinueWith(t => info.WriteServerPrivateMessage(message));
+                        Task.Delay(1000).ContinueWith(t => info.WriteServerPrivateMessage(message));
                     }
                 }
             }

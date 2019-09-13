@@ -185,44 +185,47 @@ namespace GSMasterServer.Servers
 
                 using (var ms = new MemoryStream(state.Buffer))
                 {
-                    if (request.Url.StartsWith("/api/"))
+                    if (request.Url.StartsWith("/api/", StringComparison.OrdinalIgnoreCase))
                     {
                         HandleApiRequest(request, ms, ref state);
                         goto END;
                     }
 
-                    if (request.Url.EndsWith("news.txt"))
+                    if (request.Url.EndsWith("news.txt", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (request.Url.EndsWith("Russiandow_news.txt", StringComparison.OrdinalIgnoreCase))
+                            HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/ru_news.txt", Encoding.Unicode));
+                        else
+                            HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/en_news.txt", Encoding.Unicode));
+                        goto END;
+                    }
+
+                    if (request.Url.StartsWith("/motd/motd", StringComparison.OrdinalIgnoreCase))
                     {
                         HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/Russiandow_news.txt", Encoding.Unicode));
                         goto END;
                     }
 
-                    if (request.Url.StartsWith("/motd/motd"))
-                    {
-                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/Russiandow_news.txt", Encoding.Unicode));
-                        goto END;
-                    }
-
-                    if (request.Url.StartsWith("/motd/vercheck"))
+                    if (request.Url.StartsWith("/motd/vercheck", StringComparison.OrdinalIgnoreCase))
                     {
                         //HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(@"\newver\1\newvername\1.4\dlurl\http://127.0.0.1/NewPatchHere.exe"));
                         HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(@"\newver\0"));
                         goto END;
                     }
 
-                    if (request.Url.EndsWith("LobbyRooms.lua"))
+                    if (request.Url.EndsWith("LobbyRooms.lua", StringComparison.OrdinalIgnoreCase))
                     {
                         HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/LobbyRooms.lua", Encoding.ASCII));
                         goto END;
                     }
 
-                    if (request.Url.EndsWith("AutomatchDefaultsSS.lua") || request.Url.EndsWith("AutomatchDefaultsDXP2Fixed.lua"))
+                    if (request.Url.EndsWith("AutomatchDefaultsSS.lua", StringComparison.OrdinalIgnoreCase) || request.Url.EndsWith("AutomatchDefaultsDXP2Fixed.lua", StringComparison.OrdinalIgnoreCase))
                     {
                         HttpHelper.WriteResponse(ms, HttpResponceBuilder.File("Resources/Files/AutomatchDefaults.lua", Encoding.ASCII));
                         goto END;
                     }
 
-                    if (request.Url.EndsWith("homepage.php.htm"))
+                    if (request.Url.EndsWith("homepage.php.htm", StringComparison.OrdinalIgnoreCase))
                     {
                         if (StatsResponce == null || (DateTime.Now - _lastStatsUpdate).TotalMinutes > 5)
                             StatsResponce = BuildTop10StatsResponce();
@@ -231,7 +234,7 @@ namespace GSMasterServer.Servers
                         goto END;
                     }
                     
-                    if (request.Url.StartsWith("/all"))
+                    if (request.Url.StartsWith("/all", StringComparison.OrdinalIgnoreCase))
                     {
                         HttpHelper.WriteResponse(ms, BuildAllStatsResponce());
                         goto END;

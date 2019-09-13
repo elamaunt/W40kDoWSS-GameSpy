@@ -26,9 +26,11 @@ using IrcD.Modes;
 using IrcD.Modes.ChannelModes;
 using IrcD.Modes.ChannelRanks;
 using IrcD.Modes.UserModes;
+using IrcD.Net.Tools;
 using IrcD.ServerReplies;
 using IrcD.Tools;
 using IrcNet.Tools;
+using SharedServices;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -281,20 +283,17 @@ namespace IrcD.Core
             {
                 var rooms = Channels.Where(x => x.Key.StartsWith("#GSP")).ToArray();
 
-                //info.WriteServerPrivateMessage($"Wellcome to server, {info.Nick}!");
-                //info.WriteServerPrivateMessage($"To play RATING games in auto you should leave rated checkbox in UNCHECKED state.");
-                //info.WriteServerPrivateMessage($"In current version you can create game hosts ONLY with \"Soulstorm BugFix mod\".");
-                //info.WriteServerPrivateMessage($"Opened Automatchmaking rooms now {rooms.Length} with players {rooms.Sum(x => x.Value.Users.Count())}");
+                var lang = info.FirstLanguage;
 
-                info.WriteServerPrivateMessage($"Добро пожаловать на сервер, {info.Nick}!");
-                info.WriteServerPrivateMessage($"Поиск игр в автоподборе по параметру \"Игра на счет\" теперь исправлен и разделен. Рейтинг меняется, только в том случае, если галочка стоит.");
-                info.WriteServerPrivateMessage($"В оповещениях также указывается тип игры.");
-                info.WriteServerPrivateMessage($"Статистика начисляется на последней версии ThunderHawk мода при игре без игроков, управляемых компьютером.");
+                info.WriteServerPrivateMessage($"{Messages.Get(Messages.WELLCOME, lang)}, {info.Nick}!");
+                info.WriteServerPrivateMessage(Messages.Get(Messages.RATING_GAME, lang));
+                info.WriteServerPrivateMessage(Messages.Get(Messages.NOTIFICATIONS, lang));
+                info.WriteServerPrivateMessage(Messages.Get(Messages.STATISTICS_CHANGES, lang));
 
-                info.WriteServerPrivateMessage($"Всего игроков на сервере в данный момент {Users.Count}");
+                info.WriteServerPrivateMessage($"{Messages.Get(Messages.PLAYERS_ON_SERVER, lang)} {Users.Count}");
 
                 if (rooms.Length > 0)
-                    info.WriteServerPrivateMessage($"Открытых игр в авто {rooms.Length}, количество игроков в поиске игры {rooms.Sum(x => x.Value.Users.Count())}");
+                    info.WriteServerPrivateMessage($"{Messages.Get(Messages.OPENED_GAMES_IN_AUTO, lang)} {rooms.Length}, {Messages.Get(Messages.PLAYERS_IN_AUTO, lang)} {rooms.Sum(x => x.Value.Users.Count())}");
 
             });
 
@@ -443,6 +442,24 @@ namespace IrcD.Core
             }
         }
 
+        public void SendToUserOrOnEnterInChatFormattedMessage(long profileId, string key, params object[] parameters)
+        {
+            if (Users.TryGetValue(profileId, out UserInfo user))
+            {
+                var channel = user.UserPerChannelInfos.FirstOrDefault(x => x.Key?.StartsWith("#GPG", StringComparison.OrdinalIgnoreCase) ?? false).Value;
+                var message = string.Format(Messages.Get(key, user.FirstLanguage), parameters);
+
+                if (channel != null)
+                {
+                    user.WriteServerPrivateMessage(message);
+                }
+                else
+                {
+                    user.LobbyChatEntranceMessage = message;
+                }
+            }
+        }
+
         public void SendToUserOrOnEnterInChat(long profileId, string message)
         {
             if (Users.TryGetValue(profileId, out UserInfo user))
@@ -466,7 +483,7 @@ namespace IrcD.Core
                 user.WriteServerPrivateMessage(message);
         }
 
-        public void SendToAll(string message, string exceptNick)
+        public void SendToAll(string message, string exceptNick, int randomDelay)
         {
             var mainRooms = GetMainRooms();
 
@@ -476,10 +493,56 @@ namespace IrcD.Core
 
                 foreach (var item in room.Users)
                 {
+
                     if (item.Nick.Equals(exceptNick, StringComparison.OrdinalIgnoreCase))
                         continue;
 
-                    item.WriteServerPrivateMessage(message);
+                    if (randomDelay == 0)
+                        item.WriteServerPrivateMessage(message);
+                    else
+                    {
+                        var target = item;
+                        Task.Delay(RandomHelper.Next(randomDelay) * 1000).ContinueWith(t =>
+                          {
+                              target.WriteServerPrivateMessage(message);
+                          });
+                    }
+                }
+            }
+        }
+
+        public void SendToAllGameBroadcast(string count, string type, string gamevariant, string hostname)
+        {
+            var mainRooms = GetMainRooms();
+
+            for (int i = 0; i < mainRooms.Length; i++)
+            {
+                var room = mainRooms[i];
+
+                foreach (var item in room.Users)
+                {
+                    if (item.Nick.Equals(hostname, StringComparison.OrdinalIgnoreCase))
+                        continue;
+
+                    var lang = item.FirstLanguage;
+
+                    switch (count)
+                    {
+                        case "2":
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.NOTIFICATIONS, lang)}  1 vs 1 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 5);
+                            break;
+                        case "4":
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.NOTIFICATIONS, lang)}  2 vs 2 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
+                            break;
+                        case "6":
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.NOTIFICATIONS, lang)}  3 vs 3 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
+                            break;
+                        case "8":
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.NOTIFICATIONS, lang)}  4 vs 4 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }

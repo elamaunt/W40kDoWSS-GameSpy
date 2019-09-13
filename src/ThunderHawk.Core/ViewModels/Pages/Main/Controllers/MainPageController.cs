@@ -160,7 +160,7 @@ namespace ThunderHawk.Core
         void UpdateActiveModState()
         {
             Frame.ActiveModRevision.Visible = true;
-            Frame.ActiveModRevision.Text = "Активная ревизия: <b>" + CoreContext.ThunderHawkModManager.ActiveModRevision?.Replace("\n", "")+"</b>";
+            Frame.ActiveModRevision.Text = $"{CoreContext.LangService.GetString("Active revision")} <b>" + CoreContext.ThunderHawkModManager.ActiveModRevision?.Replace("\n", "")+"</b>";
         }
     }
 }

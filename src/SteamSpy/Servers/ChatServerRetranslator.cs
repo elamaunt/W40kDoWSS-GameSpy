@@ -2,6 +2,7 @@
 using GSMasterServer.Utils;
 using Steamworks;
 using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -466,6 +467,7 @@ namespace GSMasterServer.Servers
                                 ChatNick = nick;
 
                                 SendToServerSocket(ref state, bytes);
+                                SendToServerSocket(ref state, Encoding.UTF8.GetBytes($"LANGUAGE {CultureInfo.CurrentCulture.TwoLetterISOLanguageName} \r\n"));
 
                                 goto CONTINUE;
                             }
@@ -631,14 +633,14 @@ namespace GSMasterServer.Servers
             SendToServerSocket(ref state, $@"BROADCAST :{message}".ToUTF8Bytes());
         }
 
-        public void SendAutomatchGameBroadcast(string hostname, int maxPlayers, string gameType)
+        public void SendAutomatchGameBroadcast(string hostname, int maxPlayers, string gameType, string gamevariant)
         {
             var state = _currentClientState;
 
             if (state.Disposing)
                 return;
             
-            SendToServerSocket(ref state, $@"GAMEBROADCAST {hostname} {maxPlayers} {gameType}".ToUTF8Bytes());
+            SendToServerSocket(ref state, $@"GAMEBROADCAST {hostname} {maxPlayers} {gameType} {gamevariant}".ToUTF8Bytes());
         }
 
         private unsafe void SendToServerSocket(ref SocketState state, byte[] bytes)

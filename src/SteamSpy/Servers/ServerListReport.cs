@@ -284,6 +284,7 @@ namespace GSMasterServer.Servers
             }
 
             var gameType = server["gametype"];
+            var gamevariant = server.Get<string>("gamevariant");
 
             var isRanked = "ranked".Equals(gameType, StringComparison.OrdinalIgnoreCase);
 
@@ -294,13 +295,16 @@ namespace GSMasterServer.Servers
 
             if (server.Get<string>("statechanged") == "3" && gamename.Equals("whamdowfram", StringComparison.Ordinal))
             {
-                ServerContext.ChatServer.SentServerMessageToClient("Вы создаете хост для игры в авто. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.\n\r");
+                if (CoreContext.LangService.CurrentCulture.TwoLetterISOLanguageName == "ru")
+                    ServerContext.ChatServer.SentServerMessageToClient($"Вы создаете хост для игры в авто [{gameType}, {gamevariant}]. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.\n\r");
+                else
+                    ServerContext.ChatServer.SentServerMessageToClient($"You are creating a host for automatch [{gameType}, {gamevariant}]. Other players will see your host after a while (up to a minute), receive a notification and be able to connect to the game.\n\r");
+
             }
 
             server["hostport"] = remote.Port.ToString();
             server["localport"] = remote.Port.ToString();
 
-            var gamevariant = server.Get<string>("gamevariant");
 
             /*if (!gamevariant.IsNullOrWhiteSpace())
             {
@@ -346,7 +350,7 @@ namespace GSMasterServer.Servers
                 var hostname = server.Get<string>("hostname");
 
                 if (gamename == "whamdowfram")
-                    ServerContext.ChatServer.SendAutomatchGameBroadcast(hostname, int.Parse(server.Get<string>("maxplayers")), gameType);
+                    ServerContext.ChatServer.SendAutomatchGameBroadcast(hostname, int.Parse(server.Get<string>("maxplayers")), gameType, gamevariant);
             }
 
             return true;

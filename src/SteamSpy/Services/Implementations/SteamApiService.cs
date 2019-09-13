@@ -55,7 +55,11 @@ namespace ThunderHawk
             regKey.SetValue("Path", Environment.CurrentDirectory);
 
             File.Copy(Path.Combine(Environment.CurrentDirectory, "ThunderHawk.RemoteLaunch.exe"), Path.Combine(gamePath, "Soulstorm.exe"), true);
-            File.Copy(Path.Combine(Environment.CurrentDirectory, "ThunderHawk.exe.config"), Path.Combine(gamePath, "Soulstorm.exe.config"), true);
+
+            var path = Path.Combine(gamePath, "Soulstorm.exe.config");
+
+            if (!File.Exists(path))
+                File.Copy(Path.Combine(Environment.CurrentDirectory, "ThunderHawk.exe.config"), path, true);
 
             Environment.Exit(0);
         }

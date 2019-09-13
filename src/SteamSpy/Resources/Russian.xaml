@@ -13,6 +13,7 @@
     <system:String x:Key="FoundErrors">Есть несколько рекомендации для повышения комфорта Вашей игры!</system:String>
     <system:String x:Key="ShowIt">Посмотреть!</system:String>
     <system:String x:Key="SteamNotLaunched">Стим не запущен!</system:String>
+    <system:String x:Key="Active revision">Активная ревизия:</system:String>
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPageHeader">Конфигуратор улучшений</system:String>

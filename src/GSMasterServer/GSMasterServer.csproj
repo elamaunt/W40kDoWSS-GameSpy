@@ -34,8 +34,9 @@
   <ItemGroup>
     <None Remove="External\Reality.Net.dll" />
     <None Remove="Resources\Files\AutomatchDefaults.lua" />
+    <None Remove="Resources\Files\en_news.txt" />
     <None Remove="Resources\Files\LobbyRooms.lua" />
-    <None Remove="Resources\Files\Russiandow_news.txt" />
+    <None Remove="Resources\Files\ru_news.txt" />
     <None Remove="Resources\Pages\404.html" />
     <None Remove="Resources\Pages\500.html" />
     <None Remove="Resources\Pages\ComingSoon.html" />
@@ -51,7 +52,10 @@
     <Content Include="Resources\Files\LobbyRooms.lua">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\Files\Russiandow_news.txt">
+    <Content Include="Resources\Files\en_news.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Files\ru_news.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\Pages\404.html">
@@ -80,6 +84,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ApiDomain\ApiDomain.csproj" />
     <ProjectReference Include="..\IrcD.Net\IrcD.Net.csproj" />
+    <ProjectReference Include="..\SharedServices\SharedServices.csproj" />
   </ItemGroup>
 
   <ItemGroup>

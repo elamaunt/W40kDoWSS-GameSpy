@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using ThunderHawk.StaticClasses.Soulstorm;
@@ -15,6 +16,8 @@ namespace ThunderHawk
         [STAThread]
         public static void Main(string[] args)
         {
+            CultureInfo.CurrentCulture = new CultureInfo("en-EN");
+
             try
             {
                 PathFinder.Find();
