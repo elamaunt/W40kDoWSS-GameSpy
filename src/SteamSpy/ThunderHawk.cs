@@ -16,7 +16,7 @@ namespace ThunderHawk
         [STAThread]
         public static void Main(string[] args)
         {
-            CultureInfo.CurrentCulture = new CultureInfo("en-EN");
+            CultureInfo.CurrentCulture = new CultureInfo("en-US");
 
             try
             {
@@ -25,7 +25,7 @@ namespace ThunderHawk
                 if (!args.IsNullOrEmpty() && args[0] == "-original")
                 {
                     Thread.Sleep(2000);
-                    File.Copy(Path.Combine(Environment.CurrentDirectory, "SoulstormBackup", "Soulstorm.exe" ), Path.Combine(PathFinder.GamePath, "Soulstorm.exe"), true);
+                    File.Copy(Path.Combine(Environment.CurrentDirectory, "GameFiles", "SteamSSBackup", "Soulstorm.exe" ), Path.Combine(PathFinder.GamePath, "Soulstorm.exe"), true);
                     Thread.Sleep(2000);
                     Process.Start(new ProcessStartInfo(Path.Combine(PathFinder.GamePath, "Soulstorm.exe"), "-nomovies -forcehighpoly -modname dxp2")
                     {
