@@ -603,7 +603,7 @@
     <Resource Include="Images\BackButton.png" />
     <Resource Include="Images\star.png" />
     <Resource Include="Images\Indicator_Aquila.png" />
-    <None Include="GameFiles\SteamSSBackup\Soulstorm.exe">
+    <None Include="SoulstormBackup\Soulstorm.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Resource Include="Images\MapContest.png" />
