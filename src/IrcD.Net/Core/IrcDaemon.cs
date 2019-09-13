@@ -529,16 +529,16 @@ namespace IrcD.Core
                     switch (count)
                     {
                         case "2":
-                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.NOTIFICATIONS, lang)}  1 vs 1 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 5);
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  1 vs 1 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 5);
                             break;
                         case "4":
-                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.NOTIFICATIONS, lang)}  2 vs 2 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  2 vs 2 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
                             break;
                         case "6":
-                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.NOTIFICATIONS, lang)}  3 vs 3 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  3 vs 3 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
                             break;
                         case "8":
-                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.NOTIFICATIONS, lang)}  4 vs 4 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  4 vs 4 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
                             break;
                         default:
                             break;

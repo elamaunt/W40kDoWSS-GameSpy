@@ -299,9 +299,9 @@ namespace GSMasterServer.Servers
             if (server.Get<string>("statechanged") == "3" && gamename.Equals("whamdowfram", StringComparison.Ordinal))
             {
                 if (CoreContext.LangService.CurrentCulture.TwoLetterISOLanguageName == "ru")
-                    ServerContext.ChatServer.SentServerMessageToClient($"Вы создаете хост для игры в авто [{gameType}, {gamevariant}]. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.\n\r");
+                    ServerContext.ChatServer.SentServerMessageToClient($"Вы создаете хост для игры в авто [{gameType}, {gamevariant}]. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.");
                 else
-                    ServerContext.ChatServer.SentServerMessageToClient($"You are creating a host for automatch [{gameType}, {gamevariant}]. Other players will see your host after a while (up to a minute), receive a notification and be able to connect to the game.\n\r");
+                    ServerContext.ChatServer.SentServerMessageToClient($"You are creating a host for automatch [{gameType}, {gamevariant}]. Other players will see your host after a while (up to a minute), receive a notification and be able to connect to the game.");
 
             }
 

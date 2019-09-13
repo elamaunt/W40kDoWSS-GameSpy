@@ -20,8 +20,8 @@ namespace ThunderHawk
     {
         const string ApiKey = "AIzaSyD8_wjaIxgrQG0m-DwBYLR3ZDQiQjPB7bk";
 
-        const string Version = "1.10-beta";
-        const string VersionForUI = "BETA 1.10";
+        const string Version = "1.11-beta";
+        const string VersionForUI = "BETA 1.11";
 
         // If modifying these scopes, delete your previously saved credentials
         // at ~/.credentials/drive-dotnet-quickstart.json
