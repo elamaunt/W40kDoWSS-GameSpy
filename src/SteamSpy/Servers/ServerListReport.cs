@@ -290,19 +290,22 @@ namespace GSMasterServer.Servers
 
             if (isRanked)
             {
-                server["realscore"] = (ServerContext.ChatServer?.CurrentRating ?? 1000).ToString();
-                server["score_"] = "1000";
+                //server["realscore"] = (ServerContext.ChatServer?.CurrentRating ?? 1000).ToString();
+                server["score_"] = (ServerContext.ChatServer?.CurrentRating ?? 1000).ToString();
             }
 
             var gamename = server.Get<string>("gamename");
 
             if (server.Get<string>("statechanged") == "3" && gamename.Equals("whamdowfram", StringComparison.Ordinal))
             {
+#if SPACEWAR
+                ServerContext.ChatServer.SentServerMessageToClient($"Вы создаете хост для игры в авто [{gameType}, {gamevariant}]. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.");
+#else
                 if (CoreContext.LangService.CurrentCulture.TwoLetterISOLanguageName == "ru")
                     ServerContext.ChatServer.SentServerMessageToClient($"Вы создаете хост для игры в авто [{gameType}, {gamevariant}]. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.");
                 else
                     ServerContext.ChatServer.SentServerMessageToClient($"You are creating a host for automatch [{gameType}, {gamevariant}]. Other players will see your host after a while (up to a minute), receive a notification and be able to connect to the game.");
-
+#endif
             }
 
             server["hostport"] = remote.Port.ToString();

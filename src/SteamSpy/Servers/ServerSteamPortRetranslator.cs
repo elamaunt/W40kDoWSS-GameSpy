@@ -11,6 +11,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ThunderHawk;
 
 namespace GSMasterServer.Servers
 {
@@ -227,7 +228,7 @@ namespace GSMasterServer.Servers
                         AppendServerProperty(builder, "gametype");
                         AppendServerProperty(builder, "numplayers");
                         AppendServerProperty(builder, "maxplayers");
-                        AppendServerProperty(builder, "score_");
+                        AppendServerProperty(builder, "score_", GetRating());
                         AppendServerProperty(builder, "teamplay");
                         AppendServerProperty(builder, "gametype");
                         AppendServerProperty(builder, "gamevariant");
@@ -277,6 +278,11 @@ namespace GSMasterServer.Servers
             }
 
             WaitForData();
+        }
+
+        private string GetRating()
+        {
+            return ServerContext.ChatServer?.CurrentRating.ToString() ?? "1000";
         }
 
         public void SendToGame(byte[] buffer, uint size)
@@ -329,11 +335,18 @@ namespace GSMasterServer.Servers
                 if (index != -1)
                 {
                     Console.WriteLine("INCOME " + str);
+                    // \0#\u001a�\u0001splitnum\0�\0numplayers\01\0maxplayers\02\0hostname\0Bambochuk2\0hostport\063181\0mapname\0\0password\00\0gamever\01.2.120R\0numplayers\01\0maxplayers\02\0score_\0teamplay\00\0gametype\0ranked\0gamevariant\01.56bugfix\0groupid\00\0numobservers\00\0maxobservers\00\0modname\0\0moddisplayname\0\0modversion\0\0devmode\00\0gametype0\0gametype1\0gametype2\0gametype3\0gametype4\0gametype5\0gametype6\0gametype7\0gametype8\0gametype9\0gametype10\0gametype11\0gametype12\0gametype13\0gametype14\0gametype15\0gametype16\0gametype17\0gametype18\0gametype19\0gametype20\0gametype21\0gametype22\0gametype23\0gametype24\0gametype25\0gametype26\0gametype27\0gametype28\0gametype29\0gametype30\0gametype31\0\0\u0001player_\0\0Bambochuk2\0\0ping_\0\00\0\0player_\0\0Bambochuk2\0\0\0\u0002\0"
+                    var newStr = str
+                        .Replace("score_\0", $"score_\0{GetRating()}\0")
+                        .Replace("hostport\06112", "hostport\0" + Port.ToString())
+                        .Replace("hostport\00", "hostport\0"+ Port.ToString());
 
-                    var newStr = str.Replace("hostport\06112", "hostport\0" + Port.ToString()).Replace("hostport\00", "hostport\0"+ Port.ToString());
+
+
                     var bytes = Encoding.UTF8.GetBytes(newStr);
                     
-                    Console.WriteLine("CONNECTING "+ newStr);
+
+                    Console.WriteLine("CONNECTING " + newStr);
 
                     _socket?.SendTo(bytes, bytes.Length, SocketFlags.None, LocalPoint ?? GameEndPoint);
 

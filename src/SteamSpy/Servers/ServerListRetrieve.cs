@@ -375,6 +375,11 @@ namespace GSMasterServer.Servers
                    else
                        servers = task.Result;
 
+                   for (int i = 0; i < servers.Length; i++)
+                   {
+                       servers[i]["score_"] = ServerContext.ChatServer.CurrentRating.ToString();
+                   }
+
                    string[] fields = data[5].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
                    
                    byte[] unencryptedServerList = PackServerList(state, servers, fields, isAutomatch);

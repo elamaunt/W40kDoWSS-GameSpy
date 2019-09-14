@@ -434,6 +434,23 @@ namespace GSMasterServer.Servers
 
                             // GETCKEY #GPG!1 * 026 0 :\\username\\b_flags\r\nSETCKEY #GPG!1 elamaunt :\\b_stats\\3|1000|0|\r\nGETCKEY #GPG!1 * 027 0 :\\b_stats\r\n
 
+                            if (utf8value.StartsWith("SETCKEY", StringComparison.OrdinalIgnoreCase))
+                            {
+                                var split = utf8value.Split(' ');
+
+                                if (split.Length == 4 && split[0] == "SETCKEY" && split[3].StartsWith(":\\b_stats\\", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    split = split[3].Split('|');
+
+                                    if (split.Length > 1 && int.TryParse(split[1], out int rating))
+                                        CurrentRating = rating;
+                                }
+
+                                SendToServerSocket(ref state, bytes);
+
+                                goto CONTINUE;
+                            }
+
                             if (utf8value.StartsWith("GETCKEY", StringComparison.OrdinalIgnoreCase))
                             {
                                 var split = utf8value.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
@@ -610,7 +627,7 @@ namespace GSMasterServer.Servers
             if (state.Disposing)
                 return;
 
-            SendToServerSocket(ref state, "ROOMCOUNTERS".ToAssciiBytes());
+            SendToServerSocket(ref state, "ROOMCOUNTERS\r\n".ToAssciiBytes());
         }
 
         public void SentServerMessageToClient(string message)
@@ -620,7 +637,7 @@ namespace GSMasterServer.Servers
             if (state.Disposing || ChatNick.IsNullOrWhiteSpace() || message.IsNullOrWhiteSpace())
                 return;
 
-            SendToGameSocket(ref state, $@":SERVER!XaaaaaaaaX|10008@127.0.0.1 PRIVMSG {ChatNick} :{message}".ToUTF8Bytes());
+            SendToGameSocket(ref state, $":SERVER!XaaaaaaaaX|10008@127.0.0.1 PRIVMSG {ChatNick} :{message}\r\n".ToUTF8Bytes());
         }
 
         public void SendGameBroadcast(string message)
@@ -630,7 +647,7 @@ namespace GSMasterServer.Servers
             if (state.Disposing)
                 return;
 
-            SendToServerSocket(ref state, $@"BROADCAST :{message}".ToUTF8Bytes());
+            SendToServerSocket(ref state, $"BROADCAST :{message}\r\n".ToUTF8Bytes());
         }
 
         public void SendAutomatchGameBroadcast(string hostname, int maxPlayers, string gameType, string gamevariant)
@@ -640,7 +657,7 @@ namespace GSMasterServer.Servers
             if (state.Disposing)
                 return;
             
-            SendToServerSocket(ref state, $@"GAMEBROADCAST {hostname} {maxPlayers} {gameType} {gamevariant}".ToUTF8Bytes());
+            SendToServerSocket(ref state, $"GAMEBROADCAST {hostname} {maxPlayers} {gameType} {gamevariant}\r\n".ToUTF8Bytes());
         }
 
         private unsafe void SendToServerSocket(ref SocketState state, byte[] bytes)

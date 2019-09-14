@@ -54,11 +54,11 @@ namespace ThunderHawk
             var window = WPFPageHelper.InstantiateWindow<MainWindowViewModel>();
             window.Show();
             MainWindow = window;
-#endif
 
             var path = Path.Combine(CoreContext.LaunchService.LauncherPath, "logs");
 
             NLog.LogManager.Configuration = LogConfigurator.GetConfiguration(path);
+#endif
         }
     }
 }
