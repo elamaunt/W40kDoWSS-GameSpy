@@ -125,7 +125,8 @@ automatch_defaults_dxp2 =
 	{
 		"Annihilate",
 		"ControlArea",
-		"StrategicObjective"
+		"StrategicObjective",
+        "GameTimer"
 	},
 
 
