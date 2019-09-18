@@ -95,7 +95,8 @@ namespace ThunderHawk
                         if (AppSettings.ThunderHawkModAutoSwitch)
                             procParams += " -modname ThunderHawk";
 
-                        CopyHotKeysIfFirstLaunch(GamePath);
+                        CopySchemes(GamePath);
+                        CopyHotkeys(GamePath);
 
                         ProcessManager.KillDowStatsProccesses();
 
@@ -136,7 +137,30 @@ namespace ThunderHawk
         }
 
 
-        private void CopyHotKeysIfFirstLaunch(string gamePath)
+        private void CopySchemes(string gamePath)
+        {
+            var profiles = Directory.GetDirectories(Path.Combine(gamePath, "Profiles"));
+            foreach (var profile in profiles)
+            {
+                var schemesPath = Path.Combine(profile, "dxp2", "Schemes");
+                if (Directory.Exists(schemesPath))
+                {
+                    var files = Directory.GetFiles(schemesPath, "*.teamcolour");
+                    if (files.Length == 0)
+                        continue;
+                    var targetDir = Path.Combine(profile, "thunderhawk", "Schemes");
+                    if (!Directory.Exists(targetDir))
+                    {
+                        Directory.CreateDirectory(targetDir);
+                        foreach(var file in files)
+                        {
+                            File.Copy(file, Path.Combine(targetDir, Path.GetFileName(file)), true);
+                        }
+                    }
+                }
+            }
+        }
+        private void CopyHotkeys(string gamePath)
         {
             var profiles = Directory.GetDirectories(Path.Combine(gamePath, "Profiles"));
             foreach (var profile in profiles)
