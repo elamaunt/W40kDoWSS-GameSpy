@@ -529,7 +529,7 @@ namespace IrcD.Core
                     switch (count)
                     {
                         case "2":
-                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  1 vs 1 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 5);
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  1 vs 1 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 0);
                             break;
                         case "4":
                             item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  2 vs 2 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
