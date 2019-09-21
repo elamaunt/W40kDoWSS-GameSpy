@@ -12,7 +12,8 @@ namespace GSMasterServer.DiscordBot
     {
         private static Dictionary<string, IBotCommand> commands = new Dictionary<string, IBotCommand>()
         {
-            { "ping", new PingCommand() }
+            { "ping", new PingCommand() },
+            { "dm", new DeleteMessagesCommand() }
         };
 
         public static async Task HandleCommand(SocketMessage arg)
@@ -28,13 +29,7 @@ namespace GSMasterServer.DiscordBot
                     return;
                 }
 
-                var userAccessLevel = AccessLevel.User;
-
-                var author = arg.Author as SocketGuildUser;
-                if (author.Roles.Any(x => x.Id == DiscordServerConstants.adminRoleId))
-                    userAccessLevel = AccessLevel.Admin;
-                else if (author.Roles.Any(x => x.Id == DiscordServerConstants.moderRoleId))
-                    userAccessLevel = AccessLevel.Moderator;
+                var userAccessLevel = arg.Author.GetAccessLevel();
 
                 if (userAccessLevel >= command.MinAccessLevel)
                 {
