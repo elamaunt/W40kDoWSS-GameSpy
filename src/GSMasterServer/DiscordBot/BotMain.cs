@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using GSMasterServer.DiscordBot.Database;
 using IrcNet.Tools;
 using System;
 using System.IO;
@@ -25,6 +26,10 @@ namespace GSMasterServer.DiscordBot
                 await BotClient.LoginAsync(TokenType.Bot, GetToken());
                 await BotClient.StartAsync();
                 Logger.Info("Discord bot intialized!");
+
+                DiscordDatabase.InitDb();
+
+                //await Task.Run(() => UpdateLoop());
             }
             catch (Exception ex)
             {
@@ -38,6 +43,14 @@ namespace GSMasterServer.DiscordBot
             if (string.IsNullOrWhiteSpace(token))
                 throw new Exception("Token is empty!");
             return token;
+        }
+
+        private static async Task UpdateLoop()
+        {
+            while (true)
+            {  
+                await Task.Delay(10000);
+            }
         }
 
         private static async Task MessageReceivedAsync(SocketMessage arg)

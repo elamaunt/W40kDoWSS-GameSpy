@@ -9,7 +9,7 @@ namespace GSMasterServer.DiscordBot.Commands
 {
     public class DeleteMessagesCommand : IBotCommand
     {
-        public AccessLevel MinAccessLevel { get; } = AccessLevel.Admin;
+        public AccessLevel MinAccessLevel { get; } = AccessLevel.Moderator;
         /// <summary>
         /// Possible command params:
         /// (required) From message(ulong messageId)
@@ -35,7 +35,7 @@ namespace GSMasterServer.DiscordBot.Commands
                 }
             }
             if (fromMessage == 0)
-                throw new Exception("[DeleteMesages]No messageId was passed");
+                throw new Exception("[DeleteMessagesCommand]No message id was passed");
             var textChannel = socketMessage.Channel as SocketTextChannel;
             var messages = await textChannel.GetMessagesAsync(fromMessage, Direction.After).FlattenAsync();
             var messagesToDelete = messages;

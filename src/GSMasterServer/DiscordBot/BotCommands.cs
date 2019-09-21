@@ -13,7 +13,10 @@ namespace GSMasterServer.DiscordBot
         private static Dictionary<string, IBotCommand> commands = new Dictionary<string, IBotCommand>()
         {
             { "ping", new PingCommand() },
-            { "dm", new DeleteMessagesCommand() }
+            { "dm", new DeleteMessagesCommand() },
+            { "sm", new MuteCommand(true) },
+            { "mute", new MuteCommand(false) },
+            { "unmute", new UnMuteCommand() }
         };
 
         public static async Task HandleCommand(SocketMessage arg)
@@ -22,8 +25,7 @@ namespace GSMasterServer.DiscordBot
             {
                 var commandParams = arg.Content.Split();
                 var commandName = commandParams[0].Substring(1).ToLower();
-                IBotCommand command;
-                if (!commands.TryGetValue(commandName, out command))
+                if (!commands.TryGetValue(commandName, out IBotCommand command))
                 {
                     Logger.Trace($"Command: \"{commandName}\" is not implemented!");
                     return;
