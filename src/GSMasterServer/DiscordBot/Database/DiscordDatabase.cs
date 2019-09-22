@@ -1,6 +1,7 @@
 ﻿using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace GSMasterServer.DiscordBot.Database
@@ -9,7 +10,7 @@ namespace GSMasterServer.DiscordBot.Database
     {
         private static LiteDatabase db;
 
-        private static LiteCollection<DiscordProfile> ProfilesTable => db.GetCollection<DiscordProfile>("DiscordProfiles");
+        public static LiteCollection<DiscordProfile> ProfilesTable => db.GetCollection<DiscordProfile>("DiscordProfiles");
 
         public static void InitDb()
         {
@@ -21,21 +22,48 @@ namespace GSMasterServer.DiscordBot.Database
             return ProfilesTable.FindOne(x => x.UserId == userId);
         }
 
-        public static void UpdateData(ulong userId, ulong softMuteUntil, ulong muteUntil)
+        public static void RemoveMute(ulong userId, bool isSoftMute)
         {
-            var data = new DiscordProfile()
+            var profile = GetProfile(userId);
+            if (profile != null)
             {
-                UserId = userId,
-                MuteUntil = muteUntil,
-                SoftMuteUntil = softMuteUntil
-            };
-
-            if (GetProfile(userId) != null)
-                ProfilesTable.Update(data);
-            else
-            {
-                ProfilesTable.Insert(data);
+                if (isSoftMute)
+                    profile.IsSoftMuteActive = false;
+                else
+                    profile.IsMuteActive = false;
+                ProfilesTable.Update(profile);
             }
+        }
+
+        public static void AddMute(ulong userId, ulong softMuteUntil, ulong muteUntil)
+        {
+            var profile = GetProfile(userId);
+            bool isNew = false;
+            if (profile == null)
+            {
+                isNew = true;
+                profile = new DiscordProfile()
+                {
+                    UserId = userId,
+                    MuteUntil = muteUntil,
+                    SoftMuteUntil = softMuteUntil,
+                };
+            }
+            if (softMuteUntil != 0)
+            {
+                profile.SoftMuteUntil = softMuteUntil;
+                profile.IsSoftMuteActive = true;
+            }
+            if (muteUntil != 0)
+            {
+                profile.MuteUntil = muteUntil;
+                profile.IsMuteActive = true;
+            }
+
+            if (isNew)
+                ProfilesTable.Insert(profile);
+            else
+                ProfilesTable.Update(profile);
         }
     }
 }

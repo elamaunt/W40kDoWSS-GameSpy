@@ -19,8 +19,9 @@ namespace GSMasterServer.DiscordBot.Commands
         /// <param name="commandParams"></param>
         /// <param name="socketMessage"></param>
         /// <returns></returns>
-        public async Task Execute(string[] commandParams, SocketMessage socketMessage)
+        public async Task Execute(SocketMessage socketMessage)
         {
+            string[] commandParams = socketMessage.CommandArgs();
             var paramCount = commandParams.Length;
             ulong fromMessage = 0;
             bool deleteAdmin = false;

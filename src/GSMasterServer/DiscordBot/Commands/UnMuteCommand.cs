@@ -12,19 +12,28 @@ namespace GSMasterServer.DiscordBot.Commands
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.Moderator;
 
-        public async Task Execute(string[] commandParams, SocketMessage socketMessage)
+        private readonly bool softUnmute;
+        public UnMuteCommand(bool softUnmute)
+        {
+            this.softUnmute = softUnmute;
+        }
+
+        public static async Task UnMute(IReadOnlyCollection<SocketUser> users, bool softUnmute, SocketGuild socketGuild)
+        {
+            foreach (var user in users)
+            {
+                var guidUser = user as SocketGuildUser;
+                var roleToRemove = softUnmute ? socketGuild.GetRole(DiscordServerConstants.floodOnlyRoleId) : socketGuild.GetRole(DiscordServerConstants.readOnlyRoleId);
+                await guidUser.RemoveRoleAsync(roleToRemove);
+            }
+        }
+
+        public async Task Execute(SocketMessage socketMessage)
         {
             var targetUsers = socketMessage.MentionedUsers;
             if (targetUsers.Count == 0)
                 throw new Exception("[UnMuteCommand]No users were mentioned!");
-
-            var server = (socketMessage.Channel as SocketGuildChannel).Guild;
-            foreach (var user in targetUsers)
-            {
-                var guidUser = user as SocketGuildUser;
-                var roles = new List<IRole>() { server.GetRole(DiscordServerConstants.readOnlyRoleId),  server.GetRole(DiscordServerConstants.floodOnlyRoleId)} ;
-                await guidUser.RemoveRolesAsync(roles);
-            }
+            await UnMute(targetUsers, softUnmute, (socketMessage.Channel as SocketGuildChannel).Guild);
         }
     }
 }

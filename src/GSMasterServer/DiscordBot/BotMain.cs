@@ -1,9 +1,12 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using GSMasterServer.DiscordBot.Commands;
 using GSMasterServer.DiscordBot.Database;
 using IrcNet.Tools;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 
@@ -11,7 +14,8 @@ namespace GSMasterServer.DiscordBot
 {
     internal class BotMain
     {
-        public static DiscordSocketClient BotClient { get; private set; }
+        private static DiscordSocketClient BotClient { get; set; }
+        private static SocketGuild SocketGuild { get; set; }
 
         public static async Task StartAsync()
         {
@@ -28,13 +32,19 @@ namespace GSMasterServer.DiscordBot
                 Logger.Info("Discord bot intialized!");
 
                 DiscordDatabase.InitDb();
-
-                //await Task.Run(() => UpdateLoop());
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
             }
+        }
+
+        private static async Task ReadyAsync()
+        {
+            SocketGuild = BotClient.GetGuild(DiscordServerConstants.serverId);
+            Logger.Info($"{BotClient} is ready!");
+
+            await Task.Run(() => UpdateLoop());
         }
 
         private static string GetToken()
@@ -48,8 +58,42 @@ namespace GSMasterServer.DiscordBot
         private static async Task UpdateLoop()
         {
             while (true)
-            {  
-                await Task.Delay(10000);
+            {
+                try
+                {
+                    var timeNow = (ulong)DateTime.UtcNow.Ticks;
+                    var softUnmuteList = new List<SocketUser>();
+                    var unmuteList = new List<SocketUser>();
+                    foreach (var tableUser in DiscordDatabase.ProfilesTable.FindAll())
+                    {
+                        if (tableUser.IsSoftMuteActive && timeNow >= tableUser.SoftMuteUntil)
+                        {
+                            softUnmuteList.Add(SocketGuild.GetUser(tableUser.UserId));
+                            DiscordDatabase.RemoveMute(tableUser.UserId, true);
+                        }
+                        if (tableUser.IsMuteActive && timeNow >= tableUser.MuteUntil)
+                        {
+                            unmuteList.Add(SocketGuild.GetUser(tableUser.UserId));
+                            DiscordDatabase.RemoveMute(tableUser.UserId, false);
+                        }
+                    }
+                    if (softUnmuteList.Count != 0)
+                    {
+                        await UnMuteCommand.UnMute(softUnmuteList, true, SocketGuild);
+                    }
+                    if (unmuteList.Count != 0)
+                    {
+                        await UnMuteCommand.UnMute(unmuteList, false, SocketGuild);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
+                finally
+                {
+                    await Task.Delay(10000);
+                }
             }
         }
 
@@ -69,12 +113,6 @@ namespace GSMasterServer.DiscordBot
             {
                 Logger.Error(ex);
             }
-        }
-
-        private static Task ReadyAsync()
-        {
-            Logger.Info($"{BotClient} is ready!");
-            return Task.CompletedTask;
         }
 
         private static Task LogAsync(LogMessage arg)

@@ -15,5 +15,10 @@ namespace GSMasterServer.DiscordBot
                 return AccessLevel.Moderator;
             return AccessLevel.User;
         }
+
+        public static string[] CommandArgs(this SocketMessage arg)
+        {
+            return arg.Content.Split().Skip(1).ToArray();
+        }
     }
 }

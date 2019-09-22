@@ -5,7 +5,7 @@ namespace GSMasterServer.DiscordBot.Commands
 {
     public interface IBotCommand
     {
-        Task Execute(string[] commandParams, SocketMessage socketMessage);
+        Task Execute(SocketMessage socketMessage);
 
         AccessLevel MinAccessLevel { get; }
     }

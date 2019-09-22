@@ -27,8 +27,9 @@ namespace GSMasterServer.DiscordBot.Commands
         /// <param name="commandParams"></param>
         /// <param name="socketMessage"></param>
         /// <returns></returns>
-        public async Task Execute(string[] commandParams, SocketMessage socketMessage)
+        public async Task Execute(SocketMessage socketMessage)
         {
+            string[] commandParams = socketMessage.CommandArgs();
             var paramCount = commandParams.Length;
             ulong howLong = 0;
             if (paramCount > 0)
@@ -48,7 +49,7 @@ namespace GSMasterServer.DiscordBot.Commands
                 if (howLong != 0)
                 {
                     var timeUntilMute = (ulong)DateTime.UtcNow.AddMinutes(howLong).Ticks;
-                    DiscordDatabase.UpdateData(guidUser.Id, softMute ? timeUntilMute : 0, !softMute ? timeUntilMute : 0);
+                    DiscordDatabase.AddMute(guidUser.Id, softMute ? timeUntilMute : 0, !softMute ? timeUntilMute : 0);
                 }
             }
         }

@@ -16,15 +16,15 @@ namespace GSMasterServer.DiscordBot
             { "dm", new DeleteMessagesCommand() },
             { "sm", new MuteCommand(true) },
             { "mute", new MuteCommand(false) },
-            { "unmute", new UnMuteCommand() }
+            { "unsm", new UnMuteCommand(true) },
+            { "unmute", new UnMuteCommand(false) },
         };
 
         public static async Task HandleCommand(SocketMessage arg)
         {
             try
             {
-                var commandParams = arg.Content.Split();
-                var commandName = commandParams[0].Substring(1).ToLower();
+                var commandName = arg.Content.Split()[0].Substring(1).ToLower();
                 if (!commands.TryGetValue(commandName, out IBotCommand command))
                 {
                     Logger.Trace($"Command: \"{commandName}\" is not implemented!");
@@ -35,7 +35,7 @@ namespace GSMasterServer.DiscordBot
 
                 if (userAccessLevel >= command.MinAccessLevel)
                 {
-                    await commands[commandName].Execute(commandParams.Skip(1).ToArray(), arg);
+                    await commands[commandName].Execute(arg);
                     Logger.Trace($"Executed command \"{commandName}\" by {arg.Author.Username}({arg.Author.Id})" +
                         $" with Access Level {userAccessLevel}");
                 }

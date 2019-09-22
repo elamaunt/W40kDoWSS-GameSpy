@@ -18,6 +18,8 @@
 #endif
 
 #if Debug
+        public const long serverId = 624305167743057921;
+
         public const ulong normalCatRuId = 624962194051956739;
         public const ulong normalCatEnId = 624962194051956739;
         public const ulong floodCatId = 624962245914525698;
