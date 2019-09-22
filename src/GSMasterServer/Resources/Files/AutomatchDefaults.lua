@@ -146,11 +146,9 @@ automatch_defaults_dxp2 =
 	},
 	automatch_maps4p = 
 	{
-		"4p_murad_swamplands",
 		"4p_gurmuns_pass",
 		"4P_Biffys_Peril",
 		"4P_Gorhael_Crater",
-		"4P_Ice_Flow",
 		"4P_Doom_Spiral",
 		"4p_panrea_lowlands",
 		"4P_Skerries",

@@ -13,7 +13,7 @@ namespace ThunderHawk
         public MainWindow()
         {
             InitializeComponent();
-            
+
             if (SteamAPI.RestartAppIfNecessary(AppId_t.Invalid))
             {
                 Console.WriteLine("APP RESTART REQUESTED");
@@ -35,8 +35,7 @@ namespace ThunderHawk
             CompositionTarget.Rendering += OnRender;
             ServerContext.Start(IPAddress.Any);
             ServerContext.ServerListRetrieve.StartReloadingTimer();
-
-
+            ServerContext.MasterServer.Connect(SteamUser.GetSteamID());
         }
 
         private void OnRender(object sender, EventArgs e)

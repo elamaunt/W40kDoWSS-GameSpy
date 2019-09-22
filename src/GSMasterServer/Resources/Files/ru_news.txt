@@ -21,11 +21,9 @@ Bugfix 1.56a и фикс пафинга (для Техники) внедрены
 - 2P Moonbase (доработанная Дэвилом)
 .
 2на2
-- 4p murad swamplands (доработанная Дэвилом)
 - 4p gurmuns pass
 - 4P Biffys Peril
 - 4P Gorhael Crater
-- 4P Ice Flow
 - 4P Doom Spiral
 - 4p panrea lowlands (доработанная Дэвилом)
 - 4P Skerries (доработанная Дэвилом)

@@ -26,6 +26,8 @@ namespace GSMasterServer.Services.Implementations
             _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Score1v1));
             _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Score2v2));
             _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Score3v3));
+            _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.SteamId));
+            _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Modified));
 
             _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.Author), true);
             _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.CreatedDate), true);
@@ -132,12 +134,14 @@ namespace GSMasterServer.Services.Implementations
 
             data.SteamId = steamId;
             data.LastIp = address.ToString();
+            data.Modified = DateTime.UtcNow.Ticks;
 
             ProfilesTable.Update(data);
         }
 
         public void UpdateProfileData(ProfileDBO stats)
         {
+            stats.Modified = DateTime.UtcNow.Ticks;
             ProfilesTable.Update(stats);
         }
 
@@ -236,5 +240,11 @@ namespace GSMasterServer.Services.Implementations
         {
             return NewsTable.Find(Query.All(nameof(NewsDBO.CreatedDate), Query.Descending), 0, count).ToArray();
         }
+
+        public IEnumerable<ProfileDBO> GetProfilesBySteamId(long steamId)
+        {
+            return ProfilesTable.Find(Query.And(Query.EQ(nameof(ProfileDBO.SteamId), new BsonValue(steamId)), Query.All(nameof(ProfileDBO.Modified), Query.Descending)), 0);
+        }
+
     }
 }

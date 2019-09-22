@@ -285,15 +285,15 @@ namespace IrcD.Core
 
                 var lang = info.FirstLanguage;
 
-                info.WriteServerPrivateMessage($"{Messages.Get(Messages.WELLCOME, lang)}, {info.Nick}!");
-                info.WriteServerPrivateMessage(Messages.Get(Messages.RATING_GAME, lang));
-                info.WriteServerPrivateMessage(Messages.Get(Messages.NOTIFICATIONS, lang));
-                info.WriteServerPrivateMessage(Messages.Get(Messages.STATISTICS_CHANGES, lang));
+                info.WriteServerPrivateMessage($"{LangMessages.Get(LangMessages.WELLCOME, lang)}, {info.Nick}!");
+                info.WriteServerPrivateMessage(LangMessages.Get(LangMessages.RATING_GAME, lang));
+                info.WriteServerPrivateMessage(LangMessages.Get(LangMessages.NOTIFICATIONS, lang));
+                info.WriteServerPrivateMessage(LangMessages.Get(LangMessages.STATISTICS_CHANGES, lang));
 
-                info.WriteServerPrivateMessage($"{Messages.Get(Messages.PLAYERS_ON_SERVER, lang)} {Users.Count}");
+                info.WriteServerPrivateMessage($"{LangMessages.Get(LangMessages.PLAYERS_ON_SERVER, lang)} {Users.Count}");
 
                 if (rooms.Length > 0)
-                    info.WriteServerPrivateMessage($"{Messages.Get(Messages.OPENED_GAMES_IN_AUTO, lang)} {rooms.Length}, {Messages.Get(Messages.PLAYERS_IN_AUTO, lang)} {rooms.Sum(x => x.Value.Users.Count())}");
+                    info.WriteServerPrivateMessage($"{LangMessages.Get(LangMessages.OPENED_GAMES_IN_AUTO, lang)} {rooms.Length}, {LangMessages.Get(LangMessages.PLAYERS_IN_AUTO, lang)} {rooms.Sum(x => x.Value.Users.Count())}");
 
             });
 
@@ -447,7 +447,7 @@ namespace IrcD.Core
             if (Users.TryGetValue(profileId, out UserInfo user))
             {
                 var channel = user.UserPerChannelInfos.FirstOrDefault(x => x.Key?.StartsWith("#GPG", StringComparison.OrdinalIgnoreCase) ?? false).Value;
-                var message = string.Format(Messages.Get(key, user.FirstLanguage), parameters);
+                var message = string.Format(LangMessages.Get(key, user.FirstLanguage), parameters);
 
                 if (channel != null)
                 {
@@ -529,16 +529,16 @@ namespace IrcD.Core
                     switch (count)
                     {
                         case "2":
-                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  1 vs 1 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 0);
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {LangMessages.Get(LangMessages.SOMEBODY_CREATED_A_GAME, lang)}  1 vs 1 ({type}, {gamevariant}). {LangMessages.Get(LangMessages.RESTART_AUTOMATCH_ADVICE, lang)}", 0);
                             break;
                         case "4":
-                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  2 vs 2 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {LangMessages.Get(LangMessages.SOMEBODY_CREATED_A_GAME, lang)}  2 vs 2 ({type}, {gamevariant}). {LangMessages.Get(LangMessages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
                             break;
                         case "6":
-                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  3 vs 3 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {LangMessages.Get(LangMessages.SOMEBODY_CREATED_A_GAME, lang)}  3 vs 3 ({type}, {gamevariant}). {LangMessages.Get(LangMessages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
                             break;
                         case "8":
-                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {Messages.Get(Messages.SOMEBODY_CREATED_A_GAME, lang)}  4 vs 4 ({type}, {gamevariant}). {Messages.Get(Messages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
+                            item.WriteServerPrivateMessage($"[{DateTime.UtcNow.ToString("hh:mm")}] {LangMessages.Get(LangMessages.SOMEBODY_CREATED_A_GAME, lang)}  4 vs 4 ({type}, {gamevariant}). {LangMessages.Get(LangMessages.RESTART_AUTOMATCH_ADVICE, lang)}", 15);
                             break;
                         default:
                             break;

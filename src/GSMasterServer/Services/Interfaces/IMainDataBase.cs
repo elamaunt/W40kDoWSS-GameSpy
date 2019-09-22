@@ -8,6 +8,7 @@ namespace GSMasterServer.Services
     {
         bool AddFriend(long toProfileId, long friendProfileId);
         void RemoveFriend(long profileId, long friendProfileId);
+        IEnumerable<ProfileDBO> GetProfilesBySteamId(long steamId);
         ProfileDBO GetProfileById(long profileId);
         ProfileDBO GetProfileByName(string username);
         void UpdateProfileData(ProfileDBO stats);

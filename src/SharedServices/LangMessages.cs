@@ -2,7 +2,7 @@
 
 namespace SharedServices
 {
-    public static class Messages
+    public static class LangMessages
     {
         public const string WELLCOME = nameof(WELLCOME);
         public const string RATING_GAME = nameof(RATING_GAME);

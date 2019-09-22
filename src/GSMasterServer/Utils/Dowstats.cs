@@ -1,19 +1,16 @@
+using GSMasterServer.Data;
+using GSMasterServer.Servers;
+using IrcNet.Tools;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Threading;
 using System.Web;
-using GSMasterServer.Data;
-using GSMasterServer.Servers;
-using GSMasterServer.Services;
-using IrcNet.Tools;
-using NLog.Fluent;
 
 namespace GSMasterServer.Utils
 {
-    
+
     public class Dowstats
     {
         static readonly HttpClient httpClient = new HttpClient();
@@ -137,7 +134,7 @@ namespace GSMasterServer.Utils
                     {
                         profile1X1 = Database.MainDBInstance.CreateProfile1X1(profileId);
                     }
-                    var profile1X1ToUpdate = (Profile1X1DBO) profile1X1.updateRaceStat(race, isWin, isAuto);
+                    var profile1X1ToUpdate = (Profile1X1DBO) profile1X1.UpdateRaceStat(race, isWin, isAuto);
                     Database.MainDBInstance.UpdateProfile1X1(profile1X1ToUpdate);
                     UploadProfileToDowstats(profile1X1ToUpdate, gameType);
                     break;
@@ -147,7 +144,7 @@ namespace GSMasterServer.Utils
                     {
                         profile2X2 = Database.MainDBInstance.CreateProfile2X2(profileId);
                     }
-                    var profile2X2ToUpdate = (Profile2X2DBO) profile2X2.updateRaceStat(race, isWin, isAuto);
+                    var profile2X2ToUpdate = (Profile2X2DBO) profile2X2.UpdateRaceStat(race, isWin, isAuto);
                     Database.MainDBInstance.UpdateProfile2X2(profile2X2ToUpdate);
                     UploadProfileToDowstats(profile2X2ToUpdate, gameType);
                     break;
@@ -157,7 +154,7 @@ namespace GSMasterServer.Utils
                     {
                         profile3X3 = Database.MainDBInstance.CreateProfile3X3(profileId);
                     }
-                    var profile3X3ToUpdate = (Profile3X3DBO) profile3X3.updateRaceStat(race, isWin, isAuto);
+                    var profile3X3ToUpdate = (Profile3X3DBO) profile3X3.UpdateRaceStat(race, isWin, isAuto);
                     Database.MainDBInstance.UpdateProfile3X3(profile3X3ToUpdate);
                     UploadProfileToDowstats(profile3X3ToUpdate, gameType);
                     break;
@@ -167,7 +164,7 @@ namespace GSMasterServer.Utils
                     {
                         profile4X4 = Database.MainDBInstance.CreateProfile4X4(profileId);
                     }
-                    var profile4X4ToUpdate = (Profile4X4DBO) profile4X4.updateRaceStat(race, isWin, isAuto);
+                    var profile4X4ToUpdate = (Profile4X4DBO) profile4X4.UpdateRaceStat(race, isWin, isAuto);
                     Database.MainDBInstance.UpdateProfile4X4(profile4X4ToUpdate);
                     UploadProfileToDowstats(profile4X4ToUpdate, gameType);
                     break;

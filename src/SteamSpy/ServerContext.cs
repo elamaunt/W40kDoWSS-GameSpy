@@ -12,6 +12,7 @@ namespace ThunderHawk
         public static ServerListRetrieve ServerListRetrieve { get; private set; }
         public static LoginServerRetranslator LoginMasterServer { get; private set; }
         public static ChatServerRetranslator ChatServer { get; private set; }
+        public static SingleMasterServer MasterServer { get; private set; }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public static void Start(IPAddress bind)
@@ -20,6 +21,8 @@ namespace ThunderHawk
             ServerListRetrieve = new ServerListRetrieve(bind, 28910);
             LoginMasterServer = new LoginServerRetranslator(bind, 29900, 29901);
             ChatServer = new ChatServerRetranslator(bind, 6667);
+
+            MasterServer = new SingleMasterServer(bind, 0);
 
             ServerListRetrieve.StartReloadingTimer();
         }

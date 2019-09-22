@@ -150,7 +150,10 @@ namespace GSMasterServer.Servers
             SocketState state = (SocketState)async.AsyncState;
 
             if (state == null || state.Socket == null || !state.Socket.Connected)
+            {
+                Logger.Trace($"Stats socket: STATE NULL");
                 return;
+            }
 
             try
             {
@@ -158,13 +161,16 @@ namespace GSMasterServer.Servers
                 int received = state.Socket.EndReceive(async);
 
                 if (received == 0)
+                {
+                    Logger.Trace($"Stats socket: ZERO");
                     return;
+                }
 
                 var buffer = state.Buffer;
 
                 var input = Encoding.UTF8.GetString(XorBytes(buffer, 0, received - 7, XorKEY), 0, received);
 
-                Logger.Trace($"Receive data from the socket: {input}");
+                Logger.Trace($"Stats socket: {input}");
 
                 if (input.StartsWith(@"\auth\\gamename\"))
                 {
@@ -276,6 +282,8 @@ namespace GSMasterServer.Servers
 
                 if (input.StartsWith(@"\updgame\"))
                 {
+                    Logger.Trace($"Stats socket: GAME UPDATE FROM " + (state.Nick ?? "UNKNOWN" ));
+
                     Task.Factory.StartNew(() =>
                     {
                         var gamedataIndex = input.IndexOf("gamedata");
@@ -307,7 +315,10 @@ namespace GSMasterServer.Servers
                         {
                             // Dont process games with AI
                             if (dictionary["PHuman_" + i] != "1")
+                            {
+                                Logger.Trace($"Stats socket: GAME WITH NONHUMAN PLAYER");
                                 return;
+                            }
                         }
 
                         var gameInternalSession = dictionary["SessionID"];
@@ -327,6 +338,7 @@ namespace GSMasterServer.Servers
                         
                         if (!HandledGamesCache.Add(uniqueSession, uniqueSession, new CacheItemPolicy() { SlidingExpiration = TimeSpan.FromDays(1) }))
                         {
+                            Logger.Trace($"Stats socket: GAME ALREADY IN COUNT");
                             return;
                         }
                         
@@ -523,13 +535,13 @@ namespace GSMasterServer.Servers
                                     case ReatingGameType.Unknown:
                                         break;
                                     case ReatingGameType.Rating1v1:
-                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, Messages.RATING_CHANGED, @"1v1", GetDeltaString(info.Delta), info.Profile.Score1v1);
+                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"1v1", GetDeltaString(info.Delta), info.Profile.Score1v1);
                                         break;
                                     case ReatingGameType.Rating2v2:
-                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, Messages.RATING_CHANGED, @"2v2", GetDeltaString(info.Delta), info.Profile.Score2v2);
+                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"2v2", GetDeltaString(info.Delta), info.Profile.Score2v2);
                                         break;
                                     case ReatingGameType.Rating3v3_4v4:
-                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, Messages.RATING_CHANGED, @"3v3/4v4", GetDeltaString(info.Delta), info.Profile.Score3v3);
+                                            ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"3v3/4v4", GetDeltaString(info.Delta), info.Profile.Score3v3);
                                             break;
                                         default:
                                             break;
@@ -538,6 +550,7 @@ namespace GSMasterServer.Servers
                             }
                         }
 
+                        Logger.Trace($"Stats socket: GAME ACCEPTED "+uniqueSession);
                         Dowstats.UploadGame(dictionary, usersGameInfos, isRateGame);
                     }, CancellationToken.None, TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness, _exclusiveScheduler);
 

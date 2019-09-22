@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3F0C33F2-BBB7-45F2-91BE-A604C36EA0FE}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>ThunderHawk</RootNamespace>
     <AssemblyName>ThunderHawk</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
@@ -121,6 +121,7 @@
     <Compile Include="GameState.cs" />
     <Compile Include="LogConfigurator.cs" />
     <Compile Include="PageExtensions\UserInteractionsExtension.cs" />
+    <Compile Include="Servers\SingleMasterServer.cs" />
     <Compile Include="Services\Implementations\UpdaterService.cs" />
     <Compile Include="ThunderHawk.cs" />
     <Compile Include="ServerContext.cs" />
@@ -509,6 +510,10 @@
       <Project>{2929d34b-f1bb-4578-9e9a-24c9b0179931}</Project>
       <Name>Framework</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SharedServices\SharedServices.csproj">
+      <Project>{ACAD388F-98FC-489B-80C4-CE414C08F531}</Project>
+      <Name>SharedServices</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Steamworks.NET\Standalone\Steamworks.NET.csproj">
       <Project>{b3543600-587c-4fdc-994a-cb0bdc629a7e}</Project>
       <Name>Steamworks.NET</Name>
@@ -621,6 +626,9 @@
     </PackageReference>
     <PackageReference Include="LibGit2Sharp">
       <Version>0.26.0</Version>
+    </PackageReference>
+    <PackageReference Include="Lidgren.Network">
+      <Version>1.0.2</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>10.0.1</Version>

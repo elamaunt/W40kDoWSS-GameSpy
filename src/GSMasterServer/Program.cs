@@ -62,6 +62,9 @@ namespace GSMasterServer
             HttpServer httpServer = new HttpServer(bind, 80);
             StatsServer statsServer = new StatsServer(bind, 29920);
             //DiscordServer discordServer = new DiscordServer();
+
+            SingleMasterServer singleServer = new SingleMasterServer();
+
             while (true)
                 Thread.Sleep(1000);
         }

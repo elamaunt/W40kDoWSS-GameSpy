@@ -59,7 +59,7 @@ namespace GSMasterServer.Data
             ProfileId = profileId;
         }
 
-        public ProfileDetailDBO updateRaceStat(Race raceType, bool isWin, bool isAuto)
+        public ProfileDetailDBO UpdateRaceStat(Race raceType, bool isWin, bool isAuto)
         {
             switch (raceType)
             {
