@@ -34,6 +34,8 @@ namespace GSMasterServer.DiscordBot.Commands
             if (targetUsers.Count == 0)
                 throw new Exception("[UnMuteCommand]No users were mentioned!");
             await UnMute(targetUsers, softUnmute, (socketMessage.Channel as SocketGuildChannel).Guild);
+
+            await socketMessage.DeleteAsync();
         }
     }
 }

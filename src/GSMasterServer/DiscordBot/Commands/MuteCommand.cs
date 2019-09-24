@@ -52,6 +52,8 @@ namespace GSMasterServer.DiscordBot.Commands
                     DiscordDatabase.AddMute(guidUser.Id, softMute ? timeUntilMute : 0, !softMute ? timeUntilMute : 0);
                 }
             }
+
+            await socketMessage.DeleteAsync();
         }
     }
 }
