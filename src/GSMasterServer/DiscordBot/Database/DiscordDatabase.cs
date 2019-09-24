@@ -38,10 +38,9 @@ namespace GSMasterServer.DiscordBot.Database
         public static void AddMute(ulong userId, ulong softMuteUntil, ulong muteUntil)
         {
             var profile = GetProfile(userId);
-            bool isNew = false;
+            bool isNew = profile == null;
             if (profile == null)
             {
-                isNew = true;
                 profile = new DiscordProfile()
                 {
                     UserId = userId,
