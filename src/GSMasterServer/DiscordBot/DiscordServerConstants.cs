@@ -3,8 +3,10 @@
     public static class DiscordServerConstants
     {
 #if Release
-        public const long serverId = 606832876369215491;
-        public const long welcomeChannelId = 606832876369215495;
+        public const ulong serverId = 606832876369215491;
+        public const ulong welcomeChannelId = 606832876369215495;
+
+        public const ulong logChannelId = 626123363840163861;
 
         public const ulong normalCatRuId = 618843467237425153;
         public const ulong normalCatEnId = 622125594351501313;
@@ -18,7 +20,9 @@
 #endif
 
 #if Debug
-        public const long serverId = 624305167743057921;
+        public const ulong serverId = 624305167743057921;
+
+        public const ulong logChannelId = 626123183380234261;
 
         public const ulong normalCatRuId = 624962194051956739;
         public const ulong normalCatEnId = 624962194051956739;

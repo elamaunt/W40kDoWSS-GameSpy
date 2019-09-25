@@ -104,6 +104,9 @@ namespace GSMasterServer.DiscordBot
                 if (arg.Author.Id == BotClient.CurrentUser.Id)
                     return;
 
+                if ((arg.Channel as SocketTextChannel).Guild.Id != DiscordServerConstants.serverId)
+                    return;
+
                 if (arg.Content.StartsWith("!"))
                 {
                     await BotCommands.HandleCommand(arg);
@@ -119,6 +122,18 @@ namespace GSMasterServer.DiscordBot
         {
             Logger.Debug(arg);
             return Task.CompletedTask;
+        }
+
+        public static async Task WriteToLogChannel(string text)
+        {
+            var channel = SocketGuild.GetTextChannel(DiscordServerConstants.logChannelId);
+            if (channel == null)
+            {
+                Logger.Warn("Tried to write log to channel, but the channel is null!");
+                return;
+            }
+            var socketChannel = channel as SocketTextChannel;
+            await socketChannel.SendMessageAsync(text);
         }
 
     }

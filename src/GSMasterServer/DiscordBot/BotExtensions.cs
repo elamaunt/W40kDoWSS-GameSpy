@@ -1,6 +1,8 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using IrcNet.Tools;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace GSMasterServer.DiscordBot
 {

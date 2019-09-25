@@ -5,6 +5,7 @@ using IrcNet.Tools;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace GSMasterServer.DiscordBot.Commands
@@ -52,6 +53,17 @@ namespace GSMasterServer.DiscordBot.Commands
                     DiscordDatabase.AddMute(guidUser.Id, softMute ? timeUntilMute : 0, !softMute ? timeUntilMute : 0);
                 }
             }
+
+            var logMessage = new StringBuilder();
+            foreach (var user in targetUsers)
+            {
+                logMessage.Append($"<@{user.Id}> ");
+            }
+            if (howLong != 0)
+                logMessage.Append($"You've been {(softMute ?  "soft-" : "")}muted for {howLong} minutes");
+            else
+                logMessage.Append($"You've been {(softMute ? "soft-" : "")}muted FOREVER!");
+            await BotMain.WriteToLogChannel(logMessage.ToString());
 
             await socketMessage.DeleteAsync();
         }
