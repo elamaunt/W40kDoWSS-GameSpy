@@ -3,6 +3,7 @@ using Framework.WPF;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Windows;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
@@ -45,9 +46,10 @@ namespace ThunderHawk
 
             base.OnStartup(e);
 
-#if SPACEWAR
-            MainWindow = new MainWindow();
-#else
+//#if SPACEWAR
+//            MainWindow = new MainWindow();
+//#else
+
             CoreContext.SteamApi.Initialize();
             CoreContext.UpdaterService.CheckForUpdates();
 
@@ -58,7 +60,7 @@ namespace ThunderHawk
             var path = Path.Combine(CoreContext.LaunchService.LauncherPath, "logs");
 
             NLog.LogManager.Configuration = LogConfigurator.GetConfiguration(path);
-#endif
+//#endif
         }
     }
 }

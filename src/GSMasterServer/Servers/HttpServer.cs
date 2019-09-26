@@ -14,6 +14,7 @@ using System.Xml;
 using System.Xml.Linq;
 using GSMasterServer.Services;
 using IrcNet.Tools;
+using SharedServices;
 
 namespace GSMasterServer.Servers
 {
@@ -185,12 +186,6 @@ namespace GSMasterServer.Servers
 
                 using (var ms = new MemoryStream(state.Buffer))
                 {
-                    if (request.Url.StartsWith("/api/", StringComparison.OrdinalIgnoreCase))
-                    {
-                        HandleApiRequest(request, ms, ref state);
-                        goto END;
-                    }
-
                     if (request.Url.EndsWith("news.txt", StringComparison.OrdinalIgnoreCase))
                     {
                         if (request.Url.EndsWith("Russiandow_news.txt", StringComparison.OrdinalIgnoreCase))
@@ -284,78 +279,6 @@ namespace GSMasterServer.Servers
 
             // and we wait for more data...
             CONTINUE: WaitForData(ref state);
-        }
-
-        private void HandleApiRequest(HttpRequest request, MemoryStream ms, ref HttpSocketState state)
-        {
-            var fullPath = request.Url.Substring(5);
-
-            var fullPathSplit = fullPath.Split('?');
-
-            var path = fullPathSplit[0];
-            var parametersPairs = fullPathSplit.ElementAtOrDefault(1)?.Split('&');
-            NameValueCollection parameters;
-
-            if (parametersPairs != null)
-            {
-                parameters = new NameValueCollection(parametersPairs.Length);
-
-                for (int i = 0; i < parametersPairs.Length; i++)
-                {
-                    var split = parametersPairs[i].Split('=');
-
-                    if (split.Length == 2)
-                        parameters[split[0]] = split[1];
-                    else
-                        parameters[split[0]] = string.Empty;
-                }
-            }
-
-
-            if (request.Method == "GET")
-            {
-                if (path == "lastnews")
-                {
-                    var lastNews = Database.MainDBInstance.GetLastNews(3);
-
-                    var lastNewsDTOs = lastNews.Select(x => new NewsItemDTO()
-                        {
-                            Id = x.Id,
-                            Author = x.Author,
-                            CreatedDate = x.CreatedDate,
-                            EditedDate = x.EditedDate,
-                            ImageBase64 = x.ImageBase64,
-                            ImagePath = x.ImagePath,
-                            NewsType = x.NewsType,
-
-                            English = Convert(x.English),
-                            Russian = Convert(x.Russian)
-                        }).ToArray();
-
-                    var bytes = lastNewsDTOs.AsJson().ToUTF8Bytes();
-                    ms.Write(bytes, 0, bytes.Length);
-                    return;
-                }
-
-                if (path == "allnews")
-                {
-
-                    return;
-                }
-
-                return;
-            }
-
-            if (request.Method == "POST")
-            {
-                if (path == "news")
-                {
-
-                    return;
-                }
-
-                return;
-            }
         }
 
         private NewsLanguageItemDTO Convert(NewsData newsData)

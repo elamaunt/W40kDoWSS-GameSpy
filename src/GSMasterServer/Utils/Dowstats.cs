@@ -1,6 +1,7 @@
 using GSMasterServer.Data;
 using GSMasterServer.Servers;
 using IrcNet.Tools;
+using SharedServices;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -114,7 +115,7 @@ namespace GSMasterServer.Utils
             
             for (int i = 0; i < gameUserInfo.Length; i++)
             {
-                updateDetailStats(
+                UpdateDetailStats(
                     gameUserInfo[i].Profile.Id, 
                     Int32.Parse(gameType), 
                     gameUserInfo[i].Race, 
@@ -124,7 +125,7 @@ namespace GSMasterServer.Utils
             
         }
 
-        private static void updateDetailStats(long profileId, int gameType, Race race, bool isWin, bool isAuto)
+        private static void UpdateDetailStats(long profileId, int gameType, Race race, bool isWin, bool isAuto)
         {
             switch (gameType)
             {
@@ -227,12 +228,13 @@ namespace GSMasterServer.Utils
             Logger.Debug($"request uri: {updateRequestBuilder.Uri}");
             IAsyncResult result = request.BeginGetResponse( OnAsyncCallback, request );
         }
-        
-        
-        private static void OnAsyncCallback( IAsyncResult asyncResult ) {
+
+
+        private static void OnAsyncCallback(IAsyncResult asyncResult)
+        {
             try
             {
-                var httpWebRequest = (HttpWebRequest) asyncResult.AsyncState;
+                var httpWebRequest = (HttpWebRequest)asyncResult.AsyncState;
                 WebResponse response = httpWebRequest.EndGetResponse(asyncResult);
                 var reader = new StreamReader(response.GetResponseStream());
                 string str = reader.ReadToEnd();

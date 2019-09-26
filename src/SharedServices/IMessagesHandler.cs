@@ -1,19 +1,23 @@
-﻿namespace SharedServices
+﻿using Lidgren.Network;
+
+namespace SharedServices
 {
     public interface IMessagesHandler
     {
-        void HandleMessage(UserDisconnectedMessage message);
-        void HandleMessage(UserConnectedMessage message);
-        void HandleMessage(ChatMessageMessage message);
-        void HandleMessage(UsersMessage message);
-        void HandleMessage(UserNameChangedMessage message);
-        void HandleMessage(UserStatusChangedMessage message);
-        void HandleMessage(GameBroadcastMessage message);
-        void HandleMessage(UserStatsChangedMessage message);
-        void HandleMessage(UserStatsMessage message);
-        void HandleMessage(RequestUserStatsMessage message);
-        void HandleMessage(LoginMessage message);
-        void HandleMessage(LogoutMessage message);
-        void HandleMessage(GameFinishedMessage message);
+        void HandleMessage(NetConnection connection, UserDisconnectedMessage message);
+        void HandleMessage(NetConnection connection, UserConnectedMessage message);
+        void HandleMessage(NetConnection connection, ChatMessageMessage message);
+        void HandleMessage(NetConnection connection, UsersMessage message);
+        void HandleMessage(NetConnection connection, UserNameChangedMessage message);
+        void HandleMessage(NetConnection connection, UserStatusChangedMessage message);
+        void HandleMessage(NetConnection connection, GameBroadcastMessage message);
+        void HandleMessage(NetConnection connection, UserStatsChangedMessage message);
+        void HandleMessage(NetConnection connection, UserStatsMessage message);
+        void HandleMessage(NetConnection connection, RequestUserStatsMessage message);
+        void HandleMessage(NetConnection connection, LoginMessage message);
+        void HandleMessage(NetConnection connection, LogoutMessage message);
+        void HandleMessage(NetConnection connection, GameFinishedMessage message);
+        void HandleMessage(NetConnection connection, RequestUsersMessage message);
+        
     }
 }

@@ -1,0 +1,28 @@
+﻿<framework:BindableControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+             ClipToBounds="False"
+             VerticalAlignment="Stretch"
+             HorizontalAlignment="Stretch"
+             mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel Orientation="Vertical" UseLayoutRounding="True">
+            <TextBox   Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Name"
+                       HorizontalAlignment="Left"
+                       MaxWidth="420"
+                       Margin="16 8 100 8"     
+                       IsReadOnly="True"
+                       TextWrapping="Wrap"
+                       FontSize="14"
+                       Foreground="#75f4ff">
+            </TextBox>
+           
+        </StackPanel>
+    </Grid>
+</framework:BindableControl>

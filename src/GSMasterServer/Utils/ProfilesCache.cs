@@ -6,7 +6,8 @@ namespace GSMasterServer.Utils
 {
     public static class ProfilesCache
     {
-        static readonly MemoryCache ProfilesByIdCache = new MemoryCache("Profiles");
+        static readonly MemoryCache ProfilesByIdCache = new MemoryCache("ProfilesById");
+        static readonly MemoryCache ProfilesByNameCache = new MemoryCache("ProfilesByName");
 
         public static void UpdateProfilesCache(ProfileDBO profile)
         {
@@ -15,7 +16,15 @@ namespace GSMasterServer.Utils
             if (ProfilesByIdCache.Contains(idString))
                 ProfilesByIdCache.Remove(idString, CacheEntryRemovedReason.Removed);
 
+            if (ProfilesByNameCache.Contains(profile.Name))
+                ProfilesByNameCache.Remove(profile.Name, CacheEntryRemovedReason.Removed);
+
             ProfilesByIdCache.Add(new CacheItem(idString, profile), new CacheItemPolicy()
+            {
+                SlidingExpiration = TimeSpan.FromMinutes(25)
+            });
+
+            ProfilesByNameCache.Add(new CacheItem(profile.Name, profile), new CacheItemPolicy()
             {
                 SlidingExpiration = TimeSpan.FromMinutes(25)
             });
@@ -31,6 +40,9 @@ namespace GSMasterServer.Utils
             {
                 var stats = Database.MainDBInstance.GetProfileById(long.Parse(pid));
 
+                if (stats == null)
+                    return null;
+
                 ProfilesByIdCache.Add(new CacheItem(stats.Id.ToString(), stats), new CacheItemPolicy()
                 {
                     SlidingExpiration = TimeSpan.FromMinutes(25)
@@ -42,14 +54,24 @@ namespace GSMasterServer.Utils
 
         public static ProfileDBO GetProfileByName(string name)
         {
-            var stats = Database.MainDBInstance.GetProfileByName(name);
-
-            ProfilesByIdCache.Add(new CacheItem(stats.Id.ToString(), stats), new CacheItemPolicy()
+            if (ProfilesByNameCache.Contains(name))
             {
-                SlidingExpiration = TimeSpan.FromMinutes(25)
-            });
+                return (ProfileDBO)ProfilesByNameCache.Get(name);
+            }
+            else
+            {
+                var stats = Database.MainDBInstance.GetProfileByName(name);
 
-            return stats;
+                if (stats == null)
+                    return null;
+
+                ProfilesByNameCache.Add(new CacheItem(name, stats), new CacheItemPolicy()
+                {
+                    SlidingExpiration = TimeSpan.FromMinutes(25)
+                });
+
+                return stats;
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using NLog;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 namespace Framework
@@ -11,13 +12,9 @@ namespace Framework
             var name = $"{Path.GetFileName(callerFilePath)} line {sourceLineNumber} / {callerMemberName}";
             var logger = LogManager.GetLogger(name);
 
-            /*if (logLevel == null)
-            {
-                if (obj is Exception)
-                    logLevel = LogLevel.Error;
-                else
-                    logLevel = LogLevel.Info;
-            }*/
+            if (Debugger.IsAttached)
+                Console.WriteLine(obj.ToString());
+
             logger.Log(logLevel, obj);
         }
     }

@@ -121,10 +121,12 @@
     <Compile Include="GameState.cs" />
     <Compile Include="LogConfigurator.cs" />
     <Compile Include="PageExtensions\UserInteractionsExtension.cs" />
-    <Compile Include="Servers\SingleMasterServer.cs" />
+    <Compile Include="Servers\TcpPortHandler.cs" />
+    <Compile Include="Servers\UdpPortHandler.cs" />
+    <Compile Include="Services\Implementations\SingleClientServer.cs" />
+    <Compile Include="Services\Implementations\SingleMasterServer.cs" />
     <Compile Include="Services\Implementations\UpdaterService.cs" />
     <Compile Include="ThunderHawk.cs" />
-    <Compile Include="ServerContext.cs" />
     <Compile Include="Data\AddressInfo.cs" />
     <Compile Include="Data\GameServer.cs" />
     <Compile Include="Data\Race.cs" />
@@ -148,12 +150,7 @@
     <Compile Include="Tweaks\RuFont.cs" />
     <Compile Include="Tweaks\Unlocker.cs" />
     <Compile Include="Utils\ProcessHelper.cs" />
-    <Compile Include="Servers\ChatServerRetranslator.cs" />
-    <Compile Include="Servers\LoginServerRetranslator.cs" />
-    <Compile Include="Servers\Server.cs" />
     <Compile Include="Servers\ServerSteamPortRetranslator.cs" />
-    <Compile Include="Servers\ServerListReport.cs" />
-    <Compile Include="Servers\ServerListRetrieve.cs" />
     <Compile Include="StaticClasses\Soulstorm\PathFinder.cs" />
     <Compile Include="Styles\WindowStyle.cs" />
     <Compile Include="Utils\ByteHelpers.cs" />
@@ -217,6 +214,14 @@
     <Page Include="Styles\WindowStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Elements\Element_ChatUser.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Elements\Element_ChatMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Elements\Element_Question.xaml">
       <Generator>MSBuild:Compile</Generator>

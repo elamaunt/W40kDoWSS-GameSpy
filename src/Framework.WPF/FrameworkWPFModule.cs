@@ -23,6 +23,7 @@
             batch.RegisterControllerFactory(() => new FrameWithIListFrameBinder());
             batch.RegisterControllerFactory(() => new FrameWithINavigationPanelFrameBinder());
             batch.RegisterControllerFactory(() => new ListViewWithIListFrameBinder());
+            batch.RegisterControllerFactory(() => new TextBoxBaseWithITextEditorFrameBinder());
         }
     }
 }

@@ -2,6 +2,6 @@
 {
     public class UsersMessage
     {
-        public UserInfo[] User { get; set; }
+        public UserPart[] Users { get; set; }
     }
 }

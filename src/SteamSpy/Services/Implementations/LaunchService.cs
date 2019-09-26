@@ -107,7 +107,8 @@ namespace ThunderHawk
                         });
 
                         GameProcess = ssProc;
-                        ServerContext.Start(IPAddress.Any);
+
+                        CoreContext.ClientServer.Start();
 
                         ssProc.EnableRaisingEvents = true;
 
@@ -129,7 +130,7 @@ namespace ThunderHawk
                 finally
                 {
                     GameProcess = null;
-                    ServerContext.Stop();
+                    CoreContext.ClientServer.Stop();
                     SteamLobbyManager.LeaveFromCurrentLobby();
                 }
             }).Unwrap();

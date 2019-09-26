@@ -11,6 +11,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ApiDomain\ApiDomain.csproj" />
     <ProjectReference Include="..\Framework\Framework.csproj" />
+    <ProjectReference Include="..\SharedServices\SharedServices.csproj" />
   </ItemGroup>
 
   <ItemGroup>

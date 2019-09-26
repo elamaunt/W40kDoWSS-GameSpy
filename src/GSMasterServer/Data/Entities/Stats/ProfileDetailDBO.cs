@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using SharedServices;
 
 namespace GSMasterServer.Data
 {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using SharedServices;
+using System.Collections.Generic;
 
 namespace GSMasterServer.Data
 {

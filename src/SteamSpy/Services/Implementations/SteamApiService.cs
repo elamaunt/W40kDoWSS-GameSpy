@@ -29,21 +29,27 @@ namespace ThunderHawk
                 return;
             }
 
+#if !SPACEWAR
             if (SteamAPI.RestartAppIfNecessary(AppId))
             {
                 RestartAsSoulstormExe();
                 return;
             }
+#endif
 
             if (!SteamAPI.Init())
                 throw new Exception("Cant init SteamApi");
 
+#if !SPACEWAR
             var appId = SteamUtils.GetAppID();
 
             if (appId.m_AppId != AppId.m_AppId)
                 throw new Exception("Wrong App Id!");
+#endif
 
             IsInitialized = true;
+
+            CoreContext.MasterServer.Connect(SteamUser.GetSteamID().m_SteamID);
         }
 
         private void RestartAsSoulstormExe()
@@ -62,6 +68,11 @@ namespace ThunderHawk
                 File.Copy(Path.Combine(Environment.CurrentDirectory, "ThunderHawk.exe.config"), path, true);
 
             Environment.Exit(0);
+        }
+
+        public string GetUserName(ulong steamId)
+        {
+            return SteamFriends.GetFriendPersonaName(new CSteamID(steamId));
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Windows;
 using System.Windows.Media;
+using ThunderHawk.Core;
 using ThunderHawk.Utils;
 
 namespace ThunderHawk
@@ -33,9 +34,8 @@ namespace ThunderHawk
             process.WaitForExit();
 
             CompositionTarget.Rendering += OnRender;
-            ServerContext.Start(IPAddress.Any);
-            ServerContext.ServerListRetrieve.StartReloadingTimer();
-            ServerContext.MasterServer.Connect(SteamUser.GetSteamID());
+            CoreContext.ClientServer.Start();
+            CoreContext.MasterServer.Connect(SteamUser.GetSteamID().m_SteamID);
         }
 
         private void OnRender(object sender, EventArgs e)

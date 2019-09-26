@@ -1,6 +1,6 @@
-﻿namespace GSMasterServer.Data
+﻿namespace SharedServices
 {
-    public enum ReatingGameType
+    public enum RatingGameType
     {
         Unknown,
         Rating1v1,

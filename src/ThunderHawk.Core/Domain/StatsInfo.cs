@@ -1,9 +1,12 @@
-﻿namespace SharedServices
+﻿using SharedServices;
+
+namespace ThunderHawk.Core
 {
-    public class UserStatsMessage
+    public class StatsInfo
     {
+        public long ProfileId { get; }
+
         public ulong SteamId { get; set; }
-        public long ProfileId { get; set; }
         public string Name { get; set; }
         public Race FavouriteRace { get; set; }
         public long GamesCount { get; set; }
@@ -13,5 +16,10 @@
         public long Score3v3_4v4 { get; set; }
         public long AverageDuration { get; set; }
         public long Disconnects { get; set; }
+
+        public StatsInfo(long profileId)
+        {
+            ProfileId = profileId;
+        }
     }
 }

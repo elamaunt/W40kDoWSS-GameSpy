@@ -1,17 +1,21 @@
 ﻿using GSMasterServer.Data;
+using GSMasterServer.Utils;
 using IrcNet.Tools;
 using Lidgren.Network;
 using SharedServices;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Net;
 using System.Threading;
 
 namespace GSMasterServer.Servers
 {
-    public class SingleMasterServer
+    public class SingleMasterServer : IMessagesHandler
     {
-        readonly ConcurrentDictionary<ulong, PeerState> _states = new ConcurrentDictionary<ulong, PeerState>();
+        readonly ConcurrentDictionary<ulong, PeerState> _userStates = new ConcurrentDictionary<ulong, PeerState>();
+
+
 
         readonly NetServer _serverPeer;
 
@@ -19,19 +23,20 @@ namespace GSMasterServer.Servers
         {
             var config = new NetPeerConfiguration("ThunderHawk")
             {
-                ConnectionTimeout = 30,
+                ConnectionTimeout = 60,
                 LocalAddress = IPAddress.Any,
                 AutoFlushSendQueue = true,
                 AcceptIncomingConnections = true,
                 MaximumConnections = 2048,
                 Port = 29909,
-                PingInterval = 30000,
+                PingInterval = 30,
                 UseMessageRecycling = true,
                 RecycledCacheMaxCount = 128,
                 UnreliableSizeBehaviour = NetUnreliableSizeBehaviour.NormalFragmentation
             };
 
             config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
+            config.EnableMessageType(NetIncomingMessageType.Data);
 
             _serverPeer = new NetServer(config);
 
@@ -52,9 +57,11 @@ namespace GSMasterServer.Servers
                 {
                     switch (type)
                     {
-                        case NetIncomingMessageType.Data: HandleDataMessage(message); break;
-                        case NetIncomingMessageType.Error: HandleError(message); break;
-                        case NetIncomingMessageType.ErrorMessage: HandleErrorMessage(message); break;
+                        case NetIncomingMessageType.Data: message.ReadJsonMessage(this); break;
+                        case NetIncomingMessageType.ErrorMessage: Logger.Error(message.ReadString()); break;
+                        case NetIncomingMessageType.VerboseDebugMessage: Logger.Debug(message.ReadString()); break;
+                        case NetIncomingMessageType.WarningMessage: Logger.Warn(message.ReadString()); break;
+                        case NetIncomingMessageType.DebugMessage: Logger.Debug(message.ReadString()); break;
                         case NetIncomingMessageType.StatusChanged: HandleStatusChanged(message); break;
                         default: break;
                     }
@@ -84,14 +91,14 @@ namespace GSMasterServer.Servers
                     {
                         var steamId = message.SenderConnection.RemoteHailMessage.PeekUInt64();
 
-                        HandleStateConnected(message, _states.GetOrAdd(steamId, ep => new PeerState(steamId, message.SenderConnection)));
+                        HandleStateConnected(message, _userStates.GetOrAdd(steamId, ep => new PeerState(steamId, message.SenderConnection)));
                         break;
                     }
                 case NetConnectionStatus.Disconnected:
                     {
                         var steamId = message.SenderConnection.RemoteHailMessage.PeekUInt64();
 
-                        if (_states.TryRemove(steamId, out PeerState state))
+                        if (_userStates.TryRemove(steamId, out PeerState state))
                             HandleStateDisconnected(message, state);
                         break;
                     }
@@ -132,40 +139,148 @@ namespace GSMasterServer.Servers
 
         void HandleStateConnected(NetIncomingMessage message, PeerState state)
         {
-            _serverPeer.SendToAll(_serverPeer.CreateMessage(  new UserConnectedMessage().AsJson()), state.Connection, NetDeliveryMethod.ReliableUnordered, ConnectedChannel);
+            var mes = _serverPeer.CreateMessage();
+
+            mes.WriteJsonMessage(new UserConnectedMessage()
+            {
+                SteamId = state.SteamId
+            });
+
+            _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableOrdered);
         }
 
         void HandleStateDisconnected(NetIncomingMessage message, PeerState state)
         {
-            _serverPeer.SendToAll(_serverPeer.CreateMessage(new UserDisconnectedMessage()
+            var mes = _serverPeer.CreateMessage();
+
+            mes.WriteJsonMessage(new UserDisconnectedMessage()
             {
                 SteamId = state.SteamId
+            });
 
-            }.AsJson()), state.Connection, NetDeliveryMethod.ReliableUnordered, DisconnectedChannel);
-        }
-
-        void HandleError(NetIncomingMessage message)
-        {
-        }
-
-        void HandleErrorMessage(NetIncomingMessage message)
-        {
-            
-        }
-
-        void HandleDataMessage(NetIncomingMessage message)
-        {
-            /*switch (message.SequenceChannel)
-            {
-                default:
-                    break;
-            }*/
+            _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableOrdered);
         }
 
         bool ReadMessage(out NetIncomingMessage message)
         {
             message = _serverPeer.ReadMessage();
             return message != null;
+        }
+
+
+        //-------------- HANDLERS ---------------
+
+        public void HandleMessage(NetConnection connection, UserDisconnectedMessage message)
+        {
+        }
+
+        public void HandleMessage(NetConnection connection, UserConnectedMessage message)
+        {
+        }
+
+        public void HandleMessage(NetConnection connection, ChatMessageMessage message)
+        {
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(message);
+            _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        public void HandleMessage(NetConnection connection, UsersMessage message)
+        {
+        }
+
+        public void HandleMessage(NetConnection connection, UserNameChangedMessage message)
+        {
+        }
+
+        public void HandleMessage(NetConnection connection, UserStatusChangedMessage message)
+        {
+        }
+
+        public void HandleMessage(NetConnection connection, GameBroadcastMessage message)
+        {
+        }
+
+        public void HandleMessage(NetConnection connection, UserStatsChangedMessage message)
+        {
+        }
+
+        public void HandleMessage(NetConnection connection, UserStatsMessage message)
+        {
+        }
+
+        public void HandleMessage(NetConnection connection, RequestUserStatsMessage message)
+        {
+            ProfileDBO profile = null;
+
+            if (message.Name == null)
+            {
+                if (message.ProfileId != null)
+                {
+                    profile = ProfilesCache.GetProfileByPid(message.ProfileId.Value.ToString());
+
+                    if (profile == null)
+                        return;
+
+                    
+                }
+            }
+            else
+            {
+                profile = ProfilesCache.GetProfileByName(message.Name);
+
+                if (profile == null)
+                    return;
+            }
+
+            var statsMessage = new UserStatsMessage()
+            {
+                ProfileId = profile.Id,
+                Name = profile.Name,
+                AverageDuration = profile.AverageDuractionTicks,
+                Disconnects = profile.Disconnects,
+                FavouriteRace = profile.FavouriteRace,
+                WinsCount = profile.WinsCount,
+                GamesCount = profile.GamesCount,
+                Score1v1 = profile.Score1v1,
+                Score2v2 = profile.Score2v2,
+                Score3v3_4v4 = profile.Score3v3,
+                SteamId = profile.SteamId
+            };
+
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(statsMessage);
+            _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        public void HandleMessage(NetConnection connection, LoginMessage message)
+        {
+        }
+
+        public void HandleMessage(NetConnection connection, LogoutMessage message)
+        {
+
+        }
+
+        public void HandleMessage(NetConnection connection, GameFinishedMessage message)
+        {
+
+        }
+
+        public void HandleMessage(NetConnection connection, RequestUsersMessage message)
+        {
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(new UsersMessage()
+            {
+                Users = _userStates.Values.Select(x => new UserPart()
+                {
+                    Name = x.ActiveProfile?.Name,
+                    ProfileId = x.ActiveProfile?.Id,
+                    Status = x.Status,
+                    SteamId = x.SteamId
+                }).ToArray()
+            }); ;
+            _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
         }
     }
 }

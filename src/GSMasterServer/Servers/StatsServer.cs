@@ -28,7 +28,7 @@ namespace GSMasterServer.Servers
         public int Team;
         public PlayerFinalState FinalState;
         public long Delta;
-        public ReatingGameType RatingGameType;
+        public RatingGameType RatingGameType;
     }
     
     internal class StatsServer
@@ -465,23 +465,23 @@ namespace GSMasterServer.Servers
                             Func<ProfileDBO, long> scoreSelector = null;
                             Action<ProfileDBO, long> scoreUpdater = null;
 
-                            ReatingGameType type = ReatingGameType.Unknown;
+                            RatingGameType type = RatingGameType.Unknown;
 
                             switch (usersGameInfos.Length)
                             {
                                 case 2:
                                     scoreSelector = StatsDelegates.Score1v1Selector;
                                     scoreUpdater = StatsDelegates.Score1v1Updated;
-                                    type = ReatingGameType.Rating1v1;
+                                    type = RatingGameType.Rating1v1;
                                     break;
                                 case 4:
                                     scoreSelector = StatsDelegates.Score2v2Selector;
                                     scoreUpdater = StatsDelegates.Score2v2Updated;
-                                    type = ReatingGameType.Rating2v2;
+                                    type = RatingGameType.Rating2v2;
                                     break;
                                 case 6:
                                 case 8:
-                                    type = ReatingGameType.Rating3v3_4v4;
+                                    type = RatingGameType.Rating3v3_4v4;
                                     scoreSelector = StatsDelegates.Score3v3Selector;
                                     scoreUpdater = StatsDelegates.Score3v3Updated;
                                     break;
@@ -532,15 +532,15 @@ namespace GSMasterServer.Servers
                                 {
                                 switch (info.RatingGameType)
                                 {
-                                    case ReatingGameType.Unknown:
+                                    case RatingGameType.Unknown:
                                         break;
-                                    case ReatingGameType.Rating1v1:
+                                    case RatingGameType.Rating1v1:
                                             ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"1v1", GetDeltaString(info.Delta), info.Profile.Score1v1);
                                         break;
-                                    case ReatingGameType.Rating2v2:
+                                    case RatingGameType.Rating2v2:
                                             ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"2v2", GetDeltaString(info.Delta), info.Profile.Score2v2);
                                         break;
-                                    case ReatingGameType.Rating3v3_4v4:
+                                    case RatingGameType.Rating3v3_4v4:
                                             ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"3v3/4v4", GetDeltaString(info.Delta), info.Profile.Score3v3);
                                             break;
                                         default:

@@ -6,6 +6,62 @@
              xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
              mc:Ignorable="d">
     <Grid Margin="0 0 0 0">
-        <Label HorizontalAlignment="Center" VerticalAlignment="Center" framework:WPFBinder.Frame="Title" Foreground="White" />
+
+        <ListView Margin="0 12 0 30"
+                  ClipToBounds="False"
+                  Background="Transparent"
+                  BorderThickness="0" 
+                  HorizontalContentAlignment="Left"
+                  Width="200"
+                  VerticalAlignment="Stretch"
+                  VerticalContentAlignment="Stretch"
+                  HorizontalAlignment="Left"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.PanningMode="VerticalOnly"
+                  framework:WPFBinder.Frame="Users" >
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="IsSelected" Value="{Binding Content.IsSelected, Mode=TwoWay, RelativeSource={RelativeSource Self}}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <ListView Margin="200 12 0 30"
+                  ClipToBounds="False"
+                  Background="Transparent"
+                  BorderThickness="0" 
+                  VerticalContentAlignment="Stretch"
+                  HorizontalAlignment="Stretch"
+                  HorizontalContentAlignment="Left"
+                  ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                  ScrollViewer.PanningMode="VerticalOnly"
+                  framework:WPFBinder.Frame="Messages" >
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="IsSelected" Value="{Binding Content.IsSelected, Mode=TwoWay, RelativeSource={RelativeSource Self}}"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+
+        <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal"  HorizontalAlignment="Stretch"  Margin="200 0 0 12">
+            <TextBox HorizontalAlignment="Left" MinWidth="400" framework:WPFBinder.Frame="TextInput" />
+            <Button Margin="22,0,0,0" Padding="2,2,2,2" HorizontalAlignment="Right" framework:WPFBinder.Frame="Send" />
+        </StackPanel>
     </Grid>
 </framework:BindableControl>

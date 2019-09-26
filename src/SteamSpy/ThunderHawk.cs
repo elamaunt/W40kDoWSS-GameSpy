@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 
 namespace ThunderHawk
@@ -20,9 +21,9 @@ namespace ThunderHawk
 
                 if (!args.IsNullOrEmpty() && args[0] == "-original")
                 {
-                    Thread.Sleep(2000);
+                    Thread.Sleep(5000);
                     File.Copy(Path.Combine(Environment.CurrentDirectory, "SoulstormBackup", "Soulstorm.exe" ), Path.Combine(PathFinder.GamePath, "Soulstorm.exe"), true);
-                    Thread.Sleep(2000);
+                    Thread.Sleep(1000);
                     Process.Start(new ProcessStartInfo(Path.Combine(PathFinder.GamePath, "Soulstorm.exe"), "-nomovies -forcehighpoly -modname dxp2")
                     {
                         UseShellExecute = true,
@@ -36,6 +37,7 @@ namespace ThunderHawk
                 AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
                 new App().Run();
+                CoreContext.MasterServer.Disconnect();
             }
             catch(Exception ex)
             {

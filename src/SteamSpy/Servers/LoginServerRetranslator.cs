@@ -1,13 +1,12 @@
 ﻿using GSMasterServer.Data;
 using Reality.Net.GameSpy.Servers;
-using ThunderHawk.Utils;
 using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using ThunderHawk.Core;
+using ThunderHawk.Utils;
 
 namespace GSMasterServer.Servers
 {

@@ -1,6 +1,6 @@
 ﻿namespace SharedServices
 {
-    public class UserInfo
+    public class RequestUsersMessage
     {
     }
 }

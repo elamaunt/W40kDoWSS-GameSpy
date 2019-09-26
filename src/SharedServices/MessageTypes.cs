@@ -14,6 +14,7 @@
         RequestUserStats,
         Login,
         Logout,
-        GameFinished
+        GameFinished,
+        RequestUsers
     }
 }

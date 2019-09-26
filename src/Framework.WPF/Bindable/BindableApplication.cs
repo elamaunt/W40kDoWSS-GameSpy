@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Navigation;
 
 namespace Framework.WPF
 {
@@ -13,11 +12,9 @@ namespace Framework.WPF
         
         protected override void OnStartup(StartupEventArgs e)
         {
-#if !SPACEWAR
             ViewModel = CreateApplicationViewModel();
             Bootstrapper.Run(CreateModules().ToArray());
             FrameBinder.Bind(this, ViewModel);
-#endif
             base.OnStartup(e);
         }
         

@@ -74,6 +74,7 @@
     <Compile Include="Controllers\Binders\ContentControlWithIListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\FrameWithINavigationPanelFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ListViewWithIListFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\TextBoxBaseWithITextEditorFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ToggleButtonWithIToggleFrameBinder.cs" />
     <Compile Include="Controllers\Binders\UIElementWithIControlFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithByteArrayFrameBinder.cs" />

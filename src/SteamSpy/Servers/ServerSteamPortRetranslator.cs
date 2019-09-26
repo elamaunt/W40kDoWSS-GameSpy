@@ -12,10 +12,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ThunderHawk;
+using ThunderHawk.Core;
 
 namespace GSMasterServer.Servers
 {
-    public class ServerSteamPortRetranslator : Server
+    public class ServerSteamPortRetranslator
     {
         public const string Category = "ServerRetranslator";
         const int BufferSize = 65535;
@@ -110,8 +111,6 @@ namespace GSMasterServer.Servers
 
         private void StartServer()
         {
-            Log(Category, "Starting Server Retranslator");
-
             try
             {
                 _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp)
@@ -136,9 +135,9 @@ namespace GSMasterServer.Servers
                 _socketReadEvent.SetBuffer(_socketReceivedBuffer, 0, BufferSize);
                 _socketReadEvent.Completed += OnDataReceived;
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                LogError(Category, e.ToString());
+                Logger.Error(ex);
                 return;
             }
 
@@ -162,11 +161,9 @@ namespace GSMasterServer.Servers
             {
 
             }
-            catch (SocketException e)
+            catch (Exception ex)
             {
-                LogError(Category, "Error receiving data");
-                LogError(Category, e.ToString());
-                return;
+                Logger.Error(ex);
             }
         }
 
@@ -274,7 +271,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception ex)
             {
-                LogError(Category, ex.ToString());
+                Logger.Error(ex);
             }
 
             WaitForData();
@@ -282,7 +279,7 @@ namespace GSMasterServer.Servers
 
         private string GetRating()
         {
-            return ServerContext.ChatServer?.CurrentRating.ToString() ?? "1000";
+            return "1000"; //ServerContext.ChatServer?.CurrentRating.ToString() ?? "1000";
         }
 
         public void SendToGame(byte[] buffer, uint size)
@@ -360,7 +357,7 @@ namespace GSMasterServer.Servers
             }
             catch (Exception ex)
             {
-                LogError(Category, ex.ToString());
+                Logger.Error(ex);
             }
         }
 
@@ -408,8 +405,8 @@ namespace GSMasterServer.Servers
                 }
             }
             
-            if (nicks.Count > 0)
-                await LoadSteamIds(nicks);
+            //if (nicks.Count > 0)
+                //await LoadSteamIds(nicks);
 
             // skip start information
             for (int k = 50; k < bytes.Length - 3; k++)
@@ -453,7 +450,7 @@ namespace GSMasterServer.Servers
             return bytes;
         }
 
-        private async Task LoadSteamIds(List<string> nicks)
+        /*private async Task LoadSteamIds(List<string> nicks)
         {
             try
             {
@@ -482,7 +479,7 @@ namespace GSMasterServer.Servers
             {
                 Console.WriteLine("ERROR on loading steam ids "+ex);
             }
-        }
+        }*/
 
         private static string GetUnicodeString(byte[] bytes, int index, int index2)
         {

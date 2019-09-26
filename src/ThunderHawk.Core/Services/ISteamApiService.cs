@@ -7,5 +7,7 @@
         bool IsInitialized { get; }
 
         string NickName { get; }
+
+        string GetUserName(ulong steamId);
     }
 }

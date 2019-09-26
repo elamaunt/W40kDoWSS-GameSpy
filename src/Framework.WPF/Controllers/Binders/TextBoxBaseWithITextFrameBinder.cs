@@ -1,10 +1,10 @@
-﻿using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+﻿using System.Windows.Controls.Primitives;
 
 namespace Framework.WPF
 {
     public class TextBoxBaseWithITextFrameBinder : BindingController<TextBoxBase, ITextFrame>
     {
+        protected override bool CanBind => !(Frame is ITextEditorFrame);
         protected override void OnBind()
         {
             SubscribeOnPropertyChanged(Frame, nameof(ITextFrame.Text), OnTextChanged);

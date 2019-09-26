@@ -1,5 +1,6 @@
 ﻿using NLog;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -66,6 +67,10 @@ namespace IrcNet.Tools
         {
             var name = $"{Path.GetFileName(callerFilePath)} line {sourceLineNumber} / {callerMemberName}";
             var logger = LogManager.GetLogger(name);
+
+            if (Debugger.IsAttached)
+                Console.WriteLine(obj.ToString());
+
             logger.Log(logLevel, obj);
         }
     }

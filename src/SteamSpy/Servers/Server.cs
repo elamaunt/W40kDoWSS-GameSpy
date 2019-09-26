@@ -14,7 +14,7 @@ namespace GSMasterServer.Servers
         }
         public static void Log(string message)
         {
-            Console.WriteLine(String.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), message));
+            //Console.WriteLine(String.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), message));
         }
 
         public static void LogError(string tag, string message)
@@ -24,10 +24,10 @@ namespace GSMasterServer.Servers
 
         public static void LogError(string message)
         {
-            ConsoleColor c = Console.ForegroundColor;
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.Error.WriteLine(String.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), message));
-            Console.ForegroundColor = c;
+            //ConsoleColor c = Console.ForegroundColor;
+            //Console.ForegroundColor = ConsoleColor.Red;
+            //Console.Error.WriteLine(String.Format("[{0}] {1}", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff", CultureInfo.InvariantCulture), message));
+            //Console.ForegroundColor = c;
         }
     }
 }
