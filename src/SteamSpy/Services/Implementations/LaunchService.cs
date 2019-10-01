@@ -29,13 +29,8 @@ namespace ThunderHawk
                     return Environment.CurrentDirectory;
 
                 var regKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(ThunderHawk.RegistryKey);
-                if (regKey != null)
-                {
-                    var pathKey = (string)regKey.GetValue("Path");
-                    return pathKey;
-                }
-
-                return null;
+                var pathKey = (string) regKey?.GetValue("Path");
+                return pathKey;
             }
         }
 
