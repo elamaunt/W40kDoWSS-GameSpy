@@ -1,7 +1,6 @@
 ﻿using Framework;
 using Lidgren.Network;
 using SharedServices;
-using Steamworks;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -17,22 +16,29 @@ namespace ThunderHawk
         readonly NetClient _clientPeer;
         ulong _connectedSteamId;
 
-        NetConnection _connection;
+        //NetConnection _connection;
         ServerHailMessage _hailMessage;
 
         readonly ConcurrentDictionary<ulong, UserInfo> _users = new ConcurrentDictionary<ulong, UserInfo>();
         readonly ConcurrentDictionary<long, StatsInfo> _stats = new ConcurrentDictionary<long, StatsInfo>();
 
-        public bool StateSynced { get; private set; }
+        Timer _reconnectTimer;
+
+        public bool IsConnected { get; private set; }
 
         public event Action UsersLoaded;
         public event Action<UserInfo> UserDisconnected;
         public event Action<UserInfo> UserConnected;
         public event Action<UserInfo> UserChanged;
 
+        public event Action<GameInfo> GameBroadcastReceived;
         public event Action<MessageInfo> ChatMessageReceived;
         public event Action ConnectionLost;
-        public event Action ConnectionRestored;
+        public event Action Connected;
+
+        public string ModName => _hailMessage?.ModName;
+        public string ModVersion => _hailMessage?.ModVersion;
+        public string ActiveGameVariant => _hailMessage?.ActiveGameVariant;
 
         public SingleMasterServer()
         {
@@ -89,18 +95,28 @@ namespace ThunderHawk
 
         public void Connect(ulong steamId)
         {
+            _reconnectTimer?.Dispose();
             _connectedSteamId = steamId;
+            _reconnectTimer = new Timer(Connect, null, 10000, 10000);
+            Connect(null);
+        }
+
+        void Connect(object state)
+        {
+            if (IsConnected)
+                return;
 
             var hailMessage = _clientPeer.CreateMessage();
-            hailMessage.Write(steamId);
-
-            _connection = _clientPeer.Connect(GameConstants.SERVER_ADDRESS, 29909, hailMessage);
+            hailMessage.Write(_connectedSteamId);
+            _clientPeer.Connect(GameConstants.SERVER_ADDRESS, 29909, hailMessage);
         }
 
         public void Disconnect()
         {
+            _reconnectTimer?.Dispose();
             if (_connectedSteamId != 0)
                 _clientPeer.Disconnect(_connectedSteamId.ToString());
+            
         }
 
         void HandleStatusChanged(NetIncomingMessage message)
@@ -124,6 +140,8 @@ namespace ThunderHawk
         {
             _hailMessage = message.SenderConnection.RemoteHailMessage.ReadString().OfJson<ServerHailMessage>();
             RequestUsers();
+            IsConnected = true;
+            Connected?.Invoke();
         }
 
         public void RequestUsers()
@@ -137,8 +155,8 @@ namespace ThunderHawk
 
         void HandleStateDisconnected(NetIncomingMessage message)
         {
-            _hailMessage = null;
-            _connection = null;
+            IsConnected = false;
+            ConnectionLost?.Invoke();
         }
 
         void HandleDataMessage(NetIncomingMessage message)
@@ -181,7 +199,8 @@ namespace ThunderHawk
                     added = true;
                     return info = new UserInfo(id);
                 }),
-                Text = message.Text
+                Text = message.Text,
+                Date = DateTime.FromBinary(message.LongDate),
             });
 
             if (added)
@@ -205,6 +224,8 @@ namespace ThunderHawk
                     return info;
                 });
             }
+
+            UsersLoaded?.Invoke();
         }
 
         public void HandleMessage(NetConnection connection, UserNameChangedMessage message)
@@ -227,7 +248,14 @@ namespace ThunderHawk
 
         public void HandleMessage(NetConnection connection, GameBroadcastMessage message)
         {
-
+            GameBroadcastReceived?.Invoke(new GameInfo()
+            {
+                Teamplay = message.Teamplay,
+                Ranked = message.Ranked,
+                GameVariant = message.GameVariant,
+                MaxPlayers = message.MaxPlayers,
+                Players = message.Players,
+            });
         }
 
         public void HandleMessage(NetConnection connection, UserStatsChangedMessage message)
@@ -322,11 +350,18 @@ namespace ThunderHawk
             });
         }
 
-        public void RequestGameBroadcast()
+        public void RequestGameBroadcast(bool teamplay, string gameVariant, int maxPlayers, int players, bool ranked)
         {
             var message = _clientPeer.CreateMessage();
 
-            message.WriteJsonMessage(new GameBroadcastMessage());
+            message.WriteJsonMessage(new GameBroadcastMessage()
+            {
+                Teamplay = teamplay,
+                GameVariant = gameVariant,
+                MaxPlayers = maxPlayers,
+                Players = players,
+                Ranked = ranked
+            });
 
             _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
         }

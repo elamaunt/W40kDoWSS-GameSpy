@@ -1,10 +1,11 @@
 ﻿using Lidgren.Network;
+using System;
 
 namespace GSMasterServer.Data
 {
     public class PeerState
     {
-        public NetConnection Connection { get; }
+        public WeakReference<NetConnection> Connection { get; }
         public ulong SteamId { get; }
         public ProfileDBO ActiveProfile { get; set; }
         public string Status { get;  set; }
@@ -12,7 +13,7 @@ namespace GSMasterServer.Data
         public PeerState(ulong steamId, NetConnection connection)
         {
             SteamId = steamId;
-            Connection = connection;
+            Connection = new WeakReference<NetConnection>(connection);
         }
     }
 }

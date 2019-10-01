@@ -6,6 +6,8 @@ namespace ThunderHawk.Core
     {
         public override ITextFrame Title => ViewModel.Title;
 
+        public ValueFrame<int> NewMessagesCounter { get; } = new ValueFrame<int>();
+
         public EmbeddedPageViewModel ViewModel { get; }
 
         public PageTabViewModel(EmbeddedPageViewModel viewModel)

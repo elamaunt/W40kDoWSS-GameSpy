@@ -7,12 +7,18 @@
              mc:Ignorable="d">
     <Grid Margin="0 0 0 0">
 
-        <ListView Margin="0 12 0 30"
+        <TextBlock framework:WPFBinder.Frame="ConnectedLabel"  Margin="10 8 0 30" Foreground="Green" />
+        <TextBlock framework:WPFBinder.Frame="DisconnectedLabel"  Margin="10 8 0 30" Foreground="Yellow" />
+        <Border BorderThickness="1" HorizontalAlignment="Stretch"  Margin="200 32 0 0" VerticalAlignment="Stretch" BorderBrush="#33FFFFFF"/>
+        <Border BorderThickness="1" HorizontalAlignment="Left" Width="200"  Margin="0 32 0 0" VerticalAlignment="Stretch" BorderBrush="#33FFFFFF"/>
+
+        <ListView Margin="0 32 0 30"
                   ClipToBounds="False"
                   Background="Transparent"
                   BorderThickness="0" 
                   HorizontalContentAlignment="Left"
                   Width="200"
+                  Padding="0 2 0 0"
                   VerticalAlignment="Stretch"
                   VerticalContentAlignment="Stretch"
                   HorizontalAlignment="Left"
@@ -34,7 +40,10 @@
             </ListView.ItemContainerStyle>
         </ListView>
 
-        <ListView Margin="200 12 0 30"
+
+        <Border BorderThickness="1" BorderBrush="#33FFFFFF">
+            <ListView Margin="200 32 0 60"
+                  Padding="0 2 0 0"
                   ClipToBounds="False"
                   Background="Transparent"
                   BorderThickness="0" 
@@ -58,10 +67,11 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
+        </Border>
 
-        <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal"  HorizontalAlignment="Stretch"  Margin="200 0 0 12">
-            <TextBox HorizontalAlignment="Left" MinWidth="400" framework:WPFBinder.Frame="TextInput" />
-            <Button Margin="22,0,0,0" Padding="2,2,2,2" HorizontalAlignment="Right" framework:WPFBinder.Frame="Send" />
+        <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal"  HorizontalAlignment="Stretch"  Margin="216 0 0 12">
+            <TextBox HorizontalAlignment="Left" CaretBrush="White" MinWidth="600" MaxWidth="600" MaxLength="200" Background="Transparent" Foreground="White" framework:WPFBinder.Frame="TextInput" />
+            <Button Margin="22,0,0,0" Padding="6,4,6,4" HorizontalAlignment="Right" Background="Transparent" Foreground="Orange" framework:WPFBinder.Frame="Send" />
         </StackPanel>
     </Grid>
 </framework:BindableControl>

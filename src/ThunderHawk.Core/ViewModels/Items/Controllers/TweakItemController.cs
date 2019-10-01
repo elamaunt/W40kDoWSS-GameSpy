@@ -10,7 +10,6 @@ namespace ThunderHawk.Core
             try
             {
                 Frame.IsTweakEnabled.IsChecked = Frame.RawTweak.CheckTweak();
-                SubscribeOnPropertyChanged(Frame.IsTweakEnabled, nameof(Frame.IsTweakEnabled.IsChecked), OnCheckedChanged);
             }
             catch (Exception ex)
             {
@@ -18,6 +17,8 @@ namespace ThunderHawk.Core
                 Logger.Error(ex);
                 Frame.IsTweakEnabled.IsChecked = false;
             }
+
+            SubscribeOnPropertyChanged(Frame.IsTweakEnabled, nameof(Frame.IsTweakEnabled.IsChecked), OnCheckedChanged);
         }
 
         void OnCheckedChanged()

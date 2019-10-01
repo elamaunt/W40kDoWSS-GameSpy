@@ -4,6 +4,8 @@ namespace ThunderHawk.Core
 {
     public class ChatPageViewModel : EmbeddedPageViewModel
     {
+        public TextFrame ConnectedLabel { get; } = new TextFrame();
+        public TextFrame DisconnectedLabel { get; } = new TextFrame();
         public TextFrame ActiveNickName { get; } = new TextFrame();
         public TextFrame Score1v1 { get; } = new TextFrame();
         public TextFrame GamesCount { get; } = new TextFrame();
@@ -19,5 +21,8 @@ namespace ThunderHawk.Core
         {
             TitleButton.Text = CoreContext.LangService.GetString("ChatPage");
         }
+
+        public IScrollManager MessagesScrollManager => Messages.GetExtension<IScrollManager>();
+        public IScrollManager UsersScrollManager => Users.GetExtension<IScrollManager>();
     }
 }

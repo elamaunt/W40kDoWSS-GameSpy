@@ -14,15 +14,18 @@ namespace ThunderHawk
         TcpListener _listener;
         CancellationTokenSource _tokenSource;
 
+        ExceptionHandler _exceptionHandlerDelegate;
         DataHandler _handlerDelegate;
         AcceptHandler _acceptDelegate;
 
         readonly byte[] _buffer = new byte[65536];
 
+        public delegate void ExceptionHandler(Exception exception, bool send);
         public delegate void AcceptHandler(TcpPortHandler handler, TcpClient client, CancellationToken token);
         public delegate void DataHandler(TcpPortHandler handler, byte[] buffer, int count);
-        public TcpPortHandler(int port, DataHandler handlerDelegate, AcceptHandler acceptDelegate = null)
+        public TcpPortHandler(int port, DataHandler handlerDelegate, ExceptionHandler errorHandler, AcceptHandler acceptDelegate = null)
         {
+            _exceptionHandlerDelegate = errorHandler;
             _handlerDelegate = handlerDelegate;
             _acceptDelegate = acceptDelegate;
 
@@ -51,6 +54,7 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
+                _exceptionHandlerDelegate?.Invoke(ex, false);
                 Logger.Error(ex);
             }
             finally
@@ -71,7 +75,7 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                _exceptionHandlerDelegate?.Invoke(ex, true);
             }
         }
 
@@ -83,7 +87,7 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                _exceptionHandlerDelegate?.Invoke(ex, false);
             }
             finally
             {
@@ -97,7 +101,7 @@ namespace ThunderHawk
                 }
                 catch(Exception ex)
                 {
-                    Logger.Error(ex);
+                    _exceptionHandlerDelegate?.Invoke(ex, false);
                 }
             }
         }

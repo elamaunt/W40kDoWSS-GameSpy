@@ -136,7 +136,6 @@ namespace GSMasterServer.Servers
             }
         }
 
-
         void HandleStateConnected(NetIncomingMessage message, PeerState state)
         {
             var mes = _serverPeer.CreateMessage();
@@ -172,41 +171,55 @@ namespace GSMasterServer.Servers
 
         public void HandleMessage(NetConnection connection, UserDisconnectedMessage message)
         {
+            // Nothing
         }
 
         public void HandleMessage(NetConnection connection, UserConnectedMessage message)
         {
+            // Nothing
         }
 
         public void HandleMessage(NetConnection connection, ChatMessageMessage message)
         {
             var mes = _serverPeer.CreateMessage();
+            message.LongDate = DateTime.UtcNow.ToBinary();
             mes.WriteJsonMessage(message);
             _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableUnordered);
         }
 
         public void HandleMessage(NetConnection connection, UsersMessage message)
         {
+            // Nothing
         }
 
         public void HandleMessage(NetConnection connection, UserNameChangedMessage message)
         {
+            // Nothing
         }
+
 
         public void HandleMessage(NetConnection connection, UserStatusChangedMessage message)
         {
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(message);
+            _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableUnordered);
         }
 
         public void HandleMessage(NetConnection connection, GameBroadcastMessage message)
         {
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(message);
+            _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableUnordered);
         }
 
         public void HandleMessage(NetConnection connection, UserStatsChangedMessage message)
         {
+            // Nothing
         }
 
         public void HandleMessage(NetConnection connection, UserStatsMessage message)
         {
+            // Nothing
         }
 
         public void HandleMessage(NetConnection connection, RequestUserStatsMessage message)
@@ -255,16 +268,17 @@ namespace GSMasterServer.Servers
 
         public void HandleMessage(NetConnection connection, LoginMessage message)
         {
+            // TODO
         }
 
         public void HandleMessage(NetConnection connection, LogoutMessage message)
         {
-
+            // TODO
         }
 
         public void HandleMessage(NetConnection connection, GameFinishedMessage message)
         {
-
+            // TODO
         }
 
         public void HandleMessage(NetConnection connection, RequestUsersMessage message)

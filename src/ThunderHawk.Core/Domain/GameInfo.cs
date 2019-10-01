@@ -1,6 +1,6 @@
-﻿namespace SharedServices
+﻿namespace ThunderHawk.Core
 {
-    public class GameBroadcastMessage
+    public class GameInfo
     {
         public bool Teamplay { get; set; }
         public bool Ranked { get; set; }

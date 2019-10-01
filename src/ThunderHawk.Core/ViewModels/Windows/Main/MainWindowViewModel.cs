@@ -17,12 +17,15 @@ namespace ThunderHawk.Core
 
         public TextFrame UserAccount { get; } = new TextFrame();
 
+        public ChatPageViewModel ChatViewModel { get; }
+        public PageTabViewModel ChatTabViewModel { get; }
+
         public MainWindowViewModel()
         {
             Pages.DataSource = new ObservableCollection<PageTabViewModel>()
             {
                 new PageTabViewModel(new MainPageViewModel()),
-                new PageTabViewModel(new ChatPageViewModel()),
+                (ChatTabViewModel = new PageTabViewModel(ChatViewModel = new ChatPageViewModel())),
                 new PageTabViewModel(new TweaksPageViewModel()),
                 new PageTabViewModel(new FAQPageViewModel())
                 

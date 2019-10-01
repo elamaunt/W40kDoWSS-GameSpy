@@ -1,6 +1,6 @@
 ﻿namespace Framework
 {
-    public interface ITextEditorFrame : ITextFrame
+    public interface ITextEditorFrame : ITextFrame, IActionFrame
     {
     }
 }

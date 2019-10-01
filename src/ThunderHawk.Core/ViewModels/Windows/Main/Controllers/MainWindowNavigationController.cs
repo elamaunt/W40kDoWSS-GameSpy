@@ -31,22 +31,38 @@ namespace ThunderHawk.Core
 
         void OnCurrentViewModelChanged()
         {
-            var model = Frame.NavigationPanel.CurrentContentViewModel;
-            foreach (var item in Frame.Pages.DataSource)
+            RunOnUIThread(() =>
             {
-                item.ViewModel.TitleButton.IsChecked = model == item.ViewModel;
-                item.ViewModel.TitleButton.Enabled = model != item.ViewModel;
-            }
+                var model = Frame.NavigationPanel.CurrentContentViewModel;
+
+                if (Frame.NavigationPanel.CurrentContentViewModel == Frame.ChatViewModel)
+                {
+                    Frame.ChatTabViewModel.NewMessagesCounter.Visible = false;
+                    Frame.ChatTabViewModel.NewMessagesCounter.Value = 0;
+                }
+
+                foreach (var item in Frame.Pages.DataSource)
+                {
+                    item.ViewModel.TitleButton.IsChecked = model == item.ViewModel;
+                    item.ViewModel.TitleButton.Enabled = model != item.ViewModel;
+                }
+            });
         }
 
         void OnCanGoBackChanged()
         {
-            Frame.GoBack.Visible = Frame.NavigationPanel.CanGoBack;
+            RunOnUIThread(() =>
+            {
+                Frame.GoBack.Visible = Frame.NavigationPanel.CanGoBack;
+            });
         }
 
         void OnCanGoForwardChanged()
         {
-            Frame.GoForward.Visible = Frame.NavigationPanel.CanGoForward;
+            RunOnUIThread(() =>
+            {
+                Frame.GoForward.Visible = Frame.NavigationPanel.CanGoForward;
+            });
         }
     }
 }

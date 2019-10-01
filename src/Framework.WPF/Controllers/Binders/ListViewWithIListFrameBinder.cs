@@ -4,12 +4,14 @@ using System.Windows.Controls;
 
 namespace Framework.WPF
 {
-    public class ListViewWithIListFrameBinder : BindingController<ListView, IListFrame>
+    public class ListViewWithIListFrameBinder : BindingController<ListView, IListFrame>, IScrollManager
     {
         INotifyCollectionChanged _previousSource;
 
         protected override void OnBind()
         {
+            Frame.SetExtension<IScrollManager>(this);
+
             View.ItemTemplateSelector = ViewModelTemplateSelector.Instance;
             SubscribeOnPropertyChanged(Frame, nameof(IListFrame.DataSource), OnDataSourceChanged);
             OnDataSourceChanged();
@@ -56,6 +58,45 @@ namespace Framework.WPF
                  default:
                      break;
              }*/
+        }
+
+        float IScrollManager.ScrollOffset { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        float IScrollManager.MaxScrollOffset => throw new NotImplementedException();
+
+        void IScrollManager.ScrollToOffsetAnimated(int offset, float duration)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IScrollManager.ScrollToItem(ItemViewModel item, ScrollPosition position = ScrollPosition.None, bool animated = true)
+        {
+            View.ScrollIntoView(item);
+        }
+
+        void IScrollManager.ScrollToItem(int index, ScrollPosition position = ScrollPosition.None, bool animated = true)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IScrollManager.IsItemVisible(ItemViewModel item)
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IScrollManager.IsScrolledToEnd()
+        {
+            throw new NotImplementedException();
+        }
+
+        bool IScrollManager.IsScrolledToStart()
+        {
+            throw new NotImplementedException();
+        }
+
+        object[] IScrollManager.GetVisibleItems()
+        {
+            throw new NotImplementedException();
         }
 
         /*private FrameworkElement CreateItemCell(ViewModel model, int index)

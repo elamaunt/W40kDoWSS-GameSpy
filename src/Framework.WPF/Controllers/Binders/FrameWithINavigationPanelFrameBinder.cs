@@ -1,5 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 using System.Windows.Navigation;
 
 namespace Framework.WPF
@@ -7,6 +6,7 @@ namespace Framework.WPF
     public class FrameWithINavigationPanelFrameBinder : BindingController<System.Windows.Controls.Frame, INavigationPanelFrame>
     {
         readonly ConditionalWeakTable<IBindableView, ViewModel> _viewmodelsHistoryCache = new ConditionalWeakTable<IBindableView, ViewModel>();
+        readonly ConditionalWeakTable<ViewModel, IBindableView> _viewsHistoryCache = new ConditionalWeakTable<ViewModel, IBindableView>();
 
         IBindableView _currentView;
         protected override void OnBind()
@@ -54,6 +54,15 @@ namespace Framework.WPF
                 {
                     _viewmodelsHistoryCache.Remove(view);
                     _viewmodelsHistoryCache.Add(view, view.ViewModel);
+
+                    if (_viewsHistoryCache.TryGetValue(view.ViewModel, out IBindableView oldView))
+                    {
+                        if (oldView != null && oldView != view)
+                            oldView.ViewModel = null;
+                    }
+
+                    _viewsHistoryCache.Remove(view.ViewModel);
+                    _viewsHistoryCache.Add(view.ViewModel, view);
                 }
                 else
                 {
@@ -85,6 +94,9 @@ namespace Framework.WPF
             if (_currentView?.ViewModel == model)
                 return;
 
+            if (_currentView != null)
+                _currentView.ViewModel = null;
+
             var view = _currentView = (IBindableView)Service<IViewFactory>.Get().CreateView(model.GetPrefix(), model.GetViewStyle());
             view.ViewModel = model;
 
@@ -92,7 +104,9 @@ namespace Framework.WPF
             if (ext != null)
                 ext.Present(View, view);
             else
+            {
                 View.Content = view;
+            }
         }
 
         protected override void OnUnbind()

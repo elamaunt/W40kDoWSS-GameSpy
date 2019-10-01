@@ -15,12 +15,12 @@
                        BorderThickness="0"
                        framework:WPFBinder.Frame="Message"
                        HorizontalAlignment="Left"
-                       MaxWidth="420"
-                       Margin="16 8 100 8"     
+                       MaxWidth="1000"
+                       Margin="16 1 100 1"     
                        IsReadOnly="True"
                        TextWrapping="Wrap"
                        FontSize="14"
-                       Foreground="#75f4ff">
+                       Foreground="White">
             </TextBox>
            
         </StackPanel>

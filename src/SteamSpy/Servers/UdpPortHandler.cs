@@ -10,11 +10,14 @@ namespace ThunderHawk
     {
         UdpClient _client;
 
+        ExceptionHandler _exceptionHandlerDelegate;
         DataHandler _handlerDelegate;
 
+        public delegate void ExceptionHandler(Exception exception, bool send);
         public delegate void DataHandler(UdpPortHandler handler, UdpReceiveResult result);
-        public UdpPortHandler(int port, DataHandler handlerDelegate)
+        public UdpPortHandler(int port, DataHandler handlerDelegate, ExceptionHandler errorHandler)
         {
+            _exceptionHandlerDelegate = errorHandler;
             _handlerDelegate = handlerDelegate;
             _client = new UdpClient(port);
             _client.ExclusiveAddressUse = true;
@@ -33,7 +36,7 @@ namespace ThunderHawk
             }
             catch(Exception ex)
             {
-                Logger.Error(ex);
+                _exceptionHandlerDelegate(ex, true);
             }
         }
 
@@ -45,7 +48,7 @@ namespace ThunderHawk
             }
             catch(Exception ex)
             {
-                Logger.Error(ex);
+                _exceptionHandlerDelegate(ex, false);
             }
             finally
             {

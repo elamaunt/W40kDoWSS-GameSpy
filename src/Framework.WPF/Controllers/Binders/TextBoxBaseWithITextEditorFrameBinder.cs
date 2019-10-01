@@ -14,6 +14,13 @@ namespace Framework.WPF
             OnTextChanged();
 
             View.TextChanged += OnTextFromViewChanged;
+            View.KeyUp += OnKeyUp;
+        }
+
+        void OnKeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+                Frame.Action?.Invoke();
         }
 
         void OnTextFromViewChanged(object sender, TextChangedEventArgs e)
@@ -52,6 +59,7 @@ namespace Framework.WPF
 
         protected override void OnUnbind()
         {
+            View.KeyUp -= OnKeyUp;
             View.TextChanged -= OnTextFromViewChanged;
             base.OnUnbind();
         }
