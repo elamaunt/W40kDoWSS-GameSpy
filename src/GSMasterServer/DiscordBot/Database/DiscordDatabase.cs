@@ -8,13 +8,13 @@ namespace GSMasterServer.DiscordBot.Database
 {
     public static class DiscordDatabase
     {
-        private static LiteDatabase db;
+        private static LiteDatabase _db;
 
-        public static LiteCollection<DiscordProfile> ProfilesTable => db.GetCollection<DiscordProfile>("DiscordProfiles");
+        public static LiteCollection<DiscordProfile> ProfilesTable => _db.GetCollection<DiscordProfile>("DiscordProfiles");
 
         public static void InitDb()
         {
-            db = new LiteDatabase("Discord.db");
+            _db = new LiteDatabase("Discord.db");
         }
 
         public static DiscordProfile GetProfile(ulong userId)
@@ -38,7 +38,7 @@ namespace GSMasterServer.DiscordBot.Database
         public static void AddMute(ulong userId, ulong softMuteUntil, ulong muteUntil)
         {
             var profile = GetProfile(userId);
-            bool isNew = profile == null;
+            var isNew = profile == null;
             if (profile == null)
             {
                 profile = new DiscordProfile()

@@ -13,10 +13,10 @@ namespace GSMasterServer.DiscordBot.Commands
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.Moderator;
 
-        private readonly bool softUnmute;
+        private readonly bool _softUnmute;
         public UnMuteCommand(bool softUnmute)
         {
-            this.softUnmute = softUnmute;
+            _softUnmute = softUnmute;
         }
 
         public static async Task UnMute(IReadOnlyCollection<SocketUser> users, bool softUnmute, SocketGuild socketGuild)
@@ -32,7 +32,7 @@ namespace GSMasterServer.DiscordBot.Commands
             {
                 logMessage.Append($"<@{user.Id}> ");
             }
-            logMessage.Append($"Congratz! You have been unmuted!");
+            logMessage.Append($"Congrats! You have been unmuted!");
             await BotMain.WriteToLogChannel(logMessage.ToString());
         }
 
@@ -41,7 +41,7 @@ namespace GSMasterServer.DiscordBot.Commands
             var targetUsers = socketMessage.MentionedUsers;
             if (targetUsers.Count == 0)
                 throw new Exception("[UnMuteCommand]No users were mentioned!");
-            await UnMute(targetUsers, softUnmute, (socketMessage.Channel as SocketGuildChannel).Guild);
+            await UnMute(targetUsers, _softUnmute, (socketMessage.Channel as SocketGuildChannel).Guild);
 
             await socketMessage.DeleteAsync();
         }

@@ -29,7 +29,7 @@ namespace GSMasterServer.DiscordBot
 
                 await BotClient.LoginAsync(TokenType.Bot, GetToken());
                 await BotClient.StartAsync();
-                Logger.Info("Discord bot intialized!");
+                Logger.Info("Discord bot initialized!");
 
                 DiscordDatabase.InitDb();
             }
@@ -44,7 +44,7 @@ namespace GSMasterServer.DiscordBot
             SocketGuild = BotClient.GetGuild(DiscordServerConstants.serverId);
             Logger.Info($"{BotClient} is ready!");
 
-            await Task.Run(() => UpdateLoop());
+            await Task.Run(UpdateLoop);
         }
 
         private static string GetToken()
@@ -104,7 +104,7 @@ namespace GSMasterServer.DiscordBot
                 if (arg.Author.Id == BotClient.CurrentUser.Id)
                     return;
 
-                if ((arg.Channel as SocketTextChannel).Guild.Id != DiscordServerConstants.serverId)
+                if (((SocketTextChannel) arg.Channel).Guild.Id != DiscordServerConstants.serverId)
                     return;
 
                 if (arg.Content.StartsWith("!"))
@@ -132,8 +132,7 @@ namespace GSMasterServer.DiscordBot
                 Logger.Warn("Tried to write log to channel, but the channel is null!");
                 return;
             }
-            var socketChannel = channel as SocketTextChannel;
-            await socketChannel.SendMessageAsync(text);
+            await channel.SendMessageAsync(text);
         }
 
     }

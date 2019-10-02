@@ -18,7 +18,6 @@ namespace GSMasterServer.DiscordBot.Commands
         /// (required) From message(ulong messageId) or messages count(ushort)
         /// If not passed, no delete admins messages and delete from all users
         /// </summary>
-        /// <param name="commandParams"></param>
         /// <param name="socketMessage"></param>
         /// <returns></returns>
         public async Task Execute(SocketMessage socketMessage)

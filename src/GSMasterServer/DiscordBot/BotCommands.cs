@@ -10,7 +10,7 @@ namespace GSMasterServer.DiscordBot
 {
     internal class BotCommands
     {
-        private static Dictionary<string, IBotCommand> commands = new Dictionary<string, IBotCommand>()
+        private static readonly Dictionary<string, IBotCommand> commands = new Dictionary<string, IBotCommand>()
         {
             { "ping", new PingCommand() },
             { "dm", new DeleteMessagesCommand() },
