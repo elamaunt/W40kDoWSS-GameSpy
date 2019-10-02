@@ -15,7 +15,7 @@ namespace GSMasterServer.DiscordBot
     internal class BotMain
     {
         private static DiscordSocketClient BotClient { get; set; }
-        private static SocketGuild SocketGuild { get; set; }
+        private static SocketGuild ThunderGuild { get; set; }
 
         public static async Task StartAsync()
         {
@@ -25,6 +25,7 @@ namespace GSMasterServer.DiscordBot
 
                 BotClient.Log += LogAsync;
                 BotClient.Ready += ReadyAsync;
+                BotClient.UserJoined += UserJoinedAsync;
                 BotClient.MessageReceived += MessageReceivedAsync;
 
                 await BotClient.LoginAsync(TokenType.Bot, GetToken());
@@ -39,9 +40,26 @@ namespace GSMasterServer.DiscordBot
             }
         }
 
+        private static async Task UserJoinedAsync(SocketGuildUser arg)
+        {
+            var profile = DiscordDatabase.GetProfile(arg.Id);
+            if (profile != null)
+            {
+                var userToMute = new List<SocketUser>() { arg };
+                if (profile.IsSoftMuteActive)
+                {
+                    await MuteCommand.Mute(userToMute, true, ThunderGuild, profile.SoftMuteUntil);
+                }
+                if (profile.IsMuteActive)
+                {
+                    await MuteCommand.Mute(userToMute, false, ThunderGuild, profile.MuteUntil);
+                }
+            }
+        }
+
         private static async Task ReadyAsync()
         {
-            SocketGuild = BotClient.GetGuild(DiscordServerConstants.serverId);
+            ThunderGuild = BotClient.GetGuild(DiscordServerConstants.serverId);
             Logger.Info($"{BotClient} is ready!");
 
             await Task.Run(UpdateLoop);
@@ -49,10 +67,18 @@ namespace GSMasterServer.DiscordBot
 
         private static string GetToken()
         {
-            var token = File.ReadAllText("discord_token.txt");
-            if (string.IsNullOrWhiteSpace(token))
-                throw new Exception("Token is empty!");
-            return token;
+            try
+            {
+                var token = File.ReadAllText("discord_token.txt");
+                if (string.IsNullOrWhiteSpace(token))
+                    throw new Exception("Token is empty! Bot stopped working...");
+                return token;
+            }
+            catch (Exception)
+            {
+                Logger.Info("discord_token.txt was not found! Bot stopped working...");
+                throw;
+            }
         }
 
         private static async Task UpdateLoop()
@@ -61,29 +87,27 @@ namespace GSMasterServer.DiscordBot
             {
                 try
                 {
-                    var timeNow = (ulong)DateTime.UtcNow.Ticks;
+                    var timeNow = DateTime.UtcNow.Ticks;
                     var softUnmuteList = new List<SocketUser>();
                     var unmuteList = new List<SocketUser>();
                     foreach (var tableUser in DiscordDatabase.ProfilesTable.FindAll())
                     {
-                        if (tableUser.IsSoftMuteActive && timeNow >= tableUser.SoftMuteUntil)
+                        if (tableUser.IsSoftMuteActive && tableUser.SoftMuteUntil != -1 && timeNow >= tableUser.SoftMuteUntil)
                         {
-                            softUnmuteList.Add(SocketGuild.GetUser(tableUser.UserId));
-                            DiscordDatabase.RemoveMute(tableUser.UserId, true);
+                            softUnmuteList.Add(ThunderGuild.GetUser(tableUser.UserId));
                         }
-                        if (tableUser.IsMuteActive && timeNow >= tableUser.MuteUntil)
+                        if (tableUser.IsMuteActive && tableUser.MuteUntil != -1 && timeNow >= tableUser.MuteUntil)
                         {
-                            unmuteList.Add(SocketGuild.GetUser(tableUser.UserId));
-                            DiscordDatabase.RemoveMute(tableUser.UserId, false);
+                            unmuteList.Add(ThunderGuild.GetUser(tableUser.UserId));
                         }
                     }
                     if (softUnmuteList.Count != 0)
                     {
-                        await UnMuteCommand.UnMute(softUnmuteList, true, SocketGuild);
+                        await UnMuteCommand.UnMute(softUnmuteList, true, ThunderGuild);
                     }
                     if (unmuteList.Count != 0)
                     {
-                        await UnMuteCommand.UnMute(unmuteList, false, SocketGuild);
+                        await UnMuteCommand.UnMute(unmuteList, false, ThunderGuild);
                     }
                 }
                 catch (Exception ex)
@@ -126,7 +150,7 @@ namespace GSMasterServer.DiscordBot
 
         public static async Task WriteToLogChannel(string text)
         {
-            var channel = SocketGuild.GetTextChannel(DiscordServerConstants.logChannelId);
+            var channel = ThunderGuild.GetTextChannel(DiscordServerConstants.logChannelId);
             if (channel == null)
             {
                 Logger.Warn("Tried to write log to channel, but the channel is null!");

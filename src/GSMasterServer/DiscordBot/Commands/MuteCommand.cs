@@ -20,6 +20,20 @@ namespace GSMasterServer.DiscordBot.Commands
             _softMute = softMute;
         }
 
+        public static async Task Mute(IReadOnlyCollection<SocketUser> users, bool softMute, SocketGuild socketGuild, long muteUntil)
+        {
+            var roleId = softMute ? DiscordServerConstants.floodOnlyRoleId : DiscordServerConstants.readOnlyRoleId;
+            foreach (var user in users)
+            {
+                var guidUser = user as SocketGuildUser;
+                if (guidUser.GuildPermissions.Administrator)
+                    continue;
+                await guidUser.AddRoleAsync(socketGuild.GetRole(roleId));
+                DiscordDatabase.AddMute(guidUser.Id, softMute ? muteUntil : 0, !softMute ? muteUntil : 0);
+            }
+        }
+
+
         /// <summary>
         /// Possible command params:
         /// (optionally) How long (ulong minutes)
@@ -40,17 +54,15 @@ namespace GSMasterServer.DiscordBot.Commands
             if (targetUsers.Count == 0)
                 throw new Exception("[MuteCommand]No user were mentioned");
 
-            var server = (socketMessage.Channel as SocketGuildChannel).Guild;
-            ulong roleId = _softMute ? DiscordServerConstants.floodOnlyRoleId : DiscordServerConstants.readOnlyRoleId;
-            foreach (var user in targetUsers)
+            var guild = ((SocketGuildChannel) socketMessage.Channel).Guild;
+            if (howLong != 0)
             {
-                var guidUser = user as SocketGuildUser;
-                await guidUser.AddRoleAsync(server.GetRole(roleId));
-                if (howLong != 0)
-                {
-                    var timeUntilMute = (ulong)DateTime.UtcNow.AddMinutes(howLong).Ticks;
-                    DiscordDatabase.AddMute(guidUser.Id, _softMute ? timeUntilMute : 0, !_softMute ? timeUntilMute : 0);
-                }
+                var timeUntilMute = DateTime.UtcNow.AddMinutes(howLong).Ticks;
+                await Mute(targetUsers, _softMute, guild, timeUntilMute);
+            }
+            else
+            {
+                await Mute(targetUsers, _softMute, guild, -1);
             }
 
             var logMessage = new StringBuilder();
@@ -58,10 +70,11 @@ namespace GSMasterServer.DiscordBot.Commands
             {
                 logMessage.Append($"<@{user.Id}> ");
             }
-            if (howLong != 0)
-                logMessage.Append($"You've been {(_softMute ?  "soft-" : "")}muted for {howLong} minutes");
-            else
-                logMessage.Append($"You've been {(_softMute ? "soft-" : "")}muted FOREVER!");
+
+            logMessage.Append(howLong != 0
+                ? $"You've been {(_softMute ? "soft-" : "")}muted for {howLong} minutes"
+                : $"You've been {(_softMute ? "soft-" : "")}muted FOREVER!");
+
             await BotMain.WriteToLogChannel(logMessage.ToString());
 
             await socketMessage.DeleteAsync();

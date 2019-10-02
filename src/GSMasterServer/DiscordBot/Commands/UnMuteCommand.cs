@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GSMasterServer.DiscordBot.Database;
 
 namespace GSMasterServer.DiscordBot.Commands
 {
@@ -26,6 +27,7 @@ namespace GSMasterServer.DiscordBot.Commands
                 var guidUser = user as SocketGuildUser;
                 var roleToRemove = softUnmute ? socketGuild.GetRole(DiscordServerConstants.floodOnlyRoleId) : socketGuild.GetRole(DiscordServerConstants.readOnlyRoleId);
                 await guidUser.RemoveRoleAsync(roleToRemove);
+                DiscordDatabase.RemoveMute(user.Id, softUnmute);
             }
             var logMessage = new StringBuilder();
             foreach (var user in users)
@@ -41,7 +43,7 @@ namespace GSMasterServer.DiscordBot.Commands
             var targetUsers = socketMessage.MentionedUsers;
             if (targetUsers.Count == 0)
                 throw new Exception("[UnMuteCommand]No users were mentioned!");
-            await UnMute(targetUsers, _softUnmute, (socketMessage.Channel as SocketGuildChannel).Guild);
+            await UnMute(targetUsers, _softUnmute, ((SocketGuildChannel) socketMessage.Channel).Guild);
 
             await socketMessage.DeleteAsync();
         }
