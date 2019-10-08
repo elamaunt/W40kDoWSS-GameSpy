@@ -19,6 +19,8 @@ namespace ThunderHawk.Core
         string ModName { get; }
         string ModVersion { get; }
         string ActiveGameVariant { get; }
+        //ulong ActiveProfileId { get; }
+        ///ulong ActiveProfileName { get; }
 
         event Action ConnectionLost;
         event Action Connected;
@@ -26,8 +28,12 @@ namespace ThunderHawk.Core
         event Action<UserInfo> UserDisconnected;
         event Action<UserInfo> UserConnected;
         event Action<UserInfo> UserChanged;
+        event Action<LoginInfo> LoginInfoReceived;
 
         event Action<MessageInfo> ChatMessageReceived;
         void Disconnect();
+        void RequestLogout();
+        void RequestLogin(string name);
+        LoginInfo GetLoginInfo(string name);
     }
 }

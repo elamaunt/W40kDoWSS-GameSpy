@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GSMasterServer.Http
+namespace Http
 {
     public class Route
     {

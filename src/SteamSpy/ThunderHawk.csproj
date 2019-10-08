@@ -90,6 +90,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -119,6 +120,12 @@
     <Compile Include="Effects\RectBlurEffect.cs" />
     <Compile Include="ExplorerExtensions.cs" />
     <Compile Include="GameState.cs" />
+    <Compile Include="Http\HttpHelper.cs" />
+    <Compile Include="Http\HttpRequest.cs" />
+    <Compile Include="Http\HttpResponceBuilder.cs" />
+    <Compile Include="Http\HttpResponse.cs" />
+    <Compile Include="Http\QuickMimeTypeMapper.cs" />
+    <Compile Include="Http\Route.cs" />
     <Compile Include="LogConfigurator.cs" />
     <Compile Include="PageExtensions\UserInteractionsExtension.cs" />
     <Compile Include="Servers\TcpPortHandler.cs" />
@@ -149,6 +156,8 @@
     <Compile Include="Tweaks\GridHotkeys.cs" />
     <Compile Include="Tweaks\RuFont.cs" />
     <Compile Include="Tweaks\Unlocker.cs" />
+    <Compile Include="Utils\LoginHelper.cs" />
+    <Compile Include="Utils\ParseHelper.cs" />
     <Compile Include="Utils\ProcessHelper.cs" />
     <Compile Include="Servers\ServerSteamPortRetranslator.cs" />
     <Compile Include="StaticClasses\Soulstorm\PathFinder.cs" />
@@ -159,6 +168,7 @@
     <Compile Include="GameConstants.cs" />
     <Compile Include="Utils\NetworkHelper.cs" />
     <Compile Include="Utils\PortBindingManager.cs" />
+    <Compile Include="Utils\RandomHelper.cs" />
     <Compile Include="Utils\SteamApiHelper.cs" />
     <Compile Include="Utils\SteamExtensionMethods.cs" />
     <Compile Include="Utils\SteamLobbyManager.cs" />
@@ -541,6 +551,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="thunderhaw_notify.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="ThunderHawk.Updater.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

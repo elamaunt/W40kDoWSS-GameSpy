@@ -11,11 +11,9 @@ using System.Threading;
 
 namespace GSMasterServer.Servers
 {
-    public class SingleMasterServer : IMessagesHandler
+    public class SingleMasterServer : IClientMessagesHandler
     {
         readonly ConcurrentDictionary<ulong, PeerState> _userStates = new ConcurrentDictionary<ulong, PeerState>();
-
-
 
         readonly NetServer _serverPeer;
 
@@ -166,18 +164,7 @@ namespace GSMasterServer.Servers
             return message != null;
         }
 
-
         //-------------- HANDLERS ---------------
-
-        public void HandleMessage(NetConnection connection, UserDisconnectedMessage message)
-        {
-            // Nothing
-        }
-
-        public void HandleMessage(NetConnection connection, UserConnectedMessage message)
-        {
-            // Nothing
-        }
 
         public void HandleMessage(NetConnection connection, ChatMessageMessage message)
         {
@@ -186,17 +173,6 @@ namespace GSMasterServer.Servers
             mes.WriteJsonMessage(message);
             _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableUnordered);
         }
-
-        public void HandleMessage(NetConnection connection, UsersMessage message)
-        {
-            // Nothing
-        }
-
-        public void HandleMessage(NetConnection connection, UserNameChangedMessage message)
-        {
-            // Nothing
-        }
-
 
         public void HandleMessage(NetConnection connection, UserStatusChangedMessage message)
         {
@@ -212,16 +188,6 @@ namespace GSMasterServer.Servers
             _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableUnordered);
         }
 
-        public void HandleMessage(NetConnection connection, UserStatsChangedMessage message)
-        {
-            // Nothing
-        }
-
-        public void HandleMessage(NetConnection connection, UserStatsMessage message)
-        {
-            // Nothing
-        }
-
         public void HandleMessage(NetConnection connection, RequestUserStatsMessage message)
         {
             ProfileDBO profile = null;
@@ -234,8 +200,6 @@ namespace GSMasterServer.Servers
 
                     if (profile == null)
                         return;
-
-                    
                 }
             }
             else
@@ -268,14 +232,72 @@ namespace GSMasterServer.Servers
 
         public void HandleMessage(NetConnection connection, LoginMessage message)
         {
-            // TODO
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+
+            var profile = Database.MainDBInstance.GetProfilesBySteamId((long)steamId).FirstOrDefault(x => StringComparer.InvariantCultureIgnoreCase.Compare(x.Name, message.Name) == 0);
+
+            if (profile == null)
+                return;
+
+            if (!_userStates.TryGetValue(steamId, out PeerState state))
+                return;
+
+            state.ActiveProfile = profile;
+
+            var mes = _serverPeer.CreateMessage();
+
+            // Send login info if needed
+            if (message.NeedsInfo)
+            {
+                mes.WriteJsonMessage(new LoginInfoMessage()
+                {
+                    Name = profile.Name,
+                    Email = profile.Email,
+                    PassEnc = profile.Passwordenc,
+                    ProfileId = profile.Id
+                });
+
+                _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+
+                mes = _serverPeer.CreateMessage();
+            }
+
+            // Send profile broadcast
+            mes.WriteJsonMessage(new UserProfileChangedMessage()
+            {
+                Name = profile.Name,
+                ActiveProfileId = profile.Id,
+                Games = profile.GamesCount,
+                Wins = profile.WinsCount,
+                Race = profile.FavouriteRace,
+                Score1v1 = profile.Score1v1,
+                Score2v2 = profile.Score2v2,
+                Score3v3 = profile.Score3v3,
+                Best1v1Winstreak = profile.Best1v1Winstreak,
+                SteamId = profile.SteamId
+            });
+
+            _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableOrdered);
         }
 
         public void HandleMessage(NetConnection connection, LogoutMessage message)
         {
-            // TODO
-        }
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
 
+            if (!_userStates.TryGetValue(steamId, out PeerState state))
+                return;
+
+            state.ActiveProfile = null;
+
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(new UserProfileChangedMessage()
+            {
+                SteamId = steamId
+            });
+
+            _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableOrdered);
+        }
+        
         public void HandleMessage(NetConnection connection, GameFinishedMessage message)
         {
             // TODO
@@ -284,16 +306,25 @@ namespace GSMasterServer.Servers
         public void HandleMessage(NetConnection connection, RequestUsersMessage message)
         {
             var mes = _serverPeer.CreateMessage();
+
             mes.WriteJsonMessage(new UsersMessage()
             {
                 Users = _userStates.Values.Select(x => new UserPart()
                 {
                     Name = x.ActiveProfile?.Name,
                     ProfileId = x.ActiveProfile?.Id,
+                    Games = x.ActiveProfile?.GamesCount,
+                    Wins = x.ActiveProfile?.WinsCount,
+                    Race = x.ActiveProfile?.FavouriteRace,
+                    Score1v1 = x.ActiveProfile?.Score1v1,
+                    Score2v2 = x.ActiveProfile?.Score2v2,
+                    Score3v3 = x.ActiveProfile?.Score3v3,
+                    Best1v1Winstreak = x.ActiveProfile?.Best1v1Winstreak,
                     Status = x.Status,
                     SteamId = x.SteamId
                 }).ToArray()
-            }); ;
+            });
+
             _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
         }
     }

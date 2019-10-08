@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace GSMasterServer.Http
+namespace Http
 {
     // HTTP requires that resposnes contain the proper MIME type. This quick mapping list below
     // contains many more mimetypes than System.Web.MimeMapping

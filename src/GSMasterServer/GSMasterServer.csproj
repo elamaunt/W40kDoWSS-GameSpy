@@ -27,6 +27,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Http\**" />
+    <EmbeddedResource Remove="Http\**" />
+    <None Remove="Http\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Remove="Servers\DiscordServer.cs" />
     <Compile Remove="Servers\LoginServer.cs" />
     <Compile Remove="Servers\LoginServerMessages.cs" />

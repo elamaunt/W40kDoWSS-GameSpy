@@ -1,9 +1,8 @@
 ﻿namespace SharedServices
 {
-    public class LoginMessage
+    public class RegisterErrorMessage
     {
         public string Name { get; set; }
-
-        public bool NeedsInfo { get; set; }
+        public string Message { get; set; }
     }
 }

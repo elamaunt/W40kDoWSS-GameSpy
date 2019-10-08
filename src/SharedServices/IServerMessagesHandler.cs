@@ -2,22 +2,20 @@
 
 namespace SharedServices
 {
-    public interface IMessagesHandler
+    public interface IServerMessagesHandler
     {
         void HandleMessage(NetConnection connection, UserDisconnectedMessage message);
         void HandleMessage(NetConnection connection, UserConnectedMessage message);
         void HandleMessage(NetConnection connection, ChatMessageMessage message);
         void HandleMessage(NetConnection connection, UsersMessage message);
-        void HandleMessage(NetConnection connection, UserNameChangedMessage message);
+        void HandleMessage(NetConnection connection, UserProfileChangedMessage message);
         void HandleMessage(NetConnection connection, UserStatusChangedMessage message);
         void HandleMessage(NetConnection connection, GameBroadcastMessage message);
         void HandleMessage(NetConnection connection, UserStatsChangedMessage message);
         void HandleMessage(NetConnection connection, UserStatsMessage message);
-        void HandleMessage(NetConnection connection, RequestUserStatsMessage message);
-        void HandleMessage(NetConnection connection, LoginMessage message);
-        void HandleMessage(NetConnection connection, LogoutMessage message);
-        void HandleMessage(NetConnection connection, GameFinishedMessage message);
-        void HandleMessage(NetConnection connection, RequestUsersMessage message);
-        
+        void HandleMessage(NetConnection connection, NewProfileMessage message);
+        void HandleMessage(NetConnection connection, RegisterErrorMessage message);
+        void HandleMessage(NetConnection connection, LoginInfoMessage message);
+        //void HandleMessage(NetConnection connection, GameFinishedMessage message);
     }
 }

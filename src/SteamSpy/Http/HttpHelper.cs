@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 
-namespace GSMasterServer.Http
+namespace Http
 {
     public static class HttpHelper
     {

@@ -62,6 +62,7 @@ namespace Framework
                 return value;
             return default(ValueType);
         }
+
         public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> sequence)
         {
             return new ObservableCollection<T>(sequence);

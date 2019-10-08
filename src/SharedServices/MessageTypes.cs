@@ -6,7 +6,7 @@
         UserConnected,
         ChatMessage,
         Users,
-        UserNameChanged,
+        UserProfileChanged,
         UserStatusChanged,
         GameBroadcast,
         UserStatsChanged,
@@ -15,6 +15,9 @@
         Login,
         Logout,
         GameFinished,
-        RequestUsers
+        RequestUsers,
+        NewProfile,
+        RegisterError,
+        LoginInfo
     }
 }

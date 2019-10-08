@@ -1,10 +1,11 @@
 ﻿namespace SharedServices
 {
-    public class UserPart
+    public class UserProfileChangedMessage
     {
-        public string Name { get; set; }
         public ulong SteamId { get; set; }
-        public long? ProfileId { get; set; }
+        public long? ActiveProfileId { get; set; }
+        public string Name { get; set; }
+
         public Race? Race { get; set; }
         public long? Games { get; set; }
         public long? Wins { get; set; }
@@ -12,6 +13,5 @@
         public long? Score2v2 { get; set; }
         public long? Score3v3 { get; set; }
         public long? Best1v1Winstreak { get; set; }
-        public string Status { get; set; }
     }
 }

@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace GSMasterServer.Http
+namespace Http
 {
     internal class HttpResponceBuilder
     {
@@ -78,7 +78,9 @@ namespace GSMasterServer.Http
 
         public static HttpResponse NotFound()
         {
-            string content = System.IO.File.ReadAllText("Resources/Pages/404.html");
+            string content = @"<h1>Not Found</h1>
+
+<small>by ThunderHawk</small>";
 
             return new HttpResponse()
             {
@@ -88,14 +90,19 @@ namespace GSMasterServer.Http
             };
         }
 
-        public static HttpResponse Text(string text)
+        public static HttpResponse Text(string text, Encoding encoding)
         {
             return new HttpResponse()
             {
                 ReasonPhrase = "Ok",
                 StatusCode = "200",
-                ContentAsUTF8 = text
+                Content = encoding.GetBytes(text)
             };
+        }
+
+        internal static HttpResponse Text(object roomPairs, Encoding aSCII)
+        {
+            throw new NotImplementedException();
         }
     }
 }

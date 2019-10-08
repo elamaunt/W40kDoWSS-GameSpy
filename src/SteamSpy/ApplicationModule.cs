@@ -9,7 +9,8 @@ namespace ThunderHawk
         public override void RegisterComponents(ComponentBatch batch)
         {
             batch.RegisterServiceFactory<IMasterServer>(() => new SingleMasterServer());
-
+            batch.RegisterServiceFactory<IClientServer>(() => new SingleClientServer());
+            
             batch.RegisterServiceFactory<ILangService>(() => new LangService());
             batch.RegisterServiceFactory<ILaunchService>(() => new LaunchService());
             batch.RegisterServiceFactory<ISteamApiService>(() => new SteamApiService());

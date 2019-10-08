@@ -3,6 +3,7 @@ using Lidgren.Network;
 using SharedServices;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -11,7 +12,7 @@ using ThunderHawk.Utils;
 
 namespace ThunderHawk
 {
-    public class SingleMasterServer : IMessagesHandler, IMasterServer
+    public class SingleMasterServer : IServerMessagesHandler, IMasterServer
     {
         readonly NetClient _clientPeer;
         ulong _connectedSteamId;
@@ -19,6 +20,7 @@ namespace ThunderHawk
         //NetConnection _connection;
         ServerHailMessage _hailMessage;
 
+        readonly ConcurrentDictionary<string, LoginInfo> _logins = new ConcurrentDictionary<string, LoginInfo>();
         readonly ConcurrentDictionary<ulong, UserInfo> _users = new ConcurrentDictionary<ulong, UserInfo>();
         readonly ConcurrentDictionary<long, StatsInfo> _stats = new ConcurrentDictionary<long, StatsInfo>();
 
@@ -35,10 +37,14 @@ namespace ThunderHawk
         public event Action<MessageInfo> ChatMessageReceived;
         public event Action ConnectionLost;
         public event Action Connected;
+        public event Action<LoginInfo> LoginInfoReceived;
 
         public string ModName => _hailMessage?.ModName;
         public string ModVersion => _hailMessage?.ModVersion;
         public string ActiveGameVariant => _hailMessage?.ActiveGameVariant;
+
+        //public ulong ActiveProfileId { get; set; }
+        //public ulong ActiveProfileName { get; set; }
 
         public SingleMasterServer()
         {
@@ -119,6 +125,11 @@ namespace ThunderHawk
             
         }
 
+        public LoginInfo GetLoginInfo(string name)
+        {
+            return _logins.GetOrDefault(name);
+        }
+
         void HandleStatusChanged(NetIncomingMessage message)
         {
             var status = (NetConnectionStatus)message.ReadByte();
@@ -151,6 +162,32 @@ namespace ThunderHawk
             message.WriteJsonMessage(new RequestUsersMessage());
 
             _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+        }
+     
+        public void RequestLogin(string name)
+        {
+            var message = _clientPeer.CreateMessage();
+
+            var loginMes = new LoginMessage() { Name = name };
+
+            if (_logins.TryGetValue(name, out LoginInfo info))
+            {
+                loginMes.NeedsInfo = false;
+                LoginInfoReceived?.Invoke(info);
+            }
+            else
+            {
+                loginMes.NeedsInfo = true;
+            }
+
+            message.WriteJsonMessage(loginMes);
+
+            _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        public void RequestLogout()
+        {
+            throw new NotImplementedException();
         }
 
         void HandleStateDisconnected(NetIncomingMessage message)
@@ -228,11 +265,19 @@ namespace ThunderHawk
             UsersLoaded?.Invoke();
         }
 
-        public void HandleMessage(NetConnection connection, UserNameChangedMessage message)
+        public void HandleMessage(NetConnection connection, UserProfileChangedMessage message)
         {
             if (_users.TryGetValue(message.SteamId, out UserInfo user))
             {
-                user.Name = message.NewName;
+                user.Name = message.Name;
+                user.ActiveProfileId = message.ActiveProfileId;
+                user.Best1v1Winstreak = message.Best1v1Winstreak;
+                user.Games = message.Games;
+                user.Wins = message.Wins;
+                user.Score1v1 = message.Score1v1;
+                user.Score2v2 = message.Score2v2;
+                user.Race = message.Race;
+
                 UserChanged?.Invoke(user);
             }
         }
@@ -312,30 +357,6 @@ namespace ThunderHawk
             });
         }
 
-        public void HandleMessage(NetConnection connection, RequestUserStatsMessage message)
-        {
-            // Nothing
-        }
-
-        public void HandleMessage(NetConnection connection, LoginMessage message)
-        {
-            // Nothing
-        }
-
-        public void HandleMessage(NetConnection connection, LogoutMessage message)
-        {
-            // Nothing
-        }
-
-        public void HandleMessage(NetConnection connection, GameFinishedMessage message)
-        {
-            // Nothing
-        }
-        public void HandleMessage(NetConnection connection, RequestUsersMessage message)
-        {
-            // Nothing
-        }
-
         public UserInfo[] GetAllUsers()
         {
             return _users.Values.ToArray();
@@ -401,6 +422,38 @@ namespace ThunderHawk
             });
 
             _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        public void HandleMessage(NetConnection connection, NewProfileMessage message)
+        {
+            if (!_users.TryGetValue(message.SteamId, out UserInfo info))
+                return;
+
+            info.ActiveProfileId = message.Id;
+            info.Name = message.Name;
+
+            UserChanged?.Invoke(info);
+        }
+
+        public void HandleMessage(NetConnection connection, RegisterErrorMessage message)
+        {
+            Debugger.Break();
+        }
+
+        public void HandleMessage(NetConnection connection, LoginInfoMessage message)
+        {
+            var info = new LoginInfo()
+            {
+                Name = message.Name,
+                Email = message.Email,
+                PassEnc = message.PassEnc,
+                ProfileId = message.ProfileId
+            };
+
+            _logins[message.Name] = info;
+
+            LoginInfoReceived?.Invoke(info);
+
         }
     }
 }

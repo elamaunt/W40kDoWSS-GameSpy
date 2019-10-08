@@ -14,6 +14,16 @@ namespace ThunderHawk
         public Window_Main()
         {
             Bootstrapper.CurrentBatch.RegisterServiceFactory<IGlobalNavigationManager>(() => this);
+
+            System.Windows.Forms.NotifyIcon ni = new System.Windows.Forms.NotifyIcon();
+            ni.Icon = new System.Drawing.Icon("thunderhaw_notify.ico");
+            ni.Visible = true;
+            ni.DoubleClick +=
+                delegate (object sender, EventArgs args)
+                {
+                    this.Show();
+                    this.WindowState = WindowState.Normal;
+                };
         }
 
         public void OpenWindow(WindowViewModel viewModel)
@@ -61,6 +71,14 @@ namespace ThunderHawk
             var bundle = PageHelper.CreateBundle();
             inflateBundle(bundle);
             viewModel.PassData(bundle);
+        }
+
+        protected override void OnStateChanged(EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+                this.Hide();
+
+            base.OnStateChanged(e);
         }
     }
 }
