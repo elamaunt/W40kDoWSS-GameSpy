@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <Compile Remove="Servers\DiscordServer.cs" />
+    <Compile Remove="Servers\HttpServer.cs" />
     <Compile Remove="Servers\LoginServer.cs" />
     <Compile Remove="Servers\LoginServerMessages.cs" />
     <Compile Remove="Servers\ServerListReport.cs" />

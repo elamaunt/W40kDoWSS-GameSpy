@@ -1,20 +1,19 @@
-﻿using Reality.Net.Extensions;
+﻿using Framework;
+using GSMasterServer.Utils;
+using Http;
 using Reality.Net.GameSpy.Servers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using ThunderHawk.Core;
 using ThunderHawk.Utils;
-using Framework;
-using GSMasterServer.Utils;
-using System.Net;
-using System.Linq;
-using Http;
 
 namespace ThunderHawk
 {
@@ -28,13 +27,18 @@ namespace ThunderHawk
         TcpPortHandler _stats;
         TcpPortHandler _http;
 
+        Timer _keepAliveTimer;
+        volatile int _heartbeatState;
+
         string _serverChallenge;
         string _clientChallenge;
 
         string _passwordEncrypted;
         bool _chatEncoded;
 
+        string _user;
         string _name;
+        long _profileId;
         string _email;
         string _response;
 
@@ -46,6 +50,14 @@ namespace ThunderHawk
 
         readonly char[] ChatSplitChars = new[] { '\r', '\n' };
         readonly char[] ChatCommandsSplitChars = new[] { ' ' };
+        enum MessageType : byte
+        {
+            CHALLENGE_RESPONSE = 0x01,
+            HEARTBEAT = 0x03,
+            KEEPALIVE = 0x08,
+            AVAILABLE = 0x09,
+            RESPONSE_CORRECT = 0x0A
+        }
 
         public SingleClientServer()
         {
@@ -125,6 +137,7 @@ namespace ThunderHawk
 
         private void HandleClientManagerMessage(TcpPortHandler handler, string mes)
         {
+            Logger.Trace("CLIENT " + mes);
             var pairs = ParseHelper.ParseMessage(mes, out string query);
 
             if (pairs == null || string.IsNullOrWhiteSpace(query))
@@ -189,6 +202,8 @@ namespace ThunderHawk
 
         void SendLoginResponce(LoginInfo loginInfo)
         {
+            _email = loginInfo.Email;
+            _profileId = loginInfo.ProfileId;
             _clientManager.Send(DataFunctions.StringToBytes(LoginHelper.BuildProofOrErrorString(loginInfo, _response, _clientChallenge, _serverChallenge)));
         }
 
@@ -202,6 +217,8 @@ namespace ThunderHawk
         void OnHttp(TcpPortHandler handler, byte[] buffer, int count)
         {
             var str = ToUtf8(buffer, count);
+
+            Logger.Trace("HTTP " + str);
 
             HttpRequest request;
 
@@ -240,7 +257,7 @@ namespace ThunderHawk
 
                 if (request.Url.EndsWith("AutomatchDefaultsSS.lua", StringComparison.OrdinalIgnoreCase) || request.Url.EndsWith("AutomatchDefaultsDXP2Fixed.lua", StringComparison.OrdinalIgnoreCase))
                 {
-                    HttpHelper.WriteResponse(ms, HttpResponceBuilder.File(AutomatchDefaults, Encoding.ASCII));
+                    HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(AutomatchDefaults, Encoding.ASCII));
                     goto END;
                 }
 
@@ -257,14 +274,14 @@ namespace ThunderHawk
 
             END:
                 handler.Send(ms.ToArray());
-                handler.Stop();
-                handler.Start();
+                handler.KillCurrentClient();
             }
         }
 
         void OnStats(TcpPortHandler handler, byte[] buffer, int count)
         {
             var str = ToUtf8(buffer, count);
+            Logger.Trace("STATS " + str);
         }
 
         unsafe void OnChat(TcpPortHandler handler, byte[] buffer, int count)
@@ -310,18 +327,26 @@ namespace ThunderHawk
 
         void HandleUserCommand(TcpPortHandler handler, string[] values)
         {
-            SendToClientChat($":SERVER!SERVER@* NOTICE {_name} :Authenticated\r\n");
-            SendToClientChat($":s 001 {_name} :Welcome to the Matrix {_name}\r\n");
-            SendToClientChat($":s 002 {_name} :Your host is xs0, running version 1.0\r\n");
-            SendToClientChat($":s 003 {_name} :This server was created Fri Oct 19 1979 at 21:50:00 PDT\r\n");
-            SendToClientChat($":s 004 {_name} s 1.0 iq biklmnopqustvhe\r\n");
-            SendToClientChat($":s 375 {_name} :- (M) Message of the day - \r\n");
-            SendToClientChat($":s 372 {_name} :- Welcome to GameSpy\r\n");
+            _user = $@"{_name}!{values[1]}@{handler.RemoteEndPoint.Address}";
         }
 
         void HandleNickCommand(TcpPortHandler handler, string[] values)
         {
-           // SendToClientChat("");
+            var users = CoreContext.MasterServer.GetAllUsers().Length;
+            // SendToClientChat($":SERVER!SERVER@* NOTICE {_name} :Authenticated\r\n");
+
+            SendToClientChat($":s 001 {_name} :Welcome to the Matrix {_name}\r\n");
+          //  SendToClientChat($":s 002 {_name} :Your host is xs0, running version 1.0\r\n");
+          //  SendToClientChat($":s 003 {_name} :This server was created Fri Oct 19 1979 at 21:50:00 PDT\r\n");
+          //  SendToClientChat($":s 004 {_name} s 1.0 iq biklmnopqustvhe\r\n");
+           // SendToClientChat($":s 375 {_name} :- (M) Message of the day - \r\n");
+            SendToClientChat($":s 372 {_name} :- Welcome to GameSpy\r\n");
+          //  SendToClientChat($":s 251 :There are {users} users and 0 services on 1 servers\r\n");
+          //  SendToClientChat($":s 252 0 :operator(s)online\r\n");
+          //  SendToClientChat($":s 253 {users} :unknown connection(s)\r\n");
+          //  SendToClientChat($":s 254 1 :channels formed\r\n");
+           // SendToClientChat($":s 255 :I have {users} clients and 1 servers\r\n");
+            SendToClientChat($":{_user} NICK {_name}\r\n");
         }
 
         unsafe void HandleCryptCommand(TcpPortHandler handler, string[] values)
@@ -375,15 +400,55 @@ namespace ThunderHawk
         void HandleLoginCommand(TcpPortHandler handler, string[] values)
         {
             var nick = values[2];
-
             var loginInfo = CoreContext.MasterServer.GetLoginInfo(nick);
 
             SendToClientChat($":s 707 {nick} 12345678 {loginInfo.ProfileId}\r\n");
+
+            RestartTimer();
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        void RestartTimer()
+        {
+            StopTimer();
+            _keepAliveTimer = new Timer(KeepAliveCallback, null, TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(2));
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        void StopTimer()
+        {
+            _keepAliveTimer?.Dispose();
+            _keepAliveTimer = null;
+        }
+
+        void KeepAliveCallback(object state)
+        {
+            _heartbeatState++;
+
+            Logger.Trace("sending keep alive");
+            if (!_clientManager.Send(DataFunctions.StringToBytes(@"\ka\\final\")))
+            {
+                Restart();
+                return;
+            }
+
+            // every 2nd keep alive request, we send an additional heartbeat
+            if (_heartbeatState % 2 == 0)
+            {
+                Logger.Trace("sending heartbeat");
+                if (!_clientManager.Send(DataFunctions.StringToBytes(String.Format(@"\lt\{0}\final\", RandomHelper.GetString(22, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][") + "__"))))
+                {
+                    Restart();
+                    return;
+                }
+            }
         }
 
         unsafe void SendToClientChat(string message)
         {
-            var bytesToSend = message.ToAssciiBytes();
+            Logger.Trace("CHATSEND " + message);
+
+            var bytesToSend = message.ToUTF8Bytes();
 
             if (_chatEncoded)
                 fixed (byte* bytesToSendPtr = bytesToSend)
@@ -394,12 +459,218 @@ namespace ThunderHawk
 
         void OnServerRetrieve(TcpPortHandler handler, byte[] buffer, int count)
         {
-            var str = ToUtf8(buffer, count);
+            var str = ToASCII(buffer, count);
+            Logger.Trace("RETRIEVE " + str);
+
+            string[] data = str.Split(new char[] { '\x00' }, StringSplitOptions.RemoveEmptyEntries);
+
+            string validate = data[4];
+            string filter = null;
+
+            bool isAutomatch = false;
+
+            if (validate.Length > 8)
+            {
+                filter = validate.Substring(8);
+                validate = validate.Substring(0, 8);
+            }
+            else
+            {
+                //Log(Category, "ROOMS REQUEST - "+ data[2]);
+
+                isAutomatch = data[2].EndsWith("am");
+
+                if (!isAutomatch)
+                {
+                    SendRooms(handler, validate);
+                    return;
+                }
+            }
+
+            /*LoadLobbies()
+               .ContinueWith(task =>
+               {
+                   if (task.Status != TaskStatus.RanToCompletion)
+                   {
+                       Console.WriteLine(task.Exception);
+                       return;
+                   }
+
+                   GameServer[] servers;
+
+                   var currentRating = ServerContext.ChatServer.CurrentRating;
+
+                   if (isAutomatch)
+                   {
+                       // var groups = task.Result.GroupBy(s => s.GetByName("maxplayers") ?? string.Empty);
+                       //servers = groups.SelectMany(x => x.OrderBy(s => Math.Abs(currentRating - GetServerRating(s))).Take(2)).ToArray();
+                       servers = task.Result.OrderBy(s => Math.Abs(currentRating - GetServerRating(s))).ToArray();
+                   }
+                   else
+                       servers = task.Result;
+
+                   for (int i = 0; i < servers.Length; i++)
+                   {
+                       servers[i]["score_"] = ServerContext.ChatServer.CurrentRating.ToString();
+                   }
+
+                   string[] fields = data[5].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+
+                   byte[] unencryptedServerList = PackServerList(state, servers, fields, isAutomatch);
+                   byte[] encryptedServerList = GSEncoding.Encode("pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedServerList, unencryptedServerList.LongLength);
+
+                   SendToClient(state, encryptedServerList);
+               });*/
+        }
+
+        void SendRooms(TcpPortHandler handler, string validate)
+        {
+            var bytes = new List<byte>();
+
+            var remoteEndPoint = handler.RemoteEndPoint;
+            bytes.AddRange(remoteEndPoint.Address.GetAddressBytes());
+
+            byte[] value2 = BitConverter.GetBytes((ushort)6500);
+
+            bytes.AddRange(BitConverter.IsLittleEndian ? value2.Reverse() : value2);
+
+            bytes.Add(5); // fields count
+            bytes.Add(0);
+
+            bytes.AddRange(DataFunctions.StringToBytes("hostname"));
+            bytes.Add(0);
+            bytes.Add(0);
+            bytes.AddRange(DataFunctions.StringToBytes("numwaiting"));
+            bytes.Add(0);
+            bytes.Add(0);
+            bytes.AddRange(DataFunctions.StringToBytes("maxwaiting"));
+            bytes.Add(0);
+            bytes.Add(0);
+            bytes.AddRange(DataFunctions.StringToBytes("numservers"));
+            bytes.Add(0);
+            bytes.Add(0);
+            bytes.AddRange(DataFunctions.StringToBytes("numplayersname"));
+            bytes.Add(0);
+            bytes.Add(0);
+
+            //for (int i = 1; i <= 10; i++)
+            //{
+            bytes.Add(81);
+
+            var b2 = BitConverter.GetBytes((long)1);
+
+            bytes.Add(b2[3]);
+            bytes.Add(b2[2]);
+            bytes.Add(b2[1]);
+            bytes.Add(b2[0]);
+
+            bytes.Add(0);
+            bytes.Add(0);
+
+            bytes.Add(255);
+            bytes.AddRange(DataFunctions.StringToBytes("Room 1"));
+            bytes.Add(0);
+
+            bytes.Add(255);
+            bytes.AddRange(DataFunctions.StringToBytes(CoreContext.MasterServer.GetAllUsers().Length.ToString()));
+            bytes.Add(0);
+
+            bytes.Add(255);
+            bytes.AddRange(DataFunctions.StringToBytes("1000"));
+            bytes.Add(0);
+
+            bytes.Add(255);
+            bytes.AddRange(DataFunctions.StringToBytes("1"));
+            bytes.Add(0);
+
+            bytes.Add(255);
+            bytes.AddRange(DataFunctions.StringToBytes("20"));
+            bytes.Add(0);
+            //}
+
+            bytes.AddRange(new byte[] { 0, 255, 255, 255, 255 });
+
+            var array = bytes.ToArray();
+
+            byte[] enc = GSEncoding.Encode("pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), array, array.LongLength);
+
+            handler.Send(enc);
         }
 
         void OnServerReport(UdpPortHandler handler, UdpReceiveResult result)
         {
             var str = ToUtf8(result.Buffer, result.Buffer.Length);
+            Logger.Trace("REPORT " + str);
+
+            var receivedBytes = result.Buffer;
+            var remote = result.RemoteEndPoint;
+
+            if (receivedBytes[0] == (byte)MessageType.AVAILABLE)
+            {
+                handler.Send(new byte[] { 0xfe, 0xfd, 0x09, 0x00, 0x00, 0x00, 0x00 }, remote);
+            }
+            else if (receivedBytes.Length > 5 && receivedBytes[0] == (byte)MessageType.HEARTBEAT)
+            {
+                // this is where server details come in, it starts with 0x03, it happens every 60 seconds or so
+
+                var server = ParseHelper.ParseDetails(receivedBytes.Skip(5).ToArray());
+
+               /* if (!CanRegisterServer(remote, receivedBytes.Skip(5).ToArray()))
+                {
+                    byte[] uniqueId = new byte[4];
+                    Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
+
+                    byte[] response = new byte[] { 0xfe, 0xfd, (byte)MessageType.CHALLENGE_RESPONSE, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3], 0x41, 0x43, 0x4E, 0x2B, 0x78, 0x38, 0x44, 0x6D, 0x57, 0x49, 0x76, 0x6D, 0x64, 0x5A, 0x41, 0x51, 0x45, 0x37, 0x68, 0x41, 0x00 };
+
+                    handler.Send(response, remote);
+                }*/
+            }
+            else if (receivedBytes.Length > 5 && receivedBytes[0] == (byte)MessageType.CHALLENGE_RESPONSE)
+            {
+                byte[] uniqueId = new byte[4];
+                Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
+
+                byte[] validate = Encoding.UTF8.GetBytes("Iare43/78WkOVaU1Aanv8vrXbSwA\0");
+                byte[] validateDC = Encoding.UTF8.GetBytes("Egn4q1jDYyOIVczkXvlGbBxavC4A\0");
+
+                byte[] clientResponse = new byte[validate.Length];
+                Array.Copy(receivedBytes, 5, clientResponse, 0, clientResponse.Length);
+
+                var resStr = Encoding.UTF8.GetString(clientResponse);
+
+                // if we validate, reply back a good response
+                if (clientResponse.SequenceEqual(validate) || clientResponse.SequenceEqual(validateDC))
+                {
+                    byte[] response = new byte[] { 0xfe, 0xfd, 0x0a, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3] };
+
+                    handler.Send(response, remote);
+
+                    AddValidServer(remote);
+                }
+            }
+            else if (receivedBytes.Length == 5 && receivedBytes[0] == (byte)MessageType.KEEPALIVE)
+            {
+                // this is a server ping, it starts with 0x08, it happens every 20 seconds or so
+
+                byte[] uniqueId = new byte[4];
+                Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
+                RefreshServerPing(remote);
+            }
+        }
+
+        void RefreshServerPing(IPEndPoint remote)
+        {
+
+        }
+
+        void AddValidServer(IPEndPoint remote)
+        {
+
+        }
+
+        bool CanRegisterServer(IPEndPoint remote, byte[] data)
+        {
+            return false;
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -414,6 +685,7 @@ namespace ThunderHawk
             _chat.Stop();
             _stats.Stop();
             _http.Stop();
+            StopTimer();
         }
 
         string ToUtf8(byte[] buffer, int count)

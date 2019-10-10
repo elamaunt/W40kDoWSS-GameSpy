@@ -116,6 +116,7 @@
     <Compile Include="Controllers\Binders\TabItemWithPageViewModelBinder.cs" />
     <Compile Include="Controllers\IControlExtension.cs" />
     <Compile Include="Controllers\PageExtendingController.cs" />
+    <Compile Include="Data\GameServerDetails.cs" />
     <Compile Include="Effects\IndicatorEffect.cs" />
     <Compile Include="Effects\RectBlurEffect.cs" />
     <Compile Include="ExplorerExtensions.cs" />

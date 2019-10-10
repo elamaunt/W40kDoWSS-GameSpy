@@ -1,5 +1,9 @@
-﻿using System;
+﻿using GSMasterServer.Data;
+using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ThunderHawk.Utils
 {
@@ -34,6 +38,13 @@ namespace ThunderHawk.Utils
             }
 
             return parsedData;
+        }
+
+        internal static GameServerDetails ParseDetails(byte[] data)
+        {
+            var details = new GameServerDetails();
+
+            return details;
         }
     }
 }

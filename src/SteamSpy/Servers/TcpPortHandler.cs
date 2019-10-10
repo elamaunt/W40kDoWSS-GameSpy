@@ -103,21 +103,28 @@ namespace ThunderHawk
             }
         }
 
-        public void SendUtf8(string message)
+        public bool SendUtf8(string message)
         {
-            Send(message.ToUTF8Bytes());
+            return Send(message.ToUTF8Bytes());
         }
 
-        public void SendAskii(string message)
+        public bool SendAskii(string message)
         {
-            Send(message.ToAssciiBytes());
+            return Send(message.ToAssciiBytes());
         }
 
-        public void Send(byte[] bytes)
+        public bool Send(byte[] bytes)
         {
             try
             {
-                _client?.GetStream()?.Write(bytes, 0, bytes.Length);
+                var stream = _client?.GetStream();
+
+                if (stream != null)
+                {
+                    stream.Write(bytes, 0, bytes.Length);
+                    stream.Flush();
+                    return true;
+                }
             }
             catch (OperationCanceledException)
             {
@@ -132,6 +139,8 @@ namespace ThunderHawk
             {
                 _exceptionHandlerDelegate?.Invoke(ex, true);
             }
+
+            return false;
         }
 
         void OnReceive(Task<int> task)
@@ -210,6 +219,13 @@ namespace ThunderHawk
             {
                 get { return base.Active; }
             }
+        }
+
+        public void KillCurrentClient()
+        {
+            _client?.GetStream()?.Flush();
+            _client?.GetStream()?.Dispose();
+            _client = null;
         }
     }
 }
