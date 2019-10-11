@@ -31,7 +31,9 @@ namespace GSMasterServer.DiscordBot.Commands
                 DiscordDatabase.RemoveMute(user.Id, softUnmute);
                 var logMessage = new StringBuilder();
                 logMessage.Append($"<@{user.Id}> ");
-                logMessage.Append($"Congrats! You have been unmuted!");
+                logMessage.Append(softUnmute
+                    ? $"Congrats! You are not soft-muted anymore!"
+                    : $"Congrats! You have been unmuted!");
                 await BotMain.WriteToLogChannel(logMessage.ToString());
             }
         }
@@ -40,7 +42,7 @@ namespace GSMasterServer.DiscordBot.Commands
         {
             var targetUsers = socketMessage.MentionedUsers;
             if (targetUsers.Count == 0)
-                throw new Exception("[UnMuteCommand]No users were mentioned!");
+                Logger.Debug("[UnMuteCommand]No users were mentioned!");
             await UnMute(targetUsers, _softUnmute, ((SocketGuildChannel) socketMessage.Channel).Guild);
 
             await socketMessage.DeleteAsync();

@@ -14,9 +14,9 @@ namespace GSMasterServer.DiscordBot
         {
             { "ping", new PingCommand() },
             { "dm", new DeleteMessagesCommand() },
-            { "sm", new MuteCommand(true) },
+            { "stm", new MuteCommand(true) },
             { "mute", new MuteCommand(false) },
-            { "unsm", new UnMuteCommand(true) },
+            { "unstm", new UnMuteCommand(true) },
             { "unmute", new UnMuteCommand(false) },
         };
 

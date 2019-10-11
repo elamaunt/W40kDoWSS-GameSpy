@@ -32,7 +32,7 @@ namespace GSMasterServer.DiscordBot.Commands
                     ulong.TryParse(commandParams[0], out fromMessage);
             }
             if (messagesCount == 0 && fromMessage == 0)
-                throw new Exception("[DeleteMessagesCommand]No required arg was passed");
+                Logger.Debug("[DeleteMessagesCommand]No required arg was passed");
 
             var targetUsers = socketMessage.MentionedUsers;
 
@@ -47,8 +47,6 @@ namespace GSMasterServer.DiscordBot.Commands
                 messages = messages.Where(m => targetUsers.Contains(m.Author));
 
             await textChannel.DeleteMessagesAsync(messages);
-
-            await socketMessage.DeleteAsync();
         }
     }
 }
