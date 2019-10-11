@@ -24,8 +24,6 @@ namespace ThunderHawk.Core
                 // Still didn't subscribe!
                 Frame.IsTweakEnabled.IsChecked = false;
             }
-
-            SubscribeOnPropertyChanged(Frame.IsTweakEnabled, nameof(Frame.IsTweakEnabled.IsChecked), OnCheckedChanged);
         }
 
         void OnCheckedChanged()
