@@ -10,7 +10,7 @@ namespace GSMasterServer.DiscordBot
 {
     internal class BotCommands
     {
-        private static readonly Dictionary<string, IBotCommand> commands = new Dictionary<string, IBotCommand>()
+        private static readonly Dictionary<string, IBotCommand> Commands = new Dictionary<string, IBotCommand>()
         {
             { "ping", new PingCommand() },
             { "dm", new DeleteMessagesCommand() },
@@ -25,7 +25,7 @@ namespace GSMasterServer.DiscordBot
             try
             {
                 var commandName = arg.Content.Split()[0].Substring(1).ToLower();
-                if (!commands.TryGetValue(commandName, out IBotCommand command))
+                if (!Commands.TryGetValue(commandName, out IBotCommand command))
                 {
                     Logger.Trace($"Command: \"{commandName}\" is not implemented!");
                     return;
@@ -35,7 +35,7 @@ namespace GSMasterServer.DiscordBot
 
                 if (userAccessLevel >= command.MinAccessLevel)
                 {
-                    await commands[commandName].Execute(arg);
+                    await Commands[commandName].Execute(arg);
                     Logger.Trace($"Executed command \"{commandName}\" by {arg.Author.Username}({arg.Author.Id})" +
                         $" with Access Level {userAccessLevel}");
                 }

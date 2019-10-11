@@ -20,17 +20,20 @@ namespace GSMasterServer.DiscordBot.Commands
             _softMute = softMute;
         }
 
-        public static async Task Mute(IReadOnlyCollection<SocketUser> users, bool softMute, SocketGuild socketGuild, long muteUntil)
+        public static async Task<List<SocketUser>> Mute(IReadOnlyCollection<SocketUser> users, bool softMute, SocketGuild socketGuild, long muteUntil)
         {
             var roleId = softMute ? DiscordServerConstants.floodOnlyRoleId : DiscordServerConstants.readOnlyRoleId;
+            var mutedUsers = new List<SocketUser>();
             foreach (var user in users)
             {
-                var guidUser = user as SocketGuildUser;
-                if (guidUser.GuildPermissions.Administrator)
-                    continue;
+                if (!(user is SocketGuildUser guidUser)) continue;;
+                if (guidUser.GetAccessLevel() > AccessLevel.User) continue;
                 await guidUser.AddRoleAsync(socketGuild.GetRole(roleId));
                 DiscordDatabase.AddMute(guidUser.Id, softMute ? muteUntil : 0, !softMute ? muteUntil : 0);
+                mutedUsers.Add(guidUser);
             }
+
+            return mutedUsers;
         }
 
 
@@ -55,28 +58,27 @@ namespace GSMasterServer.DiscordBot.Commands
                 throw new Exception("[MuteCommand]No user were mentioned");
 
             var guild = ((SocketGuildChannel) socketMessage.Channel).Guild;
+            List<SocketUser> mutedUsers;
             if (howLong != 0)
             {
                 var timeUntilMute = DateTime.UtcNow.AddMinutes(howLong).Ticks;
-                await Mute(targetUsers, _softMute, guild, timeUntilMute);
+                mutedUsers = await Mute(targetUsers, _softMute, guild, timeUntilMute);
             }
             else
             {
-                await Mute(targetUsers, _softMute, guild, -1);
+                mutedUsers = await Mute(targetUsers, _softMute, guild, -1);
             }
 
-            var logMessage = new StringBuilder();
-            foreach (var user in targetUsers)
+            foreach (var user in mutedUsers)
             {
+                var logMessage = new StringBuilder();
                 logMessage.Append($"<@{user.Id}> ");
+                logMessage.Append(howLong != 0
+                    ? $"You've been {(_softMute ? "soft-" : "")}muted for {howLong} minutes"
+                    : $"You've been {(_softMute ? "soft-" : "")}muted FOREVER!");
+                await BotMain.WriteToLogChannel(logMessage.ToString());
+
             }
-
-            logMessage.Append(howLong != 0
-                ? $"You've been {(_softMute ? "soft-" : "")}muted for {howLong} minutes"
-                : $"You've been {(_softMute ? "soft-" : "")}muted FOREVER!");
-
-            await BotMain.WriteToLogChannel(logMessage.ToString());
-
             await socketMessage.DeleteAsync();
         }
     }

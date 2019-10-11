@@ -1,8 +1,10 @@
 ﻿using GSMasterServer.Servers;
 using System;
-using System.IO;
+using System.IO;
+
 using System.Net;
 using System.Threading;
+using GSMasterServer.DiscordBot;
 using IrcNet.Tools;
 
 namespace GSMasterServer
@@ -13,7 +15,7 @@ namespace GSMasterServer
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-            args = new string[] { "+db", @"test.db" };
+            args = new[] { "+db", @"test.db" };
             
             IPAddress bind = IPAddress.Any;
 
@@ -61,10 +63,11 @@ namespace GSMasterServer
             //ChatServer chatServer = new ChatServer(bind, 6668);
             //HttpServer httpServer = new HttpServer(bind, 80);
             //StatsServer statsServer = new StatsServer(bind, 29920);
-            //DiscordServer discordServer = new DiscordServer();
 
-            SingleMasterServer singleServer = new SingleMasterServer();
+            //SingleMasterServer singleServer = new SingleMasterServer();
 
+
+            BotMain.StartAsync().GetAwaiter().GetResult();
             while (true)
                 Thread.Sleep(1000);
         }

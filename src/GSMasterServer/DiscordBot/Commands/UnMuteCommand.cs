@@ -25,17 +25,15 @@ namespace GSMasterServer.DiscordBot.Commands
             foreach (var user in users)
             {
                 var guidUser = user as SocketGuildUser;
+                if (guidUser.GetAccessLevel() > AccessLevel.User) continue;
                 var roleToRemove = softUnmute ? socketGuild.GetRole(DiscordServerConstants.floodOnlyRoleId) : socketGuild.GetRole(DiscordServerConstants.readOnlyRoleId);
                 await guidUser.RemoveRoleAsync(roleToRemove);
                 DiscordDatabase.RemoveMute(user.Id, softUnmute);
-            }
-            var logMessage = new StringBuilder();
-            foreach (var user in users)
-            {
+                var logMessage = new StringBuilder();
                 logMessage.Append($"<@{user.Id}> ");
+                logMessage.Append($"Congrats! You have been unmuted!");
+                await BotMain.WriteToLogChannel(logMessage.ToString());
             }
-            logMessage.Append($"Congrats! You have been unmuted!");
-            await BotMain.WriteToLogChannel(logMessage.ToString());
         }
 
         public async Task Execute(SocketMessage socketMessage)
