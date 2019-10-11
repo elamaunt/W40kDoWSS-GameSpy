@@ -45,7 +45,7 @@ namespace ThunderHawk.Core
         {
             try
             {
-                var tweaksCount = Frame.RecommendedTweaks.DataSource.Select(x => x.RawTweak).Where(t => !t.CheckTweak()).Count();
+                var tweaksCount = Frame.RecommendedTweaks.DataSource.Select(x => x.RawTweak).Count(t => !t.CheckTweak());
                 Frame.RecommendedTweaksCount.Text = $" ({tweaksCount.ToString()})";
 
                 Frame.ApplyTweaksSP.Visible = tweaksCount != 0;

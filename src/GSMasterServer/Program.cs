@@ -1,6 +1,6 @@
 ﻿using GSMasterServer.Servers;
 using System;
-using System.IO;
+using System.IO;
 using System.Net;
 using System.Threading;
 using IrcNet.Tools;
@@ -67,14 +67,14 @@ namespace GSMasterServer
 
             while (true)
                 Thread.Sleep(1000);
-        }
-
-        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            Logger.Fatal(e.ExceptionObject);
-
-            Directory.CreateDirectory("Crashes");
-            File.WriteAllText(Path.Combine("Crashes","FatalException-"+DateTime.Now.ToLongTimeString()+".ex"), e.ExceptionObject.ToString());
-        }
+        }
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            Logger.Fatal(e.ExceptionObject);
+
+            Directory.CreateDirectory("Crashes");
+            File.WriteAllText(Path.Combine("Crashes","FatalException-"+DateTime.Now.ToLongTimeString()+".ex"), e.ExceptionObject.ToString());
+        }
     }
 }

@@ -4,7 +4,7 @@
     {
         public virtual void Start()
         {
-            // Nothind
+            // Nothing
         }
         public abstract void RegisterComponents(ComponentBatch batch);
     }
