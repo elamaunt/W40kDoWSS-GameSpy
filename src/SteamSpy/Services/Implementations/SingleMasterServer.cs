@@ -187,7 +187,7 @@ namespace ThunderHawk
 
         public void RequestLogout()
         {
-            throw new NotImplementedException();
+            // TODO
         }
 
         void HandleStateDisconnected(NetIncomingMessage message)

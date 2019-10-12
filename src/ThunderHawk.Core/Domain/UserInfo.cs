@@ -17,6 +17,8 @@ namespace ThunderHawk.Core
         public long? Score2v2 { get; set; }
         public long? Score3v3 { get; set; }
         public long? Best1v1Winstreak { get; set; }
+        public string ClientUserName { get; set; }
+        public string ClientBFlags { get; set; }
 
         public UserInfo(ulong steamId)
         {

@@ -19,7 +19,7 @@
         public const ulong moderRoleId = 623909305669910549;
 #endif
 
-#if Debug
+#if Debug || SPACEWAR
         public const ulong serverId = 624305167743057921;
 
         public const ulong logChannelId = 626123183380234261;

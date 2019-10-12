@@ -41,13 +41,13 @@ namespace ThunderHawk
         long _profileId;
         string _email;
         string _response;
+        bool _inChat;
 
         byte[] _gameNameBytes;
         byte[] _gamekeyBytes;
 
         ChatCrypt.GDCryptKey _chatClientKey;
         ChatCrypt.GDCryptKey _chatServerKey;
-
         readonly char[] ChatSplitChars = new[] { '\r', '\n' };
         readonly char[] ChatCommandsSplitChars = new[] { ' ' };
         enum MessageType : byte
@@ -96,7 +96,7 @@ namespace ThunderHawk
             _searchManager.Start();
 
             _chat.Start();
-            _stats.Start();
+           // _stats.Start();
             _http.Start();
 
             //ServerListReport = new ServerListReport(bind, 27900);
@@ -124,6 +124,7 @@ namespace ThunderHawk
 
         void OnChatAccept(TcpPortHandler handler, TcpClient client, CancellationToken token)
         {
+            _inChat = false;
             _chatEncoded = false;
         }
 
@@ -318,11 +319,103 @@ namespace ThunderHawk
             if (line.StartsWith("CRYPT", StringComparison.OrdinalIgnoreCase)) { HandleCryptCommand(handler, values); return; }
             if (line.StartsWith("USER", StringComparison.OrdinalIgnoreCase)) { HandleUserCommand(handler, values); return; }
             if (line.StartsWith("NICK", StringComparison.OrdinalIgnoreCase)) { HandleNickCommand(handler, values); return; }
+            if (line.StartsWith("CDKEY", StringComparison.OrdinalIgnoreCase)) { HandleCdkeyCommand(handler, values); return; }
+            if (line.StartsWith("JOIN", StringComparison.OrdinalIgnoreCase)) { HandleJoinCommand(handler, values); return; }
+            if (line.StartsWith("MODE", StringComparison.OrdinalIgnoreCase)) { HandleModeCommand(handler, values); return; }
+            if (line.StartsWith("QUIT", StringComparison.OrdinalIgnoreCase)) { HandleQuitCommand(handler, values); return; }
+            if (line.StartsWith("GETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleGetckeyCommand(handler, values); return; }
+            if (line.StartsWith("PRIVMSG", StringComparison.OrdinalIgnoreCase)) { HandlePrivmsgCommand(handler, values); return; }
 
             Debugger.Break();
 
             //if (!state.Disposing && state.UserInfo != null)
             //   IrcDaemon.ProcessSocketMessage(state.UserInfo, asciValue);
+        }
+
+        void HandlePrivmsgCommand(TcpPortHandler handler, string[] values)
+        {
+            // PRIVMSG #GPG!1 :dfg
+            var channelName = values[1];
+
+            if (channelName == "#GPG!1")
+            {
+                var message = values[2].Substring(1);
+                CoreContext.MasterServer.SendChatMessage(message);
+            }
+        }
+
+        void HandleGetckeyCommand(TcpPortHandler handler, string[] values)
+        {
+            var channelName = values[1];
+
+            var key = values[5];
+            var id = values[3];
+
+            if (key == ":\\username\\b_flags")
+            {
+                //GETCKEY #GPG!1 * 000 0 :\\username\\b_flags
+                var users = CoreContext.MasterServer.GetAllUsers();
+
+                for (int i = 0; i < users.Length; i++)
+                {
+                    var user = users[i];
+                    // :s 702 elamaunt #GPG!1 pitbulwewe 050 :\XW9asqsfsX|8\sh
+                    SendToClientChat($":s 702 {_name} {channelName} {user.UIName} {id} :\\{user.ClientUserName}\\{user.ClientBFlags}\r\n");
+                }
+            }
+
+
+        }
+
+        void HandleQuitCommand(TcpPortHandler handler, string[] values)
+        {
+            Restart();
+        }
+
+        void HandleModeCommand(TcpPortHandler handler, string[] values)
+        {
+            var channelName = values[1];
+
+            if (channelName.StartsWith("#GPG", StringComparison.OrdinalIgnoreCase))
+            {
+                SendToClientChat($":s 324 {_name} {channelName} +\r\n");
+            }
+            else
+            {
+
+            }
+        }
+
+        void HandleJoinCommand(TcpPortHandler handler, string[] values)
+        {
+            var channelName = values[1];
+
+            if (channelName.StartsWith("#GPG", StringComparison.OrdinalIgnoreCase))
+            {
+                var users = CoreContext.MasterServer.GetAllUsers();
+
+                SendToClientChat($":{_user} JOIN {channelName}\r\n");
+                SendToClientChat($":s 331 {channelName} :No topic is set\r\n");
+
+                _inChat = true;
+
+                var playersList = new StringBuilder();
+
+                for (int i = 0; i < users.Length; i++)
+                    playersList.Append(users[i].UIName+" ");
+
+                SendToClientChat($":s 353 {_name} = {channelName} :@{playersList}\r\n");
+                SendToClientChat($":s 366 {_name} {channelName} :End of NAMES list\r\n");
+            }
+            else
+            {
+
+            }
+        }
+
+        void HandleCdkeyCommand(TcpPortHandler handler, string[] values)
+        {
+            SendToClientChat($":s 706 {_name}: 1 :\"Authenticated\"\r\n");
         }
 
         void HandleUserCommand(TcpPortHandler handler, string[] values)
@@ -333,19 +426,19 @@ namespace ThunderHawk
         void HandleNickCommand(TcpPortHandler handler, string[] values)
         {
             var users = CoreContext.MasterServer.GetAllUsers().Length;
-            // SendToClientChat($":SERVER!SERVER@* NOTICE {_name} :Authenticated\r\n");
 
+            SendToClientChat($":SERVER!SERVER@* NOTICE {_name} :Authenticated\r\n");
             SendToClientChat($":s 001 {_name} :Welcome to the Matrix {_name}\r\n");
-          //  SendToClientChat($":s 002 {_name} :Your host is xs0, running version 1.0\r\n");
-          //  SendToClientChat($":s 003 {_name} :This server was created Fri Oct 19 1979 at 21:50:00 PDT\r\n");
-          //  SendToClientChat($":s 004 {_name} s 1.0 iq biklmnopqustvhe\r\n");
-           // SendToClientChat($":s 375 {_name} :- (M) Message of the day - \r\n");
+            SendToClientChat($":s 002 {_name} :Your host is xs0, running version 1.0\r\n");
+            SendToClientChat($":s 003 {_name} :This server was created Fri Oct 19 1979 at 21:50:00 PDT\r\n");
+            SendToClientChat($":s 004 {_name} s 1.0 iq biklmnopqustvhe\r\n");
+            SendToClientChat($":s 375 {_name} :- (M) Message of the day - \r\n");
             SendToClientChat($":s 372 {_name} :- Welcome to GameSpy\r\n");
-          //  SendToClientChat($":s 251 :There are {users} users and 0 services on 1 servers\r\n");
-          //  SendToClientChat($":s 252 0 :operator(s)online\r\n");
-          //  SendToClientChat($":s 253 {users} :unknown connection(s)\r\n");
-          //  SendToClientChat($":s 254 1 :channels formed\r\n");
-           // SendToClientChat($":s 255 :I have {users} clients and 1 servers\r\n");
+            SendToClientChat($":s 251 :There are {users} users and 0 services on 1 servers\r\n");
+            SendToClientChat($":s 252 0 :operator(s)online\r\n");
+            SendToClientChat($":s 253 {users} :unknown connection(s)\r\n");
+            SendToClientChat($":s 254 1 :channels formed\r\n");
+            SendToClientChat($":s 255 :I have {users} clients and 1 servers\r\n");
             SendToClientChat($":{_user} NICK {_name}\r\n");
         }
 

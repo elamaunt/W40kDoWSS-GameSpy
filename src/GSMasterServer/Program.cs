@@ -64,10 +64,10 @@ namespace GSMasterServer
             //HttpServer httpServer = new HttpServer(bind, 80);
             //StatsServer statsServer = new StatsServer(bind, 29920);
 
-            //SingleMasterServer singleServer = new SingleMasterServer();
+            SingleMasterServer singleServer = new SingleMasterServer();
 
+            //BotMain.StartAsync().GetAwaiter().GetResult();
 
-            BotMain.StartAsync().GetAwaiter().GetResult();
             while (true)
                 Thread.Sleep(1000);
         }
