@@ -55,7 +55,10 @@ namespace GSMasterServer.DiscordBot.Commands
             }
             var targetUsers = socketMessage.MentionedUsers;
             if (targetUsers.Count == 0)
+            {
                 Logger.Debug("[MuteCommand]No user were mentioned");
+                return;
+            }
 
             var guild = ((SocketGuildChannel) socketMessage.Channel).Guild;
             List<SocketUser> mutedUsers;

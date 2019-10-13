@@ -31,8 +31,12 @@ namespace GSMasterServer.DiscordBot.Commands
                 if (!ushort.TryParse(commandParams[0], out messagesCount))
                     ulong.TryParse(commandParams[0], out fromMessage);
             }
+
             if (messagesCount == 0 && fromMessage == 0)
+            {
                 Logger.Debug("[DeleteMessagesCommand]No required arg was passed");
+                return;
+            }
 
             var targetUsers = socketMessage.MentionedUsers;
 
