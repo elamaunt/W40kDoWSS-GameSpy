@@ -2,6 +2,7 @@
 using GSMasterServer.Utils;
 using Http;
 using Reality.Net.GameSpy.Servers;
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -49,7 +50,9 @@ namespace ThunderHawk
         ChatCrypt.GDCryptKey _chatClientKey;
         ChatCrypt.GDCryptKey _chatServerKey;
         readonly char[] ChatSplitChars = new[] { '\r', '\n' };
-        readonly char[] ChatCommandsSplitChars = new[] { ' ' };
+        //readonly char[] ChatCommandsSplitChars = new[] { ' ' };
+        const char PrefixCharacter = ':';
+
         enum MessageType : byte
         {
             CHALLENGE_RESPONSE = 0x01,
@@ -62,7 +65,7 @@ namespace ThunderHawk
         public SingleClientServer()
         {
             _serverReport = new UdpPortHandler(27900, OnServerReport, OnError);
-            _serverRetrieve = new TcpPortHandler(28910, OnServerRetrieve, OnError, null, OnZeroBytes);
+            _serverRetrieve = new TcpPortHandler(28910, OnServerRetrieve, OnError, null);
 
             _clientManager = new TcpPortHandler(29900, OnClientManager, OnError, OnClientAccept, OnZeroBytes);
             _searchManager = new TcpPortHandler(29901, OnSearchManager, OnError, null, OnZeroBytes);
@@ -72,6 +75,18 @@ namespace ThunderHawk
             _http = new TcpPortHandler(80, OnHttp, OnError, null, OnZeroBytes);
 
             CoreContext.MasterServer.LoginInfoReceived += SendLoginResponce;
+            CoreContext.MasterServer.ChatMessageReceived += OnChatMessageReceived;
+        }
+
+        void OnChatMessageReceived(MessageInfo message)
+        {
+            if (!_inChat)
+                return;
+
+            if (message.FromGame && message.Author.SteamId == SteamUser.GetSteamID().m_SteamID)
+                return;
+
+            SendToClientChat($":{message.Author.UIName}!XaaaaaaaaX|1@127.0.0.1 PRIVMSG #GPG!1 :{message.Text}\r\n");
         }
 
         void OnZeroBytes(TcpPortHandler handler)
@@ -312,7 +327,7 @@ namespace ThunderHawk
         {
             Logger.Trace("CHATLINE "+line);
 
-            var values = line.Split(ChatCommandsSplitChars, StringSplitOptions.RemoveEmptyEntries);
+            var values = GetLineValues(line); //line.Split(ChatCommandsSplitChars, StringSplitOptions.RemoveEmptyEntries);
 
             if (line.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase)) { HandleLoginCommand(handler, values); return; }
             if (line.StartsWith("USRIP", StringComparison.OrdinalIgnoreCase)) { HandleUsripCommand(handler, values); return; }
@@ -325,11 +340,94 @@ namespace ThunderHawk
             if (line.StartsWith("QUIT", StringComparison.OrdinalIgnoreCase)) { HandleQuitCommand(handler, values); return; }
             if (line.StartsWith("GETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleGetckeyCommand(handler, values); return; }
             if (line.StartsWith("PRIVMSG", StringComparison.OrdinalIgnoreCase)) { HandlePrivmsgCommand(handler, values); return; }
+            if (line.StartsWith("SETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleSetckeyCommand(handler, values); return; }
 
             Debugger.Break();
 
             //if (!state.Disposing && state.UserInfo != null)
             //   IrcDaemon.ProcessSocketMessage(state.UserInfo, asciValue);
+        }
+
+        string[] GetLineValues(string line)
+        {
+            var args = new List<string>();
+            string prefix;
+            string command = string.Empty;
+
+            try
+            {
+                int i = 0;
+                /* This runs in the mainloop :: parser needs to return fast
+                 * -> nothing which could block it may be called inside Parser
+                 * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+                if (line[0] == PrefixCharacter)
+                {
+                    /* we have a prefix */
+                    while (line[++i] != ' ') { }
+
+                    prefix = line.Substring(1, i - 1);
+                }
+                else
+                {
+                    prefix = _user;
+                }
+
+                int commandStart = i;
+                /*command might be numeric (xxx) or command */
+                if (char.IsDigit(line[i + 1]) && char.IsDigit(line[i + 2]) && char.IsDigit(line[i + 3]))
+                {
+                    //replyCode = (ReplyCode)int.Parse(line.Substring(i + 1, 3));
+                    i += 4;
+                }
+                else
+                {
+                    while ((i < (line.Length - 1)) && line[++i] != ' ') { }
+
+                    if (line.Length - 1 == i) { ++i; }
+                    command = line.Substring(commandStart, i - commandStart);
+                }
+
+                args.Add(command);
+
+                ++i;
+                int paramStart = i;
+                while (i < line.Length)
+                {
+                    if (line[i] == ' ' && i != paramStart)
+                    {
+                        args.Add(line.Substring(paramStart, i - paramStart));
+                        paramStart = i + 1;
+                    }
+                    if (line[i] == PrefixCharacter)
+                    {
+                        if (paramStart != i)
+                        {
+                            args.Add(line.Substring(paramStart, i - paramStart));
+                        }
+                        args.Add(line.Substring(i + 1));
+                        break;
+                    }
+
+                    ++i;
+                }
+
+                if (i == line.Length)
+                {
+                    args.Add(line.Substring(paramStart));
+                }
+
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Logger.Warn("Invalid Message: " + line);
+                // invalid message
+            }
+
+            return args.ToArray();
+        }
+
+        void HandleSetckeyCommand(TcpPortHandler handler, string[] values)
+        {
         }
 
         void HandlePrivmsgCommand(TcpPortHandler handler, string[] values)
@@ -339,8 +437,7 @@ namespace ThunderHawk
 
             if (channelName == "#GPG!1")
             {
-                var message = values[2].Substring(1);
-                CoreContext.MasterServer.SendChatMessage(message);
+                CoreContext.MasterServer.SendChatMessage(values[2], true);
             }
         }
 
@@ -620,8 +717,9 @@ namespace ThunderHawk
         {
             var bytes = new List<byte>();
 
-            var remoteEndPoint = handler.RemoteEndPoint;
-            bytes.AddRange(remoteEndPoint.Address.GetAddressBytes());
+            //var remoteEndPoint = handler.RemoteEndPoint;
+            //bytes.AddRange(remoteEndPoint.Address.GetAddressBytes());
+            bytes.AddRange(IPAddress.Loopback.GetAddressBytes());
 
             byte[] value2 = BitConverter.GetBytes((ushort)6500);
 

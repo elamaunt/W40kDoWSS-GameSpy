@@ -57,7 +57,7 @@ namespace ThunderHawk.Core
             if (text.IsNullOrWhiteSpace())
                 return;
 
-            CoreContext.MasterServer.SendChatMessage(text);
+            CoreContext.MasterServer.SendChatMessage(text, false);
 
             Frame.TextInput.Text = string.Empty;
         }

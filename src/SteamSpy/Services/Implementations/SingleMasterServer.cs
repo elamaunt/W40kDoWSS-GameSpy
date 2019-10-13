@@ -238,6 +238,7 @@ namespace ThunderHawk
                 }),
                 Text = message.Text,
                 Date = DateTime.FromBinary(message.LongDate),
+                FromGame = message.FromGame
             });
 
             if (added)
@@ -411,14 +412,15 @@ namespace ThunderHawk
             _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
         }
 
-        public void SendChatMessage(string text)
+        public void SendChatMessage(string text, bool fromGame)
         {
             var message = _clientPeer.CreateMessage();
 
             message.WriteJsonMessage(new ChatMessageMessage()
             {
                 SteamId = _connectedSteamId,
-                Text = text
+                Text = text,
+                FromGame = fromGame
             });
 
             _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);

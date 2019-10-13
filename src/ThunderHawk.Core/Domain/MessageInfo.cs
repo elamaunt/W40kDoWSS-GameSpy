@@ -7,5 +7,6 @@ namespace ThunderHawk.Core
         public UserInfo Author { get; set; }
         public string Text { get; set; }
         public DateTime Date { get; set; }
+        public bool FromGame { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace ThunderHawk.Core
             SteamId = steamId;
         }
 
-        public string UIName => Name ?? CoreContext.SteamApi.GetUserName(SteamId) ?? SteamId.ToString();
+        public string UIName => Name ?? CoreContext.SteamApi.GetUserName(SteamId)?.Replace(" ", "_") ?? SteamId.ToString();
 
     }
 }

@@ -21,7 +21,7 @@ namespace GSMasterServer.Servers
         {
             var config = new NetPeerConfiguration("ThunderHawk")
             {
-                ConnectionTimeout = 60,
+                ConnectionTimeout = 120,
                 LocalAddress = IPAddress.Any,
                 AutoFlushSendQueue = true,
                 AcceptIncomingConnections = true,

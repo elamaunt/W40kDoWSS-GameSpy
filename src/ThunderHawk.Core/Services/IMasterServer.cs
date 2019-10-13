@@ -13,7 +13,7 @@ namespace ThunderHawk.Core
         void RequestGameBroadcast(bool teamplay, string gameVariant, int maxPlayers, int players, bool ranked);
         void RequestUserStats(long profileId);
         void RequestUserStats(string name);
-        void SendChatMessage(string text);
+        void SendChatMessage(string text, bool fromGame);
         void RequestUsers();
 
         string ModName { get; }

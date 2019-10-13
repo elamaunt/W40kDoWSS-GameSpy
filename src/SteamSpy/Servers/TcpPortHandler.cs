@@ -30,7 +30,7 @@ namespace ThunderHawk
 
         readonly int _port;
 
-        public IPEndPoint RemoteEndPoint => (IPEndPoint)_client.Client.RemoteEndPoint;
+        public IPEndPoint RemoteEndPoint => (IPEndPoint)_client?.Client?.RemoteEndPoint;
 
         public TcpPortHandler(int port, DataHandler handlerDelegate, ExceptionHandler errorHandler, AcceptHandler acceptDelegate = null, ZeroHandler zeroHandler = null)
         {
