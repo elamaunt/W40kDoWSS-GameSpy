@@ -262,8 +262,8 @@ namespace GSMasterServer.Servers
                 return true; // true means we don't send back a response
 
             string serverVars = sections[0];
-            //string playerVars = sections[1];
-            //string teamVars = sections[2];
+            string playerVars = sections[1];
+            string teamVars = sections[2];
 
             string[] serverVarsSplit = serverVars.Split(new string[] { "\x00" }, StringSplitOptions.None);
 
@@ -274,7 +274,7 @@ namespace GSMasterServer.Servers
             server["LastRefreshed"] = DateTime.UtcNow.ToString();
             server["LastPing"] = DateTime.UtcNow.ToString();
             server["country"] = "??";
-            
+
             for (int i = 0; i < serverVarsSplit.Length - 1; i += 2)
             {
                 if (serverVarsSplit[i] == "hostname")

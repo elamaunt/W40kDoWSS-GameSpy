@@ -4,6 +4,7 @@ using Http;
 using Reality.Net.GameSpy.Servers;
 using Steamworks;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,6 +14,7 @@ using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using ThunderHawk.Core;
 using ThunderHawk.Utils;
 
@@ -44,14 +46,23 @@ namespace ThunderHawk
         string _response;
         bool _inChat;
 
+        string _enteredLobbyHash;
+        string _localServerHash;
+        GameServerDetails _localServer;
+
         byte[] _gameNameBytes;
         byte[] _gamekeyBytes;
 
         ChatCrypt.GDCryptKey _chatClientKey;
         ChatCrypt.GDCryptKey _chatServerKey;
+
         readonly char[] ChatSplitChars = new[] { '\r', '\n' };
-        //readonly char[] ChatCommandsSplitChars = new[] { ' ' };
         const char PrefixCharacter = ':';
+
+        CancellationTokenSource _lobbyTokenSource;
+        CancellationToken Token => _lobbyTokenSource.Token;
+
+        readonly ConcurrentDictionary<string, GameServerDetails> _lastLoadedLobbies = new ConcurrentDictionary<string, GameServerDetails>();
 
         enum MessageType : byte
         {
@@ -76,6 +87,26 @@ namespace ThunderHawk
 
             CoreContext.MasterServer.LoginInfoReceived += SendLoginResponce;
             CoreContext.MasterServer.ChatMessageReceived += OnChatMessageReceived;
+
+            SteamLobbyManager.LobbyMemberEntered += OnLobbyMemberEntered;
+            SteamLobbyManager.LobbyMemberLeft += OnLobbyMemberLeft;
+            SteamLobbyManager.TopicUpdated += OnTopicUpdated;
+        }
+
+        void OnTopicUpdated(string topic)
+        {
+        }
+
+        void OnLobbyMemberLeft(ulong memberSteamId, string name)
+        {
+
+        }
+
+        void OnLobbyMemberEntered(ulong memberSteamId, string name)
+        {
+            var channelName = $"GPS!whamdowfr!{_localServerHash}";
+
+            //SendToClientChat($":s{_user} JOIN {channelName}\r\n");
         }
 
         void OnChatMessageReceived(MessageInfo message)
@@ -134,6 +165,7 @@ namespace ThunderHawk
         void Restart()
         {
             Stop();
+            RecreateLobbyToken();
             Start();
         }
 
@@ -341,11 +373,46 @@ namespace ThunderHawk
             if (line.StartsWith("GETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleGetckeyCommand(handler, values); return; }
             if (line.StartsWith("PRIVMSG", StringComparison.OrdinalIgnoreCase)) { HandlePrivmsgCommand(handler, values); return; }
             if (line.StartsWith("SETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleSetckeyCommand(handler, values); return; }
+            if (line.StartsWith("TOPIC", StringComparison.OrdinalIgnoreCase)) { HandleTopicCommand(handler, values); return; }
+            if (line.StartsWith("PART", StringComparison.OrdinalIgnoreCase)) { HandlePartCommand(handler, values); return; }
+
+            //REPORT cK ?% localip0 192.168.10.2 localip1 192.168.159.1 localip2 192.168.58.1 localip3 192.168.1.21 localport 6112 natneg 1 statechanged 2 gamename whamdowfram publicip 1304808466 publicport 35108
 
             Debugger.Break();
 
             //if (!state.Disposing && state.UserInfo != null)
             //   IrcDaemon.ProcessSocketMessage(state.UserInfo, asciValue);
+        }
+
+        void HandlePartCommand(TcpPortHandler handler, string[] values)
+        {
+            //CHATLINE PART #GSP!whamdowfr!Ml39ll1K9M :
+            var channelName = values[1];
+
+            if (channelName == "#GPG!1")
+            {
+                // TODO: change state
+            }
+            else
+            {
+                SteamLobbyManager.LeaveFromCurrentLobby();
+            }
+        }
+
+        void HandleTopicCommand(TcpPortHandler handler, string[] values)
+        {
+            //TOPIC #GSP!whamdowfr!Ml39ll1K9M :elamaunt
+            var channelName = values[1];
+
+            if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
+            {
+                var roomHash = channelName.Split('!')[2];
+
+                if (roomHash == _localServerHash)
+                {
+                    SteamLobbyManager.SetLobbyTopic(values[2]);
+                }
+            }
         }
 
         string[] GetLineValues(string line)
@@ -439,6 +506,16 @@ namespace ThunderHawk
             {
                 CoreContext.MasterServer.SendChatMessage(values[2], true);
             }
+            else
+            {
+                if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
+                {
+                    var roomHash = channelName.Split('!')[2];
+
+                    if (roomHash == _enteredLobbyHash)
+                        SteamLobbyManager.SendInLobbyChat(string.Join(" ", values));
+                }
+            }
         }
 
         void HandleGetckeyCommand(TcpPortHandler handler, string[] values)
@@ -479,7 +556,24 @@ namespace ThunderHawk
             }
             else
             {
+                if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
+                {
+                    var roomHash = channelName.Split('!')[2];
 
+                    if (_lastLoadedLobbies.TryGetValue(roomHash, out GameServerDetails details))
+                    {
+
+                    }
+                    else
+                    {
+                        if (roomHash == _localServerHash)
+                        {
+                            // CHATLINE MODE #GSP!whamdowfr!Ml39ll1K9M +l 2
+                            // CHATLINE MODE #GSP!whamdowfr!Ml39ll1K9M -i-p-s-m-n-t+l+e 2
+                            SendToClientChat($":s 324 {_name} {channelName} +\r\n");
+                        }
+                    }
+                }
             }
         }
 
@@ -499,14 +593,59 @@ namespace ThunderHawk
                 var playersList = new StringBuilder();
 
                 for (int i = 0; i < users.Length; i++)
-                    playersList.Append(users[i].UIName+" ");
+                    playersList.Append(users[i].UIName + " ");
 
-                SendToClientChat($":s 353 {_name} = {channelName} :@{playersList}\r\n");
+                SendToClientChat($":s 353 {_name} = {channelName} :{playersList}\r\n");
                 SendToClientChat($":s 366 {_name} {channelName} :End of NAMES list\r\n");
             }
             else
             {
+                if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
+                {
+                    var roomHash = channelName.Split('!')[2];
 
+                    if (_lastLoadedLobbies.TryGetValue(roomHash, out GameServerDetails details))
+                    {
+                        var lobbyId = details.LobbySteamId;
+                        SteamLobbyManager.EnterInLobby(lobbyId, _name, RecreateLobbyToken())
+                            .OnFaultOnUi(() =>
+                            {
+                                // TODO
+                            })
+                            .OnCompletedOnUi(res =>
+                            {
+                                if (!res)
+                                    return;
+
+                                _enteredLobbyHash = details.RoomHash;
+
+                                var playersList = new StringBuilder();
+
+                                var usersInLobby = SteamLobbyManager.GetCurrentLobbyMembers();
+
+                                for (int i = 0; i < usersInLobby.Length; i++)
+                                    playersList.Append(usersInLobby[i] + " ");
+
+                                SendToClientChat($":{_user} JOIN {channelName}\r\n");
+                                SendToClientChat($":s 331 {channelName} :No topic is set\r\n");
+                                SendToClientChat($":s 353 {_name} = {channelName} :@{playersList}\r\n");
+                                SendToClientChat($":s 366 {_name} {channelName} :End of NAMES list\r\n");
+                            });
+                    }
+                    else
+                    {
+                        _localServerHash = roomHash;
+
+                        SendToClientChat($":{_user} JOIN {channelName}\r\n");
+                        SendToClientChat($":s 331 {channelName} :No topic is set\r\n");
+                        SendToClientChat($":s 353 {_name} = {channelName} :@{_name}\r\n");
+                        SendToClientChat($":s 366 {_name} {channelName} :End of NAMES list\r\n");
+                    }
+                }
+                else
+                {
+
+                }
             }
         }
 
@@ -651,6 +790,7 @@ namespace ThunderHawk
         {
             var str = ToASCII(buffer, count);
             Logger.Trace("RETRIEVE " + str);
+            var endPoint = handler.RemoteEndPoint;
 
             string[] data = str.Split(new char[] { '\x00' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -677,7 +817,11 @@ namespace ThunderHawk
                 }
             }
 
-            /*LoadLobbies()
+#if SPACEWAR
+            SteamLobbyManager.LoadLobbies(null, "SOULSTORM")
+#else
+            SteamLobbyManager.LoadLobbies()
+#endif
                .ContinueWith(task =>
                {
                    if (task.Status != TaskStatus.RanToCompletion)
@@ -686,31 +830,58 @@ namespace ThunderHawk
                        return;
                    }
 
-                   GameServer[] servers;
-
-                   var currentRating = ServerContext.ChatServer.CurrentRating;
-
-                   if (isAutomatch)
-                   {
-                       // var groups = task.Result.GroupBy(s => s.GetByName("maxplayers") ?? string.Empty);
-                       //servers = groups.SelectMany(x => x.OrderBy(s => Math.Abs(currentRating - GetServerRating(s))).Take(2)).ToArray();
-                       servers = task.Result.OrderBy(s => Math.Abs(currentRating - GetServerRating(s))).ToArray();
-                   }
-                   else
-                       servers = task.Result;
+                  // var currentRating = ServerContext.ChatServer.CurrentRating;
+                  
+                   var servers = task.Result;
 
                    for (int i = 0; i < servers.Length; i++)
                    {
-                       servers[i]["score_"] = ServerContext.ChatServer.CurrentRating.ToString();
+                       var server = servers[i];
+                       server["score_"] = GetCurrentRating(server.MaxPlayers);
                    }
 
-                   string[] fields = data[5].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+                   var fields = data[5].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
 
-                   byte[] unencryptedServerList = PackServerList(state, servers, fields, isAutomatch);
-                   byte[] encryptedServerList = GSEncoding.Encode("pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedServerList, unencryptedServerList.LongLength);
+                   var unencryptedBytes = ParseHelper.PackServerList(endPoint, servers, fields, isAutomatch);
+                 
+                   _lastLoadedLobbies.Clear();
 
-                   SendToClient(state, encryptedServerList);
-               });*/
+                   for (int i = 0; i < servers.Length; i++)
+                   {
+                       var server = servers[i];
+                       var retranslationPort = ushort.Parse(server.HostPort);
+                       var channelHash = ChatCrypt.PiStagingRoomHash("127.0.0.1", "127.0.0.1", retranslationPort);
+
+                       server.RoomHash = channelHash;
+                       _lastLoadedLobbies[channelHash] = server;
+                   }
+
+                   var encryptedBytes = GSEncoding.Encode("pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedBytes, unencryptedBytes.LongLength);
+
+                   handler.Send(encryptedBytes);
+               });
+        }
+
+        string GetCurrentRating(string maxPlayers)
+        {
+            var loginInfo = CoreContext.MasterServer.GetLoginInfo(_name);
+
+            if (loginInfo == null)
+                return "0";
+
+            var stats = CoreContext.MasterServer.GetStatsInfo(loginInfo.ProfileId);
+
+            if (stats == null)
+                return "0";
+
+            switch (maxPlayers)
+            {
+                case "2": return stats.Score1v1.ToString();
+                case "4": return stats.Score2v2.ToString();
+                case "6": return stats.Score3v3_4v4.ToString();
+                case "8": return stats.Score3v3_4v4.ToString();
+                default: return "0";
+            }
         }
 
         void SendRooms(TcpPortHandler handler, string validate)
@@ -804,9 +975,13 @@ namespace ThunderHawk
             {
                 // this is where server details come in, it starts with 0x03, it happens every 60 seconds or so
 
-                var server = ParseHelper.ParseDetails(receivedBytes.Skip(5).ToArray());
+                var receivedData = Encoding.UTF8.GetString(receivedBytes.Skip(5).ToArray());
+                var sections = receivedData.Split(new string[] { "\x00\x00\x00", "\x00\x00\x02" }, StringSplitOptions.None);
 
-               /* if (!CanRegisterServer(remote, receivedBytes.Skip(5).ToArray()))
+                if (sections.Length != 3 && !receivedData.EndsWith("\x00\x00"))
+                    return; // true means we don't send back a response
+
+                if (!SteamLobbyManager.IsInLobbyNow)
                 {
                     byte[] uniqueId = new byte[4];
                     Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
@@ -814,7 +989,26 @@ namespace ThunderHawk
                     byte[] response = new byte[] { 0xfe, 0xfd, (byte)MessageType.CHALLENGE_RESPONSE, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3], 0x41, 0x43, 0x4E, 0x2B, 0x78, 0x38, 0x44, 0x6D, 0x57, 0x49, 0x76, 0x6D, 0x64, 0x5A, 0x41, 0x51, 0x45, 0x37, 0x68, 0x41, 0x00 };
 
                     handler.Send(response, remote);
-                }*/
+                }
+                else
+                {
+                    string serverVars = sections[0];
+                    string playerVars = sections[1];
+                    string teamVars = sections[2];
+
+                    var details = ParseHelper.ParseDetails(serverVars, playerVars, teamVars);
+
+                    details["IPAddress"] = remote.Address.ToString();
+                    details["QueryPort"] = remote.Port.ToString();
+                    details["LastRefreshed"] = DateTime.UtcNow.ToString();
+                    details["LastPing"] = DateTime.UtcNow.ToString();
+                    details["country"] = "??";
+                    details["hostport"] = remote.Port.ToString();
+                    details["localport"] = remote.Port.ToString();
+
+                    SteamLobbyManager.UpdateCurrentLobby(details, GetIndicator());
+                    _localServer = details;
+                }
             }
             else if (receivedBytes.Length > 5 && receivedBytes[0] == (byte)MessageType.CHALLENGE_RESPONSE)
             {
@@ -834,9 +1028,14 @@ namespace ThunderHawk
                 {
                     byte[] response = new byte[] { 0xfe, 0xfd, 0x0a, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3] };
 
-                    handler.Send(response, remote);
-
-                    AddValidServer(remote);
+                    var token = RecreateLobbyToken();
+                    token.Register(() => SteamLobbyManager.LeaveFromCurrentLobby());
+                    SteamLobbyManager.CreatePublicLobby(token, _name, GetIndicator()).OnCompletedOnUi(lobbyId =>
+                    {
+                        if (token.IsCancellationRequested)
+                            return;
+                        handler.Send(response, remote);
+                    });
                 }
             }
             else if (receivedBytes.Length == 5 && receivedBytes[0] == (byte)MessageType.KEEPALIVE)
@@ -849,15 +1048,16 @@ namespace ThunderHawk
             }
         }
 
+        CancellationToken RecreateLobbyToken()
+        {
+            return (_lobbyTokenSource = _lobbyTokenSource.Recreate()).Token;
+        }
+
         void RefreshServerPing(IPEndPoint remote)
         {
 
         }
 
-        void AddValidServer(IPEndPoint remote)
-        {
-
-        }
 
         bool CanRegisterServer(IPEndPoint remote, byte[] data)
         {
@@ -887,6 +1087,15 @@ namespace ThunderHawk
         string ToASCII(byte[] buffer, int count)
         {
             return Encoding.ASCII.GetString(buffer, 0, count);
+        }
+
+        string GetIndicator()
+        {
+#if SPACEWAR
+            return "SOULSTORM";
+#else
+            return CoreContext.ThunderHawkModManager.ActiveModRevision;
+#endif
         }
 
         string RusNews => @" Привет! Вы на сервере elamaunt'а под названием THUNDERHAWK

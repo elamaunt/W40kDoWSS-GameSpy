@@ -1,10 +1,7 @@
-﻿using GSMasterServer.Data;
-using ThunderHawk.Utils;
-using Steamworks;
+﻿using Steamworks;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -13,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ThunderHawk;
 using ThunderHawk.Core;
+using ThunderHawk.Utils;
 
 namespace GSMasterServer.Servers
 {
@@ -23,7 +21,7 @@ namespace GSMasterServer.Servers
 
         public CSteamID RemoteUserSteamId { get; set; }
 
-        public Data.GameServer AttachedServer { get; set; }
+        public GameServerDetails AttachedServer { get; set; }
 
         Socket _socket;
         SocketAsyncEventArgs _socketReadEvent;
@@ -35,8 +33,6 @@ namespace GSMasterServer.Servers
 
         public ushort Port { get; private set; }
         public IPEndPoint LocalPoint { get; set; }
-
-        static readonly ConcurrentDictionary<string, CSteamID> IdByNicksCache = new ConcurrentDictionary<string, CSteamID>();
 
         public ServerSteamPortRetranslator(CSteamID userId)
             : this()
@@ -242,7 +238,7 @@ namespace GSMasterServer.Servers
                             AppendServerProperty(builder, "gametype" + i);
                         }
 
-                        var hostname = AttachedServer?.GetByName("hostname") ?? string.Empty;
+                        var hostname = AttachedServer?.GetOrDefault("hostname") ?? string.Empty;
                         builder.Append($"\u0001player_\0\0{hostname}\0\0ping_\0\00\0\0player_\0\0{hostname}\0\0\0\u0002\0");
 
                         var fakeString = builder.ToString();
@@ -313,16 +309,11 @@ namespace GSMasterServer.Servers
 
                     Array.Copy(buffer, clone, s);
 
-                   //Log(Category, "<= BYTES:" + string.Join(" ", buffer.Where((b, i) => i < size).Select(x => x.ToString())));
+                    //Log(Category, "<= BYTES:" + string.Join(" ", buffer.Where((b, i) => i < size).Select(x => x.ToString())));
 
-                    HandleGamelobbyRequest(clone)
-                        .ContinueWith(task =>
-                        {
-                            if (task.Status == TaskStatus.RanToCompletion)
-                                _socket?.SendTo(task.Result, s, SocketFlags.None, LocalPoint ?? GameEndPoint);
-                            else
-                                _socket?.SendTo(buffer, s, SocketFlags.None, LocalPoint ?? GameEndPoint);
-                        });
+                    var bytes = ReplaceIPAdresses(clone);
+
+                    _socket?.SendTo(bytes, s, SocketFlags.None, LocalPoint ?? GameEndPoint);
                     
                     return;
                 }
@@ -374,13 +365,11 @@ namespace GSMasterServer.Servers
             builder.Append("\0");
             builder.Append(name);
             builder.Append("\0");
-            builder.Append(AttachedServer?.GetByName(name)?? string.Empty);
+            builder.Append(AttachedServer?.GetOrDefault(name)?? string.Empty);
         }
 
-        private async Task<byte[]> HandleGamelobbyRequest(byte[] bytes)
+        private byte[] ReplaceIPAdresses(byte[] bytes)
         {
-            var nicks = new List<string>();
-
             // skip start information
             for (int k = 10; k < bytes.Length - 3; k++)
             {
@@ -398,50 +387,21 @@ namespace GSMasterServer.Servers
 
                     var nick = GetUnicodeString(bytes, nickStart, nickEnd);
 
-                    if (!IdByNicksCache.ContainsKey(nick))
-                        nicks.Add(GetUnicodeString(bytes, nickStart, nickEnd));
+                    var stats = CoreContext.MasterServer.GetStatsInfo(nick);
+                    var id = new CSteamID(stats.SteamId);
 
-                    k += nickLength + 4 + 6;
-                }
-            }
-            
-            //if (nicks.Count > 0)
-                //await LoadSteamIds(nicks);
+                    var pointStart = nickEnd + 7;
 
-            // skip start information
-            for (int k = 50; k < bytes.Length - 3; k++)
-            {
-                if (bytes[k] == 'K' &&
-                    bytes[k + 1] == '0' &&
-                    bytes[k + 2] == '4')
-                {
-                    if (bytes[k + 3] != 'W')
-                        k--;
+                    bytes[pointStart++] = 127;
+                    bytes[pointStart++] = 0;
+                    bytes[pointStart++] = 0;
+                    bytes[pointStart++] = 1;
 
-                    var nickLength = bytes[k + 4];
+                    var port = PortBindingManager.AddOrUpdatePortBinding(id).Port;
+                    var portBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(port).Reverse().ToArray() : BitConverter.GetBytes(port);
 
-                    var nickStart = k + 4 + 3;
-                    var nickEnd = nickStart + (nickLength << 1);
-
-                    var nick = GetUnicodeString(bytes, nickStart, nickEnd);
-
-                    if (IdByNicksCache.TryGetValue(nick, out CSteamID id))
-                    {
-                        var pointStart = nickEnd + 7;
-
-                        bytes[pointStart++] = 127;
-                        bytes[pointStart++] = 0;
-                        bytes[pointStart++] = 0;
-                        bytes[pointStart++] = 1;
-
-                        var port = PortBindingManager.AddOrUpdatePortBinding(id).Port;
-                        var portBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(port).Reverse().ToArray() : BitConverter.GetBytes(port);
-
-                        bytes[pointStart++] = portBytes[1];
-                        bytes[pointStart++] = portBytes[0];
-                    }
-                    else
-                        throw new Exception("Unknown player nick - "+nick);
+                    bytes[pointStart++] = portBytes[1];
+                    bytes[pointStart++] = portBytes[0];
 
                     k += nickLength + 4 + 6;
                 }
@@ -449,37 +409,6 @@ namespace GSMasterServer.Servers
 
             return bytes;
         }
-
-        /*private async Task LoadSteamIds(List<string> nicks)
-        {
-            try
-            {
-                var ms = new MemoryStream();
-                var writer = new BinaryWriter(ms);
-
-                for (int i = 0; i < nicks.Count; i++)
-                    writer.Write(nicks[i]);
-
-                var buffer = ms.GetBuffer();
-
-                var client = _idsRetrievingClient = new UdpClient();
-
-                var endPoint = new IPEndPoint(IPAddress.Parse(GameConstants.SERVER_ADDRESS), GameConstants.IDS_REQUEST_PORT);
-
-                await client.SendAsync(buffer, buffer.Length, endPoint);
-                var result = await client.ReceiveAsync();
-
-                ms = new MemoryStream(result.Buffer);
-                var reader = new BinaryReader(ms);
-                
-                while (ms.Position + 1 < ms.Length)
-                    IdByNicksCache.TryAdd(reader.ReadString(), new CSteamID(reader.ReadUInt64()));
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("ERROR on loading steam ids "+ex);
-            }
-        }*/
 
         private static string GetUnicodeString(byte[] bytes, int index, int index2)
         {

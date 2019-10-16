@@ -274,6 +274,8 @@ namespace GSMasterServer.Servers
                 Score2v2 = profile.Score2v2,
                 Score3v3 = profile.Score3v3,
                 Best1v1Winstreak = profile.Best1v1Winstreak,
+                Average = profile.AverageDuractionTicks,
+                Disconnects = profile.Disconnects,
                 SteamId = profile.SteamId
             });
 

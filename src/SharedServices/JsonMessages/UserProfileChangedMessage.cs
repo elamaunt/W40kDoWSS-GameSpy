@@ -13,5 +13,8 @@
         public long? Score2v2 { get; set; }
         public long? Score3v3 { get; set; }
         public long? Best1v1Winstreak { get; set; }
+        public long? Average { get; set; }
+        public long? Disconnects { get; set; }
     }
+    
 }

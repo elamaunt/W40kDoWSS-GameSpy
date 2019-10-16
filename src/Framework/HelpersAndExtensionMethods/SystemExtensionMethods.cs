@@ -162,6 +162,17 @@ namespace Framework
             });
         }
 
+        public static Task<T> OnFaultOnUi<T>(this Task<T> self, Action handler)
+        {
+            return self.ContinueWith(t =>
+            {
+                if (t.IsFaulted)
+                    Dispatcher.RunOnMainThread(handler);
+
+                return t.Result;
+            });
+        }
+
         public static Task OnFaultOnUi(this Task self, Action handler)
         {
             return self.ContinueWith(t =>

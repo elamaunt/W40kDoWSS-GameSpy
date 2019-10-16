@@ -620,6 +620,7 @@ namespace GSMasterServer.Servers
             else
                 return value.ToString();
         }
+
         private string FixFilter(string filter)
         {
             // escape [

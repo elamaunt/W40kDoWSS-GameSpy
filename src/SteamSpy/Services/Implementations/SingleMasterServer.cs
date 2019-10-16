@@ -125,6 +125,16 @@ namespace ThunderHawk
             
         }
 
+        public UserInfo GetUserInfo(ulong steamId)
+        {
+            return _users.GetOrDefault(steamId);
+        }
+
+        public StatsInfo GetStatsInfo(string nick)
+        {
+            return _stats.FirstOrDefault(x => x.Value.Name == nick).Value;
+        }
+
         public LoginInfo GetLoginInfo(string name)
         {
             return _logins.GetOrDefault(name);
@@ -268,6 +278,36 @@ namespace ThunderHawk
 
         public void HandleMessage(NetConnection connection, UserProfileChangedMessage message)
         {
+            if (message.ActiveProfileId.HasValue)
+            {
+                _stats.AddOrUpdate(message.ActiveProfileId.Value, id => new StatsInfo(id)
+                {
+                    Score1v1 = message.Score1v1.Value,
+                    Score2v2 = message.Score2v2.Value,
+                    Score3v3_4v4 = message.Score3v3.Value,
+                    WinsCount = message.Wins.Value,
+                    GamesCount = message.Games.Value,
+                    AverageDuration = message.Average.Value,
+                    Disconnects = message.Disconnects.Value,
+                    FavouriteRace = message.Race.Value,
+                    Name = message.Name,
+                    SteamId = message.SteamId
+                }, (id, stats) =>
+                {
+                    stats.Score1v1 = message.Score1v1.Value;
+                    stats.Score2v2 = message.Score2v2.Value;
+                    stats.Score3v3_4v4 = message.Score3v3.Value;
+                    stats.WinsCount = message.Wins.Value;
+                    stats.GamesCount = message.Games.Value;
+                    stats.AverageDuration = message.Average.Value;
+                    stats.Disconnects = message.Disconnects.Value;
+                    stats.FavouriteRace = message.Race.Value;
+                    stats.Name = message.Name;
+                    stats.SteamId = message.SteamId;
+                    return stats;
+                });
+            }
+
             if (_users.TryGetValue(message.SteamId, out UserInfo user))
             {
                 user.Name = message.Name;

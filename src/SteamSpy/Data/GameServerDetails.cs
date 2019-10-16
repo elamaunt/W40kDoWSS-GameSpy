@@ -1,6 +1,56 @@
-﻿namespace ThunderHawk
+﻿using Steamworks;
+using System;
+using System.Collections.Generic;
+
+namespace ThunderHawk
 {
     public class GameServerDetails
     {
+        readonly Dictionary<string, string> _values = new Dictionary<string, string>();
+
+        public Dictionary<string, string> Properties => _values;
+
+        public void Set(string key, string value)
+        {
+            _values[key] = value;
+        }
+
+        public string this[string key]
+        {
+            set
+            {
+                _values[key] = value;
+            }
+            get
+            {
+                return GetOrDefault(key);
+            }
+        }
+        public string RoomHash { get; set; }
+        public CSteamID HostSteamId { get; set; }
+        public CSteamID LobbySteamId { get; set; }
+
+        public bool HasPlayers => GetOrDefault("numplayers ") != "0";
+        public string HostPort => GetOrDefault("hostport");
+        public string HostName => GetOrDefault("hostname");
+        public string StateChanged => GetOrDefault("statechanged");
+        public string MaxPlayers => GetOrDefault("maxplayers");
+        public string GameVer => GetOrDefault("gamever");
+        public string GameName => GetOrDefault("gamename");
+        public string GameType => GetOrDefault("gametype");
+        public string GameVariant => GetOrDefault("gamevariant");
+        
+        public string GetOrDefault(string key)
+        {
+            _values.TryGetValue(key, out string value);
+            return (string)value;
+        }
+
+        public bool IsValid => !String.IsNullOrWhiteSpace(HostName) &&
+                !String.IsNullOrWhiteSpace(GameVariant) &&
+                !String.IsNullOrWhiteSpace(GameVer) &&
+                !String.IsNullOrWhiteSpace(GameType) &&
+                MaxPlayers != "0";
+
     }
 }

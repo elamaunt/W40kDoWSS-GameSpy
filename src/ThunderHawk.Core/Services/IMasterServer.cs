@@ -9,6 +9,7 @@ namespace ThunderHawk.Core
         UserInfo[] GetAllUsers();
 
         StatsInfo GetStatsInfo(long profileId);
+        StatsInfo GetStatsInfo(string nick);
 
         void RequestGameBroadcast(bool teamplay, string gameVariant, int maxPlayers, int players, bool ranked);
         void RequestUserStats(long profileId);
@@ -35,5 +36,6 @@ namespace ThunderHawk.Core
         void RequestLogout();
         void RequestLogin(string name);
         LoginInfo GetLoginInfo(string name);
+        UserInfo GetUserInfo(ulong steamId);
     }
 }
