@@ -56,7 +56,7 @@ namespace GSMasterServer.DiscordBot.Commands
             var targetUsers = socketMessage.MentionedUsers;
             if (targetUsers.Count == 0)
             {
-                Logger.Debug("[MuteCommand]No user were mentioned");
+                Logger.Debug("[MuteCommand]No users were mentioned");
                 return;
             }
 

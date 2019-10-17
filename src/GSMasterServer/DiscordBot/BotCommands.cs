@@ -18,6 +18,9 @@ namespace GSMasterServer.DiscordBot
             { "mute", new MuteCommand(false) },
             { "unstm", new UnMuteCommand(true) },
             { "unmute", new UnMuteCommand(false) },
+            { "pinfo", new ProfileInfoCommand() },
+            { "+", new ChangeRepCommand(true)},
+            { "-", new ChangeRepCommand(false) },
         };
 
         public static async Task HandleCommand(SocketMessage arg)

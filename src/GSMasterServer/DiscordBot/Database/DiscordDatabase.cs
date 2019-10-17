@@ -17,15 +17,39 @@ namespace GSMasterServer.DiscordBot.Database
             _db = new LiteDatabase("Discord.db");
         }
 
+        public static DiscordProfile CreateDiscordProfile(ulong userId)
+        {
+            var profile = new DiscordProfile()
+            {
+                UserId = userId,
+                SoftMuteUntil = 0,
+                MuteUntil = 0,
+                IsSoftMuteActive = false,
+                IsMuteActive = false,
+                Reputation = 0
+            };
+            return profile;
+        }
+
         public static DiscordProfile GetProfile(ulong userId)
         {
-            return ProfilesTable.FindOne(x => x.UserId == userId);
+            var profile = ProfilesTable.FindOne(x => x.UserId == userId);
+            return profile ?? CreateDiscordProfile(userId);
+        }
+
+        public static (int, int) ChangeRep(ulong targetId, ulong changerId, bool repAction)
+        {
+            var changerProfile = GetProfile(changerId);
+            var profile = GetProfile(targetId);
+            var repChange = BotExtensions.CalculateReputation(changerProfile.Reputation, repAction);
+            profile.Reputation += repChange;
+            ProfilesTable.Update(profile);
+            return (repChange, profile.Reputation);
         }
 
         public static void RemoveMute(ulong userId, bool isSoftMute)
         {
             var profile = GetProfile(userId);
-            if (profile == null) return;
             if (isSoftMute)
                 profile.IsSoftMuteActive = false;
             else
@@ -36,18 +60,7 @@ namespace GSMasterServer.DiscordBot.Database
         public static void AddMute(ulong userId, long softMuteUntil, long muteUntil)
         {
             var profile = GetProfile(userId);
-            var isNew = profile == null;
-            if (profile == null)
-            {
-                profile = new DiscordProfile()
-                {
-                    UserId = userId,
-                    SoftMuteUntil = 0,
-                    MuteUntil = 0,
-                    IsSoftMuteActive = false,
-                    IsMuteActive = false
-                };
-            }
+
             if (softMuteUntil != 0)
             { 
                 profile.SoftMuteUntil = softMuteUntil;
@@ -59,10 +72,7 @@ namespace GSMasterServer.DiscordBot.Database
                 profile.IsMuteActive = true;
             }
 
-            if (isNew)
-                ProfilesTable.Insert(profile);
-            else
-                ProfilesTable.Update(profile);
+            ProfilesTable.Update(profile);
         }
     }
 }
