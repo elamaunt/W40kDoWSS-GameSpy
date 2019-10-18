@@ -46,7 +46,10 @@ namespace GSMasterServer.DiscordBot.Commands
                 return;
             }
 
-            await BotMain.WriteToLogChannel($"#rep {user.Username} reputation was changed" +
+            var from = user as SocketGuildUser;
+            var nickName = from?.Nickname ?? user.Username;
+
+            await BotMain.WriteToLogChannel($"#rep {nickName} reputation was changed" +
                                             $" {(repChange > 0 ? "+" : "-")}{Math.Abs(repChange)} ({repTotal}) by {socketMessage.Author.Username}");
             await socketMessage.DeleteAsync();
         }

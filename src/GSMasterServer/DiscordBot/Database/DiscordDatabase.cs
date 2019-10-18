@@ -15,6 +15,12 @@ namespace GSMasterServer.DiscordBot.Database
         public static void InitDb()
         {
             _db = new LiteDatabase("Discord.db");
+            var users = ProfilesTable.FindAll().ToList();
+            foreach (var user in users)
+            {
+                user.RepChangingHistory = new Dictionary<ulong, long>();
+            }
+            ProfilesTable.Update(users);
         }
 
         public static DiscordProfile CreateDiscordProfile(ulong userId)
@@ -44,6 +50,13 @@ namespace GSMasterServer.DiscordBot.Database
             var profile = GetProfile(changerId);
             return !profile.RepChangingHistory.ContainsKey(targetId) ||
                    DateTime.UtcNow.Ticks >= profile.RepChangingHistory[targetId];
+        }
+
+        public static void SetReputation(ulong userId, int reputation)
+        {
+            var profile = GetProfile(userId);
+            profile.Reputation = reputation;
+            ProfilesTable.Update(profile);
         }
 
         public static (int, int) ChangeRep(ulong targetId, ulong changerId, bool repAction)

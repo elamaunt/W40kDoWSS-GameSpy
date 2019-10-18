@@ -21,6 +21,7 @@ namespace GSMasterServer.DiscordBot
             { "rep", new ProfileInfoCommand() },
             { "+", new ChangeRepCommand(true)},
             { "-", new ChangeRepCommand(false) },
+            { "setrep", new SetRepCommand() },
         };
 
         public static async Task HandleCommand(SocketMessage arg)
