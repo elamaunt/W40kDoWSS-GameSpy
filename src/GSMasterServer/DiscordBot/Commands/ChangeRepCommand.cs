@@ -28,9 +28,26 @@ namespace GSMasterServer.DiscordBot.Commands
             }
 
             var user = targetUsers.First();
-            var rep =  DiscordDatabase.ChangeRep(user.Id, socketMessage.Author.Id, _repAction);
-            await BotMain.WriteToLogChannel($"<@{user.Id}> your reputation was changed" +
-                                            $" {(rep.Item1 > 0 ? "+" : "-")}{Math.Abs(rep.Item1)} ({rep.Item2}) by {socketMessage.Author.Username}");
+            if (user.Id == socketMessage.Author.Id)
+            {
+                var channelToWrite = await socketMessage.Author.GetOrCreateDMChannelAsync();
+                await channelToWrite.SendMessageAsync("You can't change your own reputation!\nВы не можете изменять репутацию самому себе!");
+                await socketMessage.DeleteAsync();
+                return;
+            }
+
+            var (repChange, repTotal) = DiscordDatabase.ChangeRep(user.Id, socketMessage.Author.Id, _repAction);
+            if (repChange == int.MinValue)
+            {
+                var channelToWrite = await socketMessage.Author.GetOrCreateDMChannelAsync();
+                await channelToWrite.SendMessageAsync("You need to wait 24 hours before you can change the reputation of this user!\n" +
+                                                      "Вам необходимо подождать 24 часа прежде чем вы сможете изменить репутацию этого пользователя!");
+                await socketMessage.DeleteAsync();
+                return;
+            }
+
+            await BotMain.WriteToLogChannel($"#rep {user.Username} reputation was changed" +
+                                            $" {(repChange > 0 ? "+" : "-")}{Math.Abs(repChange)} ({repTotal}) by {socketMessage.Author.Username}");
             await socketMessage.DeleteAsync();
         }
     }

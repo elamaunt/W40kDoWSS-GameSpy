@@ -56,6 +56,8 @@ namespace GSMasterServer.DiscordBot
         public static int CalculateReputation(int changerRep, bool repAction)
         {
             var repChangeSign = repAction ? 3 : -2;
+            if (changerRep < 0)
+                changerRep = 0;
             var repChange = (int)((5 + Math.Sqrt(changerRep)) * repChangeSign / 10);
             return repChange;
         }

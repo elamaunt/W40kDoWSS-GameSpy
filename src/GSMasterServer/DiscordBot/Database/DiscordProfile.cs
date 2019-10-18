@@ -1,4 +1,6 @@
-﻿namespace GSMasterServer.DiscordBot.Database
+﻿using System.Collections.Generic;
+
+namespace GSMasterServer.DiscordBot.Database
 {
     public class DiscordProfile
     {
@@ -9,5 +11,7 @@
         public long SoftMuteUntil { get; set; }
         public bool IsSoftMuteActive { get; set; }
         public int Reputation { get; set; }
+
+        public Dictionary<ulong, long> RepChangingHistory { get; set; }
     }
 }

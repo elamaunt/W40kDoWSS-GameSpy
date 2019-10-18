@@ -20,7 +20,9 @@ namespace GSMasterServer.DiscordBot.Commands
             var profile = DiscordDatabase.GetProfile(user.Id);
             var text =
                 $"```\n{user.Username}\nReputation: {BotExtensions.RepName((profile.Reputation))} ({profile.Reputation})```";
-            await BotMain.WriteToLogChannel(text);
+            var channelToWrite = await socketMessage.Author.GetOrCreateDMChannelAsync();
+            await channelToWrite.SendMessageAsync(text);
+            
             await socketMessage.DeleteAsync();
         }
     }

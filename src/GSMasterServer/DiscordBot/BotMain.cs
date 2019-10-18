@@ -62,7 +62,7 @@ namespace GSMasterServer.DiscordBot
             ThunderGuild = BotClient.GetGuild(DiscordServerConstants.serverId);
             Logger.Info($"{BotClient} is ready!");
 
-            Task.Run(UpdateLoop);
+            await Task.Run(UpdateLoop);
         }
 
         private static string GetToken()

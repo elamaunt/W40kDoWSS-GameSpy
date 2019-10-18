@@ -18,7 +18,7 @@ namespace GSMasterServer.DiscordBot
             { "mute", new MuteCommand(false) },
             { "unstm", new UnMuteCommand(true) },
             { "unmute", new UnMuteCommand(false) },
-            { "pinfo", new ProfileInfoCommand() },
+            { "rep", new ProfileInfoCommand() },
             { "+", new ChangeRepCommand(true)},
             { "-", new ChangeRepCommand(false) },
         };
@@ -28,7 +28,7 @@ namespace GSMasterServer.DiscordBot
             try
             {
                 var commandName = arg.Content.Split()[0].Substring(1).ToLower();
-                if (!Commands.TryGetValue(commandName, out IBotCommand command))
+                if (!Commands.TryGetValue(commandName, out var command))
                 {
                     Logger.Trace($"Command: \"{commandName}\" is not implemented!");
                     return;
