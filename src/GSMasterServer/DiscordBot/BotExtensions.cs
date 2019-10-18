@@ -53,12 +53,18 @@ namespace GSMasterServer.DiscordBot
             }
         }
 
+
         public static int CalculateReputation(int changerRep, bool repAction)
         {
-            var repChangeSign = repAction ? 3 : -2;
+            var repChangeSignCoef = repAction ? 1 : -0.5f;
             if (changerRep < 0)
                 changerRep = 0;
-            var repChange = (int)((5 + Math.Sqrt(changerRep)) * repChangeSign / 10);
+
+            var changerCoef = (int)(Math.Sqrt(changerRep) / 3);
+            var repChange = (int)Math.Floor(repChangeSignCoef * (1 + changerCoef));
+
+            if (repChange == 0)
+                repChange = Math.Sign(repChangeSignCoef);
             return repChange;
         }
     }
