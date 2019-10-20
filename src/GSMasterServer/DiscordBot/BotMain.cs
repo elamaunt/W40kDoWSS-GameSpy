@@ -7,7 +7,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Discord.Rest;
+using SocketGuildUser = Discord.WebSocket.SocketGuildUser;
+using SocketUser = Discord.WebSocket.SocketUser;
+using SocketUserMessage = Discord.WebSocket.SocketUserMessage;
 
 
 namespace GSMasterServer.DiscordBot
@@ -16,6 +21,8 @@ namespace GSMasterServer.DiscordBot
     {
         private static DiscordSocketClient BotClient { get; set; }
         private static SocketGuild ThunderGuild { get; set; }
+
+        private static string[] numbers = new[] { ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:", ":one::zero:" };
 
         public static async Task StartAsync()
         {
@@ -59,7 +66,7 @@ namespace GSMasterServer.DiscordBot
 
         private static async Task ReadyAsync()
         {
-            ThunderGuild = BotClient.GetGuild(DiscordServerConstants.serverId);
+            ThunderGuild = BotClient.GetGuild(DiscordServerConstants.ServerId);
             Logger.Info($"{BotClient} is ready!");
 
             await Task.Run(UpdateLoop);
@@ -128,7 +135,7 @@ namespace GSMasterServer.DiscordBot
                 if (arg.Author.Id == BotClient.CurrentUser.Id)
                     return;
 
-                if (((SocketTextChannel) arg.Channel).Guild.Id != DiscordServerConstants.serverId)
+                if (((SocketTextChannel) arg.Channel).Guild.Id != DiscordServerConstants.ServerId)
                     return;
 
                 if (BotCommands.CommandStrings.Any(x => arg.Content.StartsWith(x)))
@@ -150,13 +157,45 @@ namespace GSMasterServer.DiscordBot
 
         public static async Task WriteToLogChannel(string text)
         {
-            var channel = ThunderGuild.GetTextChannel(DiscordServerConstants.logChannelId);
+            var channel = ThunderGuild.GetTextChannel(DiscordServerConstants.RepLogChannelId);
             if (channel == null)
             {
                 Logger.Warn("Tried to write log to channel, but the channel is null!");
                 return;
             }
             await channel.SendMessageAsync(text);
+        }
+
+        public static async Task UpdateRepTop()
+        {
+            var repTopText = new StringBuilder();
+            var topByRating = DiscordDatabase.GetTopByRating();
+            repTopText.AppendLine("➡️ REPUTATION TOP");
+            var userTasks = topByRating.Select(topUser => BotClient.Rest.GetUserAsync(topUser.UserId)).ToList();
+
+            var restUsers = await Task.WhenAll(userTasks);
+
+            var iter = 0;
+            foreach (var topUser in topByRating)
+            {
+                var user = restUsers.FirstOrDefault(x => x.Id == topUser.UserId);
+                if (user == null)
+                    continue;
+                var guildUser = user as RestGuildUser;
+                var nickName = guildUser?.Nickname ?? user.Username;
+                repTopText.AppendLine($"{numbers[iter++]} {nickName} **{topUser.Reputation}**");
+            }
+            var channel = ThunderGuild.GetTextChannel(DiscordServerConstants.RepTopChannelId);
+            var messages = await channel.GetMessagesAsync(1).FlattenAsync();
+            var message = messages.FirstOrDefault(x => x.Author.Id == BotClient.CurrentUser.Id);
+            if (message != null && message is RestUserMessage socketMessage)
+            {
+                await socketMessage.ModifyAsync(x => x.Content = repTopText.ToString());
+            }
+            else
+            {
+                await channel.SendMessageAsync(repTopText.ToString());
+            }
         }
 
     }

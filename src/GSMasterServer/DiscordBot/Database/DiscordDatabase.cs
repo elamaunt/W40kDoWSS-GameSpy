@@ -52,6 +52,11 @@ namespace GSMasterServer.DiscordBot.Database
                    DateTime.UtcNow.Ticks >= profile.RepChangingHistory[targetId];
         }
 
+        public static IEnumerable<DiscordProfile> GetTopByRating()
+        {
+            return ProfilesTable.FindAll().OrderByDescending(x => x.Reputation).Take(10);
+        }
+
         public static void SetReputation(ulong userId, int reputation)
         {
             var profile = GetProfile(userId);

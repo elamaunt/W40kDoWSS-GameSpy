@@ -12,9 +12,9 @@ namespace GSMasterServer.DiscordBot
         public static AccessLevel GetAccessLevel(this IUser user)
         {
             var socketUser = user as SocketGuildUser;
-            if (socketUser != null && (socketUser.Roles.Any(x => x.Id == DiscordServerConstants.adminRoleId) || socketUser.GuildPermissions.Administrator))
+            if (socketUser != null && (socketUser.Roles.Any(x => x.Id == DiscordServerConstants.AdminRoleId) || socketUser.GuildPermissions.Administrator))
                 return AccessLevel.Admin;
-            if (socketUser != null && socketUser.Roles.Any(x => x.Id == DiscordServerConstants.moderRoleId))
+            if (socketUser != null && socketUser.Roles.Any(x => x.Id == DiscordServerConstants.ModerRoleId))
                 return AccessLevel.Moderator;
             return AccessLevel.User;
         }

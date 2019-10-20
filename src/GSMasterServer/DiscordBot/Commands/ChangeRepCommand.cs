@@ -50,7 +50,9 @@ namespace GSMasterServer.DiscordBot.Commands
             var nickName = from?.Nickname ?? user.Username;
 
             await BotMain.WriteToLogChannel($"#rep {nickName} reputation was changed" +
-                                            $" {(repChange > 0 ? "+" : "-")}{Math.Abs(repChange)} ({repTotal}) by {socketMessage.Author.Username}");
+                                            $" {(repChange > 0 ? "+" : "-")}{Math.Abs(repChange)} ➡️ {repTotal} by {socketMessage.Author.Username}");
+
+            await BotMain.UpdateRepTop();
             await socketMessage.DeleteAsync();
         }
     }

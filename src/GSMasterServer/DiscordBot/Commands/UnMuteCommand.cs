@@ -26,7 +26,7 @@ namespace GSMasterServer.DiscordBot.Commands
             {
                 var guidUser = user as SocketGuildUser;
                 if (guidUser.GetAccessLevel() > AccessLevel.User) continue;
-                var roleToRemove = softUnmute ? socketGuild.GetRole(DiscordServerConstants.floodOnlyRoleId) : socketGuild.GetRole(DiscordServerConstants.readOnlyRoleId);
+                var roleToRemove = softUnmute ? socketGuild.GetRole(DiscordServerConstants.FloodOnlyRoleId) : socketGuild.GetRole(DiscordServerConstants.ReadOnlyRoleId);
                 await guidUser.RemoveRoleAsync(roleToRemove);
                 DiscordDatabase.RemoveMute(user.Id, softUnmute);
                 var logMessage = new StringBuilder();

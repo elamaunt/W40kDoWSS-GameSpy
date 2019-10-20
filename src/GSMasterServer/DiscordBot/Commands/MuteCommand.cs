@@ -22,7 +22,7 @@ namespace GSMasterServer.DiscordBot.Commands
 
         public static async Task<List<SocketUser>> Mute(IReadOnlyCollection<SocketUser> users, bool softMute, SocketGuild socketGuild, long muteUntil)
         {
-            var roleId = softMute ? DiscordServerConstants.floodOnlyRoleId : DiscordServerConstants.readOnlyRoleId;
+            var roleId = softMute ? DiscordServerConstants.FloodOnlyRoleId : DiscordServerConstants.ReadOnlyRoleId;
             var mutedUsers = new List<SocketUser>();
             foreach (var user in users)
             {
