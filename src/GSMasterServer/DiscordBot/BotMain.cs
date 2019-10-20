@@ -131,7 +131,7 @@ namespace GSMasterServer.DiscordBot
                 if (((SocketTextChannel) arg.Channel).Guild.Id != DiscordServerConstants.serverId)
                     return;
 
-                if (arg.Content.StartsWith("!"))
+                if (BotCommands.CommandStrings.Any(x => arg.Content.StartsWith(x)))
                 {
                     await BotCommands.HandleCommand(arg);
                 }

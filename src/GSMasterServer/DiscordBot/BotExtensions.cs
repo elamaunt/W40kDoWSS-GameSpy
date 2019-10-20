@@ -26,29 +26,37 @@ namespace GSMasterServer.DiscordBot
 
         public static string RepName(int repCount)
         {
+            var repModifier = CalculateReputation(repCount, true);
             switch (repCount)
             {
-                case int _ when (repCount >= 10000):
-                    return "TITAN";
-                case int _ when (repCount >= 5000):
+                case int _ when (repModifier >= 30): // 21 025
                     return "Baneblade";
-                case int _ when (repCount >= 2500):
-                    return "Dreadnought";
-                case int _ when (repCount >= 1000):
+
+                case int _ when (repModifier >= 25): // 14 400
+                    return "Predator";
+
+                case int _ when (repModifier >= 20): // 9 025
                     return "Defiler";
-                case int _ when (repCount >= 500):
-                    return "Force Commander";
-                case int _ when (repCount >= 300):
-                    return "Obliterator";
-                case int _ when (repCount >= 100):
-                    return "Warp Spider";
-                case int _ when (repCount >= 50):
+
+                case int _ when (repModifier >= 15): // 4 900
+                    return "Raider";
+
+                case int _ when (repModifier >= 10): // 2 025
+                    return "Harlequin";
+
+                case int _ when (repModifier >= 7): // 900
+                    return "Celestian";
+
+                case int _ when (repModifier >= 5): // 400
+                    return "Raptor";
+
+                case int _ when (repModifier >= 3): // 100
                     return "Fire Warrior";
-                case int _ when (repCount >= 25):
-                    return "Shoota Boy";
-                case int _ when (repCount >= 10):
-                    return "Guardian";
-                default:
+
+                case int _ when (repModifier >= 2): // 25
+                    return "Scout";
+
+                default: // 0
                     return "Gretchin";
             }
         }
@@ -60,7 +68,7 @@ namespace GSMasterServer.DiscordBot
             if (changerRep < 0)
                 changerRep = 0;
 
-            var changerCoef = (int)(Math.Sqrt(changerRep) / 3);
+            var changerCoef = (int)(Math.Sqrt(changerRep) / 5);
             var repChange = (int)Math.Floor(repChangeSignCoef * (1 + changerCoef));
 
             if (repChange == 0)

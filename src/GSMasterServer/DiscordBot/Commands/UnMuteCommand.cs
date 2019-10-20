@@ -34,7 +34,8 @@ namespace GSMasterServer.DiscordBot.Commands
                 logMessage.Append(softUnmute
                     ? $"Congrats! You are not soft-muted anymore!"
                     : $"Congrats! You have been unmuted!");
-                await BotMain.WriteToLogChannel(logMessage.ToString());
+                var channelToWrite = await user.GetOrCreateDMChannelAsync();
+                await channelToWrite.SendMessageAsync(logMessage.ToString());
             }
         }
 

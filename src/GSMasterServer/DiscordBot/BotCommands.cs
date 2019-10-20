@@ -10,25 +10,27 @@ namespace GSMasterServer.DiscordBot
 {
     internal class BotCommands
     {
+        public static string[] CommandStrings = new[] {"!", "+", "-"};
+
         private static readonly Dictionary<string, IBotCommand> Commands = new Dictionary<string, IBotCommand>()
         {
-            { "ping", new PingCommand() },
-            { "dm", new DeleteMessagesCommand() },
-            { "stm", new MuteCommand(true) },
-            { "mute", new MuteCommand(false) },
-            { "unstm", new UnMuteCommand(true) },
-            { "unmute", new UnMuteCommand(false) },
-            { "rep", new ProfileInfoCommand() },
+            { "!ping", new PingCommand() },
+            { "!dm", new DeleteMessagesCommand() },
+            { "!stm", new MuteCommand(true) },
+            { "!mute", new MuteCommand(false) },
+            { "!unstm", new UnMuteCommand(true) },
+            { "!unmute", new UnMuteCommand(false) },
+            { "!rep", new ProfileInfoCommand() },
+            { "!setrep", new SetRepCommand() },
             { "+", new ChangeRepCommand(true)},
             { "-", new ChangeRepCommand(false) },
-            { "setrep", new SetRepCommand() },
         };
 
         public static async Task HandleCommand(SocketMessage arg)
         {
             try
             {
-                var commandName = arg.Content.Split()[0].Substring(1).ToLower();
+                var commandName = arg.Content.Split()[0].ToLower();
                 if (!Commands.TryGetValue(commandName, out var command))
                 {
                     Logger.Trace($"Command: \"{commandName}\" is not implemented!");

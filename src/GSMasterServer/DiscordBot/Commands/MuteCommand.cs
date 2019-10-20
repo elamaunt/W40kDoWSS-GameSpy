@@ -79,8 +79,8 @@ namespace GSMasterServer.DiscordBot.Commands
                 logMessage.Append(howLong != 0
                     ? $"You've been {(_softMute ? "soft-" : "")}muted for {howLong} minutes"
                     : $"You've been {(_softMute ? "soft-" : "")}muted FOREVER!");
-                await BotMain.WriteToLogChannel(logMessage.ToString());
-
+                var channelToWrite = await user.GetOrCreateDMChannelAsync();
+                await channelToWrite.SendMessageAsync(logMessage.ToString());
             }
             await socketMessage.DeleteAsync();
         }
