@@ -15,12 +15,12 @@ namespace GSMasterServer.DiscordBot.Database
         public static void InitDb()
         {
             _db = new LiteDatabase("Discord.db");
-            var users = ProfilesTable.FindAll().ToList();
+            /*var users = ProfilesTable.FindAll().ToList();
             foreach (var user in users)
             {
                 user.RepChangingHistory = new Dictionary<ulong, long>();
             }
-            ProfilesTable.Update(users);
+            ProfilesTable.Update(users);*/
         }
 
         public static DiscordProfile CreateDiscordProfile(ulong userId)

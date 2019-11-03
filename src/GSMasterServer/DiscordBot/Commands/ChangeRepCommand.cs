@@ -45,14 +45,16 @@ namespace GSMasterServer.DiscordBot.Commands
                 await socketMessage.DeleteAsync();
                 return;
             }
+            await BotMain.UpdateRepTop();
 
             var from = user as SocketGuildUser;
             var nickName = from?.Nickname ?? user.Username;
+            var authorUser = socketMessage.Author as SocketGuildUser;
+            var authorNickName = authorUser?.Nickname ?? socketMessage.Author.Username;
 
             await BotMain.WriteToLogChannel($"#rep {nickName} reputation was changed" +
-                                            $" {(repChange > 0 ? "+" : "-")}{Math.Abs(repChange)} ➡️ {repTotal} by {socketMessage.Author.Username}");
+                                            $" {(repChange > 0 ? "+" : "-")}{Math.Abs(repChange)} ➡️ {repTotal} by {authorNickName}");
 
-            await BotMain.UpdateRepTop();
             await socketMessage.DeleteAsync();
         }
     }

@@ -24,6 +24,8 @@ namespace GSMasterServer.DiscordBot
 
         private static string[] numbers = new[] { ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:", ":one::zero:" };
 
+        private static Random random = new Random();
+
         public static async Task StartAsync()
         {
             try
@@ -142,10 +144,27 @@ namespace GSMasterServer.DiscordBot
                 {
                     await BotCommands.HandleCommand(arg);
                 }
+                else
+                {
+                    await ActivityBonus(arg);
+                }
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
+            }
+        }
+
+        private static async Task ActivityBonus(SocketMessage arg)
+        {
+            if (random.Next(0, 250) == 0)
+            {
+                var user = arg.Author;
+                DiscordDatabase.SetReputation(user.Id, DiscordDatabase.GetProfile(user.Id).Reputation + 1);
+                var guidUser = user as SocketGuildUser;
+                var text = $"#activityrep {guidUser?.Nickname ?? user.Username} is getting +1 rep for activity!!";
+                await WriteToLogChannel(text);
+                await UpdateRepTop();
             }
         }
 
@@ -181,9 +200,9 @@ namespace GSMasterServer.DiscordBot
                 var user = restUsers.FirstOrDefault(x => x.Id == topUser.UserId);
                 if (user == null)
                     continue;
-                var guildUser = user as RestGuildUser;
-                var nickName = guildUser?.Nickname ?? user.Username;
-                repTopText.AppendLine($"{numbers[iter++]} {nickName} **{topUser.Reputation}**");
+                //var guildUser = user as RestGuildUser;
+                var nickName = user.Mention;
+                repTopText.AppendLine($"{numbers[iter++]} {nickName} **{topUser.Reputation}** ({BotExtensions.RepName(topUser.Reputation)})");
             }
             var channel = ThunderGuild.GetTextChannel(DiscordServerConstants.RepTopChannelId);
             var messages = await channel.GetMessagesAsync(1).FlattenAsync();
