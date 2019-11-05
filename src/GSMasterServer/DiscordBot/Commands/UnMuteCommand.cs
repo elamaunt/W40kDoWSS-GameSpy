@@ -26,7 +26,7 @@ namespace GSMasterServer.DiscordBot.Commands
             {
                 var guidUser = user as SocketGuildUser;
                 if (guidUser.GetAccessLevel() > AccessLevel.User) continue;
-                var roleToRemove = softUnmute ? socketGuild.GetRole(DiscordServerConstants.floodOnlyRoleId) : socketGuild.GetRole(DiscordServerConstants.readOnlyRoleId);
+                var roleToRemove = softUnmute ? socketGuild.GetRole(DiscordServerConstants.FloodOnlyRoleId) : socketGuild.GetRole(DiscordServerConstants.ReadOnlyRoleId);
                 await guidUser.RemoveRoleAsync(roleToRemove);
                 DiscordDatabase.RemoveMute(user.Id, softUnmute);
                 var logMessage = new StringBuilder();
@@ -34,7 +34,8 @@ namespace GSMasterServer.DiscordBot.Commands
                 logMessage.Append(softUnmute
                     ? $"Congrats! You are not soft-muted anymore!"
                     : $"Congrats! You have been unmuted!");
-                await BotMain.WriteToLogChannel(logMessage.ToString());
+                var channelToWrite = await user.GetOrCreateDMChannelAsync();
+                await channelToWrite.SendMessageAsync(logMessage.ToString());
             }
         }
 

@@ -22,7 +22,7 @@ namespace GSMasterServer.DiscordBot.Commands
 
         public static async Task<List<SocketUser>> Mute(IReadOnlyCollection<SocketUser> users, bool softMute, SocketGuild socketGuild, long muteUntil)
         {
-            var roleId = softMute ? DiscordServerConstants.floodOnlyRoleId : DiscordServerConstants.readOnlyRoleId;
+            var roleId = softMute ? DiscordServerConstants.FloodOnlyRoleId : DiscordServerConstants.ReadOnlyRoleId;
             var mutedUsers = new List<SocketUser>();
             foreach (var user in users)
             {
@@ -56,7 +56,7 @@ namespace GSMasterServer.DiscordBot.Commands
             var targetUsers = socketMessage.MentionedUsers;
             if (targetUsers.Count == 0)
             {
-                Logger.Debug("[MuteCommand]No user were mentioned");
+                Logger.Debug("[MuteCommand]No users were mentioned");
                 return;
             }
 
@@ -79,8 +79,8 @@ namespace GSMasterServer.DiscordBot.Commands
                 logMessage.Append(howLong != 0
                     ? $"You've been {(_softMute ? "soft-" : "")}muted for {howLong} minutes"
                     : $"You've been {(_softMute ? "soft-" : "")}muted FOREVER!");
-                await BotMain.WriteToLogChannel(logMessage.ToString());
-
+                var channelToWrite = await user.GetOrCreateDMChannelAsync();
+                await channelToWrite.SendMessageAsync(logMessage.ToString());
             }
             await socketMessage.DeleteAsync();
         }
