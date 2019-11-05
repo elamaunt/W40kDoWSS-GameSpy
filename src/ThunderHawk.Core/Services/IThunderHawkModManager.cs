@@ -8,7 +8,7 @@ namespace ThunderHawk.Core
     {
         string ActiveModRevision { get; }
         string ModName { get; }
-        bool CheckIsModExists(string gamePath);
+        bool CheckIsModExists();
         Task DownloadMod(string gamePath, CancellationToken token, Action<float> progressReporter);
         Task UpdateMod(string gamePath, CancellationToken token, Action<float> progressReporter);
     }

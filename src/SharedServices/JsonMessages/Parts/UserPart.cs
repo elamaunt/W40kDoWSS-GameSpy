@@ -7,6 +7,8 @@
         public long? ProfileId { get; set; }
         public Race? Race { get; set; }
         public long? Games { get; set; }
+        public long? Disconnects { get; set; }
+        public long? Average { get; set; }
         public long? Wins { get; set; }
         public long? Score1v1 { get; set; }
         public long? Score2v2 { get; set; }

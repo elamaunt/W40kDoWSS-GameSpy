@@ -12,7 +12,7 @@ namespace Framework
             var name = $"{Path.GetFileName(callerFilePath)} line {sourceLineNumber} / {callerMemberName}";
             var logger = LogManager.GetLogger(name);
 
-            if (Debugger.IsAttached)
+            //if (Debugger.IsAttached)
                 Console.WriteLine(obj.ToString());
 
             logger.Log(logLevel, obj);

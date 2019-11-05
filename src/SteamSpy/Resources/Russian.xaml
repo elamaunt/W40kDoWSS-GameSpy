@@ -36,4 +36,6 @@
 
     <!-- Settings -->
     <system:String x:Key="DisableFog">Отключить туман</system:String>
+    <system:String x:Key="ChangeGamePath">Сменить путь к игре</system:String>
+    
 </ResourceDictionary>

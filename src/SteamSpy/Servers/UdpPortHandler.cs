@@ -12,7 +12,7 @@ namespace ThunderHawk
         ExceptionHandler _exceptionHandlerDelegate;
         DataHandler _handlerDelegate;
 
-        public delegate void ExceptionHandler(Exception exception, bool send);
+        public delegate void ExceptionHandler(Exception exception, bool send, int port);
         public delegate void DataHandler(UdpPortHandler handler, UdpReceiveResult result);
 
         readonly int _port;
@@ -55,7 +55,7 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
-                _exceptionHandlerDelegate(ex, true);
+                _exceptionHandlerDelegate(ex, true, _port);
             }
         }
 
@@ -79,7 +79,7 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
-                _exceptionHandlerDelegate(ex, false);
+                _exceptionHandlerDelegate(ex, false, _port);
             }
             finally
             {

@@ -23,7 +23,7 @@ namespace ThunderHawk
 
         Task _currentLoadingTask;
 
-        public bool CheckIsModExists(string gamePath)
+        public bool CheckIsModExists()
         {
             if (!Repository.IsValid(ClonePath))
                 return false;

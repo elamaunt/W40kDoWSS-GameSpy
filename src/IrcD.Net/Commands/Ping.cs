@@ -43,7 +43,6 @@ namespace IrcD.Commands
         {
             var arg = GetSaveArgument<PingArgument>(commandArgument);
 
-
             Command.Length = 0;
             Command.Append("PING ");
             Command.Append(IrcDaemon.ServerPrefix);

@@ -1,10 +1,11 @@
-﻿using Microsoft.Win32;
-using Steamworks;
+﻿using Steamworks;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ThunderHawk.Core;
@@ -21,7 +22,7 @@ namespace ThunderHawk
 
         public Process GameProcess { get; private set; }
 
-        public string LauncherPath
+        /*public string LauncherPath
         {
             get
             {
@@ -32,14 +33,16 @@ namespace ThunderHawk
                 var pathKey = (string) regKey?.GetValue("Path");
                 return pathKey;
             }
-        }
+        }*/
 
         public Task LaunchThunderHawkGameAndWait()
         {
+            if (!CoreContext.LaunchService.TryGetOrChoosePath(out string path))
+                return Task.CompletedTask;
+
             return Task.Factory.StartNew(async () =>
             {
                 ProcessManager.KillAllGameProccessesWithoutWindow();
-
 
                 if (ProcessManager.GameIsRunning())
                    throw new Exception("Game is running");
@@ -84,21 +87,20 @@ namespace ThunderHawk
                              }
                          }, TaskCreationOptions.LongRunning);
 
-                        var exeFileName = Path.Combine(LauncherPath, "GameFiles", "Patch1.2", "Soulstorm.exe");
+                        var exeFileName = Path.Combine(Environment.CurrentDirectory,  "GameFiles", "Patch1.2", "Soulstorm.exe");
                         var procParams = "-nomovies -forcehighpoly";
                         if (AppSettings.ThunderHawkModAutoSwitch)
                             procParams += " -modname ThunderHawk";
 
-                        CopySchemes(GamePath);
-                        CopyHotkeys(GamePath);
+                        CopySchemes(path);
+                        CopyHotkeys(path);
 
                         ProcessManager.KillDowStatsProccesses();
-
 
                         var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
                         {
                             UseShellExecute = true,
-                            WorkingDirectory = PathFinder.GamePath
+                            WorkingDirectory = path
                         });
 
                         GameProcess = ssProc;
@@ -130,7 +132,6 @@ namespace ThunderHawk
                 }
             }).Unwrap();
         }
-
 
         private void CopySchemes(string gamePath)
         {
@@ -197,35 +198,164 @@ namespace ThunderHawk
             }
         }
 
-        public void LaunchOriginalGame()
+        public bool TryGetOrChoosePath(out string path)
         {
-            ProcessManager.KillDowStatsProccesses();
-
-            Process.Start(new ProcessStartInfo(Path.Combine(LauncherPath, "ThunderHawk.exe"), "-original")
-            {
-                UseShellExecute = true,
-                WorkingDirectory = LauncherPath
-            });
-
-            Environment.Exit(0);
+            return PathFinder.TryGetOrChoosePath(out path);
         }
 
-        /*public void SwitchGameToMod(string modName)
+        public void ChangeGamePath()
         {
+            PathFinder.ChoosePath();
+        }
+
+        public void SwitchGameToMod(string modName)
+        {
+            try
+            {
+                var localConfig = Path.Combine(GamePath, "Local.ini");
+
+                if (!File.Exists(localConfig))
+                    return;
+
+                var lines = File.ReadAllLines(localConfig);
+
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    if (lines[i].StartsWith("currentmoddc=", StringComparison.OrdinalIgnoreCase))
+                        lines[i] = "currentmoddc=thunderhawk";
+                }
+
+                File.WriteAllLines(localConfig, lines);
+            }
+            catch(Exception ex)
+            {
+
+            }
+        }
+
+        public enum ProcessorArchitecture
+        {
+            X86 = 0,
+            X64 = 9,
+            @Arm = -1,
+            Itanium = 6,
+            Unknown = 0xFFFF,
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct SystemInfo
+        {
+            public ProcessorArchitecture ProcessorArchitecture; // WORD
+            public uint PageSize; // DWORD
+            public IntPtr MinimumApplicationAddress; // (long)void*
+            public IntPtr MaximumApplicationAddress; // (long)void*
+            public IntPtr ActiveProcessorMask; // DWORD*
+            public uint NumberOfProcessors; // DWORD (WTF)
+            public uint ProcessorType; // DWORD
+            public uint AllocationGranularity; // DWORD
+            public ushort ProcessorLevel; // WORD
+            public ushort ProcessorRevision; // WORD
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct MEMORY_BASIC_INFORMATION
+        {
+            public IntPtr BaseAddress;
+            public IntPtr AllocationBase;
+            public uint AllocationProtect;
+            public IntPtr RegionSize;
+            public uint State;
+            public uint Protect;
+            public uint Type;
+        }
+
+        [DllImport("kernel32.dll")]
+        static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
+
+        [DllImport("kernel32.dll", SetLastError = false)]
+        public static extern void GetSystemInfo(out SystemInfo Info);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
+       
+        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+        static extern unsafe int memcmp(byte* b1, byte* b2, int count);
+
+        public static unsafe int CompareBuffers(byte[] buffer1, int offset1, byte[] buffer2, int offset2, int count)
+        {
+            fixed (byte* b1 = buffer1, b2 = buffer2)
+            {
+                return memcmp(b1 + offset1, b2 + offset2, count);
+            }
+        }
+
+        public unsafe string GetCurrentModName()
+        {
+            // TODO: не работает
+            var process = GameProcess;
+
+            byte[] str = Encoding.ASCII.GetBytes("thunderhawk");
+
+            if (process != null)
+            {
+                SystemInfo si;
+                GetSystemInfo(out si);
+
+                byte[] chunk = new byte[1024];
+
+                byte* p = (byte*)0;
+                var max = (byte*)si.MaximumApplicationAddress;
+                MEMORY_BASIC_INFORMATION info;
+
+                while (p < max)
+                {
+                    if (VirtualQueryEx(process.Handle, (IntPtr)p, out info, (uint)sizeof(MEMORY_BASIC_INFORMATION)) == sizeof(MEMORY_BASIC_INFORMATION))
+                    {
+                        p = (byte*)info.BaseAddress;
+                        //chunk.resize(info.RegionSize);
+
+                        //var s = Marshal.SizeOf(info.RegionSize);
+                        var s = (int)info.RegionSize;
+                        if (chunk.Length < s)
+                            chunk = new byte[s];
+
+                        IntPtr bytesRead;
+                        if (ReadProcessMemory(process.Handle, (IntPtr)p, chunk, s, out bytesRead))
+                        {
+                            var rs = (int)bytesRead;
+
+                            if (rs >= str.Length)
+                            {
+                                for (int i = 0; i < (rs - str.Length); ++i)
+                                {
+                                    if (CompareBuffers(str, 0, chunk, i, str.Length) == 0)
+                                    {
+                                        var value = Encoding.ASCII.GetString(chunk, i-100, str.Length + 100);
+                                        Console.WriteLine("F "+ value);
+                                    }
+                                }
+                            }
+                        }
+                        p += s;
+                    }
+                }
+            }
+
+
             var localConfig = Path.Combine(GamePath, "Local.ini");
 
             if (!File.Exists(localConfig))
-                return;
+                return null;
 
             var lines = File.ReadAllLines(localConfig);
 
             for (int i = 0; i < lines.Length; i++)
             {
                 if (lines[i].StartsWith("currentmoddc=", StringComparison.OrdinalIgnoreCase))
-                    lines[i] = "currentmoddc=thunderhawk";
+                    return lines[i].Substring(13).TrimEnd();
             }
 
-            File.WriteAllLines(localConfig, lines);
-        }*/
+            return null;
+        }
     }
 }

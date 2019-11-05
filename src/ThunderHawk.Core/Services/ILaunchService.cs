@@ -5,13 +5,14 @@ namespace ThunderHawk.Core
 {
     public interface ILaunchService
     {
-        //void SwitchGameToMod(string modName);
+        void SwitchGameToMod(string modName);
+        string GetCurrentModName();
         string GamePath { get; }
-        string LauncherPath { get; }
         bool CanLaunchGame { get; }
         Process GameProcess { get; }
 
         Task LaunchThunderHawkGameAndWait();
-        void LaunchOriginalGame();
+        bool TryGetOrChoosePath(out string path);
+        void ChangeGamePath();
     }
 }

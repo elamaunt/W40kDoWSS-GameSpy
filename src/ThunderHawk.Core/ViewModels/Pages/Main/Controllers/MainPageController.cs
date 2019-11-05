@@ -51,11 +51,7 @@ namespace ThunderHawk.Core
                     .AttachIndicator(Frame.LoadingIndicator);
             }
 
-            var path = CoreContext.LaunchService.GamePath;
-
-            Frame.LaunchOriginalGame.Action = LaunchOriginalSoulstorm;
-
-            if (CoreContext.ThunderHawkModManager.CheckIsModExists(path))
+            if (CoreContext.ThunderHawkModManager.CheckIsModExists())
             {
                 UpdateMod();
             }
@@ -66,15 +62,12 @@ namespace ThunderHawk.Core
             }
         }
 
-        void LaunchOriginalSoulstorm()
-        {
-            CoreContext.LaunchService.LaunchOriginalGame();
-        }
-
         void UpdateMod()
         {
+            if (!CoreContext.LaunchService.TryGetOrChoosePath(out string path))
+                return;
+
             Frame.LaunchGame.Enabled = false;
-            var path = CoreContext.LaunchService.GamePath;
             CoreContext.ThunderHawkModManager.UpdateMod(path, Token, ReportProgress)
                 .OnContinueOnUi(task =>
                 {
@@ -89,22 +82,8 @@ namespace ThunderHawk.Core
 
         private void SetGameLaunchState()
         {
-            if (CoreContext.SteamApi.IsInitialized)
-            {
-                Frame.LaunchGame.Text = "Launch Thunderhawk";
-                Frame.LaunchGame.Action = LaunchGame;
-            }
-            else
-            {
-                Frame.LaunchGame.Text = "Init Steam";
-                Frame.LaunchGame.Action = IniSteam;
-            }
-        }
-
-        void IniSteam()
-        {
-            CoreContext.SteamApi.Initialize();
-            SetGameLaunchState();
+            Frame.LaunchGame.Text = "Launch Thunderhawk";
+            Frame.LaunchGame.Action = LaunchGame;
         }
 
         void SetupGameMod()

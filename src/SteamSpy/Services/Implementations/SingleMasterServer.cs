@@ -259,17 +259,53 @@ namespace ThunderHawk
         {
             var clone = _users.ToDictionary(x => x.Key, x => x.Value);
 
+            // TODO: дописать стату
             for (int i = 0; i < message.Users.Length; i++)
             {
                 var user = message.Users[i];
                 clone.Remove(user.SteamId);
-                _users.AddOrUpdate(user.SteamId, id => new UserInfo(id), (id, info) =>
+                _users.AddOrUpdate(user.SteamId, id => new UserInfo(id)
+                {
+                    Name = user.Name,
+                    ActiveProfileId = user.ProfileId,
+                    Status = user.Status
+                }, (id, info) =>
                 {
                     info.Name = user.Name;
                     info.ActiveProfileId = user.ProfileId;
                     info.Status = user.Status;
 
                     return info;
+                });
+
+                if (!user.ProfileId.HasValue)
+                    continue;
+
+                _stats.AddOrUpdate(user.ProfileId.Value, id => new StatsInfo(id)
+                {
+                    Score1v1 = user.Score1v1.Value,
+                    Score2v2 = user.Score2v2.Value,
+                    Score3v3_4v4 = user.Score3v3.Value,
+                    WinsCount = user.Wins.Value,
+                    GamesCount = user.Games.Value,
+                    AverageDuration = user.Average.Value,
+                    Disconnects = user.Disconnects.Value,
+                    FavouriteRace = user.Race.Value,
+                    Name = user.Name,
+                    SteamId = user.SteamId
+                }, (id, stats) =>
+                {
+                    stats.Score1v1 = user.Score1v1.Value;
+                    stats.Score2v2 = user.Score2v2.Value;
+                    stats.Score3v3_4v4 = user.Score3v3.Value;
+                    stats.WinsCount = user.Wins.Value;
+                    stats.GamesCount = user.Games.Value;
+                    stats.AverageDuration = user.Average.Value;
+                    stats.Disconnects = user.Disconnects.Value;
+                    stats.FavouriteRace = user.Race.Value;
+                    stats.Name = user.Name;
+                    stats.SteamId = user.SteamId;
+                    return stats;
                 });
             }
 

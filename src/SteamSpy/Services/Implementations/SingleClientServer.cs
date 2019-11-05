@@ -40,6 +40,7 @@ namespace ThunderHawk
         bool _chatEncoded;
 
         string _user;
+        string _shortUser;
         string _name;
         long _profileId;
         string _email;
@@ -49,6 +50,7 @@ namespace ThunderHawk
         string _enteredLobbyHash;
         string _localServerHash;
         GameServerDetails _localServer;
+        string _flags;
 
         byte[] _gameNameBytes;
         byte[] _gamekeyBytes;
@@ -59,7 +61,11 @@ namespace ThunderHawk
         readonly char[] ChatSplitChars = new[] { '\r', '\n' };
         const char PrefixCharacter = ':';
 
+        const string XorKEY = "GameSpy3D";
+        volatile int _sessionCounter;
+
         CancellationTokenSource _lobbyTokenSource;
+
         CancellationToken Token => _lobbyTokenSource.Token;
 
         readonly ConcurrentDictionary<string, GameServerDetails> _lastLoadedLobbies = new ConcurrentDictionary<string, GameServerDetails>();
@@ -76,37 +82,119 @@ namespace ThunderHawk
         public SingleClientServer()
         {
             _serverReport = new UdpPortHandler(27900, OnServerReport, OnError);
-            _serverRetrieve = new TcpPortHandler(28910, OnServerRetrieve, OnError, null);
+            _serverRetrieve = new TcpPortHandler(28910, OnServerRetrieve);
 
             _clientManager = new TcpPortHandler(29900, OnClientManager, OnError, OnClientAccept, OnZeroBytes);
             _searchManager = new TcpPortHandler(29901, OnSearchManager, OnError, null, OnZeroBytes);
 
             _chat = new TcpPortHandler(6667, OnChat, OnError, OnChatAccept, OnZeroBytes);
-            _stats = new TcpPortHandler(29920, OnStats, OnError, null, OnZeroBytes);
+            _stats = new TcpPortHandler(29920, OnStats, OnError, OnStatsAccept, OnZeroBytes);
             _http = new TcpPortHandler(80, OnHttp, OnError, null, OnZeroBytes);
 
             CoreContext.MasterServer.LoginInfoReceived += SendLoginResponce;
             CoreContext.MasterServer.ChatMessageReceived += OnChatMessageReceived;
+            CoreContext.MasterServer.ConnectionLost += OnServerConnectonLost;
+            CoreContext.MasterServer.Connected += OnServerConnected;
 
-            SteamLobbyManager.LobbyMemberEntered += OnLobbyMemberEntered;
+            SteamLobbyManager.LobbyChatMessage += OnLobbyChatMessageReceived;
+            //SteamLobbyManager.LobbyMemberUpdated += OnLobbyMemberUpdated;
             SteamLobbyManager.LobbyMemberLeft += OnLobbyMemberLeft;
             SteamLobbyManager.TopicUpdated += OnTopicUpdated;
         }
 
+        void OnStatsAccept(TcpPortHandler handler, TcpClient client, CancellationToken token)
+        {
+            handler.Send(XorBytes(@"\lc\1\challenge\KNDVKXFQWP\id\1\final\", XorKEY, 7));
+        }
+
+        void OnServerConnected()
+        {
+        }
+
+        void OnServerConnectonLost()
+        {
+        }
+
+        void OnLobbyChatMessageReceived(ulong memberId, string message)
+        {
+            Logger.Info("RECV-FROM-LOBBY-CHAT " + message);
+
+            var values = GetLineValues(message);
+
+            if (message.StartsWith("UTM", StringComparison.OrdinalIgnoreCase)) { HandleRemoteUtmCommand(values); return; }
+            if (message.StartsWith("PRIVMSG", StringComparison.OrdinalIgnoreCase)) { HandleRemotePrivmsgCommand(values); return; }
+            
+            if (memberId == SteamUser.GetSteamID().m_SteamID)
+                return;
+
+            if (message.StartsWith("JOIN", StringComparison.OrdinalIgnoreCase)) { HandleRemoteJoinCommand(values); return; }
+            if (message.StartsWith("SETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleRemoteSetckeyCommand(values); return; }
+
+            Debugger.Break();
+        }
+
+        void HandleRemoteJoinCommand(string[] values)
+        {
+            // :Bambochuk2!Xu4FpqOa9X|4@192.168.159.128 JOIN #GSP!whamdowfr!76561198408785287
+
+            if (values[1] == _user)
+                return;
+
+            var userValues = values[1].Split(new char[] { '!', '|', '@' });
+            var nick = userValues[0];
+
+            //Bambochuk2!Xu4FpqOa9X|4@192.168.159.128 
+
+            SendToClientChat($":{nick}!Xu4FpqOa9X|{userValues[2]}@192.168.159.128 JOIN #GSP!whamdowfr!{_enteredLobbyHash}\r\n");
+            SendToClientChat($":s 702 #GPG!1 #GPG!1 {nick} BCAST :\\b_flags\\s\r\n");
+            SendToClientChat($":s 702 #GSP!whamdowfr!{_enteredLobbyHash} #GSP!whamdowfr!{_enteredLobbyHash} {nick} BCAST :\\b_flags\\s\r\n");
+        }
+
+        void HandleRemoteSetckeyCommand(string[] values)
+        {
+            var channelName = values[1];
+
+            if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
+            {
+                var keyValues = values[3];
+
+                var pairs = keyValues.Split(':', '\\');
+
+                for (int i = 1; i < pairs.Length; i += 2)
+                    SendToClientChat($":s 702 #GSP!whamdowfr!{_enteredLobbyHash} #GSP!whamdowfr!{_enteredLobbyHash} {values[2]} BCAST :\\{pairs[i]}\\{pairs[i + 1]}\r\n");
+            }
+        }
+
+        void HandleRemotePrivmsgCommand(string[] values)
+        {
+            if (!SteamLobbyManager.IsInLobbyNow)
+                return;
+
+            SendToClientChat($":{_user} PRIVMSG #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
+        }
+
+        void HandleRemoteUtmCommand(string[] values)
+        {
+            if (!SteamLobbyManager.IsInLobbyNow)
+                return;
+
+            SendToClientChat($":{_user} UTM #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
+        }
+
         void OnTopicUpdated(string topic)
         {
+            if (!SteamLobbyManager.IsInLobbyNow)
+                return;
         }
 
-        void OnLobbyMemberLeft(ulong memberSteamId, string name)
+        void OnLobbyMemberLeft(ulong memberSteamId)
         {
+            var info = CoreContext.MasterServer.GetUserInfo(memberSteamId);
 
-        }
+            if (info == null)
+                return;
 
-        void OnLobbyMemberEntered(ulong memberSteamId, string name)
-        {
-            var channelName = $"GPS!whamdowfr!{_localServerHash}";
-
-            //SendToClientChat($":s{_user} JOIN {channelName}\r\n");
+            SendToClientChat($":{info.Name}!Xu4FpqOa9X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{_enteredLobbyHash} :Leaving\r\n");
         }
 
         void OnChatMessageReceived(MessageInfo message)
@@ -142,7 +230,7 @@ namespace ThunderHawk
             _searchManager.Start();
 
             _chat.Start();
-           // _stats.Start();
+            _stats.Start();
             _http.Start();
 
             //ServerListReport = new ServerListReport(bind, 27900);
@@ -151,7 +239,7 @@ namespace ThunderHawk
             //ChatServer = new ChatServerRetranslator(bind, 6667);
         }
 
-        void OnError(Exception exception, bool send)
+        void OnError(Exception exception, bool send, int port)
         {
             File.WriteAllText("LastClientError.ex", send + " " + exception.ToString());
             Logger.Error(exception);
@@ -252,6 +340,14 @@ namespace ThunderHawk
         {
             _email = loginInfo.Email;
             _profileId = loginInfo.ProfileId;
+
+            /*if (CoreContext.LaunchService.GetCurrentModName() != "thunderhawk")
+            {
+                _clientManager.Send(DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\You can login only with ThunderHawk active mod.\id\1\final\"));
+                MessageBox.Show("You can login only with ThunderHawk active mod.");
+            }
+            else*/
+
             _clientManager.Send(DataFunctions.StringToBytes(LoginHelper.BuildProofOrErrorString(loginInfo, _response, _clientChallenge, _serverChallenge)));
         }
 
@@ -328,8 +424,393 @@ namespace ThunderHawk
 
         void OnStats(TcpPortHandler handler, byte[] buffer, int count)
         {
-            var str = ToUtf8(buffer, count);
+            var str = Encoding.UTF8.GetString(XorBytes(buffer, 0, count - 7, XorKEY), 0, count);
+
             Logger.Trace("STATS " + str);
+
+            if (str.StartsWith(@"\auth\\gamename\", StringComparison.OrdinalIgnoreCase))
+            {
+                var sesskey = Interlocked.Increment(ref _sessionCounter).ToString("0000000000");
+
+                handler.Send(XorBytes($@"\lc\2\sesskey\{sesskey}\proof\0\id\1\final\", XorKEY, 7));
+                return;
+            }
+
+            if (str.StartsWith(@"\authp\\pid\", StringComparison.OrdinalIgnoreCase))
+            {
+                var pid = GetPidFromInput(str, 12);
+                var profileId = long.Parse(pid);
+
+                handler.Send(XorBytes($@"\pauthr\{pid}\lid\1\final\", XorKEY, 7));
+                return;
+            }
+
+            if (str.StartsWith(@"\getpd\", StringComparison.OrdinalIgnoreCase))
+            {
+                // \\getpd\\\\pid\\87654321\\ptype\\3\\dindex\\0\\keys\\\u0001points\u0001points2\u0001points3\u0001stars\u0001games\u0001wins\u0001disconn\u0001a_durat\u0001m_streak\u0001f_race\u0001SM_wins\u0001Chaos_wins\u0001Ork_wins\u0001Tau_wins\u0001SoB_wins\u0001DE_wins\u0001Eldar_wins\u0001IG_wins\u0001Necron_wins\u0001lsw\u0001rnkd_vics\u0001con_rnkd_vics\u0001team_vics\u0001mdls1\u0001mdls2\u0001rg\u0001pw\\lid\\1\\final\\
+                // \getpd\\pid\87654321\ptype\3\dindex\0\keys\pointspoints2points3starsgameswinsdisconna_duratm_streakf_raceSM_winsChaos_winsOrk_winsTau_winsSoB_winsDE_winsEldar_winsIG_winsNecron_winslswrnkd_vicscon_rnkd_vicsteam_vicsmdls1mdls2rgpw\lid\1\final\
+                var pid = GetPidFromInput(str, 12);
+
+                var keysIndex = str.IndexOf("keys") + 5;
+                var keys = str.Substring(keysIndex);
+                var keysList = keys.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "final", "\\", "lid" }, StringSplitOptions.RemoveEmptyEntries);
+
+                var keysResult = new StringBuilder();
+                var stats = CoreContext.MasterServer.GetStatsInfo(long.Parse(pid)); //ProfilesCache.GetProfileByPid(pid);
+
+                for (int i = 0; i < keysList.Length; i++)
+                {
+                    var key = keysList[i];
+
+                    keysResult.Append("\\" + key + "\\");
+
+                    switch (key)
+                    {
+                        case "points": keysResult.Append(stats.Score1v1); break;
+                        case "points2": keysResult.Append(stats.Score2v2); break;
+                        case "points3": keysResult.Append(stats.Score3v3_4v4); break;
+
+                        case "stars": keysResult.Append(GetStars(stats)); break;
+
+                        case "games": keysResult.Append(stats.GamesCount); break;
+                        case "wins": keysResult.Append(stats.WinsCount); break;
+                        case "disconn": keysResult.Append(stats.Disconnects); break;
+                        case "a_durat": keysResult.Append(stats.AverageDuration); break;
+                        case "m_streak": keysResult.Append(stats.Best1v1Winstreak); break;
+
+                        case "f_race": keysResult.Append(stats.FavouriteRace); break;
+
+                        
+                        /*case "SM_wins": keysResult.Append(stats.Smwincount); break;
+                        case "Chaos_wins": keysResult.Append(stats.Csmwincount); break;
+                        case "Ork_wins": keysResult.Append(stats.Orkwincount); break;
+                        case "Tau_wins": keysResult.Append(stats.Tauwincount); break;
+                        case "SoB_wins": keysResult.Append(stats.Sobwincount); break;
+                        case "DE_wins": keysResult.Append(stats.Dewincount); break;
+                        case "Eldar_wins": keysResult.Append(stats.Eldarwincount); break;
+                        case "IG_wins": keysResult.Append(stats.Igwincount); break;
+                        case "Necron_wins": keysResult.Append(stats.Necrwincount); break;*/
+
+                        /*case "lsw": keysResult.Append("123"); break;
+                        case "rnkd_vics": keysResult.Append("50"); break;
+                        case "con_rnkd_vics": keysResult.Append("200"); break;
+                        case "team_vics": keysResult.Append("250"); break;
+                        case "mdls1": keysResult.Append("260"); break;
+                        case "mdls2": keysResult.Append("270"); break;
+                        case "rg": keysResult.Append("280"); break;
+                        case "pw": keysResult.Append("290"); break;*/
+                        default:
+                            keysResult.Append("0");
+                            break;
+                    }
+
+                }
+
+                handler.Send(XorBytes($@"\getpdr\1\lid\1\pid\{pid}\mod\{stats.Modified}\length\{keys.Length}\data\{keysResult}\final\", XorKEY, 7));
+
+                return;
+            }
+
+            if (str.StartsWith(@"\setpd\", StringComparison.OrdinalIgnoreCase))
+            {
+                var pid = GetPidFromInput(str, 12);
+
+                var lidIndex = str.IndexOf("\\lid\\", StringComparison.OrdinalIgnoreCase);
+                var lid = str.Substring(lidIndex + 5, 1);
+
+                var timeInSeconds = (ulong)((DateTime.Now - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc)).TotalSeconds);
+                // \setpd\\pid\3\ptype\1\dindex\0\kv\1\lid\1\length\413\data\\ckey\5604 - 7796 - 6425 - 0127 - DA96\system\Nr.Proc:8, Type: 586, GenuineIntel, unknown: f = 6,m = 12, Fam: 6, Mdl: 12, St: 3, Fe: 7, OS: 7, Ch: 15\speed\CPUSpeed: 3.5Mhz\os\OS NT 6.2\lang\Language: Русский(Россия), Country: Россия, User Language:Русский(Россия), User Country:Россия\vid\Card: Dx9: Hardware TnL, NVIDIA GeForce GTX 1080, \vidmod\Mode: 1920 x 1080 x 32\mem\2048Mb phys. memory
+                handler.Send(XorBytes($@"\setpdr\1\lid\{lid}\pid\{pid}\mod\{timeInSeconds}\final\", XorKEY, 7));
+
+                return;
+            }
+
+            if (str.StartsWith(@"\updgame\", StringComparison.OrdinalIgnoreCase))
+            {
+                var gamedataIndex = str.IndexOf("gamedata");
+                var finalIndex = str.IndexOf("final");
+
+                var gameDataString = str.Substring(gamedataIndex + 9, finalIndex - gamedataIndex - 10);
+
+                var valuesList = gameDataString.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "final", "\\", "lid" }, StringSplitOptions.RemoveEmptyEntries);
+
+                var dictionary = new Dictionary<string, string>();
+
+                for (int i = 0; i < valuesList.Length; i += 2)
+                    dictionary[valuesList[i]] = valuesList[i + 1];
+
+                var mod = dictionary["Mod"];
+                var modVersion = dictionary["ModVer"];
+
+                      /*  if (!"ThunderHawk".Equals(mod, StringComparison.OrdinalIgnoreCase))
+                            return;
+
+                        if (!"1.0a".Equals(modVersion, StringComparison.OrdinalIgnoreCase))
+                            return;*/
+
+                var playersCount = int.Parse(dictionary["Players"]);
+
+                for (int i = 0; i < playersCount; i++)
+                {
+                    // Dont process games with AI
+                    if (dictionary["PHuman_" + i] != "1")
+                    {
+                        Logger.Trace($"Stats socket: GAME WITH NONHUMAN PLAYER");
+                        return;
+                    }
+                }
+
+                var gameInternalSession = dictionary["SessionID"];
+                var teamsCount = int.Parse(dictionary["Teams"]);
+                var version = dictionary["Version"];
+
+                var uniqueGameSessionBuilder = new StringBuilder(gameInternalSession);
+
+                for (int i = 0; i < playersCount; i++)
+                {
+                    uniqueGameSessionBuilder.Append('<');
+                    uniqueGameSessionBuilder.Append(dictionary["player_" + i]);
+                    uniqueGameSessionBuilder.Append('>');
+                }
+
+                var uniqueSession = uniqueGameSessionBuilder.ToString();
+
+                /*if (!HandledGamesCache.Add(uniqueSession, uniqueSession, new CacheItemPolicy() { SlidingExpiration = TimeSpan.FromDays(1) }))
+                {
+                    Logger.Trace($"Stats socket: GAME ALREADY IN COUNT");
+                    return;
+                }
+
+                var usersGameInfos = new GameUserInfo[playersCount];
+
+                GameUserInfo currentUserInfo = null;
+
+                for (int i = 0; i < playersCount; i++)
+                {
+                    var nick = dictionary["player_" + i];
+
+                    var info = new GameUserInfo
+                    {
+                        Profile = ProfilesCache.GetProfileByName(nick),
+                        Race = Enum.Parse<Race>(dictionary["PRace_" + i], true),
+                        Team = int.Parse(dictionary["PTeam_" + i]),
+                        FinalState = Enum.Parse<PlayerFinalState>(dictionary["PFnlState_" + i]),
+                    };
+
+                    usersGameInfos[i] = info;
+
+                    if (nick.Equals(state.Nick, StringComparison.Ordinal))
+                        currentUserInfo = info;
+                }
+
+                var teams = usersGameInfos.GroupBy(x => x.Team).ToDictionary(x => x.Key, x => x.ToArray());
+                var gameDuration = long.Parse(dictionary["Duration"]);
+
+                foreach (var team in teams)
+                {
+                    for (int i = 0; i < team.Value.Length; i++)
+                    {
+                        var info = team.Value[i];
+
+                        info.Profile.AllInGameTicks += gameDuration;
+
+                        switch (info.Race)
+                        {
+                            case Race.space_marine_race:
+                                info.Profile.Smgamescount++;
+                                break;
+                            case Race.chaos_marine_race:
+                                info.Profile.Csmgamescount++;
+                                break;
+                            case Race.ork_race:
+                                info.Profile.Orkgamescount++;
+                                break;
+                            case Race.eldar_race:
+                                info.Profile.Eldargamescount++;
+                                break;
+                            case Race.guard_race:
+                                info.Profile.Iggamescount++;
+                                break;
+                            case Race.necron_race:
+                                info.Profile.Necrgamescount++;
+                                break;
+                            case Race.tau_race:
+                                info.Profile.Taugamescount++;
+                                break;
+                            case Race.dark_eldar_race:
+                                info.Profile.Degamescount++;
+                                break;
+                            case Race.sisters_race:
+                                info.Profile.Sobgamescount++;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        if (info.FinalState == PlayerFinalState.Winner)
+                        {
+                            switch (info.Race)
+                            {
+                                case Race.space_marine_race:
+                                    info.Profile.Smwincount++;
+                                    break;
+                                case Race.chaos_marine_race:
+                                    info.Profile.Csmwincount++;
+                                    break;
+                                case Race.ork_race:
+                                    info.Profile.Orkwincount++;
+                                    break;
+                                case Race.eldar_race:
+                                    info.Profile.Eldarwincount++;
+                                    break;
+                                case Race.guard_race:
+                                    info.Profile.Igwincount++;
+                                    break;
+                                case Race.necron_race:
+                                    info.Profile.Necrwincount++;
+                                    break;
+                                case Race.tau_race:
+                                    info.Profile.Tauwincount++;
+                                    break;
+                                case Race.dark_eldar_race:
+                                    info.Profile.Dewincount++;
+                                    break;
+                                case Race.sisters_race:
+                                    info.Profile.Sobwincount++;
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+
+                bool isRateGame = dictionary["Ladder"] == "1";
+
+                if (isRateGame)
+                {
+                    // Update winstreaks for 1v1 only
+                    if (usersGameInfos.Length == 2)
+                    {
+                        UpdateStreak(usersGameInfos[0]);
+                        UpdateStreak(usersGameInfos[1]);
+                    }
+
+                    var groupedTeams = usersGameInfos.GroupBy(x => x.Team).Select(x => x.ToArray()).ToArray();
+
+                    var players1Team = groupedTeams[0];
+                    var players2Team = groupedTeams[1];
+
+                    Func<ProfileDBO, long> scoreSelector = null;
+                    Action<ProfileDBO, long> scoreUpdater = null;
+
+                    RatingGameType type = RatingGameType.Unknown;
+
+                    switch (usersGameInfos.Length)
+                    {
+                        case 2:
+                            scoreSelector = StatsDelegates.Score1v1Selector;
+                            scoreUpdater = StatsDelegates.Score1v1Updated;
+                            type = RatingGameType.Rating1v1;
+                            break;
+                        case 4:
+                            scoreSelector = StatsDelegates.Score2v2Selector;
+                            scoreUpdater = StatsDelegates.Score2v2Updated;
+                            type = RatingGameType.Rating2v2;
+                            break;
+                        case 6:
+                        case 8:
+                            type = RatingGameType.Rating3v3_4v4;
+                            scoreSelector = StatsDelegates.Score3v3Selector;
+                            scoreUpdater = StatsDelegates.Score3v3Updated;
+                            break;
+                        default:
+                            goto UPDATE;
+                    }
+
+                    var team0score = (long)players1Team.Average(x => scoreSelector(x.Profile));
+                    var team1score = (long)players2Team.Average(x => scoreSelector(x.Profile));
+
+                    var isFirstTeamResult = players1Team.Any(x => x.FinalState == PlayerFinalState.Winner);
+                    var delta = EloRating.CalculateELOdelta(team0score, team1score, isFirstTeamResult ? EloRating.GameOutcome.Win : EloRating.GameOutcome.Loss);
+
+                    for (int i = 0; i < players1Team.Length; i++)
+                    {
+                        var rx = delta;
+
+                        rx = CorrectDelta(rx, team0score, team1score);
+
+                        players1Team[i].Delta = rx;
+                        players1Team[i].RatingGameType = type;
+                        scoreUpdater(players1Team[i].Profile, Math.Max(1000L, scoreSelector(players1Team[i].Profile) + rx));
+                    }
+
+                    for (int i = 0; i < players2Team.Length; i++)
+                    {
+                        var rx = -delta;
+
+                        rx = CorrectDelta(rx, team0score, team1score);
+
+                        players2Team[i].Delta = rx;
+                        players2Team[i].RatingGameType = type;
+                        scoreUpdater(players2Team[i].Profile, Math.Max(1000L, scoreSelector(players2Team[i].Profile) + rx));
+                    }
+                }
+
+            UPDATE:
+                for (int i = 0; i < usersGameInfos.Length; i++)
+                {
+                    var info = usersGameInfos[i];
+                    var profile = info.Profile;
+                    ProfilesCache.UpdateProfilesCache(profile);
+                    Database.MainDBInstance.UpdateProfileData(profile);
+
+                    if (info.Delta != 0)
+                    {
+                        Task.Delay(5000).ContinueWith(task =>
+                        {
+                            switch (info.RatingGameType)
+                            {
+                                case RatingGameType.Unknown:
+                                    break;
+                                case RatingGameType.Rating1v1:
+                                    ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"1v1", GetDeltaString(info.Delta), info.Profile.Score1v1);
+                                    break;
+                                case RatingGameType.Rating2v2:
+                                    ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"2v2", GetDeltaString(info.Delta), info.Profile.Score2v2);
+                                    break;
+                                case RatingGameType.Rating3v3_4v4:
+                                    ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"3v3/4v4", GetDeltaString(info.Delta), info.Profile.Score3v3);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        });
+                    }
+                }
+
+                Logger.Trace($"Stats socket: GAME ACCEPTED " + uniqueSession);
+                Dowstats.UploadGame(dictionary, usersGameInfos, isRateGame);*/
+            }
+        }
+
+        string GetStars(StatsInfo stats)
+        {
+            return "1";
+        }
+
+        string GetPidFromInput(string input, int start)
+        {
+            int end = start;
+            while (true)
+            {
+                var ch = input[end++];
+
+                if (!char.IsDigit(ch))
+                    break;
+            }
+
+            return input.Substring(start, end - start - 1);
         }
 
         unsafe void OnChat(TcpPortHandler handler, byte[] buffer, int count)
@@ -348,6 +829,9 @@ namespace ThunderHawk
             }
 
             var str = ToUtf8(buffer, count);
+
+            Logger.Trace(">>>>> " + str);
+
             var lines = str.Split(ChatSplitChars, StringSplitOptions.RemoveEmptyEntries);
 
             for (int i = 0; i < lines.Length; i++)
@@ -357,8 +841,6 @@ namespace ThunderHawk
 
         unsafe void HandleChatLine(TcpPortHandler handler, string line)
         {
-            Logger.Trace("CHATLINE "+line);
-
             var values = GetLineValues(line); //line.Split(ChatCommandsSplitChars, StringSplitOptions.RemoveEmptyEntries);
 
             if (line.StartsWith("LOGIN", StringComparison.OrdinalIgnoreCase)) { HandleLoginCommand(handler, values); return; }
@@ -367,14 +849,16 @@ namespace ThunderHawk
             if (line.StartsWith("USER", StringComparison.OrdinalIgnoreCase)) { HandleUserCommand(handler, values); return; }
             if (line.StartsWith("NICK", StringComparison.OrdinalIgnoreCase)) { HandleNickCommand(handler, values); return; }
             if (line.StartsWith("CDKEY", StringComparison.OrdinalIgnoreCase)) { HandleCdkeyCommand(handler, values); return; }
-            if (line.StartsWith("JOIN", StringComparison.OrdinalIgnoreCase)) { HandleJoinCommand(handler, values); return; }
+            if (line.StartsWith("JOIN", StringComparison.OrdinalIgnoreCase)) { HandleJoinCommand(handler, line, values); return; }
             if (line.StartsWith("MODE", StringComparison.OrdinalIgnoreCase)) { HandleModeCommand(handler, values); return; }
             if (line.StartsWith("QUIT", StringComparison.OrdinalIgnoreCase)) { HandleQuitCommand(handler, values); return; }
-            if (line.StartsWith("GETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleGetckeyCommand(handler, values); return; }
             if (line.StartsWith("PRIVMSG", StringComparison.OrdinalIgnoreCase)) { HandlePrivmsgCommand(handler, values); return; }
-            if (line.StartsWith("SETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleSetckeyCommand(handler, values); return; }
+            if (line.StartsWith("SETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleSetckeyCommand(handler, line, values); return; }
+            if (line.StartsWith("GETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleGetckeyCommand(handler, values); return; }
             if (line.StartsWith("TOPIC", StringComparison.OrdinalIgnoreCase)) { HandleTopicCommand(handler, values); return; }
             if (line.StartsWith("PART", StringComparison.OrdinalIgnoreCase)) { HandlePartCommand(handler, values); return; }
+            if (line.StartsWith("UTM", StringComparison.OrdinalIgnoreCase)) { HandleUtmCommand(handler, line); return; }
+            if (line.StartsWith("PING", StringComparison.OrdinalIgnoreCase)) { HandlePingCommand(handler, values); return; }
 
             //REPORT cK ?% localip0 192.168.10.2 localip1 192.168.159.1 localip2 192.168.58.1 localip3 192.168.1.21 localport 6112 natneg 1 statechanged 2 gamename whamdowfram publicip 1304808466 publicport 35108
 
@@ -382,6 +866,16 @@ namespace ThunderHawk
 
             //if (!state.Disposing && state.UserInfo != null)
             //   IrcDaemon.ProcessSocketMessage(state.UserInfo, asciValue);
+        }
+
+        void HandlePingCommand(TcpPortHandler handler, string[] values)
+        {
+            SendToClientChat($":s PONG :s {values.FirstOrDefault()}\r\n");
+        }
+
+        void HandleUtmCommand(TcpPortHandler handler, string line)
+        {
+            SteamLobbyManager.SendInLobbyChat(line);
         }
 
         void HandlePartCommand(TcpPortHandler handler, string[] values)
@@ -395,14 +889,26 @@ namespace ThunderHawk
             }
             else
             {
-                SteamLobbyManager.LeaveFromCurrentLobby();
+                /*if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
+                {
+                    var roomHash = channelName.Split('!')[2];
+
+                    if (roomHash == _localServerHash)
+                    {
+                        SteamLobbyManager.LeaveFromCurrentLobby();
+                    }
+                }*/
             }
         }
 
         void HandleTopicCommand(TcpPortHandler handler, string[] values)
         {
+            // :Bambochuk2!Xu4FpqOa9X|4@192.168.159.128 TOPIC #GSP!whamdowfr!76561198408785287 :Bambochuk2
+            SteamLobbyManager.SetLobbyTopic(values[2]);
+            SendToClientChat($":{_user} TOPIC #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
+
             //TOPIC #GSP!whamdowfr!Ml39ll1K9M :elamaunt
-            var channelName = values[1];
+            /*var channelName = values[1];
 
             if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
             {
@@ -412,7 +918,7 @@ namespace ThunderHawk
                 {
                     SteamLobbyManager.SetLobbyTopic(values[2]);
                 }
-            }
+            }*/
         }
 
         string[] GetLineValues(string line)
@@ -493,8 +999,37 @@ namespace ThunderHawk
             return args.ToArray();
         }
 
-        void HandleSetckeyCommand(TcpPortHandler handler, string[] values)
+        void HandleSetckeyCommand(TcpPortHandler handler, string line, string[] values)
         {
+            var channelName = values[1];
+
+            if (channelName == "#GPG!1")
+            {
+                var keyValues = values[3];
+
+                var pairs = keyValues.Split(':', '\\');
+
+                for (int i = 1; i < pairs.Length; i += 2)
+                    SendToClientChat($":s 702 GPG!1 GPG!1 {values[2]} BCAST :\\{pairs[i]}\\{pairs[i + 1]}\r\n");
+            }
+            else
+            {
+                if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
+                {
+                    //var roomHash = channelName.Split('!')[2];
+
+                    var keyValues = values[3];
+
+                    var pairs = keyValues.Split(':', '\\');
+
+                    // Skip first empty entry
+                    for (int i = 1; i < pairs.Length; i += 2)
+                        SteamLobbyManager.SetKeyValue(pairs[i], pairs[i + 1]);
+
+                    SteamLobbyManager.SendInLobbyChat(line);
+                    HandleRemoteSetckeyCommand(values);
+                }
+            }
         }
 
         void HandlePrivmsgCommand(TcpPortHandler handler, string[] values)
@@ -510,10 +1045,13 @@ namespace ThunderHawk
             {
                 if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
                 {
-                    var roomHash = channelName.Split('!')[2];
+                    //var roomHash = channelName.Split('!')[2];
 
-                    if (roomHash == _enteredLobbyHash)
-                        SteamLobbyManager.SendInLobbyChat(string.Join(" ", values));
+                    // Костыль для работы личных сообщений в игре
+                    if (values[1].EndsWith("-thq"))
+                        values[1] = values[1].Substring(0, values[1].Length - 4);
+
+                    SteamLobbyManager.SendInLobbyChat(string.Join(" ", values));
                 }
             }
         }
@@ -522,23 +1060,70 @@ namespace ThunderHawk
         {
             var channelName = values[1];
 
-            var key = values[5];
-            var id = values[3];
+            //GETCKEY #GPG!1 * 000 0 :\\username\\b_flags
 
-            if (key == ":\\username\\b_flags")
+            if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
             {
-                //GETCKEY #GPG!1 * 000 0 :\\username\\b_flags
-                var users = CoreContext.MasterServer.GetAllUsers();
+                //var roomHash = channelName.Split('!')[2];
 
-                for (int i = 0; i < users.Length; i++)
+                var id = values[3];
+                var keysString = values[5];
+
+                var keys = keysString.Split(':', '\\');
+                var builder = new StringBuilder();
+
+                if (!SteamLobbyManager.IsInLobbyNow)
                 {
-                    var user = users[i];
-                    // :s 702 elamaunt #GPG!1 pitbulwewe 050 :\XW9asqsfsX|8\sh
-                    SendToClientChat($":s 702 {_name} {channelName} {user.UIName} {id} :\\{user.ClientUserName}\\{user.ClientBFlags}\r\n");
+                    for (int k = 0; k < keys.Length; k++)
+                    {
+                        var key = keys[k];
+
+                        if (string.IsNullOrWhiteSpace(key))
+                            continue;
+
+                        string value;
+
+                        if (key == "username")
+                            value = _shortUser;
+                        else
+                            value = SteamLobbyManager.GetLocalMemberData(key);
+
+                        builder.Append(@"\" + value);
+                    }
+
+                    SendToClientChat($":s 702 {_name} {channelName} {id} :{builder}\r\n");
                 }
+                else
+                {
+                    var count = SteamLobbyManager.GetLobbyMembersCount();
+
+                    for (int i = 0; i < count; i++)
+                    {
+                        builder.Clear();
+
+                        var name = SteamLobbyManager.GetLobbyMemberName(i);
+
+                        if (name == null)
+                            continue;
+
+                        for (int k = 0; k < keys.Length; k++)
+                        {
+                            var key = keys[k];
+
+                            if (string.IsNullOrWhiteSpace(key))
+                                continue;
+
+                            var value = SteamLobbyManager.GetLobbyMemberData(i, key);
+
+                            builder.Append(@"\" + value);
+                        }
+
+                        SendToClientChat($":s 702 {name} {channelName} {id} :{builder}\r\n");
+                    }
+                }
+
+                SendToClientChat($":s 703 {_name} {channelName} {id} :End of GETCKEY\r\n");
             }
-
-
         }
 
         void HandleQuitCommand(TcpPortHandler handler, string[] values)
@@ -562,22 +1147,45 @@ namespace ThunderHawk
 
                     if (_lastLoadedLobbies.TryGetValue(roomHash, out GameServerDetails details))
                     {
+                        var maxPLayers = SteamLobbyManager.GetLobbyMaxPlayers();
 
+                        if (maxPLayers == 2 || maxPLayers == 4 || maxPLayers == 6 || maxPLayers == 8)
+                            SendToClientChat($":s 324 {_name} {channelName} +l {maxPLayers}\r\n");
+                        else
+                            SendToClientChat($":s 324 {_name} {channelName} +\r\n");
                     }
                     else
                     {
                         if (roomHash == _localServerHash)
                         {
+                            if (values.Length < 4)
+                            {
+                                var max = SteamLobbyManager.GetLobbyMaxPlayers();
+
+                                if (max > 0 && max < 9)
+                                    SendToClientChat($":s 324 {_name} {channelName} +l {max}\r\n");
+                                else
+                                    SendToClientChat($":s 324 {_name} {channelName} +\r\n");
+                            }
+                            else
+                            {
+                                var maxPlayers = values[3];
+
+                                if (int.TryParse(maxPlayers, out int value))
+                                    SteamLobbyManager.SetLobbyMaxPlayers(value);
+
+                                SendToClientChat($":{_user} MODE #GSP!whamdowfr!{_enteredLobbyHash} +l {maxPlayers}\r\n");
+                            }
+
                             // CHATLINE MODE #GSP!whamdowfr!Ml39ll1K9M +l 2
                             // CHATLINE MODE #GSP!whamdowfr!Ml39ll1K9M -i-p-s-m-n-t+l+e 2
-                            SendToClientChat($":s 324 {_name} {channelName} +\r\n");
                         }
                     }
                 }
             }
         }
 
-        void HandleJoinCommand(TcpPortHandler handler, string[] values)
+        void HandleJoinCommand(TcpPortHandler handler, string line, string[] values)
         {
             var channelName = values[1];
 
@@ -607,15 +1215,18 @@ namespace ThunderHawk
                     if (_lastLoadedLobbies.TryGetValue(roomHash, out GameServerDetails details))
                     {
                         var lobbyId = details.LobbySteamId;
-                        SteamLobbyManager.EnterInLobby(lobbyId, _name, RecreateLobbyToken())
+                        SteamLobbyManager.EnterInLobby(lobbyId, _shortUser, _name, _profileId.ToString(), RecreateLobbyToken())
                             .OnFaultOnUi(() =>
                             {
-                                // TODO
+                                SendToClientChat($":{_user} {channelName} :Bad Channel Mask\r\n");
                             })
                             .OnCompletedOnUi(res =>
                             {
                                 if (!res)
+                                {
+                                    SendToClientChat($":{_user} {channelName} :Bad Channel Mask\r\n");
                                     return;
+                                }
 
                                 _enteredLobbyHash = details.RoomHash;
 
@@ -626,8 +1237,13 @@ namespace ThunderHawk
                                 for (int i = 0; i < usersInLobby.Length; i++)
                                     playersList.Append(usersInLobby[i] + " ");
 
+                                SteamLobbyManager.SendInLobbyChat($"JOIN {_user}");
+
                                 SendToClientChat($":{_user} JOIN {channelName}\r\n");
-                                SendToClientChat($":s 331 {channelName} :No topic is set\r\n");
+
+                                var topic = SteamLobbyManager.GetLobbyTopic() ?? "No topic is set";
+
+                                SendToClientChat($":s 331 {channelName} :{topic}\r\n");
                                 SendToClientChat($":s 353 {_name} = {channelName} :@{playersList}\r\n");
                                 SendToClientChat($":s 366 {_name} {channelName} :End of NAMES list\r\n");
                             });
@@ -635,16 +1251,13 @@ namespace ThunderHawk
                     else
                     {
                         _localServerHash = roomHash;
+                        _enteredLobbyHash = roomHash;
 
                         SendToClientChat($":{_user} JOIN {channelName}\r\n");
                         SendToClientChat($":s 331 {channelName} :No topic is set\r\n");
                         SendToClientChat($":s 353 {_name} = {channelName} :@{_name}\r\n");
                         SendToClientChat($":s 366 {_name} {channelName} :End of NAMES list\r\n");
                     }
-                }
-                else
-                {
-
                 }
             }
         }
@@ -657,6 +1270,7 @@ namespace ThunderHawk
         void HandleUserCommand(TcpPortHandler handler, string[] values)
         {
             _user = $@"{_name}!{values[1]}@{handler.RemoteEndPoint.Address}";
+            _shortUser = values[1];
         }
 
         void HandleNickCommand(TcpPortHandler handler, string[] values)
@@ -775,7 +1389,7 @@ namespace ThunderHawk
 
         unsafe void SendToClientChat(string message)
         {
-            Logger.Trace("CHATSEND " + message);
+            Logger.Trace("<<<<<<<<<<< " + message);
 
             var bytesToSend = message.ToUTF8Bytes();
 
@@ -791,6 +1405,9 @@ namespace ThunderHawk
             var str = ToASCII(buffer, count);
             Logger.Trace("RETRIEVE " + str);
             var endPoint = handler.RemoteEndPoint;
+
+            if (endPoint == null)
+                return;
 
             string[] data = str.Split(new char[] { '\x00' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -993,10 +1610,10 @@ namespace ThunderHawk
                 else
                 {
                     string serverVars = sections[0];
-                    string playerVars = sections[1];
-                    string teamVars = sections[2];
+                    //string playerVars = sections[1];
+                    //string teamVars = sections[2];
 
-                    var details = ParseHelper.ParseDetails(serverVars, playerVars, teamVars);
+                    var details = ParseHelper.ParseDetails(serverVars);
 
                     details["IPAddress"] = remote.Address.ToString();
                     details["QueryPort"] = remote.Port.ToString();
@@ -1030,12 +1647,12 @@ namespace ThunderHawk
 
                     var token = RecreateLobbyToken();
                     token.Register(() => SteamLobbyManager.LeaveFromCurrentLobby());
-                    SteamLobbyManager.CreatePublicLobby(token, _name, GetIndicator()).OnCompletedOnUi(lobbyId =>
+                    SteamLobbyManager.CreatePublicLobby(token, _name, _shortUser, _flags, GetIndicator()).OnCompletedOnUi(lobbyId =>
                     {
                         if (token.IsCancellationRequested)
                             return;
                         handler.Send(response, remote);
-                    });
+                    }).Wait();
                 }
             }
             else if (receivedBytes.Length == 5 && receivedBytes[0] == (byte)MessageType.KEEPALIVE)
@@ -1087,6 +1704,28 @@ namespace ThunderHawk
         string ToASCII(byte[] buffer, int count)
         {
             return Encoding.ASCII.GetString(buffer, 0, count);
+        }
+        byte[] XorBytes(byte[] data, int start, int count, string keystr)
+        {
+            byte[] key = Encoding.ASCII.GetBytes(keystr);
+
+            for (int i = start; i < count; i++)
+                data[i] = (byte)(data[i] ^ key[i % key.Length]);
+
+            return data;
+        }
+
+        byte[] XorBytes(string str, string keystr, int lengthOffset = 0)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(str);
+            byte[] key = Encoding.UTF8.GetBytes(keystr);
+
+            var length = data.Length - lengthOffset;
+
+            for (int i = 0; i < length; i++)
+                data[i] = (byte)(data[i] ^ key[i % key.Length]);
+
+            return data;
         }
 
         string GetIndicator()

@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace ThunderHawk.StaticClasses.Soulstorm
 {
@@ -22,13 +23,83 @@ namespace ThunderHawk.StaticClasses.Soulstorm
         public static void Find()
         {
             GamePath = FindSteamSoulstorm();
+            TrySavePath();
         }
+
+        private static void TrySavePath()
+        {
+            if (GamePath != null)
+            {
+                try
+                {
+                    var launcherRegKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(ThunderHawk.RegistryKey);
+                    launcherRegKey?.SetValue("GamePath", GamePath);
+                }
+                catch (Exception ex)
+                {
+
+                }
+            }
+        }
+
+        public static bool TryGetOrChoosePath(out string path)
+        {
+            if (GamePath != null)
+            {
+                path = GamePath;
+                return true;
+            }
+
+            ChoosePath();
+            path = GamePath;
+            return path != null;
+        }
+
+        public static void ChoosePath()
+        {
+            var path = GetDirectoryByBrowser(GamePath);
+
+            if (IsGameLocation(path))
+            {
+                GamePath = path;
+                TrySavePath();
+            }
+            else
+                MessageBox.Show("Game not found in selected directory");
+        }
+
+        static string GetDirectoryByBrowser(string root = null)
+        {
+            var folderDialog = new FolderBrowserDialog();
+            if (root == null)
+                folderDialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);
+            else
+                folderDialog.SelectedPath = root;
+            folderDialog.ShowDialog();
+
+            return folderDialog.SelectedPath;
+        }
+
 
         private static string FindSteamSoulstorm()
         {
+            try
+            {
+                var launcherRegKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(ThunderHawk.RegistryKey);
+                var pathKey = (string)launcherRegKey?.GetValue("GamePath");
+
+                if (pathKey != null && IsGameLocation(pathKey))
+                    return pathKey;
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+
             // First. Try to check THIS folder. Maybe user installed launcher to the game-folder.
             var currentDirectory = Directory.GetCurrentDirectory();
-            if (IsSteamGameLocation(currentDirectory))
+            if (IsGameLocation(currentDirectory))
             {
                 return currentDirectory;
             }
@@ -36,7 +107,7 @@ namespace ThunderHawk.StaticClasses.Soulstorm
             // Second. Try to check default Steam location
             if (Directory.Exists(defaultSteamPath))
             {
-                if (IsSteamGameLocation(defaultSteamPath))
+                if (IsGameLocation(defaultSteamPath))
                 {
                     return defaultSteamPath;
                 }
@@ -54,7 +125,7 @@ namespace ThunderHawk.StaticClasses.Soulstorm
                 if (pathVal != null)
                 {
                     var path = pathVal as string;
-                    if (IsSteamGameLocation(path))
+                    if (IsGameLocation(path))
                         return path;
                 }
             }
@@ -75,7 +146,7 @@ namespace ThunderHawk.StaticClasses.Soulstorm
                 {
                     if (directory.IndexOf("soulstorm", StringComparison.OrdinalIgnoreCase) != -1)
                     {
-                        if (IsSteamGameLocation(directory))
+                        if (IsGameLocation(directory))
                             return directory;
                     }
                 }
@@ -110,7 +181,7 @@ namespace ThunderHawk.StaticClasses.Soulstorm
                         {
                             if (directory.IndexOf("soulstorm", StringComparison.OrdinalIgnoreCase) != -1)
                             {
-                                if (IsSteamGameLocation(directory))
+                                if (IsGameLocation(directory))
                                     return directory;
                             }
                         }
@@ -168,13 +239,13 @@ namespace ThunderHawk.StaticClasses.Soulstorm
             return null;
         }
 
-        private static bool IsSteamGameLocation(string path)
+        private static bool IsGameLocation(string path)
         {
             if (path == null)
                 return false;
 
             return File.Exists(path + "\\Soulstorm.exe") &&
-                File.Exists(path + "\\steam_api.dll") &&
+                //File.Exists(path + "\\steam_api.dll") &&
                 Directory.Exists(path + "\\DXP2") &&
                 Directory.Exists(path + "\\W40K") &&
                 Directory.Exists(path + "\\Engine");

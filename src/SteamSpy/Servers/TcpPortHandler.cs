@@ -24,7 +24,7 @@ namespace ThunderHawk
         readonly byte[] _buffer = new byte[65536];
 
         public delegate void ZeroHandler(TcpPortHandler handler);
-        public delegate void ExceptionHandler(Exception exception, bool send);
+        public delegate void ExceptionHandler(Exception exception, bool send, int port);
         public delegate void AcceptHandler(TcpPortHandler handler, TcpClient client, CancellationToken token);
         public delegate void DataHandler(TcpPortHandler handler, byte[] buffer, int count);
 
@@ -32,7 +32,7 @@ namespace ThunderHawk
 
         public IPEndPoint RemoteEndPoint => (IPEndPoint)_client?.Client?.RemoteEndPoint;
 
-        public TcpPortHandler(int port, DataHandler handlerDelegate, ExceptionHandler errorHandler, AcceptHandler acceptDelegate = null, ZeroHandler zeroHandler = null)
+        public TcpPortHandler(int port, DataHandler handlerDelegate, ExceptionHandler errorHandler = null, AcceptHandler acceptDelegate = null, ZeroHandler zeroHandler = null)
         {
             _port = port;
             _zeroHandlerDelegate = zeroHandler;
@@ -93,7 +93,7 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
-                _exceptionHandlerDelegate?.Invoke(ex, false);
+                _exceptionHandlerDelegate?.Invoke(ex, false, _port);
                 Logger.Error(ex);
             }
             finally
@@ -137,7 +137,7 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
-                _exceptionHandlerDelegate?.Invoke(ex, true);
+                _exceptionHandlerDelegate?.Invoke(ex, true, _port);
             }
 
             return false;
@@ -147,6 +147,9 @@ namespace ThunderHawk
         {
             try
             {
+                if (task.IsCanceled)
+                    return;
+
                 if (task.IsFaulted)
                     throw task.Exception.GetInnerException();
 
@@ -168,13 +171,16 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
-                _exceptionHandlerDelegate?.Invoke(ex, false);
+                _exceptionHandlerDelegate?.Invoke(ex, false, _port);
             }
             finally
             {
                 try
                 {
-                    _client?.GetStream()?.ReadAsync(_buffer, 0, _buffer.Length, _connectionTokenSource.Token).ContinueWith(OnReceive);
+                    var source = _connectionTokenSource;
+
+                    if (source != null)
+                        _client?.GetStream()?.ReadAsync(_buffer, 0, _buffer.Length, source.Token).ContinueWith(OnReceive);
                 }
                 catch (OperationCanceledException)
                 {
@@ -187,7 +193,7 @@ namespace ThunderHawk
                 }
                 catch (Exception ex)
                 {
-                    _exceptionHandlerDelegate?.Invoke(ex, false);
+                    _exceptionHandlerDelegate?.Invoke(ex, false, _port);
                 }
             }
         }

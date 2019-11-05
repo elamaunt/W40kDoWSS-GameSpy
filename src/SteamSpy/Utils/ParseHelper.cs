@@ -42,7 +42,7 @@ namespace ThunderHawk.Utils
             return parsedData;
         }
 
-        internal static GameServerDetails ParseDetails(string serverVars, string playerVars, string teamVars)
+        internal static GameServerDetails ParseDetails(string serverVars)
         {
             var serverVarsSplit = serverVars.Split(new string[] { "\x00" }, StringSplitOptions.None);
 

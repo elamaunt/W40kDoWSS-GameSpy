@@ -57,9 +57,7 @@ namespace ThunderHawk
             window.Show();
             MainWindow = window;
 
-            var path = Path.Combine(CoreContext.LaunchService.LauncherPath, "logs");
-
-            NLog.LogManager.Configuration = LogConfigurator.GetConfiguration(path);
+            NLog.LogManager.Configuration = LogConfigurator.GetConfiguration("logs");
 //#endif
         }
     }

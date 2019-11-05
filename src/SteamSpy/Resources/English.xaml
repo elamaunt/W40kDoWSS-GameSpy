@@ -35,9 +35,8 @@
     <system:String x:Key="HotKeysTweakTitle">Grid Keys (QWER HotKeys)</system:String>
     <system:String x:Key="HotKeysTweakDescription">You can install custom hotkeys with q,w,e,r,a,s,d,f,z,x,c,v buttons</system:String>
 
-
-
     <!-- Settings -->
     <system:String x:Key="DisableFog">Disable fog</system:String>
+    <system:String x:Key="ChangeGamePath">Change game path</system:String>
 
 </ResourceDictionary>

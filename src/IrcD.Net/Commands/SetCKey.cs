@@ -26,7 +26,6 @@ namespace IrcD.Commands
                     info.UserStats = args[2].Substring(9);
                 }
 
-
                 IrcDaemon.Replies.SendSetKeyBroadcast(info, channel, args);
             }
 

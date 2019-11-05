@@ -388,6 +388,7 @@ namespace GSMasterServer.Servers
                     var nick = GetUnicodeString(bytes, nickStart, nickEnd);
 
                     var stats = CoreContext.MasterServer.GetStatsInfo(nick);
+
                     var id = new CSteamID(stats.SteamId);
 
                     var pointStart = nickEnd + 7;

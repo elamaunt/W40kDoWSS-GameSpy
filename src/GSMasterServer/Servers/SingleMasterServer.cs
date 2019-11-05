@@ -148,6 +148,15 @@ namespace GSMasterServer.Servers
 
         void HandleStateDisconnected(NetIncomingMessage message, PeerState state)
         {
+            if (state.Connection.TryGetTarget(out NetConnection connection))
+            {
+                if (connection != message.SenderConnection)
+                {
+                    _userStates[state.SteamId] = state;
+                    return;
+                }
+            }
+
             var mes = _serverPeer.CreateMessage();
 
             mes.WriteJsonMessage(new UserDisconnectedMessage()
@@ -318,6 +327,8 @@ namespace GSMasterServer.Servers
                     Games = x.ActiveProfile?.GamesCount,
                     Wins = x.ActiveProfile?.WinsCount,
                     Race = x.ActiveProfile?.FavouriteRace,
+                    Disconnects = x.ActiveProfile?.Disconnects,
+                    Average = x.ActiveProfile?.AverageDuractionTicks,
                     Score1v1 = x.ActiveProfile?.Score1v1,
                     Score2v2 = x.ActiveProfile?.Score2v2,
                     Score3v3 = x.ActiveProfile?.Score3v3,
