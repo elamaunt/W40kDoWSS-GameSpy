@@ -15,7 +15,7 @@ namespace GSMasterServer
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-            /*args = new[] { "+db", @"test.db" };
+            args = new[] { "+db", @"test.db" };
             
             IPAddress bind = IPAddress.Any;
 
@@ -52,7 +52,7 @@ namespace GSMasterServer
                 return;
             }
             Logger.Info("Database successful initialized");
-            */
+            
             //CDKeyServer cdKeyServer = new CDKeyServer(bind, 29910);
             //ServerListReport serverListReport = new ServerListReport(bind, 27900);
             //ServerNatNeg serverNatNeg = new ServerNatNeg(bind, 27901);
@@ -64,9 +64,9 @@ namespace GSMasterServer
             //HttpServer httpServer = new HttpServer(bind, 80);
             //StatsServer statsServer = new StatsServer(bind, 29920);
 
-            //SingleMasterServer singleServer = new SingleMasterServer();
+            SingleMasterServer singleServer = new SingleMasterServer();
 
-            BotMain.StartAsync().GetAwaiter().GetResult();
+           // BotMain.StartAsync().GetAwaiter().GetResult();
 
             while (true)
                 Thread.Sleep(1000);

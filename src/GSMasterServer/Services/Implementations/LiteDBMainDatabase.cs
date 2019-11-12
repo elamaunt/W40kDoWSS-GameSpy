@@ -11,6 +11,7 @@ namespace GSMasterServer.Services.Implementations
     {
         LiteDatabase _db;
 
+        LiteCollection<GameDBO> GamesTable => _db.GetCollection<GameDBO>("GAMES");
         LiteCollection<ProfileDBO> ProfilesTable => _db.GetCollection<ProfileDBO>("USERS");
         LiteCollection<NewsDBO> NewsTable => _db.GetCollection<NewsDBO>("NEWS");
         LiteCollection<Profile1X1DBO> Profiles1X1Table => _db.GetCollection<Profile1X1DBO>("PROFILES1X1");
@@ -246,5 +247,9 @@ namespace GSMasterServer.Services.Implementations
             return ProfilesTable.Find(Query.And(Query.EQ(nameof(ProfileDBO.SteamId), new BsonValue(steamId)), Query.All(nameof(ProfileDBO.Modified), Query.Descending)), 0);
         }
 
+        public bool TryRegisterGame(ref GameDBO game)
+        {
+            return GamesTable.Upsert(game);
+        }
     }
 }

@@ -88,8 +88,18 @@ namespace GSMasterServer.Servers
                 case NetConnectionStatus.Connected:
                     {
                         var steamId = message.SenderConnection.RemoteHailMessage.PeekUInt64();
+                        bool added = false;
 
-                        HandleStateConnected(message, _userStates.GetOrAdd(steamId, ep => new PeerState(steamId, message.SenderConnection)));
+                        var state = _userStates.GetOrAdd(steamId, ep =>
+                        {
+                            added = true;
+                            return new PeerState(steamId, message.SenderConnection);
+                        });
+
+                        state.Connection.SetTarget(message.SenderConnection);
+
+                        if (added)
+                            HandleStateConnected(message, state);
                         break;
                     }
                 case NetConnectionStatus.Disconnected:
@@ -310,6 +320,301 @@ namespace GSMasterServer.Servers
         }
         
         public void HandleMessage(NetConnection connection, GameFinishedMessage message)
+        {
+            if (message.SessionId == null || message.Players.IsNullOrEmpty())
+                return;
+
+            var game = new GameDBO();
+            game.Id = message.SessionId;
+            game.IsRateGame = message.IsRateGame;
+            game.UploadedBy = connection.RemoteHailMessage.PeekUInt64();
+            game.Date = DateTime.UtcNow;
+            game.Duration = message.Duration;
+            game.Players = new PlayerData[message.Players.Length];
+
+            var playerInfos = new GamePlayerInfo[message.Players.Length];
+
+            for (int i = 0; i < message.Players.Length; i++)
+            {
+                var playerPart = message.Players[i];
+                var profile = Database.MainDBInstance.GetProfileByName(playerPart.Name);
+
+                if (profile == null)
+                    return;
+
+
+                var player = new PlayerData();
+
+                player.ProfileId = profile.Id;
+                player.Race = playerPart.Race;
+                player.FinalState = playerPart.FinalState;
+                player.Team = (byte)playerPart.Team;
+
+                playerInfos[i] = new GamePlayerInfo() 
+                {
+                    Data = player,
+                    Profile = profile,
+                    Part = playerPart,
+                    Index = i 
+                };
+
+                game.Players[i] = player;
+            }
+
+            var teams = playerInfos.GroupBy(x => x.Part.Team).ToDictionary(x => x.Key, x => x.ToArray());
+
+            GameType gameType = GameType.Unknown;
+
+            if (teams.Count == 2)
+            {
+                if (teams.All(x => x.Value.Length == 1))
+                    gameType = GameType._1v1;
+                else
+                {
+                    if (teams.All(x => x.Value.Length == 2))
+                        gameType = GameType._2v2;
+                    else
+                    {
+                        if (teams.All(x => x.Value.Length == 3))
+                            gameType = GameType._3v3_4v4;
+                        else
+                        {
+                            if (teams.All(x => x.Value.Length == 4))
+                                gameType = GameType._3v3_4v4;
+                        }
+                    }
+                }
+            }
+
+            for (int i = 0; i < game.Players.Length; i++)
+            {
+                var info = playerInfos[i];
+                info.Profile.AllInGameTicks += message.Duration;
+                var playerData = game.Players[i];
+
+                switch (gameType)
+                {
+                    case GameType.Unknown:
+                    case GameType._1v1:
+                        playerData.Rating = info.Profile.Score1v1;
+                        break;
+                    case GameType._2v2:
+                        playerData.Rating = info.Profile.Score2v2;
+                        break;
+                    case GameType._3v3_4v4:
+                        playerData.Rating = info.Profile.Score3v3;
+                        break;
+                    default:
+                        break;
+                }
+
+                switch (playerData.Race)
+                {
+                    case Race.space_marine_race:
+                        info.Profile.Smgamescount++;
+                        break;
+                    case Race.chaos_marine_race:
+                        info.Profile.Csmgamescount++;
+                        break;
+                    case Race.ork_race:
+                        info.Profile.Orkgamescount++;
+                        break;
+                    case Race.eldar_race:
+                        info.Profile.Eldargamescount++;
+                        break;
+                    case Race.guard_race:
+                        info.Profile.Iggamescount++;
+                        break;
+                    case Race.necron_race:
+                        info.Profile.Necrgamescount++;
+                        break;
+                    case Race.tau_race:
+                        info.Profile.Taugamescount++;
+                        break;
+                    case Race.dark_eldar_race:
+                        info.Profile.Degamescount++;
+                        break;
+                    case Race.sisters_race:
+                        info.Profile.Sobgamescount++;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (playerData.FinalState == PlayerFinalState.Winner)
+                {
+                    switch (playerData.Race)
+                    {
+                        case Race.space_marine_race:
+                            info.Profile.Smwincount++;
+                            break;
+                        case Race.chaos_marine_race:
+                            info.Profile.Csmwincount++;
+                            break;
+                        case Race.ork_race:
+                            info.Profile.Orkwincount++;
+                            break;
+                        case Race.eldar_race:
+                            info.Profile.Eldarwincount++;
+                            break;
+                        case Race.guard_race:
+                            info.Profile.Igwincount++;
+                            break;
+                        case Race.necron_race:
+                            info.Profile.Necrwincount++;
+                            break;
+                        case Race.tau_race:
+                            info.Profile.Tauwincount++;
+                            break;
+                        case Race.dark_eldar_race:
+                            info.Profile.Dewincount++;
+                            break;
+                        case Race.sisters_race:
+                            info.Profile.Sobwincount++;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            if (message.IsRateGame)
+            {
+                Func<ProfileDBO, long> scoreSelector = null;
+                Action<ProfileDBO, long> scoreUpdater = null;
+
+                var players1Team = teams[0];
+                var players2Team = teams[1];
+
+                var team0score = (long)players1Team.Average(x => scoreSelector(x.Profile));
+                var team1score = (long)players2Team.Average(x => scoreSelector(x.Profile));
+
+                var isFirstTeamResult = players1Team.Any(x => x.Part.FinalState == PlayerFinalState.Winner);
+                var delta = EloRating.CalculateELOdelta(team0score, team1score, isFirstTeamResult ? EloRating.GameOutcome.Win : EloRating.GameOutcome.Loss);
+
+                if (gameType == GameType._1v1)
+                {
+                    UpdateStreak(playerInfos[0]);
+                    UpdateStreak(playerInfos[1]);
+                }
+
+                for (int i = 0; i < players1Team.Length; i++)
+                {
+                    var rx = delta;
+
+                    rx = CorrectDelta(rx, team0score, team1score);
+
+                    var info = players1Team[i];
+
+                    var data = game.Players[info.Index];
+                    data.Rating = scoreSelector(info.Profile);
+                    data.RatingDelta = rx;
+
+                    var part = message.Players[info.Index];
+                    part.Rating = scoreSelector(info.Profile);
+                    part.RatingDelta = rx;
+
+                    scoreUpdater(info.Profile, Math.Max(1000L, scoreSelector(info.Profile) + rx));
+                }
+
+                for (int i = 0; i < players2Team.Length; i++)
+                {
+                    var rx = -delta;
+
+                    rx = CorrectDelta(rx, team0score, team1score);
+
+                    var info = players2Team[i];
+
+                    var data = game.Players[info.Index];
+                    data.Rating = scoreSelector(info.Profile);
+                    data.RatingDelta = rx;
+
+                    var part = message.Players[info.Index];
+                    part.Rating = scoreSelector(info.Profile);
+                    part.RatingDelta = rx;
+
+                    scoreUpdater(info.Profile, Math.Max(1000L, scoreSelector(info.Profile) + rx));
+                }
+            }
+
+            message.Type = gameType;
+            game.Type = gameType;
+
+            if (Database.MainDBInstance.TryRegisterGame(ref game))
+            {
+                for (int i = 0; i < playerInfos.Length; i++)
+                {
+                    var info = playerInfos[i];
+                    var profile = info.Profile;
+                    Database.MainDBInstance.UpdateProfileData(profile);
+                }
+
+                var mes = _serverPeer.CreateMessage();
+                mes.WriteJsonMessage(message);
+                _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableOrdered);
+
+                Logger.Trace($"Stats socket: GAME ACCEPTED " + message.SessionId);
+                //Dowstats.UploadGame(dictionary, usersGameInfos, isRateGame);
+            }
+            else
+            {
+                for (int i = 0; i < message.Players.Length; i++)
+                {
+                    var player = message.Players[i];
+                    var playerFromDbo = game.Players[i];
+
+                    player.Rating = playerFromDbo.Rating;
+                    player.RatingDelta = playerFromDbo.RatingDelta;
+                }
+
+                var mes = _serverPeer.CreateMessage();
+                mes.WriteJsonMessage(message);
+                _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+            }
+        }
+
+        long CorrectDelta(long rx, long team0score, long team1score)
+        {
+            // Correct rating delta for good players which were beaten by smurfers
+
+            if (rx > 0)
+                return rx;
+
+            if (team0score < 1100 || team1score < 1100)
+            {
+                if (rx < -15)
+                    return -15;
+            }
+
+            if (team0score < 1200 || team1score < 1200)
+            {
+                if (rx < -20)
+                    return -20;
+            }
+
+            if (team0score < 1300 || team1score < 1300)
+            {
+                if (rx < -25)
+                    return -25;
+            }
+
+            return rx;
+        }
+
+        void UpdateStreak(GamePlayerInfo info)
+        {
+            if (info.Part.FinalState == PlayerFinalState.Winner)
+            {
+                info.Profile.Current1v1Winstreak++;
+
+                if (info.Profile.Current1v1Winstreak > info.Profile.Best1v1Winstreak)
+                    info.Profile.Best1v1Winstreak = info.Profile.Current1v1Winstreak;
+            }
+            else
+                info.Profile.Current1v1Winstreak = 0;
+        }
+
+        public void HandleMessage(NetConnection connection, RequestPlayersTopMessage message)
         {
             // TODO
         }

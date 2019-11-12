@@ -1,4 +1,4 @@
-﻿namespace GSMasterServer.Data
+﻿namespace SharedServices
 {
     public enum PlayerFinalState
     {

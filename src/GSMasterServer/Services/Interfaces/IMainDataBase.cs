@@ -6,6 +6,8 @@ namespace GSMasterServer.Services
 {
     public interface IMainDataBase : IDataBase
     {
+        bool TryRegisterGame(ref GameDBO game);
+
         bool AddFriend(long toProfileId, long friendProfileId);
         void RemoveFriend(long profileId, long friendProfileId);
         IEnumerable<ProfileDBO> GetProfilesBySteamId(long steamId);

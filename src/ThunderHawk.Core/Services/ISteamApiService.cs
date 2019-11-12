@@ -1,4 +1,6 @@
-﻿namespace ThunderHawk.Core
+﻿using System;
+
+namespace ThunderHawk.Core
 {
     public interface ISteamApiService
     {
@@ -9,5 +11,8 @@
         string NickName { get; }
 
         string GetUserName(ulong steamId);
+
+        event Action<ulong> UserStateChanged;
+        event Action<ulong> UserRichPresenceChanged;
     }
 }

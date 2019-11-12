@@ -6,7 +6,7 @@
     <system:String x:Key="MainPage">Главная</system:String>
     <system:String x:Key="ChatPage">Чат</system:String>
     <system:String x:Key="TweaksPage">Модификации</system:String>
-
+    <system:String x:Key="StatsPage">Статы</system:String>
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Запустить игру</system:String>

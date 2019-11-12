@@ -1,4 +1,5 @@
 ﻿using System;
+using SharedServices;
 
 namespace ThunderHawk.Core
 {
@@ -10,16 +11,19 @@ namespace ThunderHawk.Core
 
         StatsInfo GetStatsInfo(long profileId);
         StatsInfo GetStatsInfo(string nick);
-
+        void RequestPlayersTop(int offset, int count);
         void RequestGameBroadcast(bool teamplay, string gameVariant, int maxPlayers, int players, bool ranked);
+        StatsInfo[] GetPlayersTop(int offset, int count);
         void RequestUserStats(long profileId);
         void RequestUserStats(string name);
         void SendChatMessage(string text, bool fromGame);
         void RequestUsers();
+        void SendGameFinishedInfo(GameFinishedMessage message);
 
         string ModName { get; }
         string ModVersion { get; }
         string ActiveGameVariant { get; }
+
         //ulong ActiveProfileId { get; }
         ///ulong ActiveProfileName { get; }
 
@@ -28,9 +32,11 @@ namespace ThunderHawk.Core
         event Action UsersLoaded;
         event Action<UserInfo> UserDisconnected;
         event Action<UserInfo> UserConnected;
+        event Action<UserInfo, string, string> UserNameChanged;
         event Action<UserInfo> UserChanged;
         event Action<LoginInfo> LoginInfoReceived;
-
+        event Action<StatsInfo[], long> PlayerTopLoaded;
+        
         event Action<MessageInfo> ChatMessageReceived;
         void Disconnect();
         void RequestLogout();

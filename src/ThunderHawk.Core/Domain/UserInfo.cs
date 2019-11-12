@@ -1,4 +1,5 @@
-﻿using SharedServices;
+﻿using System;
+using SharedServices;
 
 namespace ThunderHawk.Core
 {
@@ -23,7 +24,24 @@ namespace ThunderHawk.Core
             SteamId = steamId;
         }
 
-        public string UIName => Name ?? CoreContext.SteamApi.GetUserName(SteamId)?.Replace(" ", "_") ?? SteamId.ToString();
+        public string UIName => Name ?? PrepareSteamName(CoreContext.SteamApi.GetUserName(SteamId)) ?? SteamId.ToString();
 
+        public bool IsProfileActive => ActiveProfileId.HasValue && Name != null;
+
+        static string PrepareSteamName(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                return null;
+
+            return name
+                .Replace(" ", "_")
+                .Replace("!", "_")
+                .Replace("|", "_")
+                .Replace("/", "_")
+                .Replace("\\", "_")
+                .Replace(":", "_")
+                .Replace("@", "_")
+                .Replace("*", "_");
+        }
     }
 }

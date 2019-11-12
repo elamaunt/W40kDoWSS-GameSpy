@@ -18,6 +18,8 @@
         RequestUsers,
         NewProfile,
         RegisterError,
-        LoginInfo
+        LoginInfo,
+        RequestPlayersTop,
+        PlayersTop
     }
 }

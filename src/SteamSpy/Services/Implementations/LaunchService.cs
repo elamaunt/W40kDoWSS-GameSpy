@@ -44,8 +44,11 @@ namespace ThunderHawk
             {
                 ProcessManager.KillAllGameProccessesWithoutWindow();
 
+                if (!CoreContext.MasterServer.IsConnected)
+                    throw new Exception("Server is unavailable");
+
                 if (ProcessManager.GameIsRunning())
-                   throw new Exception("Game is running");
+                    throw new Exception("Game is running");
 
                 if (!PathFinder.IsPathFound())
                     throw new Exception("Path to game not found in Steam");

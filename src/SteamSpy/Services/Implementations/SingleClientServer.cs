@@ -2,6 +2,7 @@
 using GSMasterServer.Utils;
 using Http;
 using Reality.Net.GameSpy.Servers;
+using SharedServices;
 using Steamworks;
 using System;
 using System.Collections.Concurrent;
@@ -91,6 +92,9 @@ namespace ThunderHawk
             _stats = new TcpPortHandler(29920, OnStats, OnError, OnStatsAccept, OnZeroBytes);
             _http = new TcpPortHandler(80, OnHttp, OnError, null, OnZeroBytes);
 
+            CoreContext.MasterServer.UserNameChanged += OnUserNameChanged;
+            CoreContext.MasterServer.UserConnected += OnUserConnected;
+            CoreContext.MasterServer.UserDisconnected += OnUserDisconnected;
             CoreContext.MasterServer.LoginInfoReceived += SendLoginResponce;
             CoreContext.MasterServer.ChatMessageReceived += OnChatMessageReceived;
             CoreContext.MasterServer.ConnectionLost += OnServerConnectonLost;
@@ -102,6 +106,32 @@ namespace ThunderHawk
             SteamLobbyManager.TopicUpdated += OnTopicUpdated;
         }
 
+        void OnUserNameChanged(UserInfo user, string previousName, string newName)
+        {
+            SendToClientChat($":{previousName}!XaaaaaaaaX|0@127.0.0.1 PART #GPG!1 :Leaving\r\n");
+
+            if (user.IsProfileActive)
+                SendToClientChat($":{newName}!XaaaaaaaaX|{user.ActiveProfileId}@127.0.0.1 JOIN #GPG!1\r\n");
+            else
+                SendToClientChat($":{newName}!XaaaaaaaaX|0@127.0.0.1 JOIN #GPG!1\r\n");
+        }
+
+        void OnUserConnected(UserInfo user)
+        {
+            if (user.IsProfileActive)
+                SendToClientChat($":{user.UIName}!XaaaaaaaaX|{user.ActiveProfileId}@127.0.0.1 JOIN #GPG!1\r\n");
+            else
+                SendToClientChat($":{user.UIName}!XaaaaaaaaX|0@127.0.0.1 JOIN #GPG!1\r\n");
+        }
+
+        void OnUserDisconnected(UserInfo user)
+        {
+            if (user.IsProfileActive)
+                SendToClientChat($":{user.UIName}!XaaaaaaaaX|{user.ActiveProfileId}@127.0.0.1 PART #GPG!1 :Leaving\r\n");
+            else
+                SendToClientChat($":{user.UIName}!XaaaaaaaaX|0@127.0.0.1 PART #GPG!1 :Leaving\r\n");
+        }
+
         void OnStatsAccept(TcpPortHandler handler, TcpClient client, CancellationToken token)
         {
             handler.Send(XorBytes(@"\lc\1\challenge\KNDVKXFQWP\id\1\final\", XorKEY, 7));
@@ -109,10 +139,13 @@ namespace ThunderHawk
 
         void OnServerConnected()
         {
+            if (CoreContext.LaunchService.GameProcess != null)
+                Start();
         }
 
         void OnServerConnectonLost()
         {
+            Stop();
         }
 
         void OnLobbyChatMessageReceived(ulong memberId, string message)
@@ -143,11 +176,11 @@ namespace ThunderHawk
             var userValues = values[1].Split(new char[] { '!', '|', '@' });
             var nick = userValues[0];
 
-            //Bambochuk2!Xu4FpqOa9X|4@192.168.159.128 
+            SendToClientChat($":{values[1]} JOIN #GSP!whamdowfr!{_enteredLobbyHash}\r\n");
 
-            SendToClientChat($":{nick}!Xu4FpqOa9X|{userValues[2]}@192.168.159.128 JOIN #GSP!whamdowfr!{_enteredLobbyHash}\r\n");
+            /*SendToClientChat($":{nick}!Xu4FpqOa9X|{userValues[2]}@192.168.159.128 JOIN #GSP!whamdowfr!{_enteredLobbyHash}\r\n");
             SendToClientChat($":s 702 #GPG!1 #GPG!1 {nick} BCAST :\\b_flags\\s\r\n");
-            SendToClientChat($":s 702 #GSP!whamdowfr!{_enteredLobbyHash} #GSP!whamdowfr!{_enteredLobbyHash} {nick} BCAST :\\b_flags\\s\r\n");
+            SendToClientChat($":s 702 #GSP!whamdowfr!{_enteredLobbyHash} #GSP!whamdowfr!{_enteredLobbyHash} {nick} BCAST :\\b_flags\\s\r\n");*/
         }
 
         void HandleRemoteSetckeyCommand(string[] values)
@@ -532,7 +565,7 @@ namespace ThunderHawk
 
                 var gameDataString = str.Substring(gamedataIndex + 9, finalIndex - gamedataIndex - 10);
 
-                var valuesList = gameDataString.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "final", "\\", "lid" }, StringSplitOptions.RemoveEmptyEntries);
+                var valuesList = gameDataString.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "\\" }, StringSplitOptions.RemoveEmptyEntries);
 
                 var dictionary = new Dictionary<string, string>();
 
@@ -574,6 +607,26 @@ namespace ThunderHawk
                 }
 
                 var uniqueSession = uniqueGameSessionBuilder.ToString();
+
+                var players = new PlayerPart[playersCount];
+
+                for (int i = 0; i < players.Length; i++)
+                {
+                    var player = new PlayerPart();
+
+                    player.Name = dictionary["player_" + i];
+                    player.Race = (Race)Enum.Parse(typeof(Race), dictionary["PRace_" + i], true);
+                    player.Team = int.Parse(dictionary["PTeam_" + i]);
+                    player.FinalState = (PlayerFinalState)Enum.Parse(typeof(PlayerFinalState), dictionary["PFnlState_" + i]);
+                }
+
+                CoreContext.MasterServer.SendGameFinishedInfo(new GameFinishedMessage()
+                {
+                    SessionId = uniqueSession,
+                    Duration = long.Parse(dictionary["Duration"]),
+                    Players = players,
+                    IsRateGame = dictionary["Ladder"] == "1"
+                });
 
                 /*if (!HandledGamesCache.Add(uniqueSession, uniqueSession, new CacheItemPolicy() { SlidingExpiration = TimeSpan.FromDays(1) }))
                 {
@@ -1061,16 +1114,15 @@ namespace ThunderHawk
             var channelName = values[1];
 
             //GETCKEY #GPG!1 * 000 0 :\\username\\b_flags
+            var id = values[3];
+            var keysString = values[5];
+
+            var keys = keysString.Split(':', '\\');
+            var builder = new StringBuilder();
 
             if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
             {
                 //var roomHash = channelName.Split('!')[2];
-
-                var id = values[3];
-                var keysString = values[5];
-
-                var keys = keysString.Split(':', '\\');
-                var builder = new StringBuilder();
 
                 if (!SteamLobbyManager.IsInLobbyNow)
                 {
@@ -1123,6 +1175,42 @@ namespace ThunderHawk
                 }
 
                 SendToClientChat($":s 703 {_name} {channelName} {id} :End of GETCKEY\r\n");
+            }
+            else
+            {
+                if (channelName.StartsWith("#GPG", StringComparison.OrdinalIgnoreCase))
+                {
+                    var users = CoreContext.MasterServer.GetAllUsers();
+
+                    for (int i = 0; i < users.Length; i++)
+                    {
+                        var user = users[i];
+                        builder.Clear();
+
+                        for (int k = 0; k < keys.Length; k++)
+                        {
+                            var key = keys[k];
+
+                            if (string.IsNullOrWhiteSpace(key))
+                                continue;
+
+                            string value = string.Empty;
+
+                            if (key == "username")
+                                value = $"XaaaaaaaaX|{user.ActiveProfileId ?? 0}";
+                            if (key == "b_stats")
+                                value = $"{user.ActiveProfileId ?? 0}|{user.Score1v1 ?? 1000}|{0}";
+                            if (key == "b_flags")
+                                value = "s";
+
+                            builder.Append(@"\" + value);
+                        }
+
+                        SendToClientChat($":s 702 {_name} {channelName} {id} :{builder}\r\n");
+                    }
+
+                    SendToClientChat($":s 703 {_name} {channelName} {id} :End of GETCKEY\r\n");
+                }
             }
         }
 

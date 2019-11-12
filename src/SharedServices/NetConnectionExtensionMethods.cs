@@ -222,6 +222,29 @@ namespace SharedServices
             self.Write((byte)type);
             self.Write(json);
         }
+        public static void WriteJsonMessage(this NetOutgoingMessage self, RequestPlayersTopMessage message)
+        {
+            var json = JsonConvert.SerializeObject(message, Settings);
+            var type = MessageTypes.RequestPlayersTop;
+
+            if (Debugger.IsAttached)
+                Console.WriteLine($"SEND {type}: {json}");
+
+            self.Write((byte)type);
+            self.Write(json);
+        }
+
+        public static void WriteJsonMessage(this NetOutgoingMessage self, PlayersTopMessage message)
+        {
+            var json = JsonConvert.SerializeObject(message, Settings);
+            var type = MessageTypes.PlayersTop;
+
+            if (Debugger.IsAttached)
+                Console.WriteLine($"SEND {type}: {json}");
+
+            self.Write((byte)type);
+            self.Write(json);
+        }
 
         public static void ReadJsonMessage(this NetIncomingMessage self, IClientMessagesHandler handler)
         {
@@ -241,6 +264,7 @@ namespace SharedServices
                 case MessageTypes.Logout: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LogoutMessage>(json, Settings)); break;
                 case MessageTypes.GameFinished: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<GameFinishedMessage>(json, Settings)); break;
                 case MessageTypes.RequestUsers: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestUsersMessage>(json, Settings)); break;
+                case MessageTypes.RequestPlayersTop: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestPlayersTopMessage>(json, Settings)); break;
                 default:
                     break;
             }
@@ -268,6 +292,7 @@ namespace SharedServices
                 case MessageTypes.GameBroadcast: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<GameBroadcastMessage>(json, Settings)); break;
                 case MessageTypes.UserStatsChanged: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<UserStatsChangedMessage>(json, Settings)); break;
                 case MessageTypes.UserStats: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<UserStatsMessage>(json, Settings)); break;
+                case MessageTypes.PlayersTop: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<PlayersTopMessage>(json, Settings)); break;
                 default:
                     break;
             }

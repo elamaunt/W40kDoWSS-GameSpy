@@ -16,6 +16,7 @@ namespace SharedServices
         void HandleMessage(NetConnection connection, NewProfileMessage message);
         void HandleMessage(NetConnection connection, RegisterErrorMessage message);
         void HandleMessage(NetConnection connection, LoginInfoMessage message);
+        void HandleMessage(NetConnection senderConnection, PlayersTopMessage playersTopMessage);
         //void HandleMessage(NetConnection connection, GameFinishedMessage message);
     }
 }

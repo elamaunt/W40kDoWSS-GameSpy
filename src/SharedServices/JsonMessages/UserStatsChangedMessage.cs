@@ -8,6 +8,6 @@
 
         public int Delta { get; set; }
         public int CurrentScore { get; set; }
-        public RatingGameType GameType { get; set; }
+        public GameType GameType { get; set; }
     }
 }

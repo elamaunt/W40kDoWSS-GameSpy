@@ -30,6 +30,7 @@ namespace ThunderHawk
 
         public event Action UsersLoaded;
         public event Action<UserInfo> UserDisconnected;
+        public event Action<UserInfo, string, string> UserNameChanged;
         public event Action<UserInfo> UserConnected;
         public event Action<UserInfo> UserChanged;
 
@@ -38,6 +39,9 @@ namespace ThunderHawk
         public event Action ConnectionLost;
         public event Action Connected;
         public event Action<LoginInfo> LoginInfoReceived;
+        public event Action<StatsInfo[], long> PlayerTopLoaded;
+
+        StatsInfo[] _currentLoadedLadderTop = new StatsInfo[0];
 
         public string ModName => _hailMessage?.ModName;
         public string ModVersion => _hailMessage?.ModVersion;
@@ -200,6 +204,31 @@ namespace ThunderHawk
             // TODO
         }
 
+        public void RequestPlayersTop(int offset, int count)
+        {
+            var message = _clientPeer.CreateMessage();
+            message.WriteJsonMessage(new RequestPlayersTopMessage());
+            _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        public StatsInfo[] GetPlayersTop(int offset, int count)
+        {
+            if (_currentLoadedLadderTop.Length < offset)
+                return new StatsInfo[0];
+
+            if (_currentLoadedLadderTop.Length < offset + count)
+                count = _currentLoadedLadderTop.Length - offset;
+
+            return new ArraySegment<StatsInfo>(_currentLoadedLadderTop, offset, count).ToArray();
+        }
+
+        public void SendGameFinishedInfo(GameFinishedMessage message)
+        {
+            var mes = _clientPeer.CreateMessage();
+            mes.WriteJsonMessage(message);
+            _clientPeer.SendMessage(mes, NetDeliveryMethod.ReliableUnordered);
+        }
+
         void HandleStateDisconnected(NetIncomingMessage message)
         {
             IsConnected = false;
@@ -290,6 +319,7 @@ namespace ThunderHawk
                     GamesCount = user.Games.Value,
                     AverageDuration = user.Average.Value,
                     Disconnects = user.Disconnects.Value,
+                    Best1v1Winstreak = user.Best1v1Winstreak.Value,
                     FavouriteRace = user.Race.Value,
                     Name = user.Name,
                     SteamId = user.SteamId
@@ -303,6 +333,7 @@ namespace ThunderHawk
                     stats.AverageDuration = user.Average.Value;
                     stats.Disconnects = user.Disconnects.Value;
                     stats.FavouriteRace = user.Race.Value;
+                    stats.Best1v1Winstreak = user.Best1v1Winstreak.Value;
                     stats.Name = user.Name;
                     stats.SteamId = user.SteamId;
                     return stats;
@@ -325,6 +356,7 @@ namespace ThunderHawk
                     GamesCount = message.Games.Value,
                     AverageDuration = message.Average.Value,
                     Disconnects = message.Disconnects.Value,
+                    Best1v1Winstreak = message.Best1v1Winstreak.Value,
                     FavouriteRace = message.Race.Value,
                     Name = message.Name,
                     SteamId = message.SteamId
@@ -338,6 +370,7 @@ namespace ThunderHawk
                     stats.AverageDuration = message.Average.Value;
                     stats.Disconnects = message.Disconnects.Value;
                     stats.FavouriteRace = message.Race.Value;
+                    stats.Best1v1Winstreak = message.Best1v1Winstreak.Value;
                     stats.Name = message.Name;
                     stats.SteamId = message.SteamId;
                     return stats;
@@ -346,6 +379,8 @@ namespace ThunderHawk
 
             if (_users.TryGetValue(message.SteamId, out UserInfo user))
             {
+                var previousName = user.UIName;
+
                 user.Name = message.Name;
                 user.ActiveProfileId = message.ActiveProfileId;
                 user.Best1v1Winstreak = message.Best1v1Winstreak;
@@ -353,9 +388,11 @@ namespace ThunderHawk
                 user.Wins = message.Wins;
                 user.Score1v1 = message.Score1v1;
                 user.Score2v2 = message.Score2v2;
+                user.Score3v3 = message.Score3v3;
                 user.Race = message.Race;
 
                 UserChanged?.Invoke(user);
+                UserNameChanged?.Invoke(user, previousName, user.UIName);
             }
         }
 
@@ -386,15 +423,15 @@ namespace ThunderHawk
             {
                 switch (message.GameType)
                 {
-                    case RatingGameType.Unknown:
+                    case GameType.Unknown:
                         break;
-                    case RatingGameType.Rating1v1:
+                    case GameType._1v1:
                         stats.Score1v1 = message.CurrentScore;
                         break;
-                    case RatingGameType.Rating2v2:
+                    case GameType._2v2:
                         stats.Score2v2 = message.CurrentScore;
                         break;
-                    case RatingGameType.Rating3v3_4v4:
+                    case GameType._3v3_4v4:
                         stats.Score3v3_4v4 = message.CurrentScore;
                         break;
                     default:
@@ -532,6 +569,41 @@ namespace ThunderHawk
 
             LoginInfoReceived?.Invoke(info);
 
+        }
+
+        public void HandleMessage(NetConnection connection, PlayersTopMessage message)
+        {
+            if (message.Offset + message.Count > _currentLoadedLadderTop.Length)
+                Array.Resize(ref _currentLoadedLadderTop, message.Offset + message.Count);
+
+            for (int i = 0; i < message.Count; i++)
+            {
+                if (i < message.Stats.Length)
+                    _currentLoadedLadderTop[i + message.Offset] = ToStatsInfo(message.Stats[i]);
+                else
+                    _currentLoadedLadderTop[i + message.Offset] = null;
+            }
+        }
+
+        StatsInfo ToStatsInfo(UserStatsMessage message)
+        {
+            var stats = new StatsInfo(message.ProfileId)
+            {
+                SteamId = message.SteamId,
+                Name = message.Name,
+                Modified = message.Modified,
+                AverageDuration = message.AverageDuration,
+                Disconnects = message.Disconnects,
+                Best1v1Winstreak = message.Best1v1Winstreak,
+                FavouriteRace = message.FavouriteRace,
+                GamesCount = message.GamesCount,
+                WinsCount = message.WinsCount,
+                Score1v1 = message.Score1v1,
+                Score2v2 = message.Score2v2,
+                Score3v3_4v4 = message.Score3v3_4v4
+            };
+
+            return _stats[message.ProfileId] = stats;
         }
     }
 }

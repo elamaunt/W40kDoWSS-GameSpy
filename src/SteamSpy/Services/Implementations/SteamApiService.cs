@@ -12,6 +12,28 @@ namespace ThunderHawk
 
         AppId_t AppId = AppId_t.Invalid;
 
+        readonly Callback<PersonaStateChange_t> _personaStateChangeCallback;
+        readonly Callback<FriendRichPresenceUpdate_t> _richPresenceUpdateCallback;
+
+        public event Action<ulong> UserStateChanged;
+        public event Action<ulong> UserRichPresenceChanged;
+
+        public SteamApiService()
+        {
+            _personaStateChangeCallback = Callback<PersonaStateChange_t>.Create(OnPersonaStateChange);
+            _richPresenceUpdateCallback = Callback<FriendRichPresenceUpdate_t>.Create(OnFriendRichPresenceChanged);
+        }
+
+        void OnPersonaStateChange(PersonaStateChange_t param)
+        {
+            UserStateChanged?.Invoke(param.m_ulSteamID);
+        }
+
+        void OnFriendRichPresenceChanged(FriendRichPresenceUpdate_t param)
+        {
+            UserRichPresenceChanged?.Invoke(param.m_steamIDFriend.m_SteamID);
+        }
+
         public void Initialize()
         {
             if (!SteamAPI.Init())
@@ -24,7 +46,10 @@ namespace ThunderHawk
 
         public string GetUserName(ulong steamId)
         {
-            return SteamFriends.GetFriendPersonaName(new CSteamID(steamId));
+            var id = new CSteamID(steamId);
+            SteamFriends.RequestFriendRichPresence(id);
+            SteamFriends.RequestUserInformation(id, true);
+            return SteamFriends.GetFriendPersonaName(id);
         }
     }
 }

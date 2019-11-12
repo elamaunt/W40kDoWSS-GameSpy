@@ -42,6 +42,7 @@
     <Compile Remove="Servers\ServerListReport.cs" />
     <Compile Remove="Servers\ServerListRetrieve.cs" />
     <Compile Remove="Servers\ServerSteamIdsRetrieve.cs" />
+    <Compile Remove="Servers\StatsServer.cs" />
     <Compile Remove="Services\Implementations\SQLiteUsersDatabase.cs" />
     <Compile Remove="Utils\DynamicLinq.cs" />
   </ItemGroup>

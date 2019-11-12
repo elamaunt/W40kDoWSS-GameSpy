@@ -7,7 +7,8 @@
     <system:String x:Key="MainPage">Main</system:String>
     <system:String x:Key="ChatPage">Chat</system:String>
     <system:String x:Key="TweaksPage">Features</system:String>
-
+    <system:String x:Key="StatsPage">Stats</system:String>
+    
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Launch game</system:String>
     <system:String x:Key="FoundErrors">There are some recommendations for you!</system:String>
