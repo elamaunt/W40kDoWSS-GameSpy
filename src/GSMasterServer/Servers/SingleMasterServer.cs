@@ -2,6 +2,7 @@
 using GSMasterServer.Utils;
 using IrcNet.Tools;
 using Lidgren.Network;
+using Newtonsoft.Json;
 using SharedServices;
 using System;
 using System.Collections.Concurrent;
@@ -16,6 +17,8 @@ namespace GSMasterServer.Servers
         readonly ConcurrentDictionary<ulong, PeerState> _userStates = new ConcurrentDictionary<ulong, PeerState>();
 
         readonly NetServer _serverPeer;
+        string _lastPlayersTopJson;
+        DateTime _lastTopCalculationTime;
 
         public SingleMasterServer()
         {
@@ -241,7 +244,9 @@ namespace GSMasterServer.Servers
                 Score1v1 = profile.Score1v1,
                 Score2v2 = profile.Score2v2,
                 Score3v3_4v4 = profile.Score3v3,
-                SteamId = profile.SteamId
+                SteamId = profile.SteamId,
+                Modified = profile.Modified,
+                Best1v1Winstreak = profile.Best1v1Winstreak
             };
 
             var mes = _serverPeer.CreateMessage();
@@ -328,7 +333,7 @@ namespace GSMasterServer.Servers
             game.Id = message.SessionId;
             game.IsRateGame = message.IsRateGame;
             game.UploadedBy = connection.RemoteHailMessage.PeekUInt64();
-            game.Date = DateTime.UtcNow;
+            game.UploadedDate = DateTime.UtcNow;
             game.Duration = message.Duration;
             game.Players = new PlayerData[message.Players.Length];
 
@@ -616,7 +621,37 @@ namespace GSMasterServer.Servers
 
         public void HandleMessage(NetConnection connection, RequestPlayersTopMessage message)
         {
-            // TODO
+            if (_lastPlayersTopJson == null || (DateTime.Now - _lastTopCalculationTime).TotalMinutes > 5)
+            {
+                _lastTopCalculationTime = DateTime.Now;
+                var top = Database.MainDBInstance.Load1v1Top10();
+
+                _lastPlayersTopJson = JsonConvert.SerializeObject(new PlayersTopMessage()
+                {
+                    Stats = top.Select(x => new UserStatsMessage()
+                    {
+                        ProfileId = x.Id,
+                        Name = x.Name,
+                        AverageDuration = x.AverageDuractionTicks,
+                        Disconnects = x.Disconnects,
+                        FavouriteRace = x.FavouriteRace,
+                        WinsCount = x.WinsCount,
+                        GamesCount = x.GamesCount,
+                        Score1v1 = x.Score1v1,
+                        Score2v2 = x.Score2v2,
+                        Score3v3_4v4 = x.Score3v3,
+                        SteamId = x.SteamId,
+                        Modified = x.Modified,
+                        Best1v1Winstreak = x.Best1v1Winstreak
+                    }).ToArray(),
+                    Offset = message.Offset,
+                    Count = message.Count
+                });
+            }
+
+            var mes = _serverPeer.CreateMessage();
+            mes.WritePlayersTopJsonMessage(_lastPlayersTopJson);
+            _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
         }
 
         public void HandleMessage(NetConnection connection, RequestUsersMessage message)
@@ -644,6 +679,11 @@ namespace GSMasterServer.Servers
             });
 
             _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void HandleMessage(NetConnection senderConnection, RequestLastGamesMessage requestLastGamesMessage)
+        {
+            var games = Database.MainDBInstance.GetLastGames();
         }
     }
 }

@@ -1,11 +1,14 @@
-﻿namespace ThunderHawk.Core
+﻿using SharedServices;
+
+namespace ThunderHawk.Core
 {
     public class GameInfo
     {
-        public bool Teamplay { get; set; }
-        public bool Ranked { get; set; }
-        public string GameVariant { get; set; }
-        public int MaxPlayers { get; set; }
-        public int Players { get; set; }
+        public string ModName { get; set; }
+        public string ModVersion { get; set; }
+        public bool IsRateGame { get; set; }
+        public GameType Type { get; set; }
+        public PlayerInfo[] Players { get; set; }
+        public string SessionId { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using Lidgren.Network;
 using SharedServices;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -24,9 +25,15 @@ namespace ThunderHawk
         readonly ConcurrentDictionary<ulong, UserInfo> _users = new ConcurrentDictionary<ulong, UserInfo>();
         readonly ConcurrentDictionary<long, StatsInfo> _stats = new ConcurrentDictionary<long, StatsInfo>();
 
+        readonly LinkedList<GameInfo> _lastGames = new LinkedList<GameInfo>();
+
+        public GameInfo[] LastGames => _lastGames.ToArray();
+
         Timer _reconnectTimer;
 
         public bool IsConnected { get; private set; }
+        public bool IsLastGamesLoaded { get; private set; }
+        public bool IsPlayersTopLoaded { get; private set; }
 
         public event Action UsersLoaded;
         public event Action<UserInfo> UserDisconnected;
@@ -34,14 +41,18 @@ namespace ThunderHawk
         public event Action<UserInfo> UserConnected;
         public event Action<UserInfo> UserChanged;
 
-        public event Action<GameInfo> GameBroadcastReceived;
+        public event Action<GameHostInfo> GameBroadcastReceived;
         public event Action<MessageInfo> ChatMessageReceived;
         public event Action ConnectionLost;
         public event Action Connected;
         public event Action<LoginInfo> LoginInfoReceived;
-        public event Action<StatsInfo[], long> PlayerTopLoaded;
+        public event Action<StatsInfo[], int, int> PlayersTopLoaded;
+        public event Action<GameInfo[]> LastGamesLoaded;
+        public event Action<GameInfo> NewGameReceived;
+
 
         StatsInfo[] _currentLoadedLadderTop = new StatsInfo[0];
+        public StatsInfo[] PlayersTop => _currentLoadedLadderTop;
 
         public string ModName => _hailMessage?.ModName;
         public string ModVersion => _hailMessage?.ModVersion;
@@ -207,7 +218,14 @@ namespace ThunderHawk
         public void RequestPlayersTop(int offset, int count)
         {
             var message = _clientPeer.CreateMessage();
-            message.WriteJsonMessage(new RequestPlayersTopMessage());
+            message.WriteJsonMessage(new RequestPlayersTopMessage() { Offset = offset, Count = count });
+            _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        public void RequestLastGames()
+        {
+            var message = _clientPeer.CreateMessage();
+            message.WriteJsonMessage(new RequestLastGamesMessage());
             _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
         }
 
@@ -407,7 +425,7 @@ namespace ThunderHawk
 
         public void HandleMessage(NetConnection connection, GameBroadcastMessage message)
         {
-            GameBroadcastReceived?.Invoke(new GameInfo()
+            GameBroadcastReceived?.Invoke(new GameHostInfo()
             {
                 Teamplay = message.Teamplay,
                 Ranked = message.Ranked,
@@ -583,6 +601,9 @@ namespace ThunderHawk
                 else
                     _currentLoadedLadderTop[i + message.Offset] = null;
             }
+
+            IsPlayersTopLoaded = true;
+            PlayersTopLoaded?.Invoke(_currentLoadedLadderTop, message.Offset, message.Count);
         }
 
         StatsInfo ToStatsInfo(UserStatsMessage message)
@@ -604,6 +625,36 @@ namespace ThunderHawk
             };
 
             return _stats[message.ProfileId] = stats;
+        }
+
+        public void HandleMessage(NetConnection senderConnection, LastGamesMessage lastGamesMessage)
+        {
+            for (int i = lastGamesMessage.Games.Length - 1; i >= 0; i--)
+            {
+                var game = lastGamesMessage.Games[i];
+
+                _lastGames.AddFirst(new GameInfo()
+                {
+                    SessionId = game.SessionId,
+                    ModName = game.ModName,
+                    ModVersion = game.ModVersion,
+                    IsRateGame = game.IsRateGame,
+                    Type = game.Type,
+
+                    Players = game.Players.Select(x => new PlayerInfo()
+                    {
+                        Name  = x.Name,
+                        Team = x.Team,
+                        Race = x.Race,
+                        FinalState = x.FinalState,
+                        Rating = x.Rating,
+                        RatingDelta = x.RatingDelta
+                    }).ToArray()
+                });
+            }
+
+            IsLastGamesLoaded = true;
+            LastGamesLoaded?.Invoke(_lastGames.ToArray());
         }
     }
 }

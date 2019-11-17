@@ -9,16 +9,15 @@
 
         <TextBlock framework:WPFBinder.Frame="Rating"  Margin="10 8 0 30" Foreground="Green" />
 
-        <ListView Margin="0 32 0 30"
+        <ListView Margin="40 32 440 30"
                   ClipToBounds="False"
-                  Background="Transparent"
+                  Background="#55000000"
                   BorderThickness="0" 
                   HorizontalContentAlignment="Left"
-                  Width="200"
                   Padding="0 2 0 0"
                   VerticalAlignment="Stretch"
                   VerticalContentAlignment="Stretch"
-                  HorizontalAlignment="Left"
+                  HorizontalAlignment="Stretch"
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                   ScrollViewer.PanningMode="VerticalOnly"
                   framework:WPFBinder.Frame="LastGames">
@@ -37,16 +36,16 @@
             </ListView.ItemContainerStyle>
         </ListView>
 
-        <ListView Margin="200 32 0 30"
+        <ListView Margin="0 32 40 30"
                   ClipToBounds="False"
-                  Background="Transparent"
+                  Background="#55000000"
                   BorderThickness="0" 
                   HorizontalContentAlignment="Left"
-                  Width="200"
+                  Width="360"
                   Padding="0 2 0 0"
                   VerticalAlignment="Stretch"
                   VerticalContentAlignment="Stretch"
-                  HorizontalAlignment="Left"
+                  HorizontalAlignment="Right"
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                   ScrollViewer.PanningMode="VerticalOnly"
                   framework:WPFBinder.Frame="Top10Players">

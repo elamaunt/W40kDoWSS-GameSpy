@@ -1,5 +1,4 @@
 using GSMasterServer.Data;
-using GSMasterServer.Servers;
 using IrcNet.Tools;
 using SharedServices;
 using System;
@@ -35,7 +34,7 @@ namespace GSMasterServer.Utils
         }
 
         
-        public static void UploadGame(Dictionary<string, string> gameInfo, GameUserInfo[] gameUserInfo, bool isRateGame)
+        public static void UploadGame(Dictionary<string, string> gameInfo, GamePlayerInfo[] gameUserInfo, bool isRateGame)
         {
 
             var updateRequestBuilder = new UriBuilder(DowstatsUploadGameUrl);
@@ -53,7 +52,7 @@ namespace GSMasterServer.Utils
                 parameters["mmr1x1p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score1v1.ToString();
                 parameters["mmr2x2p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score2v2.ToString();
                 parameters["mmr3x3p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score3v3.ToString();
-                switch (gameUserInfo[i].Race)
+                switch (gameUserInfo[i].Part.Race)
                 {
                     case Race.space_marine_race:
                         parameters["r" + dowStatsPIndex] = "1";
@@ -83,8 +82,8 @@ namespace GSMasterServer.Utils
                         parameters["r" + dowStatsPIndex] = "8";
                         break;
                 }
-
-                if (gameUserInfo[i].FinalState == PlayerFinalState.Winner)
+                
+                if (gameUserInfo[i].Part.FinalState == PlayerFinalState.Winner)
                 {
                     winCounter++;
                     parameters["w" + winCounter] = (i + 1).ToString();
@@ -118,8 +117,8 @@ namespace GSMasterServer.Utils
                 UpdateDetailStats(
                     gameUserInfo[i].Profile.Id, 
                     Int32.Parse(gameType), 
-                    gameUserInfo[i].Race, 
-                    gameUserInfo[i].FinalState == PlayerFinalState.Winner,
+                    gameUserInfo[i].Part.Race, 
+                    gameUserInfo[i].Part.FinalState == PlayerFinalState.Winner,
                     isRateGame);
             }
             

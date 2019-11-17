@@ -38,5 +38,6 @@ namespace GSMasterServer.Services
         void UpdateProfile4X4(Profile4X4DBO profile);
 
         NewsDBO[] GetLastNews(int count);
+        GameDBO[] GetLastGames();
     }
 }

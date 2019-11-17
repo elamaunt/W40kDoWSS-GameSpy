@@ -1,5 +1,4 @@
-﻿using System;
-using SharedServices;
+﻿using SharedServices;
 
 namespace ThunderHawk.Core
 {

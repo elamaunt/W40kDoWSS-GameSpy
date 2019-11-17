@@ -13,5 +13,6 @@ namespace SharedServices
         void HandleMessage(NetConnection connection, GameFinishedMessage message);
         void HandleMessage(NetConnection connection, RequestUsersMessage message);
         void HandleMessage(NetConnection senderConnection, RequestPlayersTopMessage requestPlayersTopMessage);
+        void HandleMessage(NetConnection senderConnection, RequestLastGamesMessage requestLastGamesMessage);
     }
 }

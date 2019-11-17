@@ -234,6 +234,17 @@ namespace SharedServices
             self.Write(json);
         }
 
+        public static void WritePlayersTopJsonMessage(this NetOutgoingMessage self, string jsonMessage)
+        {
+            var type = MessageTypes.PlayersTop;
+
+            if (Debugger.IsAttached)
+                Console.WriteLine($"SEND {type}: {jsonMessage}");
+
+            self.Write((byte)type);
+            self.Write(jsonMessage);
+        }
+
         public static void WriteJsonMessage(this NetOutgoingMessage self, PlayersTopMessage message)
         {
             var json = JsonConvert.SerializeObject(message, Settings);
@@ -245,6 +256,18 @@ namespace SharedServices
             self.Write((byte)type);
             self.Write(json);
         }
+
+        public static void WriteJsonMessage(this NetOutgoingMessage self, RequestLastGamesMessage message)
+        {
+            var json = JsonConvert.SerializeObject(message, Settings);
+            var type = MessageTypes.RequestLastGames;
+            if (Debugger.IsAttached)
+                Console.WriteLine($"SEND {type}: {json}");
+
+            self.Write((byte)type);
+            self.Write(json);
+        }
+        
 
         public static void ReadJsonMessage(this NetIncomingMessage self, IClientMessagesHandler handler)
         {
@@ -265,6 +288,7 @@ namespace SharedServices
                 case MessageTypes.GameFinished: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<GameFinishedMessage>(json, Settings)); break;
                 case MessageTypes.RequestUsers: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestUsersMessage>(json, Settings)); break;
                 case MessageTypes.RequestPlayersTop: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestPlayersTopMessage>(json, Settings)); break;
+                case MessageTypes.RequestLastGames: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestLastGamesMessage>(json, Settings)); break;
                 default:
                     break;
             }
@@ -293,6 +317,7 @@ namespace SharedServices
                 case MessageTypes.UserStatsChanged: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<UserStatsChangedMessage>(json, Settings)); break;
                 case MessageTypes.UserStats: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<UserStatsMessage>(json, Settings)); break;
                 case MessageTypes.PlayersTop: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<PlayersTopMessage>(json, Settings)); break;
+                case MessageTypes.LastGames: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LastGamesMessage>(json, Settings)); break;
                 default:
                     break;
             }

@@ -9,11 +9,11 @@
              HorizontalAlignment="Stretch"
              mc:Ignorable="d">
 
-    <Grid>
+    <Grid Background="#33000000">
         <StackPanel Orientation="Vertical" UseLayoutRounding="True">
             <TextBox   Background="Transparent"
                        BorderThickness="0"
-                       framework:WPFBinder.Frame="Name"
+                       framework:WPFBinder.Frame="Type"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -23,7 +23,35 @@
                        FontSize="14"
                        Foreground="#75f4ff">
             </TextBox>
-           
+
+            <StackPanel Orientation="Horizontal">
+                <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player0.Name"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#75f4ff">
+                </TextBox>
+                <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player1.Name"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#75f4ff">
+                </TextBox>
+                
+            </StackPanel>
+            
         </StackPanel>
     </Grid>
 </framework:BindableControl>

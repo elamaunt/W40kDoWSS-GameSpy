@@ -10,20 +10,46 @@
              mc:Ignorable="d">
 
     <Grid>
-        <StackPanel Orientation="Vertical" UseLayoutRounding="True">
+        <StackPanel Orientation="Horizontal" UseLayoutRounding="True">
             <TextBox   Background="Transparent"
                        BorderThickness="0"
-                       framework:WPFBinder.Frame="Name"
+                       framework:WPFBinder.Frame="Index"
                        HorizontalAlignment="Left"
-                       MaxWidth="200"
+                       Width="26"
                        MaxLines="1"
                        TextWrapping="NoWrap"
                        Margin="10 1 10 1"     
                        IsReadOnly="True"
                        FontSize="14"
-                       Foreground="#75f4ff">
+                       Foreground="#ffffff">
             </TextBox>
-           
+
+            <TextBox   Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Name"
+                       HorizontalAlignment="Left"
+                       Width="200"
+                       MaxLines="1"
+                       FontWeight="DemiBold"
+                       TextWrapping="NoWrap"
+                       Margin="0 1 0 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#ffffff"/>
+
+            <TextBox   Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Rating"
+                       HorizontalAlignment="Left"
+                       Width="50"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="16"
+                       Foreground="#ffffff"/>
+
+
         </StackPanel>
     </Grid>
 </framework:BindableControl>

@@ -9,9 +9,6 @@
              d:DesignHeight="400" d:DesignWidth="400">
 
     <Grid Margin="0 20 0 20" Width="760">
-        <Grid.Background>
-            <SolidColorBrush Color="Black" Opacity="0.6"></SolidColorBrush>
-        </Grid.Background>
         <StackPanel HorizontalAlignment="Center" Width="700"
                     Orientation="Vertical" Margin="0 10 0 10">
             <TextBlock Margin="0 10 0 0" Text="{DynamicResource TweaksPageHeader}" HorizontalAlignment="Center" Style="{DynamicResource ExtraBigTextStyle}"></TextBlock>

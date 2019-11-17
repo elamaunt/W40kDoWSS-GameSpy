@@ -30,6 +30,13 @@ namespace GSMasterServer.Services.Implementations
             _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.SteamId));
             _db.Engine.EnsureIndex("USERS", nameof(ProfileDBO.Modified));
 
+            _db.Engine.EnsureIndex("GAMES", nameof(GameDBO.UploadedDate), false);
+            _db.Engine.EnsureIndex("GAMES", nameof(GameDBO.ModName), false);
+            _db.Engine.EnsureIndex("GAMES", nameof(GameDBO.ModVersion), false);
+            _db.Engine.EnsureIndex("GAMES", nameof(GameDBO.Type), false);
+            _db.Engine.EnsureIndex("GAMES", nameof(GameDBO.UploadedBy), false);
+            _db.Engine.EnsureIndex("GAMES", nameof(GameDBO.Duration), false);
+
             _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.Author), true);
             _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.CreatedDate), true);
             _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.EditedDate), true);
@@ -236,11 +243,17 @@ namespace GSMasterServer.Services.Implementations
             Profiles4X4Table.Update(profile4X4);
         }
 
-
         public NewsDBO[] GetLastNews(int count)
         {
             return NewsTable.Find(Query.All(nameof(NewsDBO.CreatedDate), Query.Descending), 0, count).ToArray();
         }
+
+        public GameDBO[] GetLastGames()
+        {
+            return GamesTable.Find(Query.All(nameof(GameDBO.UploadedDate), Query.Descending), 0, 10).ToArray();
+
+        }
+
 
         public IEnumerable<ProfileDBO> GetProfilesBySteamId(long steamId)
         {
@@ -249,6 +262,14 @@ namespace GSMasterServer.Services.Implementations
 
         public bool TryRegisterGame(ref GameDBO game)
         {
+            var gameInDb = GamesTable.FindById(new BsonValue(game.Id));
+
+            if (gameInDb != null)
+            {
+                game = gameInDb;
+                return false;
+            }
+
             return GamesTable.Upsert(game);
         }
     }

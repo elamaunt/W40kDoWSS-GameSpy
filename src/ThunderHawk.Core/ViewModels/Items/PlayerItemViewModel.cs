@@ -4,6 +4,7 @@ namespace ThunderHawk.Core
 {
     public class PlayerItemViewModel : ItemViewModel
     {
+        public TextFrame Index { get; } = new TextFrame();
         public TextFrame Name { get; } = new TextFrame();
         public TextFrame Rating { get; } = new TextFrame();
         public TextFrame Race { get; } = new TextFrame();
@@ -13,9 +14,16 @@ namespace ThunderHawk.Core
         public TextFrame AverageDuration { get; } = new TextFrame();
 
         public StatsInfo StatsInfo { get; }
-        public PlayerItemViewModel(StatsInfo statsInfo)
+        public PlayerItemViewModel(StatsInfo stats, int index)
         {
-            StatsInfo = statsInfo;
+            Index.Text = index.ToString();
+            StatsInfo = stats;
+
+            Name.Text = stats.Name;
+            Rating.Text = stats.Score1v1.ToString();
+            Race.Text = stats.FavouriteRace.ToString();
+            Games.Text = stats.GamesCount.ToString();
+            Wins.Text = stats.WinsCount.ToString();
         }
     }
 }

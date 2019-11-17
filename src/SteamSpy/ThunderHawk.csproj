@@ -642,6 +642,8 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Resource Include="Images\MapContest.png" />
+    <Resource Include="Images\Background_Stats.jpg" />
+    <Resource Include="Images\Background_Tweaks.jpg" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

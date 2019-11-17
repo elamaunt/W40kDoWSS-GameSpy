@@ -7,12 +7,16 @@ namespace ThunderHawk.Core
     {
         void Connect(ulong steamId);
         bool IsConnected { get; }
+
+        bool IsLastGamesLoaded { get; }
+        bool IsPlayersTopLoaded { get; }
         UserInfo[] GetAllUsers();
 
         StatsInfo GetStatsInfo(long profileId);
         StatsInfo GetStatsInfo(string nick);
         void RequestPlayersTop(int offset, int count);
         void RequestGameBroadcast(bool teamplay, string gameVariant, int maxPlayers, int players, bool ranked);
+        void RequestLastGames();
         StatsInfo[] GetPlayersTop(int offset, int count);
         void RequestUserStats(long profileId);
         void RequestUserStats(string name);
@@ -35,13 +39,18 @@ namespace ThunderHawk.Core
         event Action<UserInfo, string, string> UserNameChanged;
         event Action<UserInfo> UserChanged;
         event Action<LoginInfo> LoginInfoReceived;
-        event Action<StatsInfo[], long> PlayerTopLoaded;
-        
+        event Action<StatsInfo[], int, int> PlayersTopLoaded;
+        event Action<GameInfo[]> LastGamesLoaded;
+        event Action<GameInfo> NewGameReceived;
+
         event Action<MessageInfo> ChatMessageReceived;
         void Disconnect();
         void RequestLogout();
         void RequestLogin(string name);
         LoginInfo GetLoginInfo(string name);
         UserInfo GetUserInfo(ulong steamId);
+
+        GameInfo[] LastGames { get; }
+        StatsInfo[] PlayersTop { get; }
     }
 }

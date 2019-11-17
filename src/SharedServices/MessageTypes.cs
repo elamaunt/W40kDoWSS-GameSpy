@@ -20,6 +20,8 @@
         RegisterError,
         LoginInfo,
         RequestPlayersTop,
-        PlayersTop
+        PlayersTop,
+        RequestLastGames,
+        LastGames
     }
 }
