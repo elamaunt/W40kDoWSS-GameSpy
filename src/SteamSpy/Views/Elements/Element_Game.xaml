@@ -25,7 +25,9 @@
             </TextBox>
 
             <StackPanel Orientation="Horizontal">
-                <TextBox Background="Transparent"
+
+                <StackPanel framework:WPFBinder.Frame="Player0" Orientation="Horizontal">
+                    <TextBox Background="Transparent"
                        BorderThickness="0"
                        framework:WPFBinder.Frame="Player0.Name"
                        HorizontalAlignment="Left"
@@ -35,9 +37,21 @@
                        Margin="10 1 10 1"     
                        IsReadOnly="True"
                        FontSize="14"
-                       Foreground="#75f4ff">
-                </TextBox>
-                <TextBox Background="Transparent"
+                       Foreground="#75f4ff"/>
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player0.RatingDelta"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#c47731"/>
+                </StackPanel>
+                <StackPanel framework:WPFBinder.Frame="Player1" Orientation="Horizontal">
+                    <TextBox Background="Transparent"
                        BorderThickness="0"
                        framework:WPFBinder.Frame="Player1.Name"
                        HorizontalAlignment="Left"
@@ -47,9 +61,163 @@
                        Margin="10 1 10 1"     
                        IsReadOnly="True"
                        FontSize="14"
-                       Foreground="#75f4ff">
-                </TextBox>
-                
+                       Foreground="#75f4ff"/>
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player1.RatingDelta"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#c47731"/>
+                </StackPanel>
+                <StackPanel framework:WPFBinder.Frame="Player2" Orientation="Horizontal">
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player2.Name"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#75f4ff"/>
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player1.RatingDelta"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#c47731"/>
+                </StackPanel>
+                <StackPanel framework:WPFBinder.Frame="Player3" Orientation="Horizontal">
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player3.Name"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#75f4ff"/>
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player3.RatingDelta"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#c47731"/>
+                </StackPanel>
+                <StackPanel framework:WPFBinder.Frame="Player4" Orientation="Horizontal">
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player4.Name"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#75f4ff"/>
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player4.RatingDelta"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#c47731"/>
+                </StackPanel>
+                <StackPanel framework:WPFBinder.Frame="Player5" Orientation="Horizontal">
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player5.Name"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#75f4ff"/>
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player5.RatingDelta"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#c47731"/>
+                </StackPanel>
+                <StackPanel framework:WPFBinder.Frame="Player6" Orientation="Horizontal">
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player6.Name"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#75f4ff"/>
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player6.RatingDelta"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#c47731"/>
+                </StackPanel>
+                <StackPanel framework:WPFBinder.Frame="Player7" Orientation="Horizontal">
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player7.Name"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#75f4ff"/>
+                    <TextBox Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Player7.RatingDelta"
+                       HorizontalAlignment="Left"
+                       MaxWidth="200"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="10 1 10 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#c47731"/>
+                </StackPanel>
             </StackPanel>
             
         </StackPanel>

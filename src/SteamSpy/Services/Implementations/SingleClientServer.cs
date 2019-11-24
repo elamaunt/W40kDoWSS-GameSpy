@@ -1,6 +1,7 @@
 ﻿using Framework;
 using GSMasterServer.Utils;
 using Http;
+using Reality.Net.Extensions;
 using Reality.Net.GameSpy.Servers;
 using SharedServices;
 using Steamworks;
@@ -99,6 +100,9 @@ namespace ThunderHawk
             CoreContext.MasterServer.ChatMessageReceived += OnChatMessageReceived;
             CoreContext.MasterServer.ConnectionLost += OnServerConnectonLost;
             CoreContext.MasterServer.Connected += OnServerConnected;
+            CoreContext.MasterServer.NicksReceived += OnNicksReceived;
+            CoreContext.MasterServer.NameCheckReceived += OnNameCheckReceived;
+            CoreContext.MasterServer.LoginErrorReceived += OnLoginErrorReceived;
 
             SteamLobbyManager.LobbyChatMessage += OnLobbyChatMessageReceived;
             //SteamLobbyManager.LobbyMemberUpdated += OnLobbyMemberUpdated;
@@ -106,26 +110,71 @@ namespace ThunderHawk
             SteamLobbyManager.TopicUpdated += OnTopicUpdated;
         }
 
+        void OnLoginErrorReceived(string name)
+        {
+            _clientManager.Send(DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\"));
+        }
+
+        void OnNameCheckReceived(string name, long? profileId)
+        {
+            if (profileId == null)
+                _searchManager.Send(DataFunctions.StringToBytes(String.Format(@"\error\\err\265\fatal\\errmsg\Username [{0}] doesn't exist!\id\1\final\", name)));
+            else
+                _searchManager.Send(DataFunctions.StringToBytes($@"\cur\0\pid\{profileId}\final\"));
+        }
+
+        void OnNicksReceived(string[] nicks)
+        {
+            if (nicks.IsNullOrEmpty())
+            {
+                _searchManager.Send(DataFunctions.StringToBytes(@"\error\\err\551\fatal\\errmsg\Unable to get any associated profiles.\id\1\final\"));
+                return;
+            }
+
+
+            if (nicks.Length == 0)
+            {
+                _searchManager.Send(DataFunctions.StringToBytes(@"\nr\0\ndone\\final\"));
+                return;
+            }
+
+            _searchManager.Send(DataFunctions.StringToBytes(GenerateNicks(nicks)));
+        }
+
         void OnUserNameChanged(UserInfo user, string previousName, string newName)
         {
-            SendToClientChat($":{previousName}!XaaaaaaaaX|0@127.0.0.1 PART #GPG!1 :Leaving\r\n");
+            if (user.SteamId == SteamUser.GetSteamID().m_SteamID)
+                return;
+
+            SendToClientChat($":{previousName}!X{GetEncodedIp(user, previousName)}X|0@127.0.0.1 PART #GPG!1 :Leaving\r\n");
 
             if (user.IsProfileActive)
-                SendToClientChat($":{newName}!XaaaaaaaaX|{user.ActiveProfileId}@127.0.0.1 JOIN #GPG!1\r\n");
+            {
+                user.UpdateIndex();
+
+                SendToClientChat($":{newName}!X{GetEncodedIp(user, newName)}X|{user.ActiveProfileId}@127.0.0.1 JOIN #GPG!1\r\n");
+                SendToClientChat($":s 702 GPG!1 GPG!1 {newName} BCAST :\\b_stats\\{user.ActiveProfileId}|{user.Score1v1}|{user.Index}|\r\n");
+            }
             else
-                SendToClientChat($":{newName}!XaaaaaaaaX|0@127.0.0.1 JOIN #GPG!1\r\n");
+                SendToClientChat($":{newName}!X{GetEncodedIp(user, newName)}X|0@127.0.0.1 JOIN #GPG!1\r\n");
         }
 
         void OnUserConnected(UserInfo user)
         {
+            if (user.SteamId == SteamUser.GetSteamID().m_SteamID)
+                return;
+
             if (user.IsProfileActive)
-                SendToClientChat($":{user.UIName}!XaaaaaaaaX|{user.ActiveProfileId}@127.0.0.1 JOIN #GPG!1\r\n");
+                SendToClientChat($":{user.UIName}!X{GetEncodedIp(user, user.UIName)}X|{user.ActiveProfileId}@127.0.0.1 JOIN #GPG!1\r\n");
             else
-                SendToClientChat($":{user.UIName}!XaaaaaaaaX|0@127.0.0.1 JOIN #GPG!1\r\n");
+                SendToClientChat($":{user.UIName}!X{GetEncodedIp(user, user.UIName)}X|0@127.0.0.1 JOIN #GPG!1\r\n");
         }
 
         void OnUserDisconnected(UserInfo user)
         {
+            if (user.SteamId == SteamUser.GetSteamID().m_SteamID)
+                return;
+
             if (user.IsProfileActive)
                 SendToClientChat($":{user.UIName}!XaaaaaaaaX|{user.ActiveProfileId}@127.0.0.1 PART #GPG!1 :Leaving\r\n");
             else
@@ -387,71 +436,151 @@ namespace ThunderHawk
         void OnSearchManager(TcpPortHandler handler, byte[] buffer, int count)
         {
             var str = ToUtf8(buffer, count);
+            var pairs = ParseHelper.ParseMessage(str, out string query);
+
+
+            switch (query)
+            {
+                case "nicks":
+                    {
+                        // \\nicks\\\\email\\elamaunt3@gmail.com\\passenc\\J4PGhRi[\\namespaceid\\7\\partnerid\\0\\gamename\\whamdowfr\\final\\
+
+                        if (!pairs.ContainsKey("email") || (!pairs.ContainsKey("passenc") && !pairs.ContainsKey("pass")))
+                        {
+                            handler.Send(DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\"));
+                            return;
+                        }
+
+                        string password = String.Empty;
+                        if (pairs.ContainsKey("passenc"))
+                        {
+                            password = DecryptPassword(pairs["passenc"]);
+                        }
+                        else if (pairs.ContainsKey("pass"))
+                        {
+                            password = pairs["pass"];
+                        }
+
+                        password = password.ToMD5();
+
+                        CoreContext.MasterServer.RequestAllUserNicks(pairs["email"]);
+                        return;
+                    }
+                case "check":
+                    {
+                        string name = String.Empty;
+
+                        if (String.IsNullOrWhiteSpace(name))
+                        {
+                            if (pairs.ContainsKey("uniquenick"))
+                            {
+                                name = pairs["uniquenick"];
+                            }
+                        }
+                        if (String.IsNullOrWhiteSpace(name))
+                        {
+                            if (pairs.ContainsKey("nick"))
+                            {
+                                name = pairs["nick"];
+                            }
+                        }
+
+                        if (String.IsNullOrWhiteSpace(name))
+                        {
+                            handler.Send(DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\"));
+                            return;
+                        }
+
+                        CoreContext.MasterServer.RequestNameCheck(name);
+                        return;
+                    }
+                default:
+                    break;
+            }
 
             Debugger.Break();
         }
 
+        string GenerateNicks(string[] nicks)
+        {
+            string message = @"\nr\" + nicks.Length;
+
+            for (int i = 0; i < nicks.Length; i++)
+                message += String.Format(@"\nick\{0}\uniquenick\{0}", nicks[i]);
+
+            message += @"\ndone\final\";
+            return message;
+        }
+
         void OnHttp(TcpPortHandler handler, byte[] buffer, int count)
         {
-            var str = ToUtf8(buffer, count);
-
-            Logger.Trace("HTTP " + str);
-
-            HttpRequest request;
-
-            using (var ms = new MemoryStream(buffer, 0, count, false, true))
-                request = HttpHelper.GetRequest(ms);
-
-            using (var ms = new MemoryStream())
+            try
             {
-                if (request.Url.EndsWith("news.txt", StringComparison.OrdinalIgnoreCase))
+                var str = ToUtf8(buffer, count);
+
+                Logger.Trace("HTTP " + str);
+
+                HttpRequest request;
+
+                using (var ms = new MemoryStream(buffer, 0, count, false, true))
+                    request = HttpHelper.GetRequest(ms);
+
+                using (var ms = new MemoryStream())
                 {
-                    if (request.Url.EndsWith("Russiandow_news.txt", StringComparison.OrdinalIgnoreCase))
+                    if (request.Url.EndsWith("news.txt", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (request.Url.EndsWith("Russiandow_news.txt", StringComparison.OrdinalIgnoreCase))
+                            HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(RusNews, Encoding.Unicode));
+                        else
+                            HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(EnNews, Encoding.Unicode));
+                        goto END;
+                    }
+
+                    if (request.Url.StartsWith("/motd/motd", StringComparison.OrdinalIgnoreCase))
+                    {
                         HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(RusNews, Encoding.Unicode));
-                    else
-                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(EnNews, Encoding.Unicode));
-                    goto END;
+                        goto END;
+                    }
+
+                    if (request.Url.StartsWith("/motd/vercheck", StringComparison.OrdinalIgnoreCase))
+                    {
+                        //HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(@"\newver\1\newvername\1.4\dlurl\http://127.0.0.1/NewPatchHere.exe"));
+                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(@"\newver\0", Encoding.UTF8));
+                        goto END;
+                    }
+
+                    if (request.Url.EndsWith("LobbyRooms.lua", StringComparison.OrdinalIgnoreCase))
+                    {
+                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(RoomPairs, Encoding.ASCII));
+                        goto END;
+                    }
+
+                    if (request.Url.EndsWith("AutomatchDefaultsSS.lua", StringComparison.OrdinalIgnoreCase) || request.Url.EndsWith("AutomatchDefaultsDXP2Fixed.lua", StringComparison.OrdinalIgnoreCase))
+                    {
+                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(AutomatchDefaults, Encoding.ASCII));
+                        goto END;
+                    }
+
+                    /*if (request.Url.EndsWith("homepage.php.htm", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (StatsResponce == null || (DateTime.Now - _lastStatsUpdate).TotalMinutes > 5)
+                            StatsResponce = BuildTop10StatsResponce();
+
+                        HttpHelper.WriteResponse(ms, StatsResponce);
+                        goto END;
+                    }*/
+
+                    HttpHelper.WriteResponse(ms, HttpResponceBuilder.NotFound());
+
+                END:
+                    handler.Send(ms.ToArray());
+                    handler.KillCurrentClient();
                 }
 
-                if (request.Url.StartsWith("/motd/motd", StringComparison.OrdinalIgnoreCase))
-                {
-                    HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(RusNews, Encoding.Unicode));
-                    goto END;
-                }
+            }
+            catch(InvalidDataException)
+            {
 
-                if (request.Url.StartsWith("/motd/vercheck", StringComparison.OrdinalIgnoreCase))
-                {
-                    //HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(@"\newver\1\newvername\1.4\dlurl\http://127.0.0.1/NewPatchHere.exe"));
-                    HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(@"\newver\0", Encoding.UTF8));
-                    goto END;
-                }
-
-                if (request.Url.EndsWith("LobbyRooms.lua", StringComparison.OrdinalIgnoreCase))
-                {
-                    HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(RoomPairs, Encoding.ASCII));
-                    goto END;
-                }
-
-                if (request.Url.EndsWith("AutomatchDefaultsSS.lua", StringComparison.OrdinalIgnoreCase) || request.Url.EndsWith("AutomatchDefaultsDXP2Fixed.lua", StringComparison.OrdinalIgnoreCase))
-                {
-                    HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(AutomatchDefaults, Encoding.ASCII));
-                    goto END;
-                }
-
-                /*if (request.Url.EndsWith("homepage.php.htm", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (StatsResponce == null || (DateTime.Now - _lastStatsUpdate).TotalMinutes > 5)
-                        StatsResponce = BuildTop10StatsResponce();
-
-                    HttpHelper.WriteResponse(ms, StatsResponce);
-                    goto END;
-                }*/
-
-                HttpHelper.WriteResponse(ms, HttpResponceBuilder.NotFound());
-
-            END:
-                handler.Send(ms.ToArray());
-                handler.KillCurrentClient();
             }
         }
 
@@ -1170,7 +1299,7 @@ namespace ThunderHawk
                             builder.Append(@"\" + value);
                         }
 
-                        SendToClientChat($":s 702 {name} {channelName} {id} :{builder}\r\n");
+                        SendToClientChat($":s 702 {_name} {channelName} {name} {id} :{builder}\r\n");
                     }
                 }
 
@@ -1197,21 +1326,26 @@ namespace ThunderHawk
                             string value = string.Empty;
 
                             if (key == "username")
-                                value = $"XaaaaaaaaX|{user.ActiveProfileId ?? 0}";
+                                value = $"X{GetEncodedIp(user, user.UIName)}X|{user.ActiveProfileId ?? 0}";
                             if (key == "b_stats")
-                                value = $"{user.ActiveProfileId ?? 0}|{user.Score1v1 ?? 1000}|{0}";
+                                value = $"{user.ActiveProfileId ?? 0}|{user.Score1v1 ?? 1000}|{user.Index}|";
                             if (key == "b_flags")
                                 value = "s";
 
                             builder.Append(@"\" + value);
                         }
 
-                        SendToClientChat($":s 702 {_name} {channelName} {id} :{builder}\r\n");
+                        SendToClientChat($":s 702 {_name} {channelName} {user.UIName} {id} :{builder}\r\n");
                     }
 
                     SendToClientChat($":s 703 {_name} {channelName} {id} :End of GETCKEY\r\n");
                 }
             }
+        }
+
+        string GetEncodedIp(UserInfo user, string name)
+        {
+            return $"{(char)user.Index}{name?.ElementAt(0) ?? 'a'}aaaaaa";
         }
 
         void HandleQuitCommand(TcpPortHandler handler, string[] values)
@@ -1793,6 +1927,173 @@ namespace ThunderHawk
         {
             return Encoding.ASCII.GetString(buffer, 0, count);
         }
+
+        string DecryptPassword(string password)
+        {
+            string decrypted = GsBase64Decode(password, password.Length);
+            GsEncode(ref decrypted);
+            return decrypted;
+        }
+
+        int GsEncode(ref string password)
+        {
+            byte[] pass = DataFunctions.StringToBytes(password);
+
+            int i;
+            int a;
+            int c;
+            int d;
+            int num = 0x79707367;   // "gspy"
+            int passlen = pass.Length;
+
+            if (num == 0)
+                num = 1;
+            else
+                num &= 0x7fffffff;
+
+            for (i = 0; i < passlen; i++)
+            {
+                d = 0xff;
+                c = 0;
+                d -= c;
+                if (d != 0)
+                {
+                    num = GsLame(num);
+                    a = num % d;
+                    a += c;
+                }
+                else
+                    a = c;
+
+                pass[i] ^= (byte)(a % 256);
+            }
+
+            password = DataFunctions.BytesToString(pass);
+            return passlen;
+        }
+
+        int GsLame(int num)
+        {
+            int a;
+            int c = (num >> 16) & 0xffff;
+
+            a = num & 0xffff;
+            c *= 0x41a7;
+            a *= 0x41a7;
+            a += ((c & 0x7fff) << 16);
+
+            if (a < 0)
+            {
+                a &= 0x7fffffff;
+                a++;
+            }
+
+            a += (c >> 15);
+
+            if (a < 0)
+            {
+                a &= 0x7fffffff;
+                a++;
+            }
+
+            return a;
+        }
+        string GsBase64Decode(string s, int size)
+        {
+            byte[] data = DataFunctions.StringToBytes(s);
+
+            int len;
+            int xlen;
+            int a = 0;
+            int b = 0;
+            int c = 0;
+            int step;
+            int limit;
+            int y = 0;
+            int z = 0;
+
+            byte[] buff;
+            byte[] p;
+
+            char[] basechars = new char[128]
+            {   // supports also the Gamespy base64
+				'\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+                '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+                '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00', '\x3e', '\x00', '\x00', '\x00', '\x3f',
+                '\x34', '\x35', '\x36', '\x37', '\x38', '\x39', '\x3a', '\x3b', '\x3c', '\x3d', '\x00', '\x00', '\x00', '\x00', '\x00', '\x00',
+                '\x00', '\x00', '\x01', '\x02', '\x03', '\x04', '\x05', '\x06', '\x07', '\x08', '\x09', '\x0a', '\x0b', '\x0c', '\x0d', '\x0e',
+                '\x0f', '\x10', '\x11', '\x12', '\x13', '\x14', '\x15', '\x16', '\x17', '\x18', '\x19', '\x3e', '\x00', '\x3f', '\x00', '\x00',
+                '\x00', '\x1a', '\x1b', '\x1c', '\x1d', '\x1e', '\x1f', '\x20', '\x21', '\x22', '\x23', '\x24', '\x25', '\x26', '\x27', '\x28',
+                '\x29', '\x2a', '\x2b', '\x2c', '\x2d', '\x2e', '\x2f', '\x30', '\x31', '\x32', '\x33', '\x00', '\x00', '\x00', '\x00', '\x00'
+            };
+
+            if (size <= 0)
+                len = data.Length;
+            else
+                len = size;
+
+            xlen = ((len >> 2) * 3) + 1;
+            buff = new byte[xlen % 256];
+            if (buff.Length == 0) return null;
+
+            p = buff;
+            limit = data.Length + len;
+
+            for (step = 0; ; step++)
+            {
+                do
+                {
+                    if (z >= limit)
+                    {
+                        c = 0;
+                        break;
+                    }
+                    if (z < data.Length)
+                        c = data[z];
+                    else
+                        c = 0;
+                    z++;
+                    if ((c == '=') || (c == '_'))
+                    {
+                        c = 0;
+                        break;
+                    }
+                } while (c != 0 && ((c <= (byte)' ') || (c > 0x7f)));
+                if (c == 0) break;
+
+                switch (step & 3)
+                {
+                    case 0:
+                        a = basechars[c];
+                        break;
+                    case 1:
+                        b = basechars[c];
+                        p[y++] = (byte)(((a << 2) | (b >> 4)) % 256);
+                        break;
+                    case 2:
+                        a = basechars[c];
+                        p[y++] = (byte)((((b & 15) << 4) | (a >> 2)) % 256);
+                        break;
+                    case 3:
+                        p[y++] = (byte)((((a & 3) << 6) | basechars[c]) % 256);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            p[y] = 0;
+
+            len = p.Length - buff.Length;
+
+            if (size != 0)
+                size = len;
+
+            if ((len + 1) != xlen)
+                if (buff.Length == 0) return null;
+
+            return DataFunctions.BytesToString(buff).Substring(0, y);
+        }
+
         byte[] XorBytes(byte[] data, int start, int count, string keystr)
         {
             byte[] key = Encoding.ASCII.GetBytes(keystr);
@@ -1821,7 +2122,7 @@ namespace ThunderHawk
 #if SPACEWAR
             return "SOULSTORM";
 #else
-            return CoreContext.ThunderHawkModManager.ActiveModRevision;
+            return CoreContext.ThunderHawkModManager.ModName + " "+ CoreContext.ThunderHawkModManager.ModVersion;
 #endif
         }
 

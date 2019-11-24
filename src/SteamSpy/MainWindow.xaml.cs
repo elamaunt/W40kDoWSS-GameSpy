@@ -30,7 +30,7 @@ namespace ThunderHawk
                 return;
             }
 
-            var process = Process.Start("ThunderHawk.HostsFixer.exe", GameConstants.SERVER_ADDRESS);
+            var process = Process.Start("ThunderHawk.HostsFixer.exe", "127.0.0.1");
             process.WaitForExit();
 
             CompositionTarget.Rendering += OnRender;

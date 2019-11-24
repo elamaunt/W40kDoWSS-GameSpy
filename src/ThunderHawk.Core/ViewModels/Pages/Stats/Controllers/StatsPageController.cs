@@ -17,7 +17,6 @@ namespace ThunderHawk.Core
             else
             {
                 CoreContext.MasterServer.LastGamesLoaded += OnLastGamesLoaded;
-                CoreContext.MasterServer.RequestLastGames();
             }
 
             if (CoreContext.MasterServer.IsPlayersTopLoaded)
@@ -31,7 +30,7 @@ namespace ThunderHawk.Core
                 CoreContext.MasterServer.RequestPlayersTop(0, 10);
             }
 
-            Frame.LastGames.DataSource.Add(new GameItemViewModel(new GameInfo()
+            /*Frame.LastGames.DataSource.Add(new GameItemViewModel(new GameInfo()
             {
                 IsRateGame = true,
                 ModName = "thunderhawk",
@@ -43,7 +42,7 @@ namespace ThunderHawk.Core
                     new PlayerInfo() { Name = "elamaunt", FinalState = PlayerFinalState.Winner, Race = Race.ork_race, Rating = 1200, RatingDelta=16, Team = 0  },
                     new PlayerInfo() { Name = "tester", FinalState = PlayerFinalState.Loser, Race = Race.space_marine_race, Rating = 1260, RatingDelta=-16, Team = 1  },
                 }
-            }));
+            }));*/
 
             CoreContext.MasterServer.NewGameReceived += OnNewGameReceived;
         }
@@ -60,12 +59,12 @@ namespace ThunderHawk.Core
 
         void OnLastGamesLoaded(GameInfo[] games)
         {
-           /* var source = games.Select(x => new GameItemViewModel(x)).ToObservableCollection();
+            var source = games.Select(x => new GameItemViewModel(x)).ToObservableCollection();
 
             RunOnUIThread(() =>
             {
                 Frame.LastGames.DataSource = source;
-            });*/
+            });
         }
 
         void OnPlayersTopLoaded(StatsInfo[] players, int offset, int count)

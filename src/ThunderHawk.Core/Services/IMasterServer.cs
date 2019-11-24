@@ -20,6 +20,9 @@ namespace ThunderHawk.Core
         StatsInfo[] GetPlayersTop(int offset, int count);
         void RequestUserStats(long profileId);
         void RequestUserStats(string name);
+        void RequestAllUserNicks(string email);
+        void RequestNameCheck(string name);
+
         void SendChatMessage(string text, bool fromGame);
         void RequestUsers();
         void SendGameFinishedInfo(GameFinishedMessage message);
@@ -31,6 +34,10 @@ namespace ThunderHawk.Core
         //ulong ActiveProfileId { get; }
         ///ulong ActiveProfileName { get; }
 
+        event Action<string[]> NicksReceived;
+        event Action<string, long?> NameCheckReceived;
+        event Action<string> LoginErrorReceived;
+        
         event Action ConnectionLost;
         event Action Connected;
         event Action UsersLoaded;

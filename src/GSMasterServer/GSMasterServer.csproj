@@ -35,6 +35,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Servers\CDKeyServer.cs" />
+    <Compile Remove="Servers\ChatServer.cs" />
     <Compile Remove="Servers\DiscordServer.cs" />
     <Compile Remove="Servers\HttpServer.cs" />
     <Compile Remove="Servers\LoginServer.cs" />

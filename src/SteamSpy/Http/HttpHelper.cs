@@ -17,7 +17,7 @@ namespace Http
             string[] tokens = request.Split(' ');
             if (tokens.Length != 3)
             {
-                throw new Exception("invalid http request line");
+                throw new InvalidDataException("invalid http request line");
             }
             string method = tokens[0].ToUpper();
             string url = tokens[1];

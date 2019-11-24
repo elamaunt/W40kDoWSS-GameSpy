@@ -11,7 +11,7 @@ namespace ThunderHawk.Core
 
         public ActionFrame Tweaks { get; } = new ActionFrame();
 
-        public TextFrame ActiveModRevision { get; } = new TextFrame() { Visible = false };
+        public TextFrame ActiveModRevision { get; } = new TextFrame();
 
         public MainPageViewModel()
         {

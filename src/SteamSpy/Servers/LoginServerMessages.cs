@@ -269,17 +269,6 @@ namespace GSMasterServer.Servers
             return DataFunctions.StringToBytes(GenerateNicks(nicks.ToArray()));
         }
 
-        private static string GenerateNicks(string[] nicks)
-        {
-            string message = @"\nr\" + nicks.Length;
-            for (int i = 0; i < nicks.Length; i++)
-            {
-                message += String.Format(@"\nick\{0}\uniquenick\{0}", nicks[i]);
-            }
-            message += @"\ndone\final\";
-            return message;
-        }
-
         internal static byte[] SendCheck(ref LoginSocketState state, Dictionary<string, string> keyValues)
         {
             string name = String.Empty;

@@ -26,6 +26,15 @@ namespace ThunderHawk.Core
 
             Type.Text = ToStringValue(game);
 
+            Player0.RatingDelta.ValueToTextConverter = GetValueWithSign;
+            Player1.RatingDelta.ValueToTextConverter = GetValueWithSign;
+            Player2.RatingDelta.ValueToTextConverter = GetValueWithSign;
+            Player3.RatingDelta.ValueToTextConverter = GetValueWithSign;
+            Player4.RatingDelta.ValueToTextConverter = GetValueWithSign;
+            Player5.RatingDelta.ValueToTextConverter = GetValueWithSign;
+            Player6.RatingDelta.ValueToTextConverter = GetValueWithSign;
+            Player7.RatingDelta.ValueToTextConverter = GetValueWithSign;
+
             Setup(Player0, game.Players.ElementAtOrDefault(0));
             Setup(Player1, game.Players.ElementAtOrDefault(1));
             Setup(Player2, game.Players.ElementAtOrDefault(2));
@@ -34,6 +43,15 @@ namespace ThunderHawk.Core
             Setup(Player5, game.Players.ElementAtOrDefault(5));
             Setup(Player6, game.Players.ElementAtOrDefault(6));
             Setup(Player7, game.Players.ElementAtOrDefault(7));
+        }
+
+        static string GetValueWithSign(long value)
+        {
+            if (value == 0)
+                return String.Empty;
+            if (value > 0)
+                return $@"(+{value})";
+            return $@"({value})";
         }
 
         void Setup(PlayerFrame frame, PlayerInfo player)
@@ -48,6 +66,7 @@ namespace ThunderHawk.Core
                 frame.Name.Text = player.Name;
                 frame.Race.Value = player.Race;
                 frame.Rating.Value = player.Rating;
+                frame.RatingDelta.Value = player.RatingDelta;
                 frame.Team.Value = player.Team;
             }
         }

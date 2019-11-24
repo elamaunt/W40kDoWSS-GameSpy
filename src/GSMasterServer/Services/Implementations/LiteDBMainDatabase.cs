@@ -113,14 +113,16 @@ namespace GSMasterServer.Services.Implementations
                 ProfilesTable.Update(profile);
         }
 
-        public List<ProfileDBO> GetAllProfilesByEmailAndPass(string email, string passwordEncrypted)
+        public List<ProfileDBO> GetAllProfilesBySteamId(ulong steamId)
         {
-            var emailQ = Query.EQ(nameof(ProfileDBO.Email), new BsonValue(email));
+            return ProfilesTable.Find(Query.EQ(nameof(ProfileDBO.SteamId), new BsonValue((long)steamId))).ToList();
+
+            /*var emailQ = Query.EQ(nameof(ProfileDBO.Email), new BsonValue(email));
             var passQuery = Query.EQ(nameof(ProfileDBO.Passwordenc), new BsonValue(email));
 
             var andQury = Query.And(emailQ, passQuery);
 
-            return ProfilesTable.Find(andQury).ToList();
+            return ProfilesTable.Find(andQury).ToList();*/
         }
 
         public ProfileDBO GetProfileByName(string username)

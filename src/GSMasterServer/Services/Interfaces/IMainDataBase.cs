@@ -15,7 +15,7 @@ namespace GSMasterServer.Services
         ProfileDBO GetProfileByName(string username);
         void UpdateProfileData(ProfileDBO stats);
         
-        List<ProfileDBO> GetAllProfilesByEmailAndPass(string email, string passwordEncrypted);
+        List<ProfileDBO> GetAllProfilesBySteamId(ulong steamId);
         void LogProfileLogin(string name, ulong steamId, IPAddress address);
 
         ProfileDBO CreateProfile(string username, string passwordEncrypted, ulong steamId, string email, string country, IPAddress address);

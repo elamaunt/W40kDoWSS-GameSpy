@@ -1,7 +1,6 @@
 ﻿using Framework;
 using System;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ThunderHawk.Core
 {
@@ -51,65 +50,9 @@ namespace ThunderHawk.Core
                     .AttachIndicator(Frame.LoadingIndicator);
             }
 
-            if (CoreContext.ThunderHawkModManager.CheckIsModExists())
-            {
-                UpdateMod();
-            }
-            else
-            {
-                Frame.LaunchGame.Text = "Setup mod";
-                Frame.LaunchGame.Action = SetupGameMod;
-            }
-        }
-
-        void UpdateMod()
-        {
-            if (!CoreContext.LaunchService.TryGetOrChoosePath(out string path))
-                return;
-
-            Frame.LaunchGame.Enabled = false;
-            CoreContext.ThunderHawkModManager.UpdateMod(path, Token, ReportProgress)
-                .OnContinueOnUi(task =>
-                {
-                    Frame.LaunchGame.Enabled = true;
-                    if (task.Status == TaskStatus.RanToCompletion)
-                    {
-                        SetGameLaunchState();
-                        UpdateActiveModState();
-                    }
-                });
-        }
-
-        private void SetGameLaunchState()
-        {
+            Frame.ActiveModRevision.Text = $"Thunderhawk <b>" + CoreContext.ThunderHawkModManager.ModVersion + "</b>";
             Frame.LaunchGame.Text = "Launch Thunderhawk";
             Frame.LaunchGame.Action = LaunchGame;
-        }
-
-        void SetupGameMod()
-        {
-            Frame.LaunchGame.Enabled = false;
-            var path = CoreContext.LaunchService.GamePath;
-
-            AppSettings.ThunderHawkModAutoSwitch = true;
-            CoreContext.ThunderHawkModManager.DownloadMod(path, Token, ReportProgress)
-                .OnContinueOnUi(task =>
-                {
-                    Frame.LaunchGame.Enabled = true;
-                    if (task.Status == TaskStatus.RanToCompletion)
-                    {
-                        SetGameLaunchState();
-                        UpdateActiveModState();
-                    }
-                });
-        }
-
-        void ReportProgress(float percent)
-        {
-            RunOnUIThread(() =>
-            {
-                Frame.LaunchGame.Text = "Loading.. " + ((int)(percent * 100)) + "%";
-            });
         }
 
         void OpenFAQ()
@@ -134,12 +77,6 @@ namespace ThunderHawk.Core
                     Frame.LaunchGame.Text = "Launch Thunderhawk";
                     Frame.LaunchGame.Enabled = true;
                 });
-        }
-
-        void UpdateActiveModState()
-        {
-            Frame.ActiveModRevision.Visible = true;
-            Frame.ActiveModRevision.Text = $"{CoreContext.LangService.GetString("Active revision")} <b>" + CoreContext.ThunderHawkModManager.ActiveModRevision?.Replace("\n", "")+"</b>";
         }
     }
 }

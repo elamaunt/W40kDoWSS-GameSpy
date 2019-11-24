@@ -22,6 +22,11 @@
         RequestPlayersTop,
         PlayersTop,
         RequestLastGames,
-        LastGames
+        LastGames,
+        RequestAllUserNicks,
+        AllUserNicks,
+        RequestNameCheck,
+        NameCheck,
+        LoginError
     }
 }

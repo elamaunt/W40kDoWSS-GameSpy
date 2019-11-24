@@ -19,6 +19,67 @@ namespace SharedServices
                 Culture = CultureInfo.InvariantCulture
             };
         }
+
+        public static void WriteJsonMessage(this NetOutgoingMessage self, LoginErrorMessage message)
+        {
+            var json = JsonConvert.SerializeObject(message, Settings);
+            var type = MessageTypes.LoginError;
+
+            if (Debugger.IsAttached)
+                Console.WriteLine($"SEND {type}: {json}");
+
+            self.Write((byte)type);
+            self.Write(json);
+        }
+
+        public static void WriteJsonMessage(this NetOutgoingMessage self, NameCheckMessage message)
+        {
+            var json = JsonConvert.SerializeObject(message, Settings);
+            var type = MessageTypes.NameCheck;
+
+            if (Debugger.IsAttached)
+                Console.WriteLine($"SEND {type}: {json}");
+
+            self.Write((byte)type);
+            self.Write(json);
+        }
+
+        public static void WriteJsonMessage(this NetOutgoingMessage self, RequestNameCheckMessage message)
+        {
+            var json = JsonConvert.SerializeObject(message, Settings);
+            var type = MessageTypes.RequestNameCheck;
+
+            if (Debugger.IsAttached)
+                Console.WriteLine($"SEND {type}: {json}");
+
+            self.Write((byte)type);
+            self.Write(json);
+        }
+
+        public static void WriteJsonMessage(this NetOutgoingMessage self, RequestAllUserNicksMessage message)
+        {
+            var json = JsonConvert.SerializeObject(message, Settings);
+            var type = MessageTypes.RequestAllUserNicks;
+
+            if (Debugger.IsAttached)
+                Console.WriteLine($"SEND {type}: {json}");
+
+            self.Write((byte)type);
+            self.Write(json);
+        }
+
+        public static void WriteJsonMessage(this NetOutgoingMessage self, AllUserNicksMessage message)
+        {
+            var json = JsonConvert.SerializeObject(message, Settings);
+            var type = MessageTypes.AllUserNicks;
+
+            if (Debugger.IsAttached)
+                Console.WriteLine($"SEND {type}: {json}");
+
+            self.Write((byte)type);
+            self.Write(json);
+        }
+
         public static void WriteJsonMessage(this NetOutgoingMessage self, UserConnectedMessage message)
         {
             var json = JsonConvert.SerializeObject(message, Settings);
@@ -267,7 +328,17 @@ namespace SharedServices
             self.Write((byte)type);
             self.Write(json);
         }
-        
+
+        public static void WriteJsonMessage(this NetOutgoingMessage self, LastGamesMessage message)
+        {
+            var json = JsonConvert.SerializeObject(message, Settings);
+            var type = MessageTypes.LastGames;
+            if (Debugger.IsAttached)
+                Console.WriteLine($"SEND {type}: {json}");
+
+            self.Write((byte)type);
+            self.Write(json);
+        }
 
         public static void ReadJsonMessage(this NetIncomingMessage self, IClientMessagesHandler handler)
         {
@@ -289,6 +360,8 @@ namespace SharedServices
                 case MessageTypes.RequestUsers: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestUsersMessage>(json, Settings)); break;
                 case MessageTypes.RequestPlayersTop: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestPlayersTopMessage>(json, Settings)); break;
                 case MessageTypes.RequestLastGames: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestLastGamesMessage>(json, Settings)); break;
+                case MessageTypes.RequestAllUserNicks: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestAllUserNicksMessage>(json, Settings)); break;
+                case MessageTypes.RequestNameCheck: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestNameCheckMessage>(json, Settings)); break;
                 default:
                     break;
             }
@@ -318,6 +391,9 @@ namespace SharedServices
                 case MessageTypes.UserStats: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<UserStatsMessage>(json, Settings)); break;
                 case MessageTypes.PlayersTop: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<PlayersTopMessage>(json, Settings)); break;
                 case MessageTypes.LastGames: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LastGamesMessage>(json, Settings)); break;
+                case MessageTypes.AllUserNicks: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<AllUserNicksMessage>(json, Settings)); break;
+                case MessageTypes.NameCheck: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<NameCheckMessage>(json, Settings)); break;
+                case MessageTypes.LoginError: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LoginErrorMessage>(json, Settings)); break;
                 default:
                     break;
             }

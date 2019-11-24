@@ -259,16 +259,22 @@ namespace GSMasterServer.Servers
             var steamId = connection.RemoteHailMessage.PeekUInt64();
 
             var profile = Database.MainDBInstance.GetProfilesBySteamId((long)steamId).FirstOrDefault(x => StringComparer.InvariantCultureIgnoreCase.Compare(x.Name, message.Name) == 0);
+            var mes = _serverPeer.CreateMessage();
 
-            if (profile == null)
-                return;
+            if (profile == null || !_userStates.TryGetValue(steamId, out PeerState state))
+            {
+                mes.WriteJsonMessage(new LoginErrorMessage()  
+                { 
+                    Name = message.Name 
+                });
 
-            if (!_userStates.TryGetValue(steamId, out PeerState state))
+                _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
                 return;
+            }
 
             state.ActiveProfile = profile;
 
-            var mes = _serverPeer.CreateMessage();
+            
 
             // Send login info if needed
             if (message.NeedsInfo)
@@ -681,9 +687,61 @@ namespace GSMasterServer.Servers
             _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
         }
 
-        public void HandleMessage(NetConnection senderConnection, RequestLastGamesMessage requestLastGamesMessage)
+        public void HandleMessage(NetConnection connection, RequestLastGamesMessage message)
         {
             var games = Database.MainDBInstance.GetLastGames();
+
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(new LastGamesMessage()
+            {
+                Games = games.Select(x => new GameFinishedMessage()
+                {
+                    SessionId = x.Id,
+                    Type = x.Type,
+                    Duration = x.Duration,
+                    IsRateGame = x.IsRateGame,
+                    ModName = x.ModName,
+                    ModVersion = x.ModVersion,
+                    Players = x.Players?.Select(p => new PlayerPart()
+                    { 
+                        FinalState = p.FinalState,
+                        Name = ProfilesCache.GetProfileByPid(p.ProfileId.ToString())?.Name,
+                        Race = p.Race,
+                        Rating = p.Rating,
+                        RatingDelta = p.RatingDelta,
+                        Team = p.Team
+                    }).ToArray()
+                }).ToArray()
+            });
+            _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void HandleMessage(NetConnection connection, RequestAllUserNicksMessage message)
+        {
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+            var profiles = Database.MainDBInstance.GetAllProfilesBySteamId(steamId);
+
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(new AllUserNicksMessage()
+            {
+                Nicks = profiles.Select(x => x.Name).ToArray()
+            });
+
+            _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void HandleMessage(NetConnection connection, RequestNameCheckMessage message)
+        {
+            var profile = ProfilesCache.GetProfileByName(message.Name);
+
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(new NameCheckMessage()
+            {
+                Name = message.Name,
+                ProfileId = profile?.Id
+            });
+
+            _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
         }
     }
 }

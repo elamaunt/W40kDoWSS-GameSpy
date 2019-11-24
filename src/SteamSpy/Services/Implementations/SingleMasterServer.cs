@@ -1,6 +1,7 @@
 ﻿using Framework;
 using Lidgren.Network;
 using SharedServices;
+using Steamworks;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -40,16 +41,18 @@ namespace ThunderHawk
         public event Action<UserInfo, string, string> UserNameChanged;
         public event Action<UserInfo> UserConnected;
         public event Action<UserInfo> UserChanged;
+        public event Action<string> LoginErrorReceived;
 
         public event Action<GameHostInfo> GameBroadcastReceived;
         public event Action<MessageInfo> ChatMessageReceived;
         public event Action ConnectionLost;
         public event Action Connected;
+        public event Action<string[]> NicksReceived;
         public event Action<LoginInfo> LoginInfoReceived;
         public event Action<StatsInfo[], int, int> PlayersTopLoaded;
         public event Action<GameInfo[]> LastGamesLoaded;
         public event Action<GameInfo> NewGameReceived;
-
+        public event Action<string, long?> NameCheckReceived;
 
         StatsInfo[] _currentLoadedLadderTop = new StatsInfo[0];
         public StatsInfo[] PlayersTop => _currentLoadedLadderTop;
@@ -104,7 +107,7 @@ namespace ThunderHawk
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex.Message);
+                    Logger.Error(ex);
                 }
                 finally
                 {
@@ -178,6 +181,9 @@ namespace ThunderHawk
             RequestUsers();
             IsConnected = true;
             Connected?.Invoke();
+            _lastGames.Clear();
+            IsLastGamesLoaded = false;
+            CoreContext.MasterServer.RequestLastGames();
         }
 
         public void RequestUsers()
@@ -272,7 +278,7 @@ namespace ThunderHawk
 
         public void HandleMessage(NetConnection connection, UserConnectedMessage message)
         {
-            var info = new UserInfo(message.SteamId);
+            var info = new UserInfo(message.SteamId, message.SteamId == SteamUser.GetSteamID().m_SteamID);
 
             if (_users.TryAdd(message.SteamId, info))
                 UserConnected?.Invoke(info);
@@ -291,7 +297,7 @@ namespace ThunderHawk
                 Author = _users.GetOrAdd(message.SteamId, id =>
                 {
                     added = true;
-                    return info = new UserInfo(id);
+                    return info = new UserInfo(id, id == SteamUser.GetSteamID().m_SteamID);
                 }),
                 Text = message.Text,
                 Date = DateTime.FromBinary(message.LongDate),
@@ -311,17 +317,34 @@ namespace ThunderHawk
             {
                 var user = message.Users[i];
                 clone.Remove(user.SteamId);
-                _users.AddOrUpdate(user.SteamId, id => new UserInfo(id)
+                _users.AddOrUpdate(user.SteamId, id => new UserInfo(id, id == SteamUser.GetSteamID().m_SteamID)
                 {
                     Name = user.Name,
                     ActiveProfileId = user.ProfileId,
-                    Status = user.Status
+                    Status = user.Status,
+                    Score1v1 = user.Score1v1,
+                    Score2v2 = user.Score2v2,
+                    Score3v3 = user.Score3v3,
+                    Wins = user.Wins,
+                    Games = user.Games,
+                    Average = user.Average,
+                    Disconnects = user.Disconnects,
+                    Best1v1Winstreak = user.Best1v1Winstreak,
+                    Race = user.Race
                 }, (id, info) =>
                 {
                     info.Name = user.Name;
                     info.ActiveProfileId = user.ProfileId;
                     info.Status = user.Status;
-
+                    info.Score1v1 = user.Score1v1;
+                    info.Score2v2 = user.Score2v2;
+                    info.Score3v3 = user.Score3v3;
+                    info.Wins = user.Wins;
+                    info.Games = user.Games;
+                    info.Average = user.Average;
+                    info.Disconnects = user.Disconnects;
+                    info.Best1v1Winstreak = user.Best1v1Winstreak;
+                    info.Race = user.Race;
                     return info;
                 });
 
@@ -400,7 +423,9 @@ namespace ThunderHawk
                 var previousName = user.UIName;
 
                 user.Name = message.Name;
+
                 user.ActiveProfileId = message.ActiveProfileId;
+
                 user.Best1v1Winstreak = message.Best1v1Winstreak;
                 user.Games = message.Games;
                 user.Wins = message.Wins;
@@ -502,6 +527,31 @@ namespace ThunderHawk
                 return new StatsInfo(id);
             });
         }
+
+        public void RequestAllUserNicks(string email)
+        {
+            var message = _clientPeer.CreateMessage();
+
+            message.WriteJsonMessage(new RequestAllUserNicksMessage()
+            {
+                Email = email
+            });
+
+           _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        public void RequestNameCheck(string name)
+        {
+            var message = _clientPeer.CreateMessage();
+
+            message.WriteJsonMessage(new RequestNameCheckMessage()
+            {
+                Name = name
+            });
+
+            _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+        }
+
 
         public void RequestGameBroadcast(bool teamplay, string gameVariant, int maxPlayers, int players, bool ranked)
         {
@@ -655,6 +705,21 @@ namespace ThunderHawk
 
             IsLastGamesLoaded = true;
             LastGamesLoaded?.Invoke(_lastGames.ToArray());
+        }
+
+        public void HandleMessage(NetConnection senderConnection, AllUserNicksMessage message)
+        {
+            NicksReceived?.Invoke(message.Nicks ?? new string[0]);
+        }
+
+        public void HandleMessage(NetConnection senderConnection, NameCheckMessage message)
+        {
+            NameCheckReceived?.Invoke(message.Name, message.ProfileId);
+        }
+
+        public void HandleMessage(NetConnection senderConnection, LoginErrorMessage message)
+        {
+            LoginErrorReceived?.Invoke(message.Name);
         }
     }
 }
