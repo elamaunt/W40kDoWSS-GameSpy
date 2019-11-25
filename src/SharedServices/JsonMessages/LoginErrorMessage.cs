@@ -1,7 +1,12 @@
 ﻿namespace SharedServices
 {
-    public class LoginErrorMessage
+    public class LoginErrorMessage : Message
     {
+        public LoginErrorMessage()
+            : base(MessageTypes.LoginError)
+        {
+        }
+
         public string Name { get; set; }
     }
 }

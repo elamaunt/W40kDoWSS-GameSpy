@@ -1,7 +1,12 @@
 ﻿namespace SharedServices
 {
-    public class UserProfileChangedMessage
+    public class UserProfileChangedMessage : Message
     {
+        public UserProfileChangedMessage()
+            : base(MessageTypes.UserProfileChanged)
+        {
+        }
+
         public ulong SteamId { get; set; }
         public long? ActiveProfileId { get; set; }
         public string Name { get; set; }

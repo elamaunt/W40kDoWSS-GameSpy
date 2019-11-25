@@ -1,7 +1,12 @@
 ﻿namespace SharedServices
 {
-    public class GameFinishedMessage
+    public class GameFinishedMessage : Message
     {
+        public GameFinishedMessage()
+            : base(MessageTypes.GameFinished)
+        {
+        }
+
         public string SessionId { get; set; }
         public string ModName { get; set; }
         public string ModVersion { get; set; }

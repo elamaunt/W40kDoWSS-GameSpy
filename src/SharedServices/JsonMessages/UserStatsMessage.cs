@@ -1,7 +1,12 @@
 ﻿namespace SharedServices
 {
-    public class UserStatsMessage
+    public class UserStatsMessage : Message
     {
+        public UserStatsMessage()
+            : base(MessageTypes.UserStats)
+        {
+        }
+
         public ulong SteamId { get; set; }
         public long Modified { get; set; }
         public long ProfileId { get; set; }

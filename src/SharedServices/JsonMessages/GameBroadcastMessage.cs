@@ -1,7 +1,12 @@
 ﻿namespace SharedServices
 {
-    public class GameBroadcastMessage
+    public class GameBroadcastMessage : Message
     {
+        public GameBroadcastMessage()
+            : base(MessageTypes.GameBroadcast)
+        {
+        }
+
         public bool Teamplay { get; set; }
         public bool Ranked { get; set; }
         public string GameVariant { get; set; }
