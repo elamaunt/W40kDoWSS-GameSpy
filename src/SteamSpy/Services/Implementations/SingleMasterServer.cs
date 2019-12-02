@@ -53,6 +53,7 @@ namespace ThunderHawk
         public event Action<GameInfo[]> LastGamesLoaded;
         public event Action<GameInfo> NewGameReceived;
         public event Action<string, long?> NameCheckReceived;
+        public event Action<string, string, string> UserKeyValueChanged;
 
         StatsInfo[] _currentLoadedLadderTop = new StatsInfo[0];
         public StatsInfo[] PlayersTop => _currentLoadedLadderTop;
@@ -178,6 +179,7 @@ namespace ThunderHawk
         void HandleStateConnected(NetIncomingMessage message)
         {
             _hailMessage = message.SenderConnection.RemoteHailMessage.ReadString().OfJson<ServerHailMessage>();
+
             RequestUsers();
             IsConnected = true;
             Connected?.Invoke();
@@ -280,6 +282,49 @@ namespace ThunderHawk
         {
             var info = new UserInfo(message.SteamId, message.SteamId == SteamUser.GetSteamID().m_SteamID);
 
+            info.ActiveProfileId = message.ActiveProfileId;
+            info.Average = message.Average;
+            info.Best1v1Winstreak = message.Best1v1Winstreak;
+            info.Disconnects = message.Disconnects;
+            info.Games = message.Games;
+            info.Name = message.Name;
+            info.Race = message.Race;
+            info.Score1v1 = message.Score1v1;
+            info.Score2v2 = message.Score2v2;
+            info.Score3v3 = message.Score3v3;
+            info.Wins = message.Wins;
+
+            if (message.ActiveProfileId.HasValue)
+            {
+                _stats.AddOrUpdate(message.ActiveProfileId.Value, profileId => new StatsInfo(message.ActiveProfileId.Value)
+                {
+                    SteamId = message.SteamId,
+                    Name = message.Name,
+                    FavouriteRace = message.Race.Value,
+                    GamesCount = message.Games.Value,
+                    WinsCount = message.Wins.Value,
+                    Score1v1 = message.Score1v1.Value,
+                    Score2v2 = message.Score2v2.Value,
+                    Score3v3_4v4 = message.Score3v3.Value,
+                    Disconnects = message.Disconnects.Value,
+                    AverageDuration = message.Average.Value
+                }, (profileId, stats) =>
+                {
+                    stats.SteamId = message.SteamId;
+                    stats.Name = message.Name;
+                    stats.FavouriteRace = message.Race.Value;
+                    stats.GamesCount = message.Games.Value;
+                    stats.WinsCount = message.Wins.Value;
+                    stats.Score1v1 = message.Score1v1.Value;
+                    stats.Score2v2 = message.Score2v2.Value;
+                    stats.Score3v3_4v4 = message.Score3v3.Value;
+                    stats.Disconnects = message.Disconnects.Value;
+                    stats.AverageDuration = message.Average.Value;
+
+                    return stats;
+                });
+            }
+
             if (_users.TryAdd(message.SteamId, info))
                 UserConnected?.Invoke(info);
         }
@@ -322,6 +367,8 @@ namespace ThunderHawk
                     Name = user.Name,
                     ActiveProfileId = user.ProfileId,
                     Status = user.Status,
+                    BStats = user.BStats,
+                    BFlags = user.BFlags,
                     Score1v1 = user.Score1v1,
                     Score2v2 = user.Score2v2,
                     Score3v3 = user.Score3v3,
@@ -336,6 +383,8 @@ namespace ThunderHawk
                     info.Name = user.Name;
                     info.ActiveProfileId = user.ProfileId;
                     info.Status = user.Status;
+                    info.BStats = user.BStats;
+                    info.BFlags = user.BFlags;
                     info.Score1v1 = user.Score1v1;
                     info.Score2v2 = user.Score2v2;
                     info.Score3v3 = user.Score3v3;
@@ -420,7 +469,7 @@ namespace ThunderHawk
 
             if (_users.TryGetValue(message.SteamId, out UserInfo user))
             {
-                var previousName = user.UIName;
+                var previousName = user.Name;
 
                 user.Name = message.Name;
 
@@ -435,7 +484,7 @@ namespace ThunderHawk
                 user.Race = message.Race;
 
                 UserChanged?.Invoke(user);
-                UserNameChanged?.Invoke(user, previousName, user.UIName);
+                UserNameChanged?.Invoke(user, previousName, user.Name);
             }
         }
 
@@ -636,7 +685,6 @@ namespace ThunderHawk
             _logins[message.Name] = info;
 
             LoginInfoReceived?.Invoke(info);
-
         }
 
         public void HandleMessage(NetConnection connection, PlayersTopMessage message)
@@ -720,6 +768,49 @@ namespace ThunderHawk
         public void HandleMessage(NetConnection senderConnection, LoginErrorMessage message)
         {
             LoginErrorReceived?.Invoke(message.Name);
+        }
+
+        public void SendKeyValuesChanged(string[] pairs)
+        {
+            if (pairs.Length < 2)
+                return;
+
+            for (int i = 0; i < pairs.Length; i+=2)
+            {
+                var message = _clientPeer.CreateMessage();
+
+                message.WriteJsonMessage(new SetKeyValueMessage()
+                {
+                    Key = pairs[i],
+                    Value = pairs[i + 1]
+                });
+
+                _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+            }
+        }
+
+        public void HandleMessage(NetConnection connection, SetKeyValueMessage message)
+        {
+            if (_users.TryGetValue(message.SteamId, out UserInfo info))
+            {
+                switch (message.Key)
+                {
+                    case "b_stats":
+                        {
+                            info.BStats = message.Value;
+                            break;
+                        }
+                    case "b_flags":
+                        {
+                            info.BFlags = message.Value;
+                            break;
+                        }
+                    default:
+                        break;
+                }
+
+                UserKeyValueChanged?.Invoke(message.Name, message.Key, message.Value);
+            }
         }
     }
 }

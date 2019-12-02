@@ -88,6 +88,8 @@ namespace ThunderHawk.Core
 
                 Frame.ChatViewModel.Messages.DataSource.Add(newItem);
                 Frame.ChatViewModel.MessagesScrollManager?.ScrollToItem(newItem);
+
+                CoreContext.SystemService.NotifyAboutMessage(info);
             });
         }
 

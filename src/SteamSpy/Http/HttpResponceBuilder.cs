@@ -92,17 +92,15 @@ namespace Http
 
         public static HttpResponse Text(string text, Encoding encoding)
         {
+            var bytes = Encoding.UTF8.GetBytes(text);
+            bytes = Encoding.Convert(Encoding.UTF8, encoding, bytes);
+
             return new HttpResponse()
             {
                 ReasonPhrase = "Ok",
                 StatusCode = "200",
-                Content = encoding.GetBytes(text)
+                Content = bytes
             };
-        }
-
-        internal static HttpResponse Text(object roomPairs, Encoding aSCII)
-        {
-            throw new NotImplementedException();
         }
     }
 }

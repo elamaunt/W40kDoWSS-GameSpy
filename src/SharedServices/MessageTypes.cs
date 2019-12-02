@@ -27,6 +27,7 @@
         AllUserNicks,
         RequestNameCheck,
         NameCheck,
-        LoginError
+        LoginError,
+        SetKeyValue
     }
 }

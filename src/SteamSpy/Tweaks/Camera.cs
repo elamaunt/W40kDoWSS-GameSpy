@@ -27,7 +27,9 @@ namespace ThunderHawk.Tweaks
 
         public bool CheckTweak()
         {
-            var gamePath = PathFinder.GamePath;
+            if (!PathFinder.TryGetOrChoosePath(out string gamePath))
+                return false;
+
             var foundCamera = false;
             foreach(var cFolder in CheckFolders(gamePath))
             {
@@ -46,7 +48,9 @@ namespace ThunderHawk.Tweaks
 
         public void EnableTweak()
         {
-            var gamePath = PathFinder.GamePath;
+            if (!PathFinder.TryGetOrChoosePath(out string gamePath))
+                return;
+
             var cameraDir = Path.Combine("GameFiles", "Tweaks", "Camera");
             if (!Directory.Exists(cameraDir))
                 throw new Exception("Could not find Camera in GameFiles!");

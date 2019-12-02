@@ -21,5 +21,4 @@
         public long? Average { get; set; }
         public long? Disconnects { get; set; }
     }
-    
 }

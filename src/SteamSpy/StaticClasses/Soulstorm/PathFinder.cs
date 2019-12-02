@@ -32,6 +32,15 @@ namespace ThunderHawk.StaticClasses.Soulstorm
             {
                 try
                 {
+                    File.WriteAllText("GamePath", GamePath);
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+                try
+                {
                     var launcherRegKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(ThunderHawk.RegistryKey);
                     launcherRegKey?.SetValue("GamePath", GamePath);
                 }
@@ -83,6 +92,21 @@ namespace ThunderHawk.StaticClasses.Soulstorm
 
         private static string FindSteamSoulstorm()
         {
+            try
+            {
+                if (File.Exists("GamePath"))
+                {
+                    var path = File.ReadAllText("GamePath");
+
+                    if (IsGameLocation(path))
+                        return path;
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
             try
             {
                 var launcherRegKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry32).OpenSubKey(ThunderHawk.RegistryKey);

@@ -15,6 +15,8 @@ namespace ThunderHawk.Core
         {
             RunOnUIThread(() =>
             {
+                Frame.ActiveProfile.Value = Frame.Info.IsProfileActive;
+
                 if (steamId == Frame.Info.SteamId)
                     Frame.Name.Text = Frame.Info.UIName;
             });
@@ -24,6 +26,8 @@ namespace ThunderHawk.Core
         {
             RunOnUIThread(() =>
             {
+                Frame.ActiveProfile.Value = Frame.Info.IsProfileActive;
+
                 if (userInfo.SteamId == Frame.Info.SteamId)
                     Frame.Name.Text = userInfo.UIName;
             });

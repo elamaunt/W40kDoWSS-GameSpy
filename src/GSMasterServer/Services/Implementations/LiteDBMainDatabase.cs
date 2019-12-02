@@ -11,6 +11,7 @@ namespace GSMasterServer.Services.Implementations
     {
         LiteDatabase _db;
 
+        LiteCollection<SteamUserDBO> SteamUsersTable => _db.GetCollection<SteamUserDBO>("STEAMUSERS");
         LiteCollection<GameDBO> GamesTable => _db.GetCollection<GameDBO>("GAMES");
         LiteCollection<ProfileDBO> ProfilesTable => _db.GetCollection<ProfileDBO>("USERS");
         LiteCollection<NewsDBO> NewsTable => _db.GetCollection<NewsDBO>("NEWS");
@@ -273,6 +274,21 @@ namespace GSMasterServer.Services.Implementations
             }
 
             return GamesTable.Upsert(game);
+        }
+
+        public void SaveLastActiveProfileForSteamId(ulong steamId, long profile)
+        {
+            var id = (long)steamId;
+            SteamUsersTable.Upsert(new BsonValue(id), new SteamUserDBO()
+            {
+                Id = id,
+                ActiveProfileId = profile
+            });
+        }
+
+        public long? GetLastActiveProfileForSteamId(ulong steamId)
+        {
+            return SteamUsersTable.FindById((long)steamId)?.ActiveProfileId;
         }
     }
 }

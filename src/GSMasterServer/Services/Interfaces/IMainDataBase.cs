@@ -39,5 +39,7 @@ namespace GSMasterServer.Services
 
         NewsDBO[] GetLastNews(int count);
         GameDBO[] GetLastGames();
+        void SaveLastActiveProfileForSteamId(ulong steamId, long profileId);
+        long? GetLastActiveProfileForSteamId(ulong steamId);
     }
 }

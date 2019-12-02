@@ -65,6 +65,7 @@ namespace SharedServices
                 case MessageTypes.RequestLastGames: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestLastGamesMessage>(json, Settings)); break;
                 case MessageTypes.RequestAllUserNicks: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestAllUserNicksMessage>(json, Settings)); break;
                 case MessageTypes.RequestNameCheck: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestNameCheckMessage>(json, Settings)); break;
+                case MessageTypes.SetKeyValue: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<SetKeyValueMessage>(json, Settings)); break;
                 default:
                     break;
             }
@@ -97,6 +98,7 @@ namespace SharedServices
                 case MessageTypes.AllUserNicks: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<AllUserNicksMessage>(json, Settings)); break;
                 case MessageTypes.NameCheck: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<NameCheckMessage>(json, Settings)); break;
                 case MessageTypes.LoginError: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LoginErrorMessage>(json, Settings)); break;
+                case MessageTypes.SetKeyValue: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<SetKeyValueMessage>(json, Settings)); break;
                 default:
                     break;
             }

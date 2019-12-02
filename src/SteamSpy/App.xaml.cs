@@ -1,9 +1,9 @@
-﻿using Framework;
+﻿using DesktopNotifications;
+using Framework;
 using Framework.WPF;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
 using System.Windows;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
@@ -28,6 +28,9 @@ namespace ThunderHawk
 
         protected override void OnStartup(StartupEventArgs e)
         {
+            DesktopNotificationManagerCompat.RegisterAumidAndComServer<ThunderHawkNotificationActivator>("ThunderHawk");
+            DesktopNotificationManagerCompat.RegisterActivator<ThunderHawkNotificationActivator>();
+
             if (PathFinder.GamePath != null)
             {
                 var steamworksDllPathInGameFolder = Path.Combine(PathFinder.GamePath, "Steamworks.NET.dll");
@@ -46,10 +49,6 @@ namespace ThunderHawk
 
             base.OnStartup(e);
 
-//#if SPACEWAR
-//            MainWindow = new MainWindow();
-//#else
-
             CoreContext.SteamApi.Initialize();
             CoreContext.UpdaterService.CheckForUpdates();
 
@@ -58,7 +57,6 @@ namespace ThunderHawk
             MainWindow = window;
 
             NLog.LogManager.Configuration = LogConfigurator.GetConfiguration("logs");
-//#endif
         }
     }
 }

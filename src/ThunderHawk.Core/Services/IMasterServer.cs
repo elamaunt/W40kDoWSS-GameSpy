@@ -41,6 +41,7 @@ namespace ThunderHawk.Core
         event Action ConnectionLost;
         event Action Connected;
         event Action UsersLoaded;
+        event Action<string, string, string> UserKeyValueChanged;
         event Action<UserInfo> UserDisconnected;
         event Action<UserInfo> UserConnected;
         event Action<UserInfo, string, string> UserNameChanged;
@@ -59,5 +60,7 @@ namespace ThunderHawk.Core
 
         GameInfo[] LastGames { get; }
         StatsInfo[] PlayersTop { get; }
+
+        void SendKeyValuesChanged(string[] pairs);
     }
 }

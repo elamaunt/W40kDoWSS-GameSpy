@@ -16,11 +16,12 @@ namespace SharedServices
         void HandleMessage(NetConnection connection, NewProfileMessage message);
         void HandleMessage(NetConnection connection, RegisterErrorMessage message);
         void HandleMessage(NetConnection connection, LoginInfoMessage message);
-        void HandleMessage(NetConnection senderConnection, PlayersTopMessage playersTopMessage);
-        void HandleMessage(NetConnection senderConnection, LastGamesMessage lastGamesMessage);
-        void HandleMessage(NetConnection senderConnection, AllUserNicksMessage allUserNicksMessage);
-        void HandleMessage(NetConnection senderConnection, NameCheckMessage nameCheckMessage);
-        void HandleMessage(NetConnection senderConnection, LoginErrorMessage loginErrorMessage);
+        void HandleMessage(NetConnection senderConnection, PlayersTopMessage message);
+        void HandleMessage(NetConnection senderConnection, LastGamesMessage message);
+        void HandleMessage(NetConnection senderConnection, AllUserNicksMessage message);
+        void HandleMessage(NetConnection senderConnection, NameCheckMessage message);
+        void HandleMessage(NetConnection senderConnection, LoginErrorMessage message);
+        void HandleMessage(NetConnection senderConnection, SetKeyValueMessage message);
         //void HandleMessage(NetConnection connection, GameFinishedMessage message);
     }
 }

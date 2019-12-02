@@ -93,11 +93,21 @@ namespace GSMasterServer.Servers
                         var steamId = message.SenderConnection.RemoteHailMessage.PeekUInt64();
                         bool added = false;
 
+                        var lastProfile = Database.MainDBInstance.GetLastActiveProfileForSteamId(steamId);
+
                         var state = _userStates.GetOrAdd(steamId, ep =>
                         {
                             added = true;
-                            return new PeerState(steamId, message.SenderConnection);
+                            var newState = new PeerState(steamId, message.SenderConnection);
+
+                            if (lastProfile.HasValue)
+                                newState.ActiveProfile = ProfilesCache.GetProfileByPid(lastProfile.Value.ToString());
+
+                            return newState;
                         });
+
+                        if (state.ActiveProfile == null && lastProfile.HasValue)
+                            state.ActiveProfile = ProfilesCache.GetProfileByPid(lastProfile.Value.ToString());
 
                         state.Connection.SetTarget(message.SenderConnection);
 
@@ -153,7 +163,19 @@ namespace GSMasterServer.Servers
 
             mes.WriteJsonMessage(new UserConnectedMessage()
             {
-                SteamId = state.SteamId
+                SteamId = state.SteamId,
+
+                Name = state.ActiveProfile?.Name,
+                ActiveProfileId = state.ActiveProfile?.Id,
+                Games = state.ActiveProfile?.GamesCount,
+                Wins = state.ActiveProfile?.WinsCount,
+                Race = state.ActiveProfile?.FavouriteRace,
+                Score1v1 = state.ActiveProfile?.Score1v1,
+                Score2v2 = state.ActiveProfile?.Score2v2,
+                Score3v3 = state.ActiveProfile?.Score3v3,
+                Best1v1Winstreak = state.ActiveProfile?.Best1v1Winstreak,
+                Average = state.ActiveProfile?.AverageDuractionTicks,
+                Disconnects = state.ActiveProfile?.Disconnects,
             });
 
             _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableOrdered);
@@ -258,7 +280,7 @@ namespace GSMasterServer.Servers
         {
             var steamId = connection.RemoteHailMessage.PeekUInt64();
 
-            var profile = Database.MainDBInstance.GetProfilesBySteamId((long)steamId).FirstOrDefault(x => StringComparer.InvariantCultureIgnoreCase.Compare(x.Name, message.Name) == 0);
+            var profile = ProfilesCache.GetProfileByName(message.Name);
             var mes = _serverPeer.CreateMessage();
 
             if (profile == null || !_userStates.TryGetValue(steamId, out PeerState state))
@@ -272,9 +294,9 @@ namespace GSMasterServer.Servers
                 return;
             }
 
-            state.ActiveProfile = profile;
+            Database.MainDBInstance.SaveLastActiveProfileForSteamId(steamId, profile.Id);
 
-            
+            state.ActiveProfile = profile;
 
             // Send login info if needed
             if (message.NeedsInfo)
@@ -318,8 +340,6 @@ namespace GSMasterServer.Servers
 
             if (!_userStates.TryGetValue(steamId, out PeerState state))
                 return;
-
-            state.ActiveProfile = null;
 
             var mes = _serverPeer.CreateMessage();
             mes.WriteJsonMessage(new UserProfileChangedMessage()
@@ -680,6 +700,8 @@ namespace GSMasterServer.Servers
                     Score3v3 = x.ActiveProfile?.Score3v3,
                     Best1v1Winstreak = x.ActiveProfile?.Best1v1Winstreak,
                     Status = x.Status,
+                    BStats = x.BStats,
+                    BFlags = x.BFlags,
                     SteamId = x.SteamId
                 }).ToArray()
             });
@@ -742,6 +764,36 @@ namespace GSMasterServer.Servers
             });
 
             _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void HandleMessage(NetConnection connection, SetKeyValueMessage message)
+        {
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+
+            if (_userStates.TryGetValue(steamId, out PeerState state))
+            {
+                switch (message.Key)
+                {
+                    case "b_stats":
+                        {
+                            state.BStats = message.Value;
+                            break;
+                        }
+                    case "b_flags":
+                        {
+                            state.BFlags = message.Value;
+                            break;
+                        }
+                    default:
+                        break;
+                }
+
+                message.Name = state.ActiveProfile?.Name;
+
+                var mes = _serverPeer.CreateMessage();
+                mes.WriteJsonMessage(message);
+                _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableOrdered);
+            }
         }
     }
 }

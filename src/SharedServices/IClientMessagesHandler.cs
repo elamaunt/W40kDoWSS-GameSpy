@@ -16,5 +16,6 @@ namespace SharedServices
         void HandleMessage(NetConnection senderConnection, RequestLastGamesMessage requestLastGamesMessage);
         void HandleMessage(NetConnection senderConnection, RequestAllUserNicksMessage requestAllUserNicksMessage);
         void HandleMessage(NetConnection senderConnection, RequestNameCheckMessage requestNameCheckMessage);
+        void HandleMessage(NetConnection senderConnection, SetKeyValueMessage setKeyValueMessage);
     }
 }
