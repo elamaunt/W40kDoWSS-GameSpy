@@ -1080,15 +1080,10 @@ namespace ThunderHawk
             }
             else
             {
-                /*if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
+                if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
                 {
-                    var roomHash = channelName.Split('!')[2];
-
-                    if (roomHash == _localServerHash)
-                    {
-                        SteamLobbyManager.LeaveFromCurrentLobby();
-                    }
-                }*/
+                    SteamLobbyManager.LeaveFromCurrentLobby();
+                }
             }
         }
 
@@ -1702,11 +1697,7 @@ namespace ThunderHawk
                 }
             }
 
-#if SPACEWAR
-            SteamLobbyManager.LoadLobbies(null, "SOULSTORM")
-#else
             SteamLobbyManager.LoadLobbies(null, GetIndicator())
-#endif
                .ContinueWith(task =>
                {
                    if (task.Status != TaskStatus.RanToCompletion)

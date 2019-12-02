@@ -16,6 +16,8 @@ namespace ThunderHawk
 {
     public class SingleMasterServer : IServerMessagesHandler, IMasterServer
     {
+        public UserInfo CurrentProfile { get; private set; }
+
         readonly NetClient _clientPeer;
         ulong _connectedSteamId;
 
@@ -362,7 +364,7 @@ namespace ThunderHawk
             {
                 var user = message.Users[i];
                 clone.Remove(user.SteamId);
-                _users.AddOrUpdate(user.SteamId, id => new UserInfo(id, id == SteamUser.GetSteamID().m_SteamID)
+                var userInfo = _users.AddOrUpdate(user.SteamId, id => new UserInfo(id, id == SteamUser.GetSteamID().m_SteamID)
                 {
                     Name = user.Name,
                     ActiveProfileId = user.ProfileId,
@@ -396,6 +398,9 @@ namespace ThunderHawk
                     info.Race = user.Race;
                     return info;
                 });
+
+                if (user.SteamId == SteamUser.GetSteamID().m_SteamID)
+                    CurrentProfile = userInfo;
 
                 if (!user.ProfileId.HasValue)
                     continue;

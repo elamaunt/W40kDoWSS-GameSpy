@@ -221,7 +221,7 @@ namespace GSMasterServer.Servers
                         AppendServerProperty(builder, "gametype");
                         AppendServerProperty(builder, "numplayers");
                         AppendServerProperty(builder, "maxplayers");
-                        AppendServerProperty(builder, "score_", GetRating());
+                        AppendServerProperty(builder, "score_", GetRating(AttachedServer?.MaxPlayers));
                         AppendServerProperty(builder, "teamplay");
                         AppendServerProperty(builder, "gametype");
                         AppendServerProperty(builder, "gamevariant");
@@ -273,9 +273,24 @@ namespace GSMasterServer.Servers
             WaitForData();
         }
 
-        private string GetRating()
+        private string GetRating(string maxPlayers)
         {
-            return "1000"; //ServerContext.ChatServer?.CurrentRating.ToString() ?? "1000";
+            var profile = CoreContext.MasterServer.CurrentProfile;
+
+            if (maxPlayers == null)
+                return profile?.Score1v1?.ToString() ?? "1000";
+
+            switch (maxPlayers)
+            {
+                case "8":
+                case "6":
+                    return profile?.Score3v3?.ToString() ?? "1000";
+                case "4":
+                    return profile?.Score2v2?.ToString() ?? "1000";
+                case "2":
+                default:
+                    return profile?.Score1v1?.ToString() ?? "1000";
+            }
         }
 
         public void SendToGame(byte[] buffer, uint size)
@@ -325,7 +340,7 @@ namespace GSMasterServer.Servers
                     Console.WriteLine("INCOME " + str);
                     // \0#\u001a�\u0001splitnum\0�\0numplayers\01\0maxplayers\02\0hostname\0Bambochuk2\0hostport\063181\0mapname\0\0password\00\0gamever\01.2.120R\0numplayers\01\0maxplayers\02\0score_\0teamplay\00\0gametype\0ranked\0gamevariant\01.56bugfix\0groupid\00\0numobservers\00\0maxobservers\00\0modname\0\0moddisplayname\0\0modversion\0\0devmode\00\0gametype0\0gametype1\0gametype2\0gametype3\0gametype4\0gametype5\0gametype6\0gametype7\0gametype8\0gametype9\0gametype10\0gametype11\0gametype12\0gametype13\0gametype14\0gametype15\0gametype16\0gametype17\0gametype18\0gametype19\0gametype20\0gametype21\0gametype22\0gametype23\0gametype24\0gametype25\0gametype26\0gametype27\0gametype28\0gametype29\0gametype30\0gametype31\0\0\u0001player_\0\0Bambochuk2\0\0ping_\0\00\0\0player_\0\0Bambochuk2\0\0\0\u0002\0"
                     var newStr = str
-                        .Replace("score_\0", $"score_\0{GetRating()}\0")
+                        .Replace("score_\0", $"score_\0{GetRating(AttachedServer?.MaxPlayers)}\0")
                         .Replace("hostport\06112", "hostport\0" + Port.ToString())
                         .Replace("hostport\00", "hostport\0"+ Port.ToString());
 
