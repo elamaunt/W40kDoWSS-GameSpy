@@ -13,36 +13,35 @@ namespace ThunderHawk
 {
     public class TcpPortHandler
     {
-        readonly LinkedList<TcpClient> _clients = new LinkedList<TcpClient>();
+        readonly LinkedList<TcpClientNode> _clients = new LinkedList<TcpClientNode>();
 
-        readonly WeakReference<TcpClient> _lastClient = new WeakReference<TcpClient>(null);
+        readonly WeakReference<TcpClientNode> _lastClient = new WeakReference<TcpClientNode>(null);
 
-        public TcpClient LastClient
+        public TcpClientNode LastClient
         {
             get
             {
-                _lastClient.TryGetTarget(out TcpClient client);
+                _lastClient.TryGetTarget(out TcpClientNode client);
                 return client;
             }
         }
 
         TcpListenerEx _listener;
-        CancellationTokenSource _acceptingTokenSource;
-        CancellationTokenSource _connectionTokenSource;
+        CancellationTokenSource _tokenSource;
 
         ExceptionHandler _exceptionHandlerDelegate;
         DataHandler _handlerDelegate;
         ZeroHandler _zeroHandlerDelegate;
         AcceptHandler _acceptDelegate;
 
-        readonly byte[] _buffer = new byte[65536];
-
         public delegate void ZeroHandler(TcpPortHandler handler);
         public delegate void ExceptionHandler(Exception exception, bool send, int port);
-        public delegate void AcceptHandler(TcpPortHandler handler, TcpClient client, CancellationToken token);
-        public delegate void DataHandler(TcpPortHandler handler, TcpClient client, byte[] buffer, int count);
+        public delegate void AcceptHandler(TcpPortHandler handler, TcpClientNode node, CancellationToken token);
+        public delegate void DataHandler(TcpPortHandler handler, TcpClientNode node, byte[] buffer, int count);
 
         readonly int _port;
+
+        readonly object RECEIVE_LOCKER = new object();
 
         public TcpPortHandler(int port, DataHandler handlerDelegate, ExceptionHandler errorHandler = null, AcceptHandler acceptDelegate = null, ZeroHandler zeroHandler = null)
         {
@@ -52,23 +51,25 @@ namespace ThunderHawk
             _handlerDelegate = handlerDelegate;
             _acceptDelegate = acceptDelegate;
             _listener = new TcpListenerEx(IPAddress.Any, _port);
+
+            _listener.ExclusiveAddressUse = true;
+            _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
+            _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void Start()
         {
-            _acceptingTokenSource = new CancellationTokenSource();
+            _tokenSource = new CancellationTokenSource();
             _listener.Start();
-            _listener.AcceptTcpClientAsync().ContinueWith(OnAccept, _acceptingTokenSource.Token);
+            _listener.AcceptTcpClientAsync().ContinueWith(OnAccept, _tokenSource.Token);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void Stop()
         {
-            _acceptingTokenSource?.Cancel();
-            _acceptingTokenSource = null;
-            _connectionTokenSource?.Cancel();
-            _connectionTokenSource = null;
+            _tokenSource?.Cancel();
+            _tokenSource = null;
             
             _listener.Stop();
 
@@ -76,7 +77,7 @@ namespace ThunderHawk
             _clients.Clear();
 
             for (int i = 0; i < set.Length; i++)
-                set[i].Dispose();
+                set[i].Client.Dispose();
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -87,21 +88,24 @@ namespace ThunderHawk
                 if (task.IsFaulted)
                     throw task.Exception.GetInnerException();
 
-                _connectionTokenSource?.Cancel();
-                _connectionTokenSource = new CancellationTokenSource();
-
                 var client = task.Result;
-                _lastClient.SetTarget(client);
+                var node = new TcpClientNode(client);
+                _lastClient.SetTarget(node);
 
                 client.NoDelay = true;
                 client.SendTimeout = 30000;
-                client.LingerState = new LingerOption(false, 0);
 
-                _clients.AddLast(client);
+                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
+                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
+                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
 
-                _acceptDelegate?.Invoke(this, client, _connectionTokenSource.Token);
 
-                client.GetStream().ReadAsync(_buffer, 0, _buffer.Length, _connectionTokenSource.Token).ContinueWith(t => OnReceive(client, t));
+                _clients.AddLast(node);
+
+                _acceptDelegate?.Invoke(this, node, _tokenSource.Token);
+
+                client.GetStream().ReadAsync(node.Buffer, 0, node.Buffer.Length, _tokenSource.Token).ContinueWith(t => OnReceive(node, t));
             }
             catch (OperationCanceledException)
             {
@@ -139,24 +143,24 @@ namespace ThunderHawk
             return Send(LastClient, bytes);
         }
 
-        public bool SendUtf8(TcpClient client, string message)
+        public bool SendUtf8(TcpClientNode node, string message)
         {
-            return Send(client, message.ToUTF8Bytes());
+            return Send(node, message.ToUTF8Bytes());
         }
 
-        public bool SendAskii(TcpClient client, string message)
+        public bool SendAskii(TcpClientNode node, string message)
         {
-            return Send(client, message.ToAssciiBytes());
+            return Send(node, message.ToAssciiBytes());
         }
 
-        public bool Send(TcpClient client, byte[] bytes)
+        public bool Send(TcpClientNode node, byte[] bytes)
         {
-            if (client == null)
+            if (node == null)
                 return false;
 
             try
             {
-                var stream = client.GetStream();
+                var stream = node.Client.GetStream();
 
                 if (stream != null)
                 {
@@ -181,7 +185,7 @@ namespace ThunderHawk
             return false;
         }
 
-        void OnReceive(TcpClient client, Task<int> task)
+        void OnReceive(TcpClientNode node, Task<int> task)
         {
             try
             {
@@ -196,7 +200,7 @@ namespace ThunderHawk
                 if (count == 0)
                     _zeroHandlerDelegate?.Invoke(this);
                 else
-                    _handlerDelegate(this, client, _buffer, count);
+                    _handlerDelegate(this, node, node.Buffer, count);
             }
             catch (OperationCanceledException)
             {
@@ -215,10 +219,10 @@ namespace ThunderHawk
             {
                 try
                 {
-                    var source = _connectionTokenSource;
+                    var source = _tokenSource;
 
                     if (source != null)
-                        client?.GetStream()?.ReadAsync(_buffer, 0, _buffer.Length, source.Token).ContinueWith(t => OnReceive(client, t));
+                        node.Client.GetStream()?.ReadAsync(node.Buffer, 0, node.Buffer.Length, source.Token).ContinueWith(t => OnReceive(node, t));
                 }
                 catch (OperationCanceledException)
                 {
@@ -265,13 +269,33 @@ namespace ThunderHawk
             }
         }
 
-        public void KillClient(TcpClient client)
+        public void KillClient(TcpClientNode node)
         {
-            if (_clients.Remove(client))
+            if (_clients.Remove(node))
             {
-                client.GetStream()?.Close(2000);
-                client.Close();
-                client.Dispose();
+                try
+                {
+                    node.Client.GetStream()?.Close(2000);
+                    node.Client.Close();
+                    node.Client.Dispose();
+                }
+                catch (Exception)
+                {
+
+                }
+            }
+        }
+
+        public class TcpClientNode
+        {
+            public readonly TcpClient Client;
+            public readonly byte[] Buffer = new byte[65536];
+
+            public IPEndPoint RemoteEndPoint => (IPEndPoint)Client.Client?.RemoteEndPoint;
+
+            public TcpClientNode(TcpClient client)
+            {
+                Client = client;
             }
         }
     }

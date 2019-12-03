@@ -6,7 +6,6 @@ namespace ThunderHawk.Core
     public interface IMasterServer
     {
         UserInfo CurrentProfile { get; }
-        byte[] AutomatchDefaultsBytes { get; }
         void Connect(ulong steamId);
         bool IsConnected { get; }
 

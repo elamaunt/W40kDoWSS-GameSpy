@@ -21,8 +21,6 @@ namespace GSMasterServer.Servers
         string _lastPlayersTopJson;
         DateTime _lastTopCalculationTime;
 
-        string _automatchDefaultsBase64;
-
         public SingleMasterServer()
         {
             var config = new NetPeerConfiguration("ThunderHawk")
@@ -42,8 +40,6 @@ namespace GSMasterServer.Servers
             config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
             config.EnableMessageType(NetIncomingMessageType.Data);
 
-            _automatchDefaultsBase64 = Convert.ToBase64String(Encoding.Convert(Encoding.UTF8, Encoding.ASCII, Encoding.UTF8.GetBytes(System.IO.File.ReadAllText("Resources/Files/AutomatchDefaults.lua"))));
-                
             _serverPeer = new NetServer(config);
 
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
@@ -150,8 +146,7 @@ namespace GSMasterServer.Servers
                     SteamId = steamId,
                     ModName = ServerConstants.ModName,
                     ModVersion = ServerConstants.ModVersion,
-                    ActiveGameVariant = ServerConstants.ActiveGameVariant,
-                    AutomatchDefaultsBase64 = _automatchDefaultsBase64
+                    ActiveGameVariant = ServerConstants.ActiveGameVariant
                 }.AsJson());
 
                 message.SenderConnection.Approve(hailMessage);
@@ -520,6 +515,28 @@ namespace GSMasterServer.Servers
                 Func<ProfileDBO, long> scoreSelector = null;
                 Action<ProfileDBO, long> scoreUpdater = null;
 
+                switch (gameType)
+                {
+                    case GameType.Unknown:
+                        scoreSelector = StatsDelegates.Score3v3Selector;
+                        scoreUpdater = StatsDelegates.Score3v3Updated;
+                        break;
+                    case GameType._1v1:
+                        scoreSelector = StatsDelegates.Score1v1Selector;
+                        scoreUpdater = StatsDelegates.Score1v1Updated;
+                        break;
+                    case GameType._2v2:
+                        scoreSelector = StatsDelegates.Score2v2Selector;
+                        scoreUpdater = StatsDelegates.Score2v2Updated;
+                        break;
+                    case GameType._3v3_4v4:
+                        scoreSelector = StatsDelegates.Score3v3Selector;
+                        scoreUpdater = StatsDelegates.Score3v3Updated;
+                        break;
+                    default:
+                        break;
+                }
+
                 var players1Team = teams[0];
                 var players2Team = teams[1];
 
@@ -586,6 +603,32 @@ namespace GSMasterServer.Servers
                     Database.MainDBInstance.UpdateProfileData(profile);
                 }
 
+                for (int i = 0; i < playerInfos.Length; i++)
+                {
+                    var info = playerInfos[i];
+                    var profile = info.Profile;
+
+                    var statsMessage = new UserStatsChangedMessage()
+                    {
+                        ProfileId = profile.Id,
+                        AverageDuration = profile.AverageDuractionTicks,
+                        CurrentScore = info.Part.Rating,
+                        Delta = info.Part.RatingDelta,
+                        Disconnects = profile.Disconnects,
+                        Games = profile.GamesCount,
+                        Wins = profile.WinsCount,
+                        Name = profile.Name,
+                        GameType = gameType,
+                        Race = profile.FavouriteRace,
+                        SteamId = profile.SteamId,
+                        Winstreak = profile.Best1v1Winstreak
+                    };
+
+                    var mess = _serverPeer.CreateMessage();
+                    mess.WriteJsonMessage(message);
+                    _serverPeer.SendToAll(mess, NetDeliveryMethod.ReliableOrdered);
+                }
+                    
                 var mes = _serverPeer.CreateMessage();
                 mes.WriteJsonMessage(message);
                 _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableOrdered);
@@ -607,6 +650,8 @@ namespace GSMasterServer.Servers
                 var mes = _serverPeer.CreateMessage();
                 mes.WriteJsonMessage(message);
                 _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+
+                Logger.Trace($"Stats socket: GAME REPEATE " + message.SessionId);
             }
         }
 

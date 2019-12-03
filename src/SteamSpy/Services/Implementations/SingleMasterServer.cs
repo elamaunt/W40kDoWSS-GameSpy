@@ -20,9 +20,6 @@ namespace ThunderHawk
 
         readonly NetClient _clientPeer;
         ulong _connectedSteamId;
-        byte[] _automatchDefaultsBytes;
-
-        public byte[] AutomatchDefaultsBytes => _automatchDefaultsBytes;
 
         //NetConnection _connection;
         ServerHailMessage _hailMessage;
@@ -185,8 +182,6 @@ namespace ThunderHawk
         void HandleStateConnected(NetIncomingMessage message)
         {
             _hailMessage = message.SenderConnection.RemoteHailMessage.ReadString().OfJson<ServerHailMessage>();
-
-            _automatchDefaultsBytes = Convert.FromBase64String(_hailMessage.AutomatchDefaultsBase64);
 
             RequestUsers();
             IsConnected = true;
@@ -523,8 +518,45 @@ namespace ThunderHawk
 
         public void HandleMessage(NetConnection connection, UserStatsChangedMessage message)
         {
+            if (_users.TryGetValue(message.SteamId, out UserInfo info))
+            {
+                if (message.ProfileId == info.ActiveProfileId)
+                {
+                    info.Games = message.Games;
+                    info.Wins = message.Wins;
+                    info.Best1v1Winstreak = message.Winstreak;
+                    info.Race = message.Race;
+                    info.Average = message.AverageDuration;
+                    info.Disconnects = message.Disconnects;
+
+                    switch (message.GameType)
+                    {
+                        case GameType.Unknown:
+                            break;
+                        case GameType._1v1:
+                            info.Score1v1 = message.CurrentScore;
+                            break;
+                        case GameType._2v2:
+                            info.Score2v2 = message.CurrentScore;
+                            break;
+                        case GameType._3v3_4v4:
+                            info.Score3v3 = message.CurrentScore;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
             if (_stats.TryGetValue(message.ProfileId, out StatsInfo stats))
             {
+                stats.GamesCount = message.Games;
+                stats.WinsCount = message.Wins;
+                stats.Best1v1Winstreak = message.Winstreak;
+                stats.FavouriteRace = message.Race;
+                stats.AverageDuration = message.AverageDuration;
+                stats.Disconnects = message.Disconnects;
+                
                 switch (message.GameType)
                 {
                     case GameType.Unknown:
