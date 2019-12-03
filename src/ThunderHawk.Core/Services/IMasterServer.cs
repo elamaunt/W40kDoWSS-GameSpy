@@ -6,7 +6,7 @@ namespace ThunderHawk.Core
     public interface IMasterServer
     {
         UserInfo CurrentProfile { get; }
-
+        byte[] AutomatchDefaultsBytes { get; }
         void Connect(ulong steamId);
         bool IsConnected { get; }
 
@@ -46,7 +46,7 @@ namespace ThunderHawk.Core
         event Action<string, string, string> UserKeyValueChanged;
         event Action<UserInfo> UserDisconnected;
         event Action<UserInfo> UserConnected;
-        event Action<UserInfo, string, string> UserNameChanged;
+        event Action<UserInfo, long?, string, string> UserNameChanged;
         event Action<UserInfo> UserChanged;
         event Action<LoginInfo> LoginInfoReceived;
         event Action<StatsInfo[], int, int> PlayersTopLoaded;

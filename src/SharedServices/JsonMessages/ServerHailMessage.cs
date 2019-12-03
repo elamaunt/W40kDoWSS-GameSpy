@@ -6,5 +6,6 @@
         public string ModName { get; set; }
         public string ModVersion { get; set; }
         public string ActiveGameVariant { get; set; }
+        public string AutomatchDefaultsBase64 { get; set; }
     }
 }

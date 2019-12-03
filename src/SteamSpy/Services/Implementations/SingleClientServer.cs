@@ -150,13 +150,13 @@ namespace ThunderHawk
             _searchManager.Send(DataFunctions.StringToBytes(GenerateNicks(nicks)));
         }
 
-        void OnUserNameChanged(UserInfo user, string previousName, string newName)
+        void OnUserNameChanged(UserInfo user, long? previousProfile, string previousName, string newName)
         {
             if (user.SteamId == SteamUser.GetSteamID().m_SteamID)
                 return;
 
-            if (previousName != null)
-                SendToClientChat($":{previousName}!X{GetEncodedIp(user, previousName)}X|0@127.0.0.1 PART #GPG!1 :Leaving\r\n");
+            if (previousName != null && previousProfile.HasValue)
+                SendToClientChat($":{previousName}!X{GetEncodedIp(user, previousName)}X|{previousProfile.Value}@127.0.0.1 PART #GPG!1 :Leaving\r\n");
 
             if (!user.IsProfileActive)
                 return;
@@ -576,7 +576,8 @@ namespace ThunderHawk
 
                     if (request.Url.EndsWith("AutomatchDefaultsSS.lua", StringComparison.OrdinalIgnoreCase) || request.Url.EndsWith("AutomatchDefaultsDXP2Fixed.lua", StringComparison.OrdinalIgnoreCase))
                     {
-                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(AutomatchDefaults, Encoding.ASCII));
+                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.TextFileBytes(CoreContext.MasterServer.AutomatchDefaultsBytes));
+                       // HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(AutomatchDefaults, Encoding.ASCII));
                         goto END;
                     }
 
@@ -1366,7 +1367,23 @@ namespace ThunderHawk
         string GetEncodedIp(UserInfo user, string name)
         {
             // Fake
-            return $"{name?.ElementAt(0) ?? 'a'}{name?.ElementAt(1) ?? 'b'}{name?.ElementAt(2) ?? 'c'}{name?.ElementAt(3) ?? 'd'}{name?.ElementAt(4) ?? 'e'}{name?.ElementAt(5) ?? 'r'}{name?.ElementAt(6) ?? 't'}{name?.ElementAt(7) ?? 'y'}";
+            var builder = new StringBuilder();
+
+            builder.Append((char)(user.ActiveProfileId ?? 0));
+
+            for (int i = 1; i < 8; i++)
+            {
+                var ch = name?.ElementAtOrDefault(i);
+
+                if (ch == (char)0)
+                    ch = 'a';
+
+                builder.Append(ch);
+            }
+
+            return builder.ToString();
+
+            // return $"{(char)((int?)name?.ElementAt(0) + user.ActiveProfileId ?? 0) ?? 'a'}{name?.ElementAt(1) ?? 'b'}{name?.ElementAt(2) ?? 'c'}{name?.ElementAt(3) ?? 'd'}{name?.ElementAt(4) ?? 'e'}{name?.ElementAt(5) ?? 'r'}{name?.ElementAt(6) ?? 't'}{name?.ElementAt(7) ?? 'y'}";
         }
 
         void HandleQuitCommand(TcpPortHandler handler, string[] values)

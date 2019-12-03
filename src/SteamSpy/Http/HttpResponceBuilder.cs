@@ -25,6 +25,29 @@ namespace Http
             }
         }
 
+        public static HttpResponse TextFileBytes(byte[] bytes)
+        {
+            try
+            {
+                var resp = new HttpResponse()
+                {
+                    ReasonPhrase = "Ok",
+                    StatusCode = "200",
+                    Content = bytes
+                };
+
+                resp.Headers.Add("Content-Type", "text/plain");
+                //resp.Headers.Add("Content-Length", bytes.Length.ToString());
+
+                return resp;
+
+            }
+            catch (Exception ex)
+            {
+                return NotFound();
+            }
+        }
+
         public static HttpResponse File(string path, Encoding encoding = null)
         {
             try
@@ -95,12 +118,16 @@ namespace Http
             var bytes = Encoding.UTF8.GetBytes(text);
             bytes = Encoding.Convert(Encoding.UTF8, encoding, bytes);
 
-            return new HttpResponse()
+            var resp = new HttpResponse()
             {
                 ReasonPhrase = "Ok",
                 StatusCode = "200",
                 Content = bytes
             };
+
+            resp.Headers.Add("Content-Type", "text/plain");
+
+            return resp;
         }
     }
 }

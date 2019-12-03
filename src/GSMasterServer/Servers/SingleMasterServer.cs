@@ -8,6 +8,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 
 namespace GSMasterServer.Servers
@@ -19,6 +20,8 @@ namespace GSMasterServer.Servers
         readonly NetServer _serverPeer;
         string _lastPlayersTopJson;
         DateTime _lastTopCalculationTime;
+
+        string _automatchDefaultsBase64;
 
         public SingleMasterServer()
         {
@@ -39,6 +42,8 @@ namespace GSMasterServer.Servers
             config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
             config.EnableMessageType(NetIncomingMessageType.Data);
 
+            _automatchDefaultsBase64 = Convert.ToBase64String(Encoding.Convert(Encoding.UTF8, Encoding.ASCII, Encoding.UTF8.GetBytes(System.IO.File.ReadAllText("Resources/Files/AutomatchDefaults.lua"))));
+                
             _serverPeer = new NetServer(config);
 
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
@@ -145,7 +150,8 @@ namespace GSMasterServer.Servers
                     SteamId = steamId,
                     ModName = ServerConstants.ModName,
                     ModVersion = ServerConstants.ModVersion,
-                    ActiveGameVariant = ServerConstants.ActiveGameVariant
+                    ActiveGameVariant = ServerConstants.ActiveGameVariant,
+                    AutomatchDefaultsBase64 = _automatchDefaultsBase64
                 }.AsJson());
 
                 message.SenderConnection.Approve(hailMessage);

@@ -20,6 +20,9 @@ namespace ThunderHawk
 
         readonly NetClient _clientPeer;
         ulong _connectedSteamId;
+        byte[] _automatchDefaultsBytes;
+
+        public byte[] AutomatchDefaultsBytes => _automatchDefaultsBytes;
 
         //NetConnection _connection;
         ServerHailMessage _hailMessage;
@@ -34,13 +37,14 @@ namespace ThunderHawk
 
         Timer _reconnectTimer;
 
+
         public bool IsConnected { get; private set; }
         public bool IsLastGamesLoaded { get; private set; }
         public bool IsPlayersTopLoaded { get; private set; }
 
         public event Action UsersLoaded;
         public event Action<UserInfo> UserDisconnected;
-        public event Action<UserInfo, string, string> UserNameChanged;
+        public event Action<UserInfo, long?, string, string> UserNameChanged;
         public event Action<UserInfo> UserConnected;
         public event Action<UserInfo> UserChanged;
         public event Action<string> LoginErrorReceived;
@@ -181,6 +185,8 @@ namespace ThunderHawk
         void HandleStateConnected(NetIncomingMessage message)
         {
             _hailMessage = message.SenderConnection.RemoteHailMessage.ReadString().OfJson<ServerHailMessage>();
+
+            _automatchDefaultsBytes = Convert.FromBase64String(_hailMessage.AutomatchDefaultsBase64);
 
             RequestUsers();
             IsConnected = true;
@@ -475,6 +481,7 @@ namespace ThunderHawk
             if (_users.TryGetValue(message.SteamId, out UserInfo user))
             {
                 var previousName = user.Name;
+                var previousProfile = user.ActiveProfileId;
 
                 user.Name = message.Name;
 
@@ -489,7 +496,7 @@ namespace ThunderHawk
                 user.Race = message.Race;
 
                 UserChanged?.Invoke(user);
-                UserNameChanged?.Invoke(user, previousName, user.Name);
+                UserNameChanged?.Invoke(user, previousProfile, previousName, user.Name);
             }
         }
 
