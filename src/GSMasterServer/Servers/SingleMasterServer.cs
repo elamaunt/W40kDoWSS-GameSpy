@@ -601,6 +601,7 @@ namespace GSMasterServer.Servers
                     var info = playerInfos[i];
                     var profile = info.Profile;
                     Database.MainDBInstance.UpdateProfileData(profile);
+                    ProfilesCache.UpdateProfilesCache(profile);
                 }
 
                 for (int i = 0; i < playerInfos.Length; i++)
@@ -624,8 +625,14 @@ namespace GSMasterServer.Servers
                         Winstreak = profile.Best1v1Winstreak
                     };
 
+                    if (_userStates.TryGetValue(profile.SteamId, out PeerState state))
+                    {
+                        if (state.ActiveProfile?.Id == profile.Id)
+                            state.ActiveProfile = profile;
+                    }
+
                     var mess = _serverPeer.CreateMessage();
-                    mess.WriteJsonMessage(message);
+                    mess.WriteJsonMessage(statsMessage);
                     _serverPeer.SendToAll(mess, NetDeliveryMethod.ReliableOrdered);
                 }
                     

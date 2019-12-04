@@ -57,6 +57,8 @@ namespace ThunderHawk
         public event Action<GameInfo> NewGameReceived;
         public event Action<string, long?> NameCheckReceived;
         public event Action<string, string, string> UserKeyValueChanged;
+        public event Action<StatsChangesInfo> UserStatsChanged;
+
 
         StatsInfo[] _currentLoadedLadderTop = new StatsInfo[0];
         public StatsInfo[] PlayersTop => _currentLoadedLadderTop;
@@ -64,9 +66,6 @@ namespace ThunderHawk
         public string ModName => _hailMessage?.ModName;
         public string ModVersion => _hailMessage?.ModVersion;
         public string ActiveGameVariant => _hailMessage?.ActiveGameVariant;
-
-        //public ulong ActiveProfileId { get; set; }
-        //public ulong ActiveProfileName { get; set; }
 
         public SingleMasterServer()
         {
@@ -518,6 +517,14 @@ namespace ThunderHawk
 
         public void HandleMessage(NetConnection connection, UserStatsChangedMessage message)
         {
+            var changesInfo = new StatsChangesInfo()
+            {
+                Name = message.Name,
+                CurrentScore = message.CurrentScore,
+                Delta = message.Delta,
+                GameType = message.GameType
+            };
+
             if (_users.TryGetValue(message.SteamId, out UserInfo info))
             {
                 if (message.ProfileId == info.ActiveProfileId)
@@ -545,6 +552,8 @@ namespace ThunderHawk
                         default:
                             break;
                     }
+
+                    changesInfo.User = info;
                 }
             }
 
@@ -574,6 +583,8 @@ namespace ThunderHawk
                         break;
                 }
             }
+
+            UserStatsChanged?.Invoke(changesInfo);
         }
 
         public void HandleMessage(NetConnection connection, UserStatsMessage message)
@@ -814,7 +825,7 @@ namespace ThunderHawk
             LoginErrorReceived?.Invoke(message.Name);
         }
 
-        public void SendKeyValuesChanged(string[] pairs)
+        public void SendKeyValuesChanged(string name, string[] pairs)
         {
             if (pairs.Length < 2)
                 return;
@@ -825,6 +836,8 @@ namespace ThunderHawk
 
                 message.WriteJsonMessage(new SetKeyValueMessage()
                 {
+                    SteamId = SteamUser.GetSteamID().m_SteamID,
+                    Name = name,
                     Key = pairs[i],
                     Value = pairs[i + 1]
                 });

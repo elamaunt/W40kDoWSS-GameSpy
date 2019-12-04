@@ -135,6 +135,7 @@
     <Compile Include="Http\QuickMimeTypeMapper.cs" />
     <Compile Include="Http\Route.cs" />
     <Compile Include="LogConfigurator.cs" />
+    <Compile Include="Servers\Sync.cs" />
     <Compile Include="ThunderHawkNotificationActivator.cs" />
     <Compile Include="PageExtensions\UserInteractionsExtension.cs" />
     <Compile Include="Servers\TcpPortHandler.cs" />

@@ -170,15 +170,19 @@ namespace ThunderHawk
             }
             catch (OperationCanceledException)
             {
+                KillClient(node);
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
+                KillClient(node);
             }
             catch (SocketException)
             {
+                KillClient(node);
             }
             catch (Exception ex)
             {
+                KillClient(node);
                 _exceptionHandlerDelegate?.Invoke(ex, true, _port);
             }
 
@@ -187,55 +191,67 @@ namespace ThunderHawk
 
         void OnReceive(TcpClientNode node, Task<int> task)
         {
-            try
+            lock (Sync.LOCK)
             {
-                if (task.IsCanceled)
-                    return;
+                Thread.Sleep(100);
 
-                if (task.IsFaulted)
-                    throw task.Exception.GetInnerException();
-
-                var count = task.Result;
-
-                if (count == 0)
-                    _zeroHandlerDelegate?.Invoke(this);
-                else
-                    _handlerDelegate(this, node, node.Buffer, count);
-            }
-            catch (OperationCanceledException)
-            {
-            }
-            catch (InvalidOperationException)
-            {
-            }
-            catch (SocketException)
-            {
-            }
-            catch (Exception ex)
-            {
-                _exceptionHandlerDelegate?.Invoke(ex, false, _port);
-            }
-            finally
-            {
                 try
                 {
-                    var source = _tokenSource;
+                    if (task.IsCanceled)
+                        return;
 
-                    if (source != null)
-                        node.Client.GetStream()?.ReadAsync(node.Buffer, 0, node.Buffer.Length, source.Token).ContinueWith(t => OnReceive(node, t));
+                    if (task.IsFaulted)
+                        throw task.Exception.GetInnerException();
+
+                    var count = task.Result;
+
+                    if (count == 0)
+                        _zeroHandlerDelegate?.Invoke(this);
+                    else
+                        _handlerDelegate(this, node, node.Buffer, count);
                 }
                 catch (OperationCanceledException)
                 {
+                    KillClient(node);
                 }
                 catch (InvalidOperationException)
                 {
+                    KillClient(node);
                 }
                 catch (SocketException)
                 {
+                    KillClient(node);
                 }
                 catch (Exception ex)
                 {
                     _exceptionHandlerDelegate?.Invoke(ex, false, _port);
+                }
+                finally
+                {
+                    try
+                    {
+                        var source = _tokenSource;
+
+                        if (source != null)
+                            node.Client.GetStream()?.ReadAsync(node.Buffer, 0, node.Buffer.Length, source.Token).ContinueWith(t => OnReceive(node, t));
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        KillClient(node);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        KillClient(node);
+                    }
+                    catch (SocketException)
+                    {
+                        KillClient(node);
+                    }
+                    catch (Exception ex)
+                    {
+                        KillClient(node);
+                        _exceptionHandlerDelegate?.Invoke(ex, false, _port);
+                    }
                 }
             }
         }

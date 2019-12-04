@@ -19,8 +19,41 @@ namespace ThunderHawk.Core
             CoreContext.MasterServer.UsersLoaded += OnUsersLoaded;
             CoreContext.MasterServer.UserConnected += OnUserConnected;
             CoreContext.MasterServer.UserDisconnected += OnUserDisconnected;
-
+            CoreContext.MasterServer.UserStatsChanged += OnUserStatsChanged;
+            CoreContext.MasterServer.GameBroadcastReceived += OnGameBroadcastReceived;
+            
             OnUsersLoaded();
+        }
+
+        void OnGameBroadcastReceived(GameHostInfo info)
+        {
+            CoreContext.SystemService.NotifyAsSystemToastMessage("New automatch host", $"GameVariant: {info.GameVariant}. GameType: {info.MaxPlayers/2} vs {info.MaxPlayers / 2}. Teamplay: {info.Teamplay}");
+        }
+
+        void OnUserStatsChanged(StatsChangesInfo changes)
+        {
+            if (changes?.User?.IsUser ?? false)
+            {
+                var text = $"You rating {changes.GameType.ToString().Replace("_", " ")} has been changed on {GetDeltaStringValue(changes.Delta)} and now equals {changes.CurrentScore}.";
+
+                RunOnUIThread(() =>
+                {
+                    CoreContext.ClientServer.SendAsServerMessage(text);
+
+                    Frame.ChatViewModel.Messages.DataSource.Add(new ChatMessageItemViewModel(new MessageInfo()
+                    {
+                        IsPrivate = true,
+                        Text = text
+                    }));
+                });
+            }
+        }
+
+        string GetDeltaStringValue(long delta)
+        {
+            if (delta > 0)
+                return "+" + delta;
+            return delta.ToString();
         }
 
         void OnUserDisconnected(UserInfo info)
@@ -89,7 +122,7 @@ namespace ThunderHawk.Core
                 Frame.ChatViewModel.Messages.DataSource.Add(newItem);
                 Frame.ChatViewModel.MessagesScrollManager?.ScrollToItem(newItem);
 
-                CoreContext.SystemService.NotifyAboutMessage(info);
+                CoreContext.SystemService.NotifyAsSystemToastMessage(info);
             });
         }
 
@@ -99,6 +132,8 @@ namespace ThunderHawk.Core
             CoreContext.MasterServer.UsersLoaded -= OnUsersLoaded;
             CoreContext.MasterServer.UserConnected -= OnUserConnected;
             CoreContext.MasterServer.UserDisconnected -= OnUserDisconnected;
+            CoreContext.MasterServer.UserStatsChanged -= OnUserStatsChanged;
+            CoreContext.MasterServer.GameBroadcastReceived -= OnGameBroadcastReceived;
             base.OnUnbind();
         }
     }

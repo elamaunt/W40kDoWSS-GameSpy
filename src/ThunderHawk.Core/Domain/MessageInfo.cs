@@ -8,5 +8,6 @@ namespace ThunderHawk.Core
         public string Text { get; set; }
         public DateTime Date { get; set; }
         public bool FromGame { get; set; }
+        public bool IsPrivate { get; set; }
     }
 }

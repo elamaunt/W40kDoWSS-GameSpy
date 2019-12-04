@@ -49,6 +49,7 @@ namespace ThunderHawk
         string _email;
         string _response;
         bool _inChat;
+        bool _challengeResponded;
 
         string _enteredLobbyHash;
         string _localServerHash;
@@ -85,7 +86,7 @@ namespace ThunderHawk
         public SingleClientServer()
         {
             _serverReport = new UdpPortHandler(27900, OnServerReport, OnError);
-            _serverRetrieve = new TcpPortHandler(28910, OnServerRetrieve);
+            _serverRetrieve = new TcpPortHandler(28910, OnServerRetrieve, OnServerRetrieveError);
 
             _clientManager = new TcpPortHandler(29900, OnClientManager, OnError, OnClientAccept, OnZeroBytes);
             _searchManager = new TcpPortHandler(29901, OnSearchManager, OnError, null, OnZeroBytes);
@@ -110,6 +111,11 @@ namespace ThunderHawk
             //SteamLobbyManager.LobbyMemberUpdated += OnLobbyMemberUpdated;
             SteamLobbyManager.LobbyMemberLeft += OnLobbyMemberLeft;
             SteamLobbyManager.TopicUpdated += OnTopicUpdated;
+        }
+
+        void OnServerRetrieveError(Exception exception, bool send, int port)
+        {
+            Logger.Info(exception);
         }
 
         void OnUserKeyValueChanged(string name, string key, string value)
@@ -140,7 +146,6 @@ namespace ThunderHawk
                 _searchManager.Send(DataFunctions.StringToBytes(@"\error\\err\551\fatal\\errmsg\Unable to get any associated profiles.\id\1\final\"));
                 return;
             }
-
 
             if (nicks.Length == 0)
             {
@@ -296,7 +301,7 @@ namespace ThunderHawk
             if (info == null)
                 return;
 
-            SendToClientChat($":{info.Name}!Xu4FpqOa9X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{_enteredLobbyHash} :Leaving\r\n");
+            SendToClientChat($":{info.Name}!X{GetEncodedIp(info, info.Name)}X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{_enteredLobbyHash} :Leaving\r\n");
         }
 
         void OnChatMessageReceived(MessageInfo message)
@@ -1078,24 +1083,22 @@ namespace ThunderHawk
         {
             //CHATLINE PART #GSP!whamdowfr!Ml39ll1K9M :
             var channelName = values[1];
+            
+            var profile = CoreContext.MasterServer.CurrentProfile;
+
+            if (profile == null || !profile.IsProfileActive)
+                return;
 
             if (channelName == "#GPG!1")
             {
             }
             else
             {
-                if (channelName.StartsWith("#GSP", StringComparison.OrdinalIgnoreCase))
-                {
-                    SteamLobbyManager.LeaveFromCurrentLobby();
-                }
+                SteamLobbyManager.LeaveFromCurrentLobby();
             }
 
-            var profile = CoreContext.MasterServer.CurrentProfile;
-
-            if (profile == null || !profile.IsProfileActive)
-                return;
-
-            SendToClientChat($":{_name}!X{GetEncodedIp(profile, profile.Name)}X|{profile.ActiveProfileId}@127.0.0.1 PART {channelName} :Leaving\r\n");
+            SendToClientChat($":{_user} PART {channelName} :Leaving\r\n");
+            //SendToClientChat($":{_name}!X{GetEncodedIp(profile, profile.Name)}X|{profile.ActiveProfileId}@127.0.0.1 PART {channelName} :Leaving\r\n");
         }
 
         void HandleTopicCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
@@ -1212,7 +1215,7 @@ namespace ThunderHawk
                     return;
                 }
 
-                CoreContext.MasterServer.SendKeyValuesChanged(pairs.Skip(1).ToArray());
+                CoreContext.MasterServer.SendKeyValuesChanged(_name, pairs.Skip(1).ToArray());
 
                /* for (int i = 1; i < pairs.Length; i += 2)
                     SendToClientChat($":s 702 #GPG!1 #GPG!1 {values[2]} BCAST :\\{pairs[i]}\\{pairs[i + 1]}\r\n");*/
@@ -1664,6 +1667,14 @@ namespace ThunderHawk
             }
         }
 
+        public void SendAsServerMessage(string message)
+        {
+            if (_name == null || !_inChat)
+                return;
+
+            SendToClientChat($":SERVER!XaaaaaaaaX|10008@127.0.0.1 PRIVMSG {_name} :{message}\r\n");
+        }
+
         unsafe void SendToClientChat(string message)
         {
             Logger.Trace("<<<<<<<<<<< " + message);
@@ -1698,7 +1709,10 @@ namespace ThunderHawk
             var endPoint = node.RemoteEndPoint;
 
             if (endPoint == null)
+            {
+                handler.KillClient(node);
                 return;
+            }
 
             string[] data = str.Split(new char[] { '\x00' }, StringSplitOptions.RemoveEmptyEntries);
 
@@ -1728,41 +1742,50 @@ namespace ThunderHawk
             SteamLobbyManager.LoadLobbies(null, GetIndicator())
                .ContinueWith(task =>
                {
-                   if (task.Status != TaskStatus.RanToCompletion)
+                   try
                    {
-                       Console.WriteLine(task.Exception);
-                       return;
+                       if (task.Status != TaskStatus.RanToCompletion)
+                       {
+                           Console.WriteLine(task.Exception);
+                           return;
+                       }
+
+                       // var currentRating = ServerContext.ChatServer.CurrentRating;
+
+                       var servers = task.Result;
+
+                       for (int i = 0; i < servers.Length; i++)
+                       {
+                           var server = servers[i];
+                           server["score_"] = GetCurrentRating(server.MaxPlayers);
+                       }
+
+                       var fields = data[5].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+
+                       var unencryptedBytes = ParseHelper.PackServerList(endPoint, servers, fields, isAutomatch);
+
+                       _lastLoadedLobbies.Clear();
+
+                       for (int i = 0; i < servers.Length; i++)
+                       {
+                           var server = servers[i];
+                           var retranslationPort = ushort.Parse(server.HostPort);
+                           var channelHash = ChatCrypt.PiStagingRoomHash("127.0.0.1", "127.0.0.1", retranslationPort);
+
+                           server.RoomHash = channelHash;
+                           _lastLoadedLobbies[channelHash] = server;
+                       }
+
+                       var encryptedBytes = GSEncoding.Encode("pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedBytes, unencryptedBytes.LongLength);
+
+                       Logger.Info("SERVERS bytes "+ encryptedBytes.Length);
+
+                       handler.Send(node, encryptedBytes);
                    }
-
-                  // var currentRating = ServerContext.ChatServer.CurrentRating;
-                  
-                   var servers = task.Result;
-
-                   for (int i = 0; i < servers.Length; i++)
+                   finally
                    {
-                       var server = servers[i];
-                       server["score_"] = GetCurrentRating(server.MaxPlayers);
+                       handler.KillClient(node);
                    }
-
-                   var fields = data[5].Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-
-                   var unencryptedBytes = ParseHelper.PackServerList(endPoint, servers, fields, isAutomatch);
-                 
-                   _lastLoadedLobbies.Clear();
-
-                   for (int i = 0; i < servers.Length; i++)
-                   {
-                       var server = servers[i];
-                       var retranslationPort = ushort.Parse(server.HostPort);
-                       var channelHash = ChatCrypt.PiStagingRoomHash("127.0.0.1", "127.0.0.1", retranslationPort);
-
-                       server.RoomHash = channelHash;
-                       _lastLoadedLobbies[channelHash] = server;
-                   }
-
-                   var encryptedBytes = GSEncoding.Encode("pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedBytes, unencryptedBytes.LongLength);
-
-                   handler.Send(node, encryptedBytes);
                });
         }
 
@@ -1861,6 +1884,8 @@ namespace ThunderHawk
             byte[] enc = GSEncoding.Encode("pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), array, array.LongLength);
 
             handler.Send(node, enc);
+
+            handler.KillClient(node);
         }
 
         void OnServerReport(UdpPortHandler handler, UdpReceiveResult result)
@@ -1873,6 +1898,7 @@ namespace ThunderHawk
 
             if (receivedBytes[0] == (byte)MessageType.AVAILABLE)
             {
+                    Logger.Trace("REPORT: Send AVAILABLE");
                 handler.Send(new byte[] { 0xfe, 0xfd, 0x09, 0x00, 0x00, 0x00, 0x00 }, remote);
             }
             else if (receivedBytes.Length > 5 && receivedBytes[0] == (byte)MessageType.HEARTBEAT)
@@ -1884,15 +1910,18 @@ namespace ThunderHawk
 
                 if (sections.Length != 3 && !receivedData.EndsWith("\x00\x00"))
                     return; // true means we don't send back a response
-
-                if (!SteamLobbyManager.IsInLobbyNow)
+                
+                if (!_challengeResponded)
                 {
+
                     byte[] uniqueId = new byte[4];
                     Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
 
                     byte[] response = new byte[] { 0xfe, 0xfd, (byte)MessageType.CHALLENGE_RESPONSE, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3], 0x41, 0x43, 0x4E, 0x2B, 0x78, 0x38, 0x44, 0x6D, 0x57, 0x49, 0x76, 0x6D, 0x64, 0x5A, 0x41, 0x51, 0x45, 0x37, 0x68, 0x41, 0x00 };
 
+                    Logger.Trace("REPORT: Send challenge responce");
                     handler.Send(response, remote);
+                    _challengeResponded = true;
                 }
                 else
                 {
@@ -1902,20 +1931,37 @@ namespace ThunderHawk
 
                     var details = ParseHelper.ParseDetails(serverVars);
 
-                    details["IPAddress"] = remote.Address.ToString();
-                    details["QueryPort"] = remote.Port.ToString();
-                    details["LastRefreshed"] = DateTime.UtcNow.ToString();
-                    details["LastPing"] = DateTime.UtcNow.ToString();
-                    details["country"] = "??";
-                    details["hostport"] = remote.Port.ToString();
-                    details["localport"] = remote.Port.ToString();
+                    if (details.StateChanged == "2")
+                    {
+                        Logger.Trace("REPORT: ClearServerDetails");
+                        _challengeResponded = false;
+                        _localServer = null;
+                    }
+                    else
+                    {
+                        Logger.Trace("REPORT: UpdateCurrentLobby");
 
-                    SteamLobbyManager.UpdateCurrentLobby(details, GetIndicator());
-                    _localServer = details;
+                        details["IPAddress"] = remote.Address.ToString();
+                        details["QueryPort"] = remote.Port.ToString();
+                        details["LastRefreshed"] = DateTime.UtcNow.ToString();
+                        details["LastPing"] = DateTime.UtcNow.ToString();
+                        details["country"] = "??";
+                        details["hostport"] = remote.Port.ToString();
+                        details["localport"] = remote.Port.ToString();
+
+                        SteamLobbyManager.UpdateCurrentLobby(details, GetIndicator());
+
+                        _localServer = details;
+
+                        if (details.IsValid && details.Ranked)
+                            CoreContext.MasterServer.RequestGameBroadcast(details.IsTeamplay, details.GameVariant, details.MaxPlayers.ParseToIntOrDefault(), details.PlayersCount.ParseToIntOrDefault(), details.Ranked);
+                    }
                 }
             }
             else if (receivedBytes.Length > 5 && receivedBytes[0] == (byte)MessageType.CHALLENGE_RESPONSE)
             {
+                Logger.Trace("REPORT: Validate challenge responce");
+
                 byte[] uniqueId = new byte[4];
                 Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
 
@@ -1926,25 +1972,39 @@ namespace ThunderHawk
                 Array.Copy(receivedBytes, 5, clientResponse, 0, clientResponse.Length);
 
                 var resStr = Encoding.UTF8.GetString(clientResponse);
+                
 
                 // if we validate, reply back a good response
                 if (clientResponse.SequenceEqual(validate) || clientResponse.SequenceEqual(validateDC))
                 {
                     byte[] response = new byte[] { 0xfe, 0xfd, 0x0a, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3] };
 
-                    var token = RecreateLobbyToken();
-                    token.Register(() => SteamLobbyManager.LeaveFromCurrentLobby());
-                    SteamLobbyManager.CreatePublicLobby(token, _name, _shortUser, _flags, GetIndicator()).OnCompletedOnUi(lobbyId =>
+                    var token = default(CancellationToken); //RecreateLobbyToken();
+                    //token.Register(() => SteamLobbyManager.LeaveFromCurrentLobby());
+
+                    if (SteamLobbyManager.IsInLobbyNow)
                     {
-                        if (token.IsCancellationRequested)
-                            return;
                         handler.Send(response, remote);
-                    }).Wait();
+                    }
+                    else
+                    {
+                        SteamLobbyManager.CreatePublicLobby(token, _name, _shortUser, _flags, GetIndicator()).OnCompletedOnUi(lobbyId =>
+                        {
+                            //if (token.IsCancellationRequested)
+                            //    return;
+                            handler.Send(response, remote);
+                        }).Wait();
+                    }
+                }
+                else
+                {
+                    Logger.Trace("REPORT: Validation failed");
                 }
             }
             else if (receivedBytes.Length == 5 && receivedBytes[0] == (byte)MessageType.KEEPALIVE)
             {
                 // this is a server ping, it starts with 0x08, it happens every 20 seconds or so
+                Logger.Trace("REPORT: KEEPALIVE");
 
                 byte[] uniqueId = new byte[4];
                 Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
@@ -1959,18 +2019,16 @@ namespace ThunderHawk
 
         void RefreshServerPing(IPEndPoint remote)
         {
-
+            // TODO
         }
 
-
-        bool CanRegisterServer(IPEndPoint remote, byte[] data)
-        {
-            return false;
-        }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void Stop()
         {
+            _challengeResponded = false;
+            _inChat = false;
+
             _serverReport.Stop();
             _serverRetrieve.Stop();
 

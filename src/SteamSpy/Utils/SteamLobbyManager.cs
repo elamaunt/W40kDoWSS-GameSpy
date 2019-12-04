@@ -465,6 +465,9 @@ namespace ThunderHawk.Utils
                             if (SteamMatchmaking.GetLobbyDataByIndex(lobbyId, k, out key, 100, out value, 100))
                                 server.Set(key, value);
 
+                        if (server.Ranked)
+                            server.Set("numplayers", SteamMatchmaking.GetNumLobbyMembers(lobbyId).ToString());
+
                         if (!server.HasPlayers)
                             continue;
                         

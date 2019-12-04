@@ -1,12 +1,10 @@
-﻿using DesktopNotifications;
-using Microsoft.Toolkit.Uwp.Notifications;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Threading;
 using System.Windows;
 using ThunderHawk.Core;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
-using ToastNotifications.Messages;
 using ToastNotifications.Position;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
@@ -41,7 +39,7 @@ namespace ThunderHawk
             });
         }
 
-        public void NotifyAboutMessage(MessageInfo info)
+        public void NotifyAsSystemToastMessage(MessageInfo info)
         {
             // Construct the visuals of the toast (using Notifications library)
             ToastContent toastContent = new ToastContent()
@@ -97,6 +95,49 @@ namespace ThunderHawk
               toastXml.LoadXml(xml);
               var toast = new ToastNotification(toastXml);
               ToastNotificationManager.CreateToastNotifier("Sample toast").Show(toast);*/
+        }
+
+        public void NotifyAsSystemToastMessage(string title, string text)
+        {
+            ToastContent toastContent = new ToastContent()
+            {
+                // Arguments when the user taps body of toast
+                Launch = "action=viewConversation&conversationId=5",
+
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                             new AdaptiveText()
+                             {
+                                Text = title,
+                                HintAlign = AdaptiveTextAlign.Left
+                             },
+
+                            new AdaptiveText()
+                            {
+                                Text = text,
+                                HintAlign = AdaptiveTextAlign.Left
+                            }
+                        }
+                    }
+                }
+            };
+
+            toastContent.Header = new ToastHeader(Interlocked.Increment(ref _idCounter).ToString(), "3", "4");
+
+            // Create the XML document (BE SURE TO REFERENCE WINDOWS.DATA.XML.DOM)
+            var doc = new XmlDocument();
+            doc.LoadXml(toastContent.GetContent());
+
+            // And create the toast notification
+            var toast = new ToastNotification(doc);
+            toast.Group = "info";
+
+            // And then show it
+            _desktopNotifier.Show(toast);
         }
 
         public void OpenLink(Uri uri)

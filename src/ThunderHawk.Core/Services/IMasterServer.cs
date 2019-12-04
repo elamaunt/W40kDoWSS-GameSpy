@@ -51,7 +51,8 @@ namespace ThunderHawk.Core
         event Action<StatsInfo[], int, int> PlayersTopLoaded;
         event Action<GameInfo[]> LastGamesLoaded;
         event Action<GameInfo> NewGameReceived;
-
+        event Action<StatsChangesInfo> UserStatsChanged;
+        event Action<GameHostInfo> GameBroadcastReceived;
         event Action<MessageInfo> ChatMessageReceived;
         void Disconnect();
         void RequestLogout();
@@ -62,6 +63,6 @@ namespace ThunderHawk.Core
         GameInfo[] LastGames { get; }
         StatsInfo[] PlayersTop { get; }
 
-        void SendKeyValuesChanged(string[] pairs);
+        void SendKeyValuesChanged(string name, string[] pairs);
     }
 }

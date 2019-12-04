@@ -2,7 +2,8 @@
 {
     public interface IClientServer
     {
-        //void SendToClientChat(string message);
+        void SendAsServerMessage(string message);
+
         void Start();
         void Stop();
     }

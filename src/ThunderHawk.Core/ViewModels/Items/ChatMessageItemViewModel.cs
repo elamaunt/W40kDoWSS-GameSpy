@@ -8,7 +8,10 @@ namespace ThunderHawk.Core
 
         public ChatMessageItemViewModel(MessageInfo info)
         {
-            Message.Text = $"[{info.Date.ToString("hh:mm:ss")}] {info.Author.UIName}: {info.Text}";
+            if (info.IsPrivate)
+                Message.Text = $"--------- SERVER: {info.Text}";
+            else
+                Message.Text = $"[{info.Date.ToString("hh:mm:ss")}] {info.Author.UIName}: {info.Text}";
         }
     } 
 }

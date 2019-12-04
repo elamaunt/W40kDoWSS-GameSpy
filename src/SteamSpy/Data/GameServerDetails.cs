@@ -30,7 +30,10 @@ namespace ThunderHawk
         public CSteamID HostSteamId { get; set; }
         public CSteamID LobbySteamId { get; set; }
 
-        public bool HasPlayers => GetOrDefault("numplayers ") != "0";
+        public bool Ranked => GameName == "whamdowfram";
+        public bool IsTeamplay => GetOrDefault("teamplay") == "1";
+        public bool HasPlayers => GetOrDefault("numplayers") != "0";
+        public string PlayersCount => GetOrDefault("numplayers");
         public string HostPort => GetOrDefault("hostport");
         public string HostName => GetOrDefault("hostname");
         public string StateChanged => GetOrDefault("statechanged");
