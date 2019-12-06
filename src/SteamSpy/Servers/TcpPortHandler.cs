@@ -308,8 +308,6 @@ namespace ThunderHawk
 
                 }
             }
-
-            Logger.Info($"{_port} CLIENTS NOW {_clients.Count}");
         }
 
         public class TcpClientNode
