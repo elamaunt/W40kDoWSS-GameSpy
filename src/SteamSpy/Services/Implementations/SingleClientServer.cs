@@ -25,6 +25,7 @@ namespace ThunderHawk
 {
     public class SingleClientServer : IClientServer
     {
+        UdpPortHandler _cdKey;
         UdpPortHandler _serverReport;
         TcpPortHandler _serverRetrieve;
         TcpPortHandler _clientManager;
@@ -85,9 +86,10 @@ namespace ThunderHawk
 
         public SingleClientServer()
         {
+            _cdKey = new UdpPortHandler(29910, OnCdKey, OnError);
             _serverReport = new UdpPortHandler(27900, OnServerReport, OnError);
             _serverRetrieve = new TcpPortHandler(28910, OnServerRetrieve, OnServerRetrieveError);
-
+            
             _clientManager = new TcpPortHandler(29900, OnClientManager, OnError, OnClientAccept, OnZeroBytes);
             _searchManager = new TcpPortHandler(29901, OnSearchManager, OnError, null, OnZeroBytes);
 
@@ -111,6 +113,11 @@ namespace ThunderHawk
             //SteamLobbyManager.LobbyMemberUpdated += OnLobbyMemberUpdated;
             SteamLobbyManager.LobbyMemberLeft += OnLobbyMemberLeft;
             SteamLobbyManager.TopicUpdated += OnTopicUpdated;
+        }
+
+        void OnCdKey(UdpPortHandler handler, UdpReceiveResult result)
+        {
+            Debugger.Break();
         }
 
         void OnServerRetrieveError(Exception exception, bool send, int port)
@@ -336,6 +343,7 @@ namespace ThunderHawk
             _clientManager.Start();
             _searchManager.Start();
 
+            _cdKey.Start();
             _chat.Start();
             _stats.Start();
             _http.Start();
@@ -417,6 +425,7 @@ namespace ThunderHawk
                     HandleStatus(node, pairs);
                     break;
                 default:
+                    Debugger.Break();
                     break;
             }
         }
@@ -998,6 +1007,8 @@ namespace ThunderHawk
                 Logger.Trace($"Stats socket: GAME ACCEPTED " + uniqueSession);
                 Dowstats.UploadGame(dictionary, usersGameInfos, isRateGame);*/
             }
+
+            Debugger.Break();
         }
 
         string GetPidFromInput(string input, int start)
@@ -1097,7 +1108,7 @@ namespace ThunderHawk
                 SteamLobbyManager.LeaveFromCurrentLobby();
             }
 
-            SendToClientChat($":{_user} PART {channelName} :Leaving\r\n");
+            SendToClientChat($":{_user} PART {channelName} :{values[2]}\r\n");
             //SendToClientChat($":{_name}!X{GetEncodedIp(profile, profile.Name)}X|{profile.ActiveProfileId}@127.0.0.1 PART {channelName} :Leaving\r\n");
         }
 
@@ -1466,8 +1477,12 @@ namespace ThunderHawk
             {
                 var users = CoreContext.MasterServer.GetAllUsers();
 
-                SendToClientChat(node, $":{_user} JOIN {channelName}\r\n");
-                SendToClientChat(node, $":s 331 {channelName} :No topic is set\r\n");
+                var builder = new StringBuilder();
+
+                builder.Append($":{_user} JOIN {channelName}\r\n");
+                // SendToClientChat(node, $":{_user} JOIN {channelName}\r\n");
+                builder.Append($":s 331 {channelName} :No topic is set\r\n");
+               // SendToClientChat(node, $":s 331 {channelName} :No topic is set\r\n");
 
                 _inChat = true;
 
@@ -1483,8 +1498,12 @@ namespace ThunderHawk
                     playersList.Append(user.Name + " ");
                 }
 
-                SendToClientChat(node, $":s 353 {_name} = {channelName} :{playersList}\r\n");
-                SendToClientChat(node, $":s 366 {_name} {channelName} :End of NAMES list\r\n");
+                builder.Append($":s 353 {_name} = {channelName} :{playersList}\r\n");
+                //SendToClientChat(node, $":s 353 {_name} = {channelName} :{playersList}\r\n");
+                builder.Append($":s 366 {_name} {channelName} :End of NAMES list\r\n");
+                //SendToClientChat(node, $":s 366 {_name} {channelName} :End of NAMES list\r\n");
+
+                SendToClientChat(builder.ToString());
             }
             else
             {
@@ -1776,6 +1795,7 @@ namespace ThunderHawk
                            _lastLoadedLobbies[channelHash] = server;
                        }
 
+                       Logger.Info("SERVERS VALIDATE VALUE ~" + validate+"~");
                        var encryptedBytes = GSEncoding.Encode("pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedBytes, unencryptedBytes.LongLength);
 
                        Logger.Info("SERVERS bytes "+ encryptedBytes.Length);
@@ -2035,6 +2055,7 @@ namespace ThunderHawk
             _clientManager.Stop();
             _searchManager.Stop();
 
+            _cdKey.Stop();
             _chat.Stop();
             _stats.Stop();
             _http.Stop();

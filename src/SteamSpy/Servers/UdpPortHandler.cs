@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace ThunderHawk
@@ -62,34 +61,29 @@ namespace ThunderHawk
 
         void OnReceive(Task<UdpReceiveResult> task)
         {
-            lock (Sync.LOCK)
+            try
             {
-                Thread.Sleep(100);
+                if (task.IsFaulted)
+                    throw task.Exception.GetInnerException();
 
-                try
-                {
-                    if (task.IsFaulted)
-                        throw task.Exception.GetInnerException();
-
-                    _handlerDelegate(this, task.Result);
-                }
-                catch (OperationCanceledException)
-                {
-                }
-                catch (InvalidOperationException)
-                {
-                }
-                catch (SocketException)
-                {
-                }
-                catch (Exception ex)
-                {
-                    _exceptionHandlerDelegate(ex, false, _port);
-                }
-                finally
-                {
-                    _client?.ReceiveAsync().ContinueWith(OnReceive);
-                }
+                _handlerDelegate(this, task.Result);
+            }
+            catch (OperationCanceledException)
+            {
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (SocketException)
+            {
+            }
+            catch (Exception ex)
+            {
+                _exceptionHandlerDelegate(ex, false, _port);
+            }
+            finally
+            {
+                _client?.ReceiveAsync().ContinueWith(OnReceive);
             }
         }
     }

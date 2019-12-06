@@ -54,6 +54,7 @@ namespace ThunderHawk
 
             _listener.ExclusiveAddressUse = true;
             _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
+            _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
             _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
         }
 
@@ -168,11 +169,53 @@ namespace ThunderHawk
                     return true;
                 }
             }
+            catch (OperationCanceledException ex)
+            {
+                Logger.Info(_port + " send : " + ex);
+                KillClient(node);
+            }
+            catch (InvalidOperationException ex)
+            {
+                Logger.Info(_port + " send : " + ex);
+                KillClient(node);
+            }
+            catch (SocketException ex)
+            {
+                Logger.Info(_port + " send : " + ex);
+                KillClient(node);
+            }
+            catch (Exception ex)
+            {
+                Logger.Info(_port + " send : " + ex);
+                KillClient(node);
+                _exceptionHandlerDelegate?.Invoke(ex, true, _port);
+            }
+
+            return false;
+        }
+
+        void OnReceive(TcpClientNode node, Task<int> task)
+        {
+            try
+            {
+                if (task.IsCanceled)
+                    return;
+
+                if (task.IsFaulted)
+                    throw task.Exception.GetInnerException();
+
+                var count = task.Result;
+
+                if (count == 0)
+                    _zeroHandlerDelegate?.Invoke(this);
+                else
+                    _handlerDelegate(this, node, node.Buffer, count);
+            }
             catch (OperationCanceledException)
             {
                 KillClient(node);
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
                 KillClient(node);
             }
@@ -183,75 +226,40 @@ namespace ThunderHawk
             catch (Exception ex)
             {
                 KillClient(node);
-                _exceptionHandlerDelegate?.Invoke(ex, true, _port);
+                _exceptionHandlerDelegate?.Invoke(ex, false, _port);
             }
-
-            return false;
-        }
-
-        void OnReceive(TcpClientNode node, Task<int> task)
-        {
-            lock (Sync.LOCK)
+            finally
             {
-                Thread.Sleep(100);
-
                 try
                 {
-                    if (task.IsCanceled)
-                        return;
-
-                    if (task.IsFaulted)
-                        throw task.Exception.GetInnerException();
-
-                    var count = task.Result;
-
-                    if (count == 0)
-                        _zeroHandlerDelegate?.Invoke(this);
-                    else
-                        _handlerDelegate(this, node, node.Buffer, count);
-                }
-                catch (OperationCanceledException)
-                {
-                    KillClient(node);
-                }
-                catch (InvalidOperationException)
-                {
-                    KillClient(node);
-                }
-                catch (SocketException)
-                {
-                    KillClient(node);
-                }
-                catch (Exception ex)
-                {
-                    _exceptionHandlerDelegate?.Invoke(ex, false, _port);
-                }
-                finally
-                {
-                    try
+                    if (node.Client.Connected)
                     {
                         var source = _tokenSource;
 
                         if (source != null)
                             node.Client.GetStream()?.ReadAsync(node.Buffer, 0, node.Buffer.Length, source.Token).ContinueWith(t => OnReceive(node, t));
                     }
-                    catch (OperationCanceledException)
-                    {
-                        KillClient(node);
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        KillClient(node);
-                    }
-                    catch (SocketException)
-                    {
-                        KillClient(node);
-                    }
-                    catch (Exception ex)
-                    {
-                        KillClient(node);
-                        _exceptionHandlerDelegate?.Invoke(ex, false, _port);
-                    }
+                }
+                catch (OperationCanceledException ex)
+                {
+                    Logger.Info(_port + " recv : " + ex);
+                    KillClient(node);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    Logger.Info(_port + " recv : " + ex);
+                    KillClient(node);
+                }
+                catch (SocketException ex)
+                {
+                    Logger.Info(_port + " recv : " + ex);
+                    KillClient(node);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Info(_port + " recv : " + ex);
+                    KillClient(node);
+                    _exceptionHandlerDelegate?.Invoke(ex, false, _port);
                 }
             }
         }
@@ -292,14 +300,16 @@ namespace ThunderHawk
                 try
                 {
                     node.Client.GetStream()?.Close(2000);
-                    node.Client.Close();
-                    node.Client.Dispose();
+                    //node.Client.Close();
+                    //node.Client.Dispose();
                 }
                 catch (Exception)
                 {
 
                 }
             }
+
+            Logger.Info($"{_port} CLIENTS NOW {_clients.Count}");
         }
 
         public class TcpClientNode
