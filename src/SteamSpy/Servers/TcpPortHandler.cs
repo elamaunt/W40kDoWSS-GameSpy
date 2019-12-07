@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using ThunderHawk.Core;
+using ThunderHawk.Utils;
 
 namespace ThunderHawk
 {
@@ -162,8 +163,10 @@ namespace ThunderHawk
         {
             _tokenSource = new CancellationTokenSource();
 
+            var addresses = NetworkHelper.GetLocalIpAddresses();
+
             _listener = _setting.Create();
-            _listener.Bind(new IPEndPoint(IPAddress.Loopback, _port));
+            _listener.Bind(new IPEndPoint(/*addresses.FirstOrDefault() ?? IPAddress.Loopback*/IPAddress.Any, _port));
             _listener.Listen(10);
             _listener.AcceptAsync().ContinueWith(OnAccept);
         }

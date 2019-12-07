@@ -1,4 +1,5 @@
 ﻿using Framework;
+using GSMasterServer.Servers;
 using GSMasterServer.Utils;
 using Http;
 using Reality.Net.Extensions;
@@ -26,7 +27,9 @@ namespace ThunderHawk
     public class SingleClientServer : IClientServer
     {
         UdpPortHandler _cdKey;
+
         UdpPortHandler _serverReport;
+
         TcpPortHandler _serverRetrieve;
         TcpPortHandler _clientManager;
         TcpPortHandler _searchManager;
@@ -87,6 +90,7 @@ namespace ThunderHawk
         public SingleClientServer()
         {
             _cdKey = new UdpPortHandler(29910, OnCdKey, OnError);
+
             _serverReport = new UdpPortHandler(27900, OnServerReport, OnError);
             _serverRetrieve = new TcpPortHandler(28910, new RetrieveTcpSetting(), OnServerRetrieve, OnServerRetrieveError);
             
@@ -115,7 +119,7 @@ namespace ThunderHawk
             SteamLobbyManager.TopicUpdated += OnTopicUpdated;
         }
 
-        void OnCdKey(UdpPortHandler handler, UdpReceiveResult result)
+        void OnCdKey(UdpPortHandler handler, byte[] receivedBytes, IPEndPoint remote)
         {
             Debugger.Break();
         }
@@ -127,7 +131,7 @@ namespace ThunderHawk
 
         void OnUserKeyValueChanged(string name, string key, string value)
         {
-            if (name == null)
+            if (name == null || _name == name)
                 return;
 
             SendToClientChat($":s 702 #GPG!1 #GPG!1 {name} BCAST :\\{key}\\{value}\r\n");
@@ -367,9 +371,9 @@ namespace ThunderHawk
 
         void Restart()
         {
-            Stop();
-            RecreateLobbyToken();
-            Start();
+           // Stop();
+           // RecreateLobbyToken();
+           // Start();
         }
 
         void OnChatAccept(TcpPortHandler handler, TcpClientNode node, CancellationToken token)
@@ -433,6 +437,21 @@ namespace ThunderHawk
         void HandleStatus(TcpClientNode node, Dictionary<string, string> pairs)
         {
             _clientManager.SendAskii(node, $@"\bdy\{0}\list\\final\");
+
+            var status = pairs.GetOrDefault("status") ??  "0";
+            var statusString = pairs.GetOrDefault("statstring") ?? "Offline";
+            var locString = pairs.GetOrDefault("locstring") ?? "-1";
+           
+            string lsParameter;
+
+            if (string.IsNullOrWhiteSpace(locString) || locString == "0")
+                lsParameter = string.Empty;
+            else
+                lsParameter = "|ls|" + locString;
+
+            var statusResult = $@"\bm\100\f\{_profileId}\msg\|s|{status}{lsParameter}|ss|{statusString}\final\";
+
+            _clientManager.SendAskii(node, statusResult);
         }
 
         void HandleLogin(TcpClientNode node, Dictionary<string, string> pairs)
@@ -1082,7 +1101,7 @@ namespace ThunderHawk
 
         void HandlePingCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
         {
-            SendToClientChat(node, $":s PONG :s {values.FirstOrDefault()}\r\n");
+            SendToClientChat(node, $":s PONG :s\r\n");
         }
 
         void HandleUtmCommand(TcpPortHandler handler, string line)
@@ -1224,6 +1243,8 @@ namespace ThunderHawk
                     SendToClientChat(node, $":s 702 #GPG!1 #GPG!1 {values[2]} BCAST :\\{pairs[1]}\\{pairs[2]}\r\n");
                     return;
                 }
+
+                SendToClientChat(node, $":s 702 #GPG!1 #GPG!1 {values[2]} BCAST :\\{pairs[1]}\\{pairs[2]}\r\n");
 
                 CoreContext.MasterServer.SendKeyValuesChanged(_name, pairs.Skip(1).ToArray());
 
@@ -1595,7 +1616,7 @@ namespace ThunderHawk
             SendToClientChat(node, $":s 372 {_name} :- Welcome to GameSpy\r\n");
             SendToClientChat(node, $":s 251 :There are {users} users and 0 services on 1 servers\r\n");
             SendToClientChat(node, $":s 252 0 :operator(s)online\r\n");
-            SendToClientChat(node, $":s 253 {users} :unknown connection(s)\r\n");
+            SendToClientChat(node, $":s 253 1 :unknown connection(s)\r\n");
             SendToClientChat(node, $":s 254 1 :channels formed\r\n");
             SendToClientChat(node, $":s 255 :I have {users} clients and 1 servers\r\n");
             SendToClientChat(node, $":{_user} NICK {_name}\r\n");
@@ -1658,7 +1679,8 @@ namespace ThunderHawk
             var loginInfo = CoreContext.MasterServer.GetLoginInfo(nick);
 
             SendToClientChat(node, $":s 707 {nick} 12345678 {loginInfo.ProfileId}\r\n");
-
+            SendToClientChat(node, $":s 687ru: Your languages have been set\r\n");
+            
             RestartTimer(node);
         }
 
@@ -1875,8 +1897,8 @@ namespace ThunderHawk
             bytes.Add(0);
             bytes.Add(0);
 
-            //for (int i = 1; i <= 10; i++)
-            //{
+            // for (int i = 1; i <= 10; i++)
+            // {
             bytes.Add(81);
 
             var b2 = BitConverter.GetBytes((long)1);
@@ -1908,7 +1930,7 @@ namespace ThunderHawk
             bytes.Add(255);
             bytes.AddRange(DataFunctions.StringToBytes("20"));
             bytes.Add(0);
-            //}
+            // }
 
             bytes.AddRange(new byte[] { 0, 255, 255, 255, 255 });
 
@@ -1921,13 +1943,10 @@ namespace ThunderHawk
             handler.KillClient(node);
         }
 
-        void OnServerReport(UdpPortHandler handler, UdpReceiveResult result)
+        void OnServerReport(UdpPortHandler handler, byte[] receivedBytes, IPEndPoint remote)
         {
-            var str = ToUtf8(result.Buffer, result.Buffer.Length);
+            var str = ToUtf8(receivedBytes, receivedBytes.Length);
             Logger.Trace("REPORT " + str);
-
-            var receivedBytes = result.Buffer;
-            var remote = result.RemoteEndPoint;
 
             if (receivedBytes[0] == (byte)MessageType.AVAILABLE)
             {
@@ -1946,7 +1965,6 @@ namespace ThunderHawk
                 
                 if (!_challengeResponded)
                 {
-
                     byte[] uniqueId = new byte[4];
                     Array.Copy(receivedBytes, 1, uniqueId, 0, 4);
 
@@ -1967,6 +1985,7 @@ namespace ThunderHawk
                     if (details.StateChanged == "2")
                     {
                         Logger.Trace("REPORT: ClearServerDetails");
+                        SteamLobbyManager.LeaveFromCurrentLobby();
                         _challengeResponded = false;
                         _localServer = null;
                     }
@@ -2014,20 +2033,16 @@ namespace ThunderHawk
 
                     var token = default(CancellationToken); //RecreateLobbyToken();
                     //token.Register(() => SteamLobbyManager.LeaveFromCurrentLobby());
+                   
+                    handler.Send(response, remote);
 
-                    if (SteamLobbyManager.IsInLobbyNow)
-                    {
-                        handler.Send(response, remote);
-                    }
-                    else
-                    {
-                        SteamLobbyManager.CreatePublicLobby(token, _name, _shortUser, _flags, GetIndicator()).OnCompletedOnUi(lobbyId =>
+                    if (!SteamLobbyManager.IsInLobbyNow)
+                        SteamLobbyManager.CreatePublicLobby(token, _name, _shortUser, _flags, GetIndicator())/*.OnCompletedOnUi(lobbyId =>
                         {
                             //if (token.IsCancellationRequested)
                             //    return;
-                            handler.Send(response, remote);
-                        }).Wait();
-                    }
+                            //handler.Send(response, remote);
+                        })*/.Wait();
                 }
                 else
                 {
@@ -2388,8 +2403,7 @@ room_pairs =
 {
         ""Room 1"",
 		""ThunderHawk""
-}
-                    ";
+}";
 
         public string AutomatchDefaults => @"----------------------------------------------------------------------------------------------------------------
 -- Default FE Settings

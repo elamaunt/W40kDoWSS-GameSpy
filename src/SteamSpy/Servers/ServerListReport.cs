@@ -1,7 +1,4 @@
 ﻿using GSMasterServer.Data;
-using GSMasterServer.Utils;
-using ThunderHawk;
-using ThunderHawk.Utils;
 using System;
 using System.Linq;
 using System.Net;
@@ -9,7 +6,8 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using ThunderHawk.Core;
+using ThunderHawk;
+using ThunderHawk.Utils;
 
 namespace GSMasterServer.Servers
 {
@@ -267,7 +265,7 @@ namespace GSMasterServer.Servers
 
             string[] serverVarsSplit = serverVars.Split(new string[] { "\x00" }, StringSplitOptions.None);
 
-            var server = new GameServer();
+            var server = new GameServerDetails();
 
             server["IPAddress"] = remote.Address.ToString();
             server["QueryPort"] = remote.Port.ToString();
@@ -284,22 +282,22 @@ namespace GSMasterServer.Servers
             }
 
             var gameType = server["gametype"];
-            var gamevariant = server.Get<string>("gamevariant");
+            var gamevariant = server.GetOrDefault("gamevariant");
 
             var isRanked = "ranked".Equals(gameType, StringComparison.OrdinalIgnoreCase);
 
             if (isRanked)
             {
                 //server["realscore"] = (ServerContext.ChatServer?.CurrentRating ?? 1000).ToString();
-                server["score_"] = (ServerContext.ChatServer?.CurrentRating ?? 1000).ToString();
+                //server["score_"] = (ServerContext.ChatServer?.CurrentRating ?? 1000).ToString();
             }
 
-            var gamename = server.Get<string>("gamename");
+            var gamename = server.GetOrDefault("gamename");
 
-            if (server.Get<string>("statechanged") == "3" && gamename.Equals("whamdowfram", StringComparison.Ordinal))
+            if (server.GetOrDefault("statechanged") == "3" && gamename.Equals("whamdowfram", StringComparison.Ordinal))
             {
 #if SPACEWAR
-                ServerContext.ChatServer.SentServerMessageToClient($"Вы создаете хост для игры в авто [{gameType}, {gamevariant}]. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.");
+             //   ServerContext.ChatServer.SentServerMessageToClient($"Вы создаете хост для игры в авто [{gameType}, {gamevariant}]. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.");
 #else
                 if (CoreContext.LangService.CurrentCulture.TwoLetterISOLanguageName == "ru")
                     ServerContext.ChatServer.SentServerMessageToClient($"Вы создаете хост для игры в авто [{gameType}, {gamevariant}]. Другие игроки увидят ваш хост через некоторое время (до минуты), получат оповещение и смогут подключиться для игры.");
@@ -321,13 +319,13 @@ namespace GSMasterServer.Servers
             }*/
 
             // you've got to have all these properties in order for your server to be valid
-            if (!String.IsNullOrWhiteSpace(server.Get<string>("hostname")) &&
+            if (!String.IsNullOrWhiteSpace(server.GetOrDefault("hostname")) &&
                 !String.IsNullOrWhiteSpace(gamevariant) &&
-                !String.IsNullOrWhiteSpace(server.Get<string>("gamever")) &&
-                !String.IsNullOrWhiteSpace(server.Get<string>("gametype")) &&
-                server.Get<string>("maxplayers") != "0")
+                !String.IsNullOrWhiteSpace(server.GetOrDefault("gamever")) &&
+                !String.IsNullOrWhiteSpace(server.GetOrDefault("gametype")) &&
+                server.GetOrDefault("maxplayers") != "0")
             {
-                server.Valid = true;
+                //server.Valid = true;
             }
             
             // if the server list doesn't contain this server, we need to return false in order to send a challenge
@@ -353,10 +351,10 @@ namespace GSMasterServer.Servers
 
             if (!wasJoinable && SteamLobbyManager.IsLobbyJoinable)
             {
-                var hostname = server.Get<string>("hostname");
+                var hostname = server.GetOrDefault("hostname");
 
-                if (gamename == "whamdowfram")
-                    ServerContext.ChatServer.SendAutomatchGameBroadcast(hostname, int.Parse(server.Get<string>("maxplayers")), gameType, gamevariant);
+               // if (gamename == "whamdowfram")
+               //     ServerContext.ChatServer.SendAutomatchGameBroadcast(hostname, int.Parse(server.Get<string>("maxplayers")), gameType, gamevariant);
             }
 
             return true;
@@ -375,7 +373,7 @@ namespace GSMasterServer.Servers
             server["hostport"] = remote.Port.ToString();
             server["localport"] = remote.Port.ToString();
             
-            SteamLobbyManager.CreatePublicLobby(server, CancellationToken.None, GetIndicator());
+            SteamLobbyManager.CreatePublicLobby(CancellationToken.None, "elamaunt23", "XaaaaaaaaX|5", "" , GetIndicator());
         }
 
         private string GetIndicator()
