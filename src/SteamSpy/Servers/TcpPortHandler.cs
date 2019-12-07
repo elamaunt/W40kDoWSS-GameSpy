@@ -13,6 +13,109 @@ namespace ThunderHawk
 {
     public class TcpPortHandler
     {
+        public interface ITcpSetting
+        {
+            Socket Create();
+        }
+
+        public class ChatTcpSetting : ITcpSetting
+        {
+            public Socket Create()
+            {
+                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    SendTimeout = 5000,
+                    ReceiveTimeout = 5000,
+                    SendBufferSize = 65535,
+                    ReceiveBufferSize = 65535
+                };
+
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
+                return socket;
+            }
+        }
+        public class HttpTcpSetting : ITcpSetting
+        {
+            public Socket Create()
+            {
+                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    SendTimeout = 5000,
+                    ReceiveTimeout = 5000,
+                    SendBufferSize = 8192,
+                    ReceiveBufferSize = 8192,
+                    Blocking = false
+                };
+
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                return socket;
+            }
+        }
+
+        public class LoginTcpSetting : ITcpSetting
+        {
+            public Socket Create()
+            {
+                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    SendTimeout = 5000,
+                    ReceiveTimeout = 5000,
+                    SendBufferSize = 8192,
+                    ReceiveBufferSize = 8192,
+                    Blocking = false
+                };
+
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                return socket;
+            }
+        }
+
+        public class RetrieveTcpSetting : ITcpSetting
+        {
+            public Socket Create()
+            {
+                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    SendTimeout = 5000,
+                    ReceiveTimeout = 5000,
+                    SendBufferSize = 65535,
+                    ReceiveBufferSize = 65535
+                };
+
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
+                return socket;
+            }
+        }
+
+        public class StatsTcpSetting : ITcpSetting
+        {
+            public Socket Create()
+            {
+                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+                {
+                    SendTimeout = 5000,
+                    ReceiveTimeout = 5000,
+                    SendBufferSize = 65535,
+                    ReceiveBufferSize = 65535
+                };
+
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
+                socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
+                return socket;
+            }
+        }
+
+        static TcpPortHandler()
+        {
+            ServicePointManager.SetTcpKeepAlive(true, 60 * 1000 * 10, 1000);
+        }
+
         readonly LinkedList<TcpClientNode> _clients = new LinkedList<TcpClientNode>();
 
         readonly WeakReference<TcpClientNode> _lastClient = new WeakReference<TcpClientNode>(null);
@@ -26,7 +129,7 @@ namespace ThunderHawk
             }
         }
 
-        TcpListenerEx _listener;
+        Socket _listener;
         CancellationTokenSource _tokenSource;
 
         ExceptionHandler _exceptionHandlerDelegate;
@@ -39,31 +142,30 @@ namespace ThunderHawk
         public delegate void AcceptHandler(TcpPortHandler handler, TcpClientNode node, CancellationToken token);
         public delegate void DataHandler(TcpPortHandler handler, TcpClientNode node, byte[] buffer, int count);
 
+        readonly ITcpSetting _setting;
         readonly int _port;
 
         readonly object RECEIVE_LOCKER = new object();
 
-        public TcpPortHandler(int port, DataHandler handlerDelegate, ExceptionHandler errorHandler = null, AcceptHandler acceptDelegate = null, ZeroHandler zeroHandler = null)
+        public TcpPortHandler(int port, ITcpSetting setting, DataHandler handlerDelegate, ExceptionHandler errorHandler = null, AcceptHandler acceptDelegate = null, ZeroHandler zeroHandler = null)
         {
+            _setting = setting;
             _port = port;
             _zeroHandlerDelegate = zeroHandler;
             _exceptionHandlerDelegate = errorHandler;
             _handlerDelegate = handlerDelegate;
             _acceptDelegate = acceptDelegate;
-            _listener = new TcpListenerEx(IPAddress.Any, _port);
-
-            _listener.ExclusiveAddressUse = true;
-            _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, new LingerOption(false, 0));
-            _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-            _listener.Server.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void Start()
         {
             _tokenSource = new CancellationTokenSource();
-            _listener.Start();
-            _listener.AcceptTcpClientAsync().ContinueWith(OnAccept, _tokenSource.Token);
+
+            _listener = _setting.Create();
+            _listener.Bind(new IPEndPoint(IPAddress.Loopback, _port));
+            _listener.Listen(10);
+            _listener.AcceptAsync().ContinueWith(OnAccept);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -71,8 +173,8 @@ namespace ThunderHawk
         {
             _tokenSource?.Cancel();
             _tokenSource = null;
-            
-            _listener.Stop();
+
+            _listener?.Close();
 
             var set = _clients.ToArray();
             _clients.Clear();
@@ -82,7 +184,7 @@ namespace ThunderHawk
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
-        void OnAccept(Task<TcpClient> task)
+        void OnAccept(Task<Socket> task)
         {
             try
             {
@@ -91,22 +193,13 @@ namespace ThunderHawk
 
                 var client = task.Result;
                 var node = new TcpClientNode(client);
+
                 _lastClient.SetTarget(node);
-
-                client.NoDelay = true;
-                client.SendTimeout = 30000;
-
-                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ExclusiveAddressUse, true);
-                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.DontLinger, true);
-                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Linger, false);
-                client.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-
-
                 _clients.AddLast(node);
 
                 _acceptDelegate?.Invoke(this, node, _tokenSource.Token);
 
-                client.GetStream().ReadAsync(node.Buffer, 0, node.Buffer.Length, _tokenSource.Token).ContinueWith(t => OnReceive(node, t));
+                client.ReceiveAsync(new ArraySegment<byte>(node.Buffer, 0, node.Buffer.Length), SocketFlags.None).ContinueWith(t => OnReceive(node, t));
             }
             catch (OperationCanceledException)
             {
@@ -124,8 +217,14 @@ namespace ThunderHawk
             }
             finally
             {
-                if (_listener.Active)
-                    _listener.AcceptTcpClientAsync().ContinueWith(OnAccept);
+                try
+                {
+                    _listener?.AcceptAsync().ContinueWith(OnAccept);
+                }
+                catch(Exception ex)
+                {
+
+                }
             }
         }
 
@@ -161,13 +260,9 @@ namespace ThunderHawk
 
             try
             {
-                var stream = node.Client.GetStream();
+                node.Client.Send(bytes, 0, bytes.Length, SocketFlags.None, out SocketError error);
 
-                if (stream != null)
-                {
-                    stream.Write(bytes, 0, bytes.Length);
-                    return true;
-                }
+                return true;
             }
             catch (OperationCanceledException ex)
             {
@@ -237,7 +332,7 @@ namespace ThunderHawk
                         var source = _tokenSource;
 
                         if (source != null)
-                            node.Client.GetStream()?.ReadAsync(node.Buffer, 0, node.Buffer.Length, source.Token).ContinueWith(t => OnReceive(node, t));
+                            node.Client.ReceiveAsync(new ArraySegment<byte>(node.Buffer, 0, node.Buffer.Length), SocketFlags.None).ContinueWith(t => OnReceive(node, t));
                     }
                 }
                 catch (OperationCanceledException ex)
@@ -264,46 +359,17 @@ namespace ThunderHawk
             }
         }
 
-        /// <summary>
-        /// Wrapper around TcpListener that exposes the Active property
-        /// </summary>
-        public class TcpListenerEx : TcpListener
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="T:System.Net.Sockets.TcpListener"/> class with the specified local endpoint.
-            /// </summary>
-            /// <param name="localEP">An <see cref="T:System.Net.IPEndPoint"/> that represents the local endpoint to which to bind the listener <see cref="T:System.Net.Sockets.Socket"/>. </param><exception cref="T:System.ArgumentNullException"><paramref name="localEP"/> is null. </exception>
-            public TcpListenerEx(IPEndPoint localEP) 
-                : base(localEP)
-            {
-            }
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="T:System.Net.Sockets.TcpListener"/> class that listens for incoming connection attempts on the specified local IP address and port number.
-            /// </summary>
-            /// <param name="localaddr">An <see cref="T:System.Net.IPAddress"/> that represents the local IP address. </param><param name="port">The port on which to listen for incoming connection attempts. </param><exception cref="T:System.ArgumentNullException"><paramref name="localaddr"/> is null. </exception><exception cref="T:System.ArgumentOutOfRangeException"><paramref name="port"/> is not between <see cref="F:System.Net.IPEndPoint.MinPort"/> and <see cref="F:System.Net.IPEndPoint.MaxPort"/>. </exception>
-            public TcpListenerEx(IPAddress localaddr, int port)
-                : base(localaddr, port)
-            {
-            }
-
-            public new bool Active
-            {
-                get { return base.Active; }
-            }
-        }
-
         public void KillClient(TcpClientNode node)
         {
             if (_clients.Remove(node))
             {
                 try
                 {
-                    node.Client.GetStream()?.Close(2000);
-                    //node.Client.Close();
-                    //node.Client.Dispose();
+                    node.Client.Shutdown(SocketShutdown.Both);
+                    node.Client.Close(2000);
+                    node.Client.Dispose();
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
 
                 }
@@ -312,12 +378,12 @@ namespace ThunderHawk
 
         public class TcpClientNode
         {
-            public readonly TcpClient Client;
+            public readonly Socket Client;
             public readonly byte[] Buffer = new byte[65536];
 
-            public IPEndPoint RemoteEndPoint => (IPEndPoint)Client.Client?.RemoteEndPoint;
+            public IPEndPoint RemoteEndPoint => (IPEndPoint)Client?.RemoteEndPoint;
 
-            public TcpClientNode(TcpClient client)
+            public TcpClientNode(Socket client)
             {
                 Client = client;
             }

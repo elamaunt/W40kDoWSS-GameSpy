@@ -88,14 +88,14 @@ namespace ThunderHawk
         {
             _cdKey = new UdpPortHandler(29910, OnCdKey, OnError);
             _serverReport = new UdpPortHandler(27900, OnServerReport, OnError);
-            _serverRetrieve = new TcpPortHandler(28910, OnServerRetrieve, OnServerRetrieveError);
+            _serverRetrieve = new TcpPortHandler(28910, new RetrieveTcpSetting(), OnServerRetrieve, OnServerRetrieveError);
             
-            _clientManager = new TcpPortHandler(29900, OnClientManager, OnError, OnClientAccept, OnZeroBytes);
-            _searchManager = new TcpPortHandler(29901, OnSearchManager, OnError, null, OnZeroBytes);
+            _clientManager = new TcpPortHandler(29900, new LoginTcpSetting(), OnClientManager, OnError, OnClientAccept, OnZeroBytes);
+            _searchManager = new TcpPortHandler(29901, new LoginTcpSetting(), OnSearchManager, OnError, null, OnZeroBytes);
 
-            _chat = new TcpPortHandler(6667, OnChat, OnError, OnChatAccept, OnZeroBytes);
-            _stats = new TcpPortHandler(29920, OnStats, OnError, OnStatsAccept, OnZeroBytes);
-            _http = new TcpPortHandler(80, OnHttp, OnError, null, OnZeroBytes);
+            _chat = new TcpPortHandler(6667, new ChatTcpSetting(), OnChat, OnError, OnChatAccept, OnZeroBytes);
+            _stats = new TcpPortHandler(29920, new StatsTcpSetting(), OnStats, OnError, OnStatsAccept, OnZeroBytes);
+            _http = new TcpPortHandler(80, new HttpTcpSetting(), OnHttp, OnError, null, OnZeroBytes);
 
             CoreContext.MasterServer.UserNameChanged += OnUserNameChanged;
             CoreContext.MasterServer.UserKeyValueChanged += OnUserKeyValueChanged;
@@ -1108,8 +1108,7 @@ namespace ThunderHawk
                 SteamLobbyManager.LeaveFromCurrentLobby();
             }
 
-            SendToClientChat($":{_user} PART {channelName} :{values[2]}\r\n");
-            //SendToClientChat($":{_name}!X{GetEncodedIp(profile, profile.Name)}X|{profile.ActiveProfileId}@127.0.0.1 PART {channelName} :Leaving\r\n");
+            SendToClientChat($":{_user} PART {channelName} :Leaving\r\n");
         }
 
         void HandleTopicCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
@@ -1367,15 +1366,20 @@ namespace ThunderHawk
                             string value = string.Empty;
 
                             if (key == "username")
-                                value = $"X{GetEncodedIp(user, user.UIName)}X|{user.ActiveProfileId ?? 0}";
+                            {
+                                if (user.IsUser)
+                                    value = _shortUser;
+                                else
+                                    value = $"X{GetEncodedIp(user, user.UIName)}X|{user.ActiveProfileId ?? 0}";
+                            }
+
                             if (key == "b_stats")
                                 if (user.BStats != null)
                                     value = user.BStats;
                                 else
                                     value = $"{user.ActiveProfileId ?? 0}|{user.Score1v1 ?? 1000}|{user.StarsCount}|";
                             if (key == "b_flags")
-                                value = user.BFlags;
-                            //value = "s";
+                                value = user.BFlags ?? string.Empty;
 
                             builder.Append(@"\" + value);
                         }
@@ -1552,10 +1556,14 @@ namespace ThunderHawk
                         _localServerHash = roomHash;
                         _enteredLobbyHash = roomHash;
 
-                        SendToClientChat(node, $":{_user} JOIN {channelName}\r\n");
-                        SendToClientChat(node, $":s 331 {channelName} :No topic is set\r\n");
-                        SendToClientChat(node, $":s 353 {_name} = {channelName} :@{_name}\r\n");
-                        SendToClientChat(node, $":s 366 {_name} {channelName} :End of NAMES list\r\n");
+                        var builder = new StringBuilder();
+
+                        builder.Append($":{_user} JOIN {channelName}\r\n");
+                        builder.Append($":s 331 {channelName} :No topic is set\r\n");
+                        builder.Append($":s 353 {_name} = {channelName} :@{_name}\r\n");
+                        builder.Append($":s 366 {_name} {channelName} :End of NAMES list\r\n");
+
+                        SendToClientChat(node, builder.ToString());
                     }
                 }
             }
@@ -1568,7 +1576,9 @@ namespace ThunderHawk
 
         void HandleUserCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
         {
-            _user = $@"{_name}!{values[1]}@{node.RemoteEndPoint?.Address}";
+            var addrs = NetworkHelper.GetLocalIpAddresses();
+
+            _user = $@"{_name}!{values[1]}@{addrs.FirstOrDefault() ?? node.RemoteEndPoint?.Address ?? IPAddress.Loopback}";
             _shortUser = values[1];
         }
 
@@ -1636,7 +1646,10 @@ namespace ThunderHawk
 
         void HandleUsripCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
         {
-            SendToClientChat(node, $":s 302  :=+@{node.RemoteEndPoint?.Address}\r\n");
+            var addrs = NetworkHelper.GetLocalIpAddresses();
+
+            SendToClientChat(node, $":s 302  :=+@{addrs.FirstOrDefault() ?? IPAddress.Loopback}\r\n");
+            //SendToClientChat(node, $":s 302  :=+@{node.RemoteEndPoint?.Address}\r\n");
         }
 
         void HandleLoginCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
@@ -1806,7 +1819,7 @@ namespace ThunderHawk
                    {
                        handler.KillClient(node);
                    }
-               });
+               }).Wait();
         }
 
         string GetCurrentRating(string maxPlayers)
@@ -1918,7 +1931,7 @@ namespace ThunderHawk
 
             if (receivedBytes[0] == (byte)MessageType.AVAILABLE)
             {
-                    Logger.Trace("REPORT: Send AVAILABLE");
+                Logger.Trace("REPORT: Send AVAILABLE");
                 handler.Send(new byte[] { 0xfe, 0xfd, 0x09, 0x00, 0x00, 0x00, 0x00 }, remote);
             }
             else if (receivedBytes.Length > 5 && receivedBytes[0] == (byte)MessageType.HEARTBEAT)
