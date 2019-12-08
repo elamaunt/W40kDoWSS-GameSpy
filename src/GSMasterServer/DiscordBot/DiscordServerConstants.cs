@@ -17,9 +17,9 @@
 
         public const ulong adminRoleId = 623907787788910613;
         public const ulong moderRoleId = 623909305669910549;
-#endif
+#else
 
-#if Debug
+
         public const ulong serverId = 624305167743057921;
 
         public const ulong logChannelId = 626123183380234261;
