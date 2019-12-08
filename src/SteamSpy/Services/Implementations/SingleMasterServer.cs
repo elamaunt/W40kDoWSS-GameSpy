@@ -41,6 +41,7 @@ namespace ThunderHawk
 
         public event Action UsersLoaded;
         public event Action<UserInfo> UserDisconnected;
+        public event Action<string, long?, string> NewUserReceived;
         public event Action<UserInfo, long?, string, string> UserNameChanged;
         public event Action<UserInfo> UserConnected;
         public event Action<UserInfo> UserChanged;
@@ -632,6 +633,18 @@ namespace ThunderHawk
             });
         }
 
+        public void RequestNewUser(Dictionary<string, string> pairs)
+        {
+            var message = _clientPeer.CreateMessage();
+
+            message.WriteJsonMessage(new RequestNewUserMessage()
+            {
+                KeyValues = pairs
+            });
+
+            _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+        }
+
         public void RequestAllUserNicks(string email)
         {
             var message = _clientPeer.CreateMessage();
@@ -868,6 +881,11 @@ namespace ThunderHawk
 
                 UserKeyValueChanged?.Invoke(message.Name, message.Key, message.Value);
             }
+        }
+
+        public void HandleMessage(NetConnection connection, NewUserMessage message)
+        {
+            NewUserReceived?.Invoke(message.Name, message.Id, message.Email);
         }
     }
 }

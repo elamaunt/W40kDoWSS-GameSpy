@@ -1,5 +1,6 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
+using System.IO;
 using System.Threading;
 using System.Windows;
 using ThunderHawk.Core;
@@ -37,6 +38,12 @@ namespace ThunderHawk
 
                 cfg.Dispatcher = Application.Current.Dispatcher;
             });
+        }
+
+        public void AddInStartup()
+        {
+            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            key.SetValue("ThunderHawk", Path.Combine(Directory.GetCurrentDirectory(), @"ThunderHawk.exe -silence"));
         }
 
         public void NotifyAsSystemToastMessage(MessageInfo info)

@@ -7,6 +7,7 @@
         {
         }
 
+        public string Map { get; set; }
         public string SessionId { get; set; }
         public string ModName { get; set; }
         public string ModVersion { get; set; }

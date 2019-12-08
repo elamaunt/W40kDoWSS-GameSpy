@@ -6,6 +6,7 @@ namespace GSMasterServer
     public class GameDBO
     {
         public string Id { get; set; }
+        public string Map { get; set; }
         public string ModName { get; set; }
         public string ModVersion { get; set; }
         public string Uri { get; set; }

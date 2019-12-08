@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using SharedServices;
 
 namespace ThunderHawk.Core
@@ -42,6 +43,7 @@ namespace ThunderHawk.Core
         event Action ConnectionLost;
         event Action Connected;
         event Action UsersLoaded;
+        event Action<string, long?, string> NewUserReceived;
         event Action<string, string, string> UserKeyValueChanged;
         event Action<UserInfo> UserDisconnected;
         event Action<UserInfo> UserConnected;
@@ -64,5 +66,6 @@ namespace ThunderHawk.Core
         StatsInfo[] PlayersTop { get; }
 
         void SendKeyValuesChanged(string name, string[] pairs);
+        void RequestNewUser(Dictionary<string, string> pairs);
     }
 }

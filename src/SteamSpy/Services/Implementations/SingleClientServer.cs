@@ -1,5 +1,4 @@
 ﻿using Framework;
-using GSMasterServer.Servers;
 using GSMasterServer.Utils;
 using Http;
 using Reality.Net.Extensions;
@@ -13,7 +12,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -96,6 +94,8 @@ namespace ThunderHawk
             _stats = new TcpPortHandler(29920, new StatsTcpSetting(), OnStats, OnError, OnStatsAccept, OnZeroBytes);
             _http = new TcpPortHandler(80, new HttpTcpSetting(), OnHttp, OnError, null, OnZeroBytes);
 
+            
+            CoreContext.MasterServer.NewUserReceived += OnNewUserReceived;
             CoreContext.MasterServer.UserNameChanged += OnUserNameChanged;
             CoreContext.MasterServer.UserKeyValueChanged += OnUserKeyValueChanged;
             CoreContext.MasterServer.UserConnected += OnUserConnected;
@@ -112,6 +112,18 @@ namespace ThunderHawk
             //SteamLobbyManager.LobbyMemberUpdated += OnLobbyMemberUpdated;
             SteamLobbyManager.LobbyMemberLeft += OnLobbyMemberLeft;
             SteamLobbyManager.TopicUpdated += OnTopicUpdated;
+        }
+
+        void OnNewUserReceived(string name, long? id, string email)
+        {
+            if (string.IsNullOrWhiteSpace(name) || id == null)
+            {
+                _clientManager.SendAskii(@"\error\\err\516\fatal\\errmsg\This account name is already in use!\id\1\final\");
+            }
+            else
+            {
+                _clientManager.SendAskii(string.Format(@"\nur\\userid\{0}\profileid\{1}\id\1\final\", id + 10000000, id));
+            }
         }
 
         void OnServerRetrieveError(Exception exception, bool send, int port)
@@ -144,7 +156,8 @@ namespace ThunderHawk
         {
             if (nicks.IsNullOrEmpty())
             {
-                _searchManager.Send(DataFunctions.StringToBytes(@"\error\\err\551\fatal\\errmsg\Unable to get any associated profiles.\id\1\final\"));
+                _searchManager.Send(DataFunctions.StringToBytes(@"\nr\0\ndone\\final\"));
+                //_searchManager.Send(DataFunctions.StringToBytes(@"\error\\err\551\fatal\\errmsg\Unable to get any associated profiles.\id\1\final\"));
                 return;
             }
 
@@ -418,7 +431,11 @@ namespace ThunderHawk
                 case "status":
                     HandleStatus(node, pairs);
                     break;
+                case "newuser":
+                    CoreContext.MasterServer.RequestNewUser(pairs);
+                    break;
                 default:
+
                     Debugger.Break();
                     break;
             }
@@ -745,11 +762,11 @@ namespace ThunderHawk
                 var mod = dictionary["Mod"];
                 var modVersion = dictionary["ModVer"];
 
-                      /*  if (!"ThunderHawk".Equals(mod, StringComparison.OrdinalIgnoreCase))
-                            return;
+                if (!CoreContext.ThunderHawkModManager.ModName.Equals(mod, StringComparison.OrdinalIgnoreCase))
+                    return;
 
-                        if (!"1.0a".Equals(modVersion, StringComparison.OrdinalIgnoreCase))
-                            return;*/
+                if (!CoreContext.ThunderHawkModManager.ModVersion.Equals(modVersion, StringComparison.OrdinalIgnoreCase))
+                    return;
 
                 var playersCount = int.Parse(dictionary["Players"]);
 
@@ -794,228 +811,14 @@ namespace ThunderHawk
 
                 CoreContext.MasterServer.SendGameFinishedInfo(new GameFinishedMessage()
                 {
+                    Map = dictionary["Scenario"],
                     SessionId = uniqueSession,
                     Duration = long.Parse(dictionary["Duration"]),
                     Players = players,
                     IsRateGame = dictionary["Ladder"] == "1"
                 });
 
-                /*if (!HandledGamesCache.Add(uniqueSession, uniqueSession, new CacheItemPolicy() { SlidingExpiration = TimeSpan.FromDays(1) }))
-                {
-                    Logger.Trace($"Stats socket: GAME ALREADY IN COUNT");
-                    return;
-                }
-
-                var usersGameInfos = new GameUserInfo[playersCount];
-
-                GameUserInfo currentUserInfo = null;
-
-                for (int i = 0; i < playersCount; i++)
-                {
-                    var nick = dictionary["player_" + i];
-
-                    var info = new GameUserInfo
-                    {
-                        Profile = ProfilesCache.GetProfileByName(nick),
-                        Race = Enum.Parse<Race>(dictionary["PRace_" + i], true),
-                        Team = int.Parse(dictionary["PTeam_" + i]),
-                        FinalState = Enum.Parse<PlayerFinalState>(dictionary["PFnlState_" + i]),
-                    };
-
-                    usersGameInfos[i] = info;
-
-                    if (nick.Equals(state.Nick, StringComparison.Ordinal))
-                        currentUserInfo = info;
-                }
-
-                var teams = usersGameInfos.GroupBy(x => x.Team).ToDictionary(x => x.Key, x => x.ToArray());
-                var gameDuration = long.Parse(dictionary["Duration"]);
-
-                foreach (var team in teams)
-                {
-                    for (int i = 0; i < team.Value.Length; i++)
-                    {
-                        var info = team.Value[i];
-
-                        info.Profile.AllInGameTicks += gameDuration;
-
-                        switch (info.Race)
-                        {
-                            case Race.space_marine_race:
-                                info.Profile.Smgamescount++;
-                                break;
-                            case Race.chaos_marine_race:
-                                info.Profile.Csmgamescount++;
-                                break;
-                            case Race.ork_race:
-                                info.Profile.Orkgamescount++;
-                                break;
-                            case Race.eldar_race:
-                                info.Profile.Eldargamescount++;
-                                break;
-                            case Race.guard_race:
-                                info.Profile.Iggamescount++;
-                                break;
-                            case Race.necron_race:
-                                info.Profile.Necrgamescount++;
-                                break;
-                            case Race.tau_race:
-                                info.Profile.Taugamescount++;
-                                break;
-                            case Race.dark_eldar_race:
-                                info.Profile.Degamescount++;
-                                break;
-                            case Race.sisters_race:
-                                info.Profile.Sobgamescount++;
-                                break;
-                            default:
-                                break;
-                        }
-
-                        if (info.FinalState == PlayerFinalState.Winner)
-                        {
-                            switch (info.Race)
-                            {
-                                case Race.space_marine_race:
-                                    info.Profile.Smwincount++;
-                                    break;
-                                case Race.chaos_marine_race:
-                                    info.Profile.Csmwincount++;
-                                    break;
-                                case Race.ork_race:
-                                    info.Profile.Orkwincount++;
-                                    break;
-                                case Race.eldar_race:
-                                    info.Profile.Eldarwincount++;
-                                    break;
-                                case Race.guard_race:
-                                    info.Profile.Igwincount++;
-                                    break;
-                                case Race.necron_race:
-                                    info.Profile.Necrwincount++;
-                                    break;
-                                case Race.tau_race:
-                                    info.Profile.Tauwincount++;
-                                    break;
-                                case Race.dark_eldar_race:
-                                    info.Profile.Dewincount++;
-                                    break;
-                                case Race.sisters_race:
-                                    info.Profile.Sobwincount++;
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                    }
-                }
-
-                bool isRateGame = dictionary["Ladder"] == "1";
-
-                if (isRateGame)
-                {
-                    // Update winstreaks for 1v1 only
-                    if (usersGameInfos.Length == 2)
-                    {
-                        UpdateStreak(usersGameInfos[0]);
-                        UpdateStreak(usersGameInfos[1]);
-                    }
-
-                    var groupedTeams = usersGameInfos.GroupBy(x => x.Team).Select(x => x.ToArray()).ToArray();
-
-                    var players1Team = groupedTeams[0];
-                    var players2Team = groupedTeams[1];
-
-                    Func<ProfileDBO, long> scoreSelector = null;
-                    Action<ProfileDBO, long> scoreUpdater = null;
-
-                    RatingGameType type = RatingGameType.Unknown;
-
-                    switch (usersGameInfos.Length)
-                    {
-                        case 2:
-                            scoreSelector = StatsDelegates.Score1v1Selector;
-                            scoreUpdater = StatsDelegates.Score1v1Updated;
-                            type = RatingGameType.Rating1v1;
-                            break;
-                        case 4:
-                            scoreSelector = StatsDelegates.Score2v2Selector;
-                            scoreUpdater = StatsDelegates.Score2v2Updated;
-                            type = RatingGameType.Rating2v2;
-                            break;
-                        case 6:
-                        case 8:
-                            type = RatingGameType.Rating3v3_4v4;
-                            scoreSelector = StatsDelegates.Score3v3Selector;
-                            scoreUpdater = StatsDelegates.Score3v3Updated;
-                            break;
-                        default:
-                            goto UPDATE;
-                    }
-
-                    var team0score = (long)players1Team.Average(x => scoreSelector(x.Profile));
-                    var team1score = (long)players2Team.Average(x => scoreSelector(x.Profile));
-
-                    var isFirstTeamResult = players1Team.Any(x => x.FinalState == PlayerFinalState.Winner);
-                    var delta = EloRating.CalculateELOdelta(team0score, team1score, isFirstTeamResult ? EloRating.GameOutcome.Win : EloRating.GameOutcome.Loss);
-
-                    for (int i = 0; i < players1Team.Length; i++)
-                    {
-                        var rx = delta;
-
-                        rx = CorrectDelta(rx, team0score, team1score);
-
-                        players1Team[i].Delta = rx;
-                        players1Team[i].RatingGameType = type;
-                        scoreUpdater(players1Team[i].Profile, Math.Max(1000L, scoreSelector(players1Team[i].Profile) + rx));
-                    }
-
-                    for (int i = 0; i < players2Team.Length; i++)
-                    {
-                        var rx = -delta;
-
-                        rx = CorrectDelta(rx, team0score, team1score);
-
-                        players2Team[i].Delta = rx;
-                        players2Team[i].RatingGameType = type;
-                        scoreUpdater(players2Team[i].Profile, Math.Max(1000L, scoreSelector(players2Team[i].Profile) + rx));
-                    }
-                }
-
-            UPDATE:
-                for (int i = 0; i < usersGameInfos.Length; i++)
-                {
-                    var info = usersGameInfos[i];
-                    var profile = info.Profile;
-                    ProfilesCache.UpdateProfilesCache(profile);
-                    Database.MainDBInstance.UpdateProfileData(profile);
-
-                    if (info.Delta != 0)
-                    {
-                        Task.Delay(5000).ContinueWith(task =>
-                        {
-                            switch (info.RatingGameType)
-                            {
-                                case RatingGameType.Unknown:
-                                    break;
-                                case RatingGameType.Rating1v1:
-                                    ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"1v1", GetDeltaString(info.Delta), info.Profile.Score1v1);
-                                    break;
-                                case RatingGameType.Rating2v2:
-                                    ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"2v2", GetDeltaString(info.Delta), info.Profile.Score2v2);
-                                    break;
-                                case RatingGameType.Rating3v3_4v4:
-                                    ChatServer.IrcDaemon.SendToUserOrOnEnterInChatFormattedMessage(profile.Id, LangMessages.RATING_CHANGED, @"3v3/4v4", GetDeltaString(info.Delta), info.Profile.Score3v3);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        });
-                    }
-                }
-
-                Logger.Trace($"Stats socket: GAME ACCEPTED " + uniqueSession);
-                Dowstats.UploadGame(dictionary, usersGameInfos, isRateGame);*/
+                return;
             }
 
             Debugger.Break();
@@ -1588,9 +1391,7 @@ namespace ThunderHawk
 
         void HandleUserCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
         {
-            var addrs = NetworkHelper.GetLocalIpAddresses();
-
-            _user = $@"{_name}!{values[1]}@{addrs.FirstOrDefault() ?? node.RemoteEndPoint?.Address ?? IPAddress.Loopback}";
+            _user = $@"{_name}!{values[1]}@{node.RemoteEndPoint?.Address}";
             _shortUser = values[1];
         }
 
@@ -1658,10 +1459,7 @@ namespace ThunderHawk
 
         void HandleUsripCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
         {
-            var addrs = NetworkHelper.GetLocalIpAddresses();
-
-            SendToClientChat(node, $":s 302  :=+@{addrs.FirstOrDefault() ?? IPAddress.Loopback}\r\n");
-            //SendToClientChat(node, $":s 302  :=+@{node.RemoteEndPoint?.Address}\r\n");
+            SendToClientChat(node, $":s 302  :=+@{node.RemoteEndPoint?.Address}\r\n");
         }
 
         void HandleLoginCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
@@ -1677,6 +1475,7 @@ namespace ThunderHawk
         void RestartTimer(TcpClientNode node)
         {
             StopTimer();
+            _heartbeatState = 0;
             _keepAliveTimer = new Timer(KeepAliveCallback, node, TimeSpan.FromMinutes(2), TimeSpan.FromMinutes(2));
         }
 

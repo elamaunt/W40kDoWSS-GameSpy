@@ -28,6 +28,8 @@
         RequestNameCheck,
         NameCheck,
         LoginError,
-        SetKeyValue
+        SetKeyValue,
+        RequestNewUser,
+        NewUser
     }
 }

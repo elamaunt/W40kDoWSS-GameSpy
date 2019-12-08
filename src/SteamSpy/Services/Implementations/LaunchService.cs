@@ -68,7 +68,7 @@ namespace ThunderHawk
 
                 if (entry != null)
                 {
-                    var address = NetworkHelper.GetLocalIpAddresses().FirstOrDefault() ?? IPAddress.Loopback;
+                    var address = IPAddress.Loopback;
                     if (!entry.AddressList.Any(x => x.Equals(address)))
                         FixHosts();
                 }
@@ -186,10 +186,7 @@ namespace ThunderHawk
 
         void FixHosts()
         {
-            var addresses = NetworkHelper.GetLocalIpAddresses();
-            var address = addresses.LastOrDefault() ?? IPAddress.Loopback;
-
-            var process = Process.Start("ThunderHawk.HostsFixer.exe", address.ToString());
+            var process = Process.Start("ThunderHawk.HostsFixer.exe", IPAddress.Loopback.ToString());
             process.WaitForExit();
 
             if (process.ExitCode == 1)

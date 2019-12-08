@@ -28,6 +28,7 @@ namespace ThunderHawk.Core
         void OnGameBroadcastReceived(GameHostInfo info)
         {
             CoreContext.SystemService.NotifyAsSystemToastMessage("New automatch host", $"GameVariant: {info.GameVariant}. GameType: {info.MaxPlayers/2} vs {info.MaxPlayers / 2}. Teamplay: {info.Teamplay}");
+            CoreContext.ClientServer.SendAsServerMessage($"New automatch host: {info.MaxPlayers / 2} vs {info.MaxPlayers / 2}, {info.GameVariant}. Teamplay: {info.Teamplay}");
         }
 
         void OnUserStatsChanged(StatsChangesInfo changes)

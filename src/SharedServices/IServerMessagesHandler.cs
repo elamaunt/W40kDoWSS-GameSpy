@@ -22,6 +22,7 @@ namespace SharedServices
         void HandleMessage(NetConnection senderConnection, NameCheckMessage message);
         void HandleMessage(NetConnection senderConnection, LoginErrorMessage message);
         void HandleMessage(NetConnection senderConnection, SetKeyValueMessage message);
+        void HandleMessage(NetConnection senderConnection, NewUserMessage newUserMessage);
         //void HandleMessage(NetConnection connection, GameFinishedMessage message);
     }
 }
