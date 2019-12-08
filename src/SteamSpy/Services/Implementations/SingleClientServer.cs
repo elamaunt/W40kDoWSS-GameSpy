@@ -26,10 +26,7 @@ namespace ThunderHawk
 {
     public class SingleClientServer : IClientServer
     {
-        UdpPortHandler _cdKey;
-
         UdpPortHandler _serverReport;
-
         TcpPortHandler _serverRetrieve;
         TcpPortHandler _clientManager;
         TcpPortHandler _searchManager;
@@ -89,8 +86,6 @@ namespace ThunderHawk
 
         public SingleClientServer()
         {
-            _cdKey = new UdpPortHandler(29910, OnCdKey, OnError);
-
             _serverReport = new UdpPortHandler(27900, OnServerReport, OnError);
             _serverRetrieve = new TcpPortHandler(28910, new RetrieveTcpSetting(), OnServerRetrieve, OnServerRetrieveError);
             
@@ -117,11 +112,6 @@ namespace ThunderHawk
             //SteamLobbyManager.LobbyMemberUpdated += OnLobbyMemberUpdated;
             SteamLobbyManager.LobbyMemberLeft += OnLobbyMemberLeft;
             SteamLobbyManager.TopicUpdated += OnTopicUpdated;
-        }
-
-        void OnCdKey(UdpPortHandler handler, byte[] receivedBytes, IPEndPoint remote)
-        {
-            Debugger.Break();
         }
 
         void OnServerRetrieveError(Exception exception, bool send, int port)
@@ -347,7 +337,6 @@ namespace ThunderHawk
             _clientManager.Start();
             _searchManager.Start();
 
-            _cdKey.Start();
             _chat.Start();
             _stats.Start();
             _http.Start();
@@ -413,6 +402,7 @@ namespace ThunderHawk
             {
                 case "login":
                     HandleLogin(node, pairs);
+                    RestartTimer(node);
                     break;
                 case "logout":
                     CoreContext.MasterServer.RequestLogout();
@@ -483,6 +473,7 @@ namespace ThunderHawk
             }
             else*/
 
+            _heartbeatState = 0;
             _clientManager.Send(DataFunctions.StringToBytes(LoginHelper.BuildProofOrErrorString(loginInfo, _response, _clientChallenge, _serverChallenge)));
         }
 
@@ -1680,8 +1671,6 @@ namespace ThunderHawk
 
             SendToClientChat(node, $":s 707 {nick} 12345678 {loginInfo.ProfileId}\r\n");
             SendToClientChat(node, $":s 687ru: Your languages have been set\r\n");
-            
-            RestartTimer(node);
         }
 
         [MethodImpl(MethodImplOptions.Synchronized)]
@@ -1710,7 +1699,7 @@ namespace ThunderHawk
             }
 
             // every 2nd keep alive request, we send an additional heartbeat
-            if (_heartbeatState % 2 == 0)
+            if ((_heartbeatState & 1) == 0)
             {
                 Logger.Trace("sending heartbeat");
                 if (!_clientManager.Send((TcpClientNode)state, DataFunctions.StringToBytes(String.Format(@"\lt\{0}\final\", RandomHelper.GetString(22, "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ][") + "__"))))
@@ -2083,7 +2072,6 @@ namespace ThunderHawk
             _clientManager.Stop();
             _searchManager.Stop();
 
-            _cdKey.Stop();
             _chat.Stop();
             _stats.Stop();
             _http.Stop();
