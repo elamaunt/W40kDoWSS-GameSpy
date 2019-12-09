@@ -36,7 +36,7 @@
             </ListView.ItemContainerStyle>
         </ListView>
 
-        <ListView Margin="0 32 40 30"
+        <ListView Margin="0 32 40 230"
                   ClipToBounds="False"
                   Background="#55000000"
                   BorderThickness="0" 

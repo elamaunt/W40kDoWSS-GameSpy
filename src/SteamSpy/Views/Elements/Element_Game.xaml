@@ -20,8 +20,8 @@
                        TextWrapping="NoWrap"
                        Margin="10 1 10 1"     
                        IsReadOnly="True"
-                       FontSize="14"
-                       Foreground="#75f4ff">
+                       FontSize="13"
+                       Foreground="#5e6363">
             </TextBox>
 
             <StackPanel Orientation="Horizontal">
@@ -40,7 +40,7 @@
                        Foreground="#75f4ff"/>
                     <TextBox Background="Transparent"
                        BorderThickness="0"
-                       framework:WPFBinder.Frame="Player0.RatingDelta"
+                       framework:WPFBinder.Frame="Player0.Rating"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -64,7 +64,7 @@
                        Foreground="#75f4ff"/>
                     <TextBox Background="Transparent"
                        BorderThickness="0"
-                       framework:WPFBinder.Frame="Player1.RatingDelta"
+                       framework:WPFBinder.Frame="Player1.Rating"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -88,7 +88,7 @@
                        Foreground="#75f4ff"/>
                     <TextBox Background="Transparent"
                        BorderThickness="0"
-                       framework:WPFBinder.Frame="Player1.RatingDelta"
+                       framework:WPFBinder.Frame="Player1.Rating"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -112,7 +112,7 @@
                        Foreground="#75f4ff"/>
                     <TextBox Background="Transparent"
                        BorderThickness="0"
-                       framework:WPFBinder.Frame="Player3.RatingDelta"
+                       framework:WPFBinder.Frame="Player3.Rating"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -136,7 +136,7 @@
                        Foreground="#75f4ff"/>
                     <TextBox Background="Transparent"
                        BorderThickness="0"
-                       framework:WPFBinder.Frame="Player4.RatingDelta"
+                       framework:WPFBinder.Frame="Player4.Rating"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -160,7 +160,7 @@
                        Foreground="#75f4ff"/>
                     <TextBox Background="Transparent"
                        BorderThickness="0"
-                       framework:WPFBinder.Frame="Player5.RatingDelta"
+                       framework:WPFBinder.Frame="Player5.Rating"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -184,7 +184,7 @@
                        Foreground="#75f4ff"/>
                     <TextBox Background="Transparent"
                        BorderThickness="0"
-                       framework:WPFBinder.Frame="Player6.RatingDelta"
+                       framework:WPFBinder.Frame="Player6.Rating"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -208,7 +208,7 @@
                        Foreground="#75f4ff"/>
                     <TextBox Background="Transparent"
                        BorderThickness="0"
-                       framework:WPFBinder.Frame="Player7.RatingDelta"
+                       framework:WPFBinder.Frame="Player7.Rating"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"

@@ -6,8 +6,7 @@ namespace ThunderHawk.Core
     public class PlayerFrame : ControlFrame
     {
         public TextFrame Name { get; } = new TextFrame();
-        public ValueFrame<long> Rating { get; } = new ValueFrame<long>();
-        public ValueFrame<long> RatingDelta { get; } = new ValueFrame<long>();
+        public TextFrame Rating { get; } = new TextFrame();
         public ValueFrame<Race> Race { get; } = new ValueFrame<Race>();
         public ValueFrame<long> Team { get; } = new ValueFrame<long>();
         public TextFrame FinalState { get; } = new TextFrame();

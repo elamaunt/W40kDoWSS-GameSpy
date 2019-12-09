@@ -186,8 +186,9 @@ namespace ThunderHawk
             RequestUsers();
             IsConnected = true;
             Connected?.Invoke();
-            _lastGames.Clear();
+
             IsLastGamesLoaded = false;
+            _lastGames.Clear();
             CoreContext.MasterServer.RequestLastGames();
         }
 
@@ -802,6 +803,7 @@ namespace ThunderHawk
                 _lastGames.AddFirst(new GameInfo()
                 {
                     SessionId = game.SessionId,
+                    Map = game.Map,
                     ModName = game.ModName,
                     ModVersion = game.ModVersion,
                     IsRateGame = game.IsRateGame,

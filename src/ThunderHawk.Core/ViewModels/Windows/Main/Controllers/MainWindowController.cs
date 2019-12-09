@@ -21,8 +21,22 @@ namespace ThunderHawk.Core
             CoreContext.MasterServer.UserDisconnected += OnUserDisconnected;
             CoreContext.MasterServer.UserStatsChanged += OnUserStatsChanged;
             CoreContext.MasterServer.GameBroadcastReceived += OnGameBroadcastReceived;
-            
+            CoreContext.MasterServer.NewGameReceived += OnNewGameReceived;
+
             OnUsersLoaded();
+        }
+
+        void OnNewGameReceived(GameInfo game)
+        {
+            if (!CoreContext.MasterServer.IsLastGamesLoaded)
+                return;
+
+            var vm = new GameItemViewModel(game);
+
+            RunOnUIThread(() =>
+            {
+                Frame.StatsViewModel.LastGames.DataSource.Add(vm);
+            });
         }
 
         void OnGameBroadcastReceived(GameHostInfo info)
@@ -129,6 +143,7 @@ namespace ThunderHawk.Core
 
         protected override void OnUnbind()
         {
+            CoreContext.MasterServer.NewGameReceived -= OnNewGameReceived;
             CoreContext.MasterServer.ChatMessageReceived -= OnMessageReceived;
             CoreContext.MasterServer.UsersLoaded -= OnUsersLoaded;
             CoreContext.MasterServer.UserConnected -= OnUserConnected;

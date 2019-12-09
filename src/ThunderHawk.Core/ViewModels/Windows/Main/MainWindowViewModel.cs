@@ -17,6 +17,7 @@ namespace ThunderHawk.Core
 
         public TextFrame UserAccount { get; } = new TextFrame();
 
+        public StatsPageViewModel StatsViewModel { get; }
         public ChatPageViewModel ChatViewModel { get; }
         public PageTabViewModel ChatTabViewModel { get; }
 
@@ -26,7 +27,7 @@ namespace ThunderHawk.Core
             {
                 new PageTabViewModel(new MainPageViewModel()),
                 (ChatTabViewModel = new PageTabViewModel(ChatViewModel = new ChatPageViewModel())),
-                new PageTabViewModel(new StatsPageViewModel()),
+                new PageTabViewModel(StatsViewModel = new StatsPageViewModel()),
                 new PageTabViewModel(new TweaksPageViewModel()),
                 new PageTabViewModel(new FAQPageViewModel())
                 

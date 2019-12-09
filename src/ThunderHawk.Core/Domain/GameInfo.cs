@@ -4,6 +4,7 @@ namespace ThunderHawk.Core
 {
     public class GameInfo
     {
+        public string Map { get; set; }
         public string ModName { get; set; }
         public string ModVersion { get; set; }
         public bool IsRateGame { get; set; }

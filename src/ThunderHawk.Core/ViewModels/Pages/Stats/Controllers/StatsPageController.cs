@@ -43,18 +43,6 @@ namespace ThunderHawk.Core
                     new PlayerInfo() { Name = "tester", FinalState = PlayerFinalState.Loser, Race = Race.space_marine_race, Rating = 1260, RatingDelta=-16, Team = 1  },
                 }
             }));*/
-
-            CoreContext.MasterServer.NewGameReceived += OnNewGameReceived;
-        }
-
-        void OnNewGameReceived(GameInfo game)
-        {
-            var vm = new GameItemViewModel(game);
-
-            RunOnUIThread(() =>
-            {
-                Frame.LastGames.DataSource.Add(vm);
-            });
         }
 
         void OnLastGamesLoaded(GameInfo[] games)
@@ -79,7 +67,6 @@ namespace ThunderHawk.Core
 
         protected override void OnUnbind()
         {
-            CoreContext.MasterServer.NewGameReceived -= OnNewGameReceived;
             CoreContext.MasterServer.LastGamesLoaded -= OnLastGamesLoaded;
             CoreContext.MasterServer.PlayersTopLoaded -= OnPlayersTopLoaded;
             base.OnUnbind();
