@@ -315,7 +315,14 @@ namespace ThunderHawk
             if (info == null)
                 return;
 
-            SendToClientChat($":{info.Name}!X{GetEncodedIp(info, info.Name)}X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{_enteredLobbyHash} :Leaving\r\n");
+            var hash = _enteredLobbyHash;
+
+            // Delay before leave for better user experience
+            Task.Delay(1500).ContinueWith(t =>
+            {
+                if (_enteredLobbyHash != null && _enteredLobbyHash == hash)
+                    SendToClientChat($":{info.Name}!X{GetEncodedIp(info, info.Name)}X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{hash} :Leaving\r\n");
+            });
         }
 
         void OnChatMessageReceived(MessageInfo message)
@@ -373,9 +380,9 @@ namespace ThunderHawk
 
         void Restart()
         {
-           // Stop();
-           // RecreateLobbyToken();
-           // Start();
+            Stop();
+            RecreateLobbyToken();
+            Start();
         }
 
         void OnChatAccept(TcpPortHandler handler, TcpClientNode node, CancellationToken token)
@@ -908,18 +915,20 @@ namespace ThunderHawk
             //CHATLINE PART #GSP!whamdowfr!Ml39ll1K9M :
             var channelName = values[1];
             
-            var profile = CoreContext.MasterServer.CurrentProfile;
-
-            if (profile == null || !profile.IsProfileActive)
-                return;
-
             if (channelName == "#GPG!1")
             {
             }
             else
             {
+                _enteredLobbyHash = null;
+                _localServerHash = null;
                 SteamLobbyManager.LeaveFromCurrentLobby();
             }
+
+            var profile = CoreContext.MasterServer.CurrentProfile;
+
+            if (profile == null || !profile.IsProfileActive)
+                return;
 
             SendToClientChat($":{_user} PART {channelName} :Leaving\r\n");
         }
@@ -1864,6 +1873,9 @@ namespace ThunderHawk
         {
             _challengeResponded = false;
             _inChat = false;
+            _enteredLobbyHash = null;
+            _localServerHash = null;
+            _localServer = null;
 
             _serverReport.Stop();
             _serverRetrieve.Stop();

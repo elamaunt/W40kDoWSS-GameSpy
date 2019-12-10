@@ -101,6 +101,7 @@ namespace SharedServices
                 case MessageTypes.LoginError: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LoginErrorMessage>(json, Settings)); break;
                 case MessageTypes.SetKeyValue: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<SetKeyValueMessage>(json, Settings)); break;
                 case MessageTypes.NewUser: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<NewUserMessage>(json, Settings)); break;
+                case MessageTypes.GameFinished: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<GameFinishedMessage>(json, Settings)); break;
                 default:
                     break;
             }

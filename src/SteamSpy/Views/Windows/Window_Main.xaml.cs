@@ -7,7 +7,7 @@ using ThunderHawk.Core;
 
 namespace ThunderHawk
 {
-    public partial class Window_Main : IGlobalNavigationManager
+    public partial class Window_Main : IGlobalNavigationManager, IMainWindowView
     {
         MainWindowViewModel ViewModel => base.ViewModel as MainWindowViewModel;
 

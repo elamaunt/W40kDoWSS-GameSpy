@@ -889,5 +889,31 @@ namespace ThunderHawk
         {
             NewUserReceived?.Invoke(message.Name, message.Id, message.Email);
         }
+
+        public void HandleMessage(NetConnection connection, GameFinishedMessage message)
+        {
+            var game = new GameInfo()
+            {
+                SessionId = message.SessionId,
+                IsRateGame = message.IsRateGame,
+                Map = message.Map,
+                ModName = message.ModName,
+                ModVersion = message.ModVersion,
+                Type = message.Type,
+                Players = message.Players?.Select(x => new PlayerInfo()
+                {
+                    Name = x.Name,
+                    FinalState = x.FinalState,
+                    Race = x.Race,
+                    Rating = x.Rating,
+                    RatingDelta = x.RatingDelta,
+                    Team = x.Team
+                }).ToArray()
+            };
+
+            if (IsLastGamesLoaded)
+                _lastGames.AddLast(game);
+            NewGameReceived?.Invoke(game);
+        }
     }
 }

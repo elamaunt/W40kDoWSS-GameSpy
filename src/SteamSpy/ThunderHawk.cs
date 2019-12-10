@@ -1,11 +1,10 @@
-﻿using Binarysharp.MemoryManagement;
-using Framework;
+﻿using Framework;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
+using System.Windows;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 
@@ -70,82 +69,6 @@ namespace ThunderHawk
             }
         }
 
-       /* public static unsafe string GetCurrentModLabel()
-        {
-            var process = ProcessManager.GetGameProcess(); // Utils.ProcessHelper.
-
-            //67168856 Ядро DOW 1.2.120, elamaunt Mod
-            //294899500 ????????????? ?? elamaunt Mod
-
-            //292671276 ????????????? ?? elamaunt Mod
-            //397773416 Ядро DOW 1.2.120, elamaunt Mod
-            
-            //293785388 ????????????? ? а elamaunt Mod
-            //397970024 Ядро DOW 1.2.120, elamaunt Mod
-            //397970308 r: Soulstorm ???? elamaunt Mod
-
-            if (process != null)
-            {
-                var pp = new MemorySharp(process);
-                byte[] str = Encoding.Unicode.GetBytes("elamaunt Mod");
-
-                 SystemInfo si;
-                 GetSystemInfo(out si);
-
-                 byte[] chunk = new byte[1024];
-
-                 byte* p = (byte*)0;
-                 var max = (byte*)si.MaximumApplicationAddress;
-                 MEMORY_BASIC_INFORMATION info;
-
-                int region = 0;
-
-                 while (p < max)
-                 {
-                     if (VirtualQueryEx(process.Handle, (IntPtr)p, out info, (uint)sizeof(MEMORY_BASIC_INFORMATION)) == sizeof(MEMORY_BASIC_INFORMATION))
-                     {
-                         p = (byte*)info.BaseAddress;
-                         //chunk.resize(info.RegionSize);
-
-                         //var s = Marshal.SizeOf(info.RegionSize);
-                         var s = (int)info.RegionSize;
-                         if (chunk.Length < s)
-                             chunk = new byte[s];
-
-                         IntPtr bytesRead;
-                         if (ReadProcessMemory(process.Handle, (IntPtr)p, chunk, s, out bytesRead))
-                         {
-                             var rs = (int)bytesRead;
-
-                             if (rs >= str.Length)
-                             {
-                                 for (int i = 0; i < (rs - str.Length); ++i)
-                                 {
-                                     if (CompareBuffers(str, 0, chunk, i, str.Length) == 0)
-                                     {
-                                         var value = Encoding.Unicode.GetString(chunk, i - 36, str.Length + 36);
-                                         var offset = p + i - 36;
-                                         //var rp = pp[(IntPtr)offset, true];
-
-                                        //pp.ReadString()
-
-                                         Console.WriteLine(((int)offset) + " " + value);
-                                     }
-                                 }
-                             }
-                         }
-
-                        Console.WriteLine("R"+ region++);
-                        p += s;
-                        Console.WriteLine("offset"+ (int)p);
-                    }
-                }
-
-            }
-
-            return "";
-        }*/
-
         [STAThread]
         public static void Main(string[] args)
         {
@@ -175,7 +98,10 @@ namespace ThunderHawk
             }
             catch(Exception ex)
             {
-                File.WriteAllText("StartupException.ex", ex.GetLowestBaseException().ToString());
+                var text = ex.GetLowestBaseException().ToString();
+                File.WriteAllText("StartupException.ex", text);
+
+                MessageBox.Show(text);
                 throw;
             }
         }

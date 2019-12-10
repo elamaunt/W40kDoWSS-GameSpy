@@ -1,10 +1,9 @@
 ﻿using Framework;
-using System;
 using System.Collections.ObjectModel;
 
 namespace ThunderHawk.Core
 {
-    class MainWindowController : FrameController<MainWindowViewModel>
+    class MainWindowController : BindingController<IMainWindowView, MainWindowViewModel>
     {
         protected override void OnBind()
         {
@@ -35,7 +34,7 @@ namespace ThunderHawk.Core
 
             RunOnUIThread(() =>
             {
-                Frame.StatsViewModel.LastGames.DataSource.Add(vm);
+                Frame.StatsViewModel.LastGames.DataSource.Insert(0, vm);
             });
         }
 
@@ -136,6 +135,12 @@ namespace ThunderHawk.Core
 
                 Frame.ChatViewModel.Messages.DataSource.Add(newItem);
                 Frame.ChatViewModel.MessagesScrollManager?.ScrollToItem(newItem);
+
+                if (info.Author?.IsUser ?? false)
+                    return;
+
+                if (View.IsActive && Frame.Pages.SelectedItem == Frame.ChatTabViewModel)
+                    return;
 
                 CoreContext.SystemService.NotifyAsSystemToastMessage(info);
             });
