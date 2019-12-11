@@ -315,14 +315,14 @@ namespace ThunderHawk
             if (info == null)
                 return;
 
-            var hash = _enteredLobbyHash;
+            //var hash = _enteredLobbyHash;
 
             // Delay before leave for better user experience
-            Task.Delay(1500).ContinueWith(t =>
-            {
-                if (_enteredLobbyHash != null && _enteredLobbyHash == hash)
-                    SendToClientChat($":{info.Name}!X{GetEncodedIp(info, info.Name)}X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{hash} :Leaving\r\n");
-            });
+            //Task.Delay(1000).ContinueWith(t =>
+            //{
+            //if (_enteredLobbyHash != null && _enteredLobbyHash == hash)
+                SendToClientChat($":{info.Name}!X{GetEncodedIp(info, info.Name)}X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{_enteredLobbyHash} :Leaving\r\n");
+            //});
         }
 
         void OnChatMessageReceived(MessageInfo message)
