@@ -7,6 +7,7 @@
         {
         }
 
+        public ulong HostSteamId { get; set; }
         public bool Teamplay { get; set; }
         public bool Ranked { get; set; }
         public string GameVariant { get; set; }

@@ -68,6 +68,7 @@ namespace ThunderHawk
         volatile int _sessionCounter;
 
         CancellationTokenSource _lobbyTokenSource;
+        volatile bool _gameLaunchReceived;
 
         CancellationToken Token => _lobbyTokenSource.Token;
 
@@ -299,6 +300,7 @@ namespace ThunderHawk
             if (!SteamLobbyManager.IsInLobbyNow)
                 return;
 
+            _gameLaunchReceived = true;
             SendToClientChat($":{_user} UTM #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
         }
 
@@ -308,21 +310,14 @@ namespace ThunderHawk
                 return;
         }
 
-        void OnLobbyMemberLeft(ulong memberSteamId)
+        void OnLobbyMemberLeft(ulong memberSteamId, bool disconnected)
         {
             var info = CoreContext.MasterServer.GetUserInfo(memberSteamId);
 
             if (info == null)
                 return;
 
-            //var hash = _enteredLobbyHash;
-
-            // Delay before leave for better user experience
-            //Task.Delay(1000).ContinueWith(t =>
-            //{
-            //if (_enteredLobbyHash != null && _enteredLobbyHash == hash)
-                SendToClientChat($":{info.Name}!X{GetEncodedIp(info, info.Name)}X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{_enteredLobbyHash} :Leaving\r\n");
-            //});
+            SendToClientChat($":{info.Name}!X{GetEncodedIp(info, info.Name)}X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{_enteredLobbyHash} :Leaving\r\n");
         }
 
         void OnChatMessageReceived(MessageInfo message)
@@ -763,7 +758,7 @@ namespace ThunderHawk
 
                 var dictionary = new Dictionary<string, string>();
 
-                for (int i = 0; i < valuesList.Length; i += 2)
+                for (int i = 0; i < valuesList.Length - 1; i += 2)
                     dictionary[valuesList[i]] = valuesList[i + 1];
 
                 var mod = dictionary["Mod"];
@@ -920,10 +915,37 @@ namespace ThunderHawk
             }
             else
             {
-                _enteredLobbyHash = null;
-                _localServerHash = null;
-                SteamLobbyManager.LeaveFromCurrentLobby();
+                if (_gameLaunchReceived)
+                {
+                    var hash = _enteredLobbyHash;
+                    var lobbyId = SteamLobbyManager.CurrentLobbyId;
+
+                    Thread.MemoryBarrier();
+
+                    Task.Delay(5000).ContinueWith(t =>
+                    {
+                        var currentHash = _enteredLobbyHash;
+                        var currentLobbyId = SteamLobbyManager.CurrentLobbyId;
+
+                        Thread.MemoryBarrier();
+
+                        _enteredLobbyHash = null;
+                        _localServerHash = null;
+
+                        if (hash == currentHash && currentLobbyId == lobbyId)
+                            SteamLobbyManager.LeaveFromCurrentLobby();
+                    });
+                }
+                else
+                {
+                    _enteredLobbyHash = null;
+                    _localServerHash = null;
+
+                    SteamLobbyManager.LeaveFromCurrentLobby();
+                }
             }
+
+            _gameLaunchReceived = false;
 
             var profile = CoreContext.MasterServer.CurrentProfile;
 
@@ -1240,7 +1262,7 @@ namespace ThunderHawk
 
         void HandleQuitCommand(TcpPortHandler handler, string[] values)
         {
-            Restart();
+            //Restart();
         }
 
         void HandleModeCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
@@ -1300,6 +1322,8 @@ namespace ThunderHawk
         void HandleJoinCommand(TcpPortHandler handler, TcpClientNode node, string line, string[] values)
         {
             var channelName = values[1];
+
+            _gameLaunchReceived = false;
 
             if (channelName.StartsWith("#GPG", StringComparison.OrdinalIgnoreCase))
             {
@@ -1623,6 +1647,8 @@ namespace ThunderHawk
                            var retranslationPort = ushort.Parse(server.HostPort);
                            var channelHash = ChatCrypt.PiStagingRoomHash("127.0.0.1", "127.0.0.1", retranslationPort);
 
+                           Logger.Info($"HASHFOR 127.0.0.1:{retranslationPort}  {channelHash}");
+
                            server.RoomHash = channelHash;
                            _lastLoadedLobbies[channelHash] = server;
                        }
@@ -1871,6 +1897,7 @@ namespace ThunderHawk
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void Stop()
         {
+            _gameLaunchReceived = false;
             _challengeResponded = false;
             _inChat = false;
             _enteredLobbyHash = null;

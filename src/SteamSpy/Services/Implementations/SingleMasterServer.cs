@@ -514,6 +514,7 @@ namespace ThunderHawk
                 GameVariant = message.GameVariant,
                 MaxPlayers = message.MaxPlayers,
                 Players = message.Players,
+                IsUser = message.HostSteamId == SteamUser.GetSteamID().m_SteamID
             });
         }
 
@@ -538,22 +539,24 @@ namespace ThunderHawk
                     info.Average = message.AverageDuration;
                     info.Disconnects = message.Disconnects;
 
-                    switch (message.GameType)
-                    {
-                        case GameType.Unknown:
-                            break;
-                        case GameType._1v1:
-                            info.Score1v1 = message.CurrentScore;
-                            break;
-                        case GameType._2v2:
-                            info.Score2v2 = message.CurrentScore;
-                            break;
-                        case GameType._3v3_4v4:
-                            info.Score3v3 = message.CurrentScore;
-                            break;
-                        default:
-                            break;
-                    }
+                    if (message.CurrentScore != 0)
+
+                        switch (message.GameType)
+                        {
+                            case GameType.Unknown:
+                                break;
+                            case GameType._1v1:
+                                info.Score1v1 = Math.Max(1000, message.CurrentScore);
+                                break;
+                            case GameType._2v2:
+                                info.Score2v2 = Math.Max(1000, message.CurrentScore);
+                                break;
+                            case GameType._3v3_4v4:
+                                info.Score3v3 = Math.Max(1000, message.CurrentScore);
+                                break;
+                            default:
+                                break;
+                        }
 
                     changesInfo.User = info;
                 }
@@ -568,22 +571,23 @@ namespace ThunderHawk
                 stats.AverageDuration = message.AverageDuration;
                 stats.Disconnects = message.Disconnects;
                 
-                switch (message.GameType)
-                {
-                    case GameType.Unknown:
-                        break;
-                    case GameType._1v1:
-                        stats.Score1v1 = message.CurrentScore;
-                        break;
-                    case GameType._2v2:
-                        stats.Score2v2 = message.CurrentScore;
-                        break;
-                    case GameType._3v3_4v4:
-                        stats.Score3v3_4v4 = message.CurrentScore;
-                        break;
-                    default:
-                        break;
-                }
+                if (message.CurrentScore != 0)
+                    switch (message.GameType)
+                    {
+                        case GameType.Unknown:
+                            break;
+                        case GameType._1v1:
+                            stats.Score1v1 = Math.Max(1000, message.CurrentScore);
+                            break;
+                        case GameType._2v2:
+                            stats.Score2v2 = Math.Max(1000, message.CurrentScore);
+                            break;
+                        case GameType._3v3_4v4:
+                            stats.Score3v3_4v4 = Math.Max(1000, message.CurrentScore);
+                            break;
+                        default:
+                            break;
+                    }
             }
 
             UserStatsChanged?.Invoke(changesInfo);

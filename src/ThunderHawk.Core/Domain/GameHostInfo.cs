@@ -2,6 +2,7 @@
 {
     public class GameHostInfo
     {
+        public bool IsUser { get; set; }
         public bool Teamplay { get; set; }
         public bool Ranked { get; set; }
         public string GameVariant { get; set; }

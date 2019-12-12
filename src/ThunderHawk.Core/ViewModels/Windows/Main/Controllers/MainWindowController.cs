@@ -34,21 +34,33 @@ namespace ThunderHawk.Core
 
             RunOnUIThread(() =>
             {
-                Frame.StatsViewModel.LastGames.DataSource.Insert(0, vm);
+                Frame.StatsViewModel.LastGames.DataSource.Add(vm);
             });
         }
 
         void OnGameBroadcastReceived(GameHostInfo info)
         {
-            CoreContext.SystemService.NotifyAsSystemToastMessage("New automatch host", $"GameVariant: {info.GameVariant}. GameType: {info.MaxPlayers/2} vs {info.MaxPlayers / 2}. Teamplay: {info.Teamplay}");
-            CoreContext.ClientServer.SendAsServerMessage($"New automatch host: {info.MaxPlayers / 2} vs {info.MaxPlayers / 2}, {info.GameVariant}. Teamplay: {info.Teamplay}");
+            if (info.IsUser)
+            {
+                CoreContext.SystemService.NotifyAsSystemToastMessage("Your host updated", $"{info.MaxPlayers / 2}vs{info.MaxPlayers / 2}, {info.Players}/{info.MaxPlayers}");
+            }
+            else
+            {
+                CoreContext.SystemService.NotifyAsSystemToastMessage("New automatch host", $"GameVariant: {info.GameVariant}. GameType: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}. {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}");
+                CoreContext.ClientServer.SendAsServerMessage($"New automatch host: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}, {info.GameVariant}.  {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}");
+            }
         }
 
         void OnUserStatsChanged(StatsChangesInfo changes)
         {
             if (changes?.User?.IsUser ?? false)
             {
-                var text = $"You rating {changes.GameType.ToString().Replace("_", " ")} has been changed on {GetDeltaStringValue(changes.Delta)} and now equals {changes.CurrentScore}.";
+                string text;
+
+                if (changes.Delta == 0)
+                    text = $"Your games count has been changed.";
+                else
+                    text = $"Your rating{changes.GameType.ToString().Replace("_", " ")} has been changed on {GetDeltaStringValue(changes.Delta)} and now equals {changes.CurrentScore}.";
 
                 RunOnUIThread(() =>
                 {

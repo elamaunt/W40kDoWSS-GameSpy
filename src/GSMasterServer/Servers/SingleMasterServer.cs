@@ -12,7 +12,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 
 namespace GSMasterServer.Servers
@@ -233,6 +232,7 @@ namespace GSMasterServer.Servers
         public void HandleMessage(NetConnection connection, GameBroadcastMessage message)
         {
             var mes = _serverPeer.CreateMessage();
+            message.HostSteamId = connection.RemoteHailMessage.PeekUInt64();
             mes.WriteJsonMessage(message);
             _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableUnordered);
         }

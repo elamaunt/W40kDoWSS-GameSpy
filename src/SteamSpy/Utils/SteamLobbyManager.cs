@@ -24,12 +24,14 @@ namespace ThunderHawk.Utils
 
         public static bool IsInLobbyNow => _currentLobby != null;
 
+        public static CSteamID? CurrentLobbyId => _currentLobby;
+
         static readonly Callback<LobbyChatUpdate_t> _lobbyChatUpdateCallback;
         static readonly Callback<LobbyDataUpdate_t> _lobbyDataUpdateCallback;
         static readonly Callback<LobbyChatMsg_t> _lobbyChatMessageCallback;
 
         public static event Action<ulong, string> LobbyMemberUpdated;
-        public static event Action<ulong> LobbyMemberLeft;
+        public static event Action<ulong, bool> LobbyMemberLeft;
         public static event Action<ulong, string> LobbyChatMessage;
         public static event Action<string> TopicUpdated;
 
@@ -119,7 +121,7 @@ namespace ThunderHawk.Utils
                 case EChatMemberStateChange.k_EChatMemberStateChangeBanned:
                 case EChatMemberStateChange.k_EChatMemberStateChangeDisconnected:
                     {
-                        LobbyMemberLeft(update.m_ulSteamIDUserChanged);
+                        LobbyMemberLeft(update.m_ulSteamIDUserChanged, change != EChatMemberStateChange.k_EChatMemberStateChangeLeft);
                         break;
                     }
                 default:

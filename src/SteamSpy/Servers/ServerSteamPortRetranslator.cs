@@ -309,14 +309,16 @@ namespace GSMasterServer.Servers
                 if (size > 4 &&
                     buffer[0] == 254 &&
                     buffer[1] == 254 &&
-                  
-                   ((buffer[2] == 0 && buffer[3] == 0) ||
-                    (buffer[2] == 3 && buffer[3] == 0) || 
-                    (buffer[2] == 4 && buffer[3] == 0)))
-                    //(buffer[2] == 5 && buffer[3] == 0) || 
-                    //(buffer[2] == 6 && buffer[3] == 0) || 
-                    //(buffer[2] == 7 && buffer[3] == 0) || 
-                   // (buffer[2] == 8 && buffer[3] == 0)))
+                    buffer[2] == 0 &&
+                    buffer[3] == 0)
+
+                  // ((buffer[2] == 0 && buffer[3] == 0) ||
+                  //  (buffer[2] == 3 && buffer[3] == 0) || 
+                  // (buffer[2] == 4 && buffer[3] == 0)))
+                  //(buffer[2] == 5 && buffer[3] == 0) || 
+                  //(buffer[2] == 6 && buffer[3] == 0) || 
+                  //(buffer[2] == 7 && buffer[3] == 0) || 
+                  // (buffer[2] == 8 && buffer[3] == 0)))
                 {
                     Console.WriteLine("JOINGAMEDATA " + str);
 
@@ -386,6 +388,45 @@ namespace GSMasterServer.Servers
         private byte[] ReplaceIPAdresses(byte[] bytes)
         {
             // skip start information
+
+            for (int k = 10; k < bytes.Length - 3; k++)
+            {
+                if (bytes[k] == 'K' &&
+                    bytes[k + 1] == '0' &&
+                    bytes[k + 2] == '4')
+                {
+                   if (bytes[k + 3] != 'W')
+                        k--;
+
+                    var nickLength = bytes[k + 4];
+
+                    var nickStart = k + 4 + 3;
+                    var nickEnd = nickStart + (nickLength << 1);
+
+                    var nick = GetUnicodeString(bytes, nickStart, nickEnd);
+
+                    var stats = CoreContext.MasterServer.GetStatsInfo(nick);
+
+                    var id = new CSteamID(stats.SteamId);
+
+                    var pointStart = nickEnd + 7;
+
+                    bytes[pointStart++] = 127;
+                    bytes[pointStart++] = 0;
+                    bytes[pointStart++] = 0;
+                    bytes[pointStart++] = 1;
+
+                    var port = PortBindingManager.AddOrUpdatePortBinding(id).Port;
+                    var portBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(port).Reverse().ToArray() : BitConverter.GetBytes(port);
+
+                    bytes[pointStart++] = portBytes[1];
+                    bytes[pointStart++] = portBytes[0];
+
+                    k += nickLength + 4 + 6;
+                }
+            }
+
+            /* OLD
             for (int k = 10; k < bytes.Length - 3; k++)
             {
                 if (bytes[k] == 'K' &&
@@ -422,7 +463,7 @@ namespace GSMasterServer.Servers
                     k += nickLength + 4 + 6;
                 }
             }
-
+            */
             return bytes;
         }
 
