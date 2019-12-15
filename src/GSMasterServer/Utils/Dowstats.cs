@@ -34,21 +34,21 @@ namespace GSMasterServer.Utils
         }
 
         
-        public static void UploadGame(Dictionary<string, string> gameInfo, GamePlayerInfo[] gameUserInfo, bool isRateGame)
+        public static void UploadGame(GamePlayerInfo[] gameUserInfo, GameDBO game)
         {
 
             var updateRequestBuilder = new UriBuilder(DowstatsUploadGameUrl);
             var parameters = HttpUtility.ParseQueryString(string.Empty);// url params storage
             
-            var playerCount = int.Parse(gameInfo["Players"]);
+            var playerCount = gameUserInfo.Length;
 
             var winCounter = 0;
 
             for (int i = 0; i < gameUserInfo.Length; i++)
             {
                 var dowStatsPIndex = i + 1;
-                parameters["p" + dowStatsPIndex] = gameInfo["player_" + i];
-                parameters["id" + dowStatsPIndex] = gameInfo["PID_" + i];
+                parameters["p" + dowStatsPIndex] = gameUserInfo[i].Profile.Name;
+                parameters["id" + dowStatsPIndex] = gameUserInfo[i].Profile.Id.ToString();
                 parameters["mmr1x1p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score1v1.ToString();
                 parameters["mmr2x2p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score2v2.ToString();
                 parameters["mmr3x3p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score3v3.ToString();
@@ -96,11 +96,11 @@ namespace GSMasterServer.Utils
             var gameType = winCounter.ToString();    
             
             parameters["type"] = gameType;
-            parameters["map"] = gameInfo["Scenario"];
-            parameters["mod"] = "el" + gameInfo["Mod"];
-            parameters["gtime"] = gameInfo["Duration"];
-            parameters["winby"] = gameInfo["WinBy"];
-            parameters["isRate"] = isRateGame.ToString();
+            parameters["map"] = game.Map;
+            parameters["mod"] = "el" + game.ModName;
+            parameters["modVersion"] = game.ModVersion;
+            parameters["gtime"] = game.Duration.ToString();
+            parameters["isRate"] = game.IsRateGame.ToString();
             parameters["version"] = DowstatsVersion;
             
             updateRequestBuilder.Query = parameters.ToString();
@@ -119,7 +119,7 @@ namespace GSMasterServer.Utils
                     Int32.Parse(gameType), 
                     gameUserInfo[i].Part.Race, 
                     gameUserInfo[i].Part.FinalState == PlayerFinalState.Winner,
-                    isRateGame);
+                    game.IsRateGame);
             }
             
         }

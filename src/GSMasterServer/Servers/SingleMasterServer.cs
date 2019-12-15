@@ -18,6 +18,11 @@ namespace GSMasterServer.Servers
 {
     public class SingleMasterServer : IClientMessagesHandler
     {
+        // Public methods for Discord Bot
+        public ProfileDBO[] GetTop => Database.MainDBInstance.Load1v1Top10();
+        public int Online => _userStates.Count;
+
+
         readonly ConcurrentDictionary<ulong, PeerState> _userStates = new ConcurrentDictionary<ulong, PeerState>();
 
         readonly NetServer _serverPeer;
@@ -46,6 +51,7 @@ namespace GSMasterServer.Servers
             _serverPeer = new NetServer(config);
 
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+
 
             _serverPeer.RegisterReceivedCallback(OnSendOrPost, SynchronizationContext.Current);
             _serverPeer.Start();
@@ -367,6 +373,8 @@ namespace GSMasterServer.Servers
             game.UploadedBy = connection.RemoteHailMessage.PeekUInt64();
             game.UploadedDate = DateTime.UtcNow;
             game.Duration = message.Duration;
+            game.ModName = message.ModName;
+            game.ModVersion = message.ModVersion;
             game.Players = new PlayerData[message.Players.Length];
 
             var playerInfos = new GamePlayerInfo[message.Players.Length];
@@ -646,7 +654,8 @@ namespace GSMasterServer.Servers
                 _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableOrdered);
 
                 Logger.Trace($"Stats socket: GAME ACCEPTED " + message.SessionId);
-                //Dowstats.UploadGame(dictionary, usersGameInfos, isRateGame);
+                
+                Dowstats.UploadGame(playerInfos, game);
             }
             else
             {

@@ -10,8 +10,5 @@ namespace GSMasterServer.DiscordBot.Database
         public bool IsMuteActive { get; set; }
         public long SoftMuteUntil { get; set; }
         public bool IsSoftMuteActive { get; set; }
-        public int Reputation { get; set; }
-
-        public Dictionary<ulong, long> RepChangingHistory { get; set; }
     }
 }
