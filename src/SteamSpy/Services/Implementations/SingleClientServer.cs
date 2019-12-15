@@ -821,6 +821,8 @@ namespace ThunderHawk
                     Map = dictionary["Scenario"],
                     SessionId = uniqueSession,
                     Duration = long.Parse(dictionary["Duration"]),
+                    ModName = dictionary["Mod"],
+                    ModVersion = dictionary["ModVer"],
                     Players = players,
                     IsRateGame = dictionary["Ladder"] == "1"
                 });
