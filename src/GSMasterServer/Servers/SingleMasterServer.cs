@@ -18,6 +18,11 @@ namespace GSMasterServer.Servers
 {
     public class SingleMasterServer : IClientMessagesHandler
     {
+        // Public methods for Discord Bot
+        public ProfileDBO[] GetTop => Database.MainDBInstance.Load1v1Top10();
+        public int Online => _userStates.Count;
+
+
         readonly ConcurrentDictionary<ulong, PeerState> _userStates = new ConcurrentDictionary<ulong, PeerState>();
 
         readonly NetServer _serverPeer;
@@ -46,6 +51,7 @@ namespace GSMasterServer.Servers
             _serverPeer = new NetServer(config);
 
             SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
+
 
             _serverPeer.RegisterReceivedCallback(OnSendOrPost, SynchronizationContext.Current);
             _serverPeer.Start();

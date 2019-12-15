@@ -5,8 +5,7 @@
 #if Release
         public const ulong ServerId = 606832876369215491;
 
-        public const ulong RepLogChannelId = 626123363840163861;
-        public const ulong RepTopChannelId = 635500933177933839;
+        public const ulong ThunderHawkInfoChannelId = 654039446412460044;
 
         public const ulong ReadOnlyRoleId = 623924991599181824;  
         public const ulong FloodOnlyRoleId = 623925234030084100;
@@ -19,8 +18,7 @@
 #if Debug || SPACEWAR
         public const ulong ServerId = 624305167743057921;
 
-        public const ulong RepLogChannelId = 626123183380234261;
-        public const ulong RepTopChannelId = 635516606465835030;
+        public const ulong ThunderHawkInfoChannelId = 635516606465835030;
 
         public const ulong ReadOnlyRoleId = 624963432105639936;
         public const ulong FloodOnlyRoleId = 624963455002083329;
