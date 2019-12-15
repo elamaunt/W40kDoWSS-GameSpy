@@ -10,26 +10,63 @@
              mc:Ignorable="d">
 
     <Grid Background="#33000000">
-        <StackPanel Orientation="Vertical" UseLayoutRounding="True">
+        <StackPanel Orientation="Vertical" UseLayoutRounding="True" Margin="10 0 10 8">
             <TextBox   Background="Transparent"
+                       Text="1vs1"
                        BorderThickness="0"
                        framework:WPFBinder.Frame="Type"
-                       HorizontalAlignment="Left"
+                       HorizontalAlignment="Center"
+                       TextAlignment="Center"
                        MaxWidth="260"
                        MaxLines="1"
                        TextWrapping="NoWrap"
-                       Margin="10 1 10 1"     
+                       Margin="0 8 10 12"     
                        IsReadOnly="True"
-                       FontSize="13"
+                       FontSize="14"
                        Foreground="#5e6363">
             </TextBox>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                    <TextBox Style="{DynamicResource PlayerNameStyleRight}" framework:WPFBinder.Frame="Player0.Name"/>
+                    <TextBox Style="{DynamicResource PlayerRatingStyleRight}" framework:WPFBinder.Frame="Player0.Rating"/>
+
+                    <TextBox Style="{DynamicResource PlayerNameStyleRight}" framework:WPFBinder.Frame="Player1.Name"/>
+                    <TextBox Style="{DynamicResource PlayerRatingStyleRight}" framework:WPFBinder.Frame="Player1.Rating"/>
+
+                    <TextBox Style="{DynamicResource PlayerNameStyleRight}" framework:WPFBinder.Frame="Player2.Name"/>
+                    <TextBox Style="{DynamicResource PlayerRatingStyleRight}" framework:WPFBinder.Frame="Player2.Rating"/>
+
+                    <TextBox Style="{DynamicResource PlayerNameStyleRight}" framework:WPFBinder.Frame="Player3.Name"/>
+                    <TextBox Style="{DynamicResource PlayerRatingStyleRight}" framework:WPFBinder.Frame="Player3.Rating"/>
+                </StackPanel>
+
+                <Image Name="Map" framework:WPFBinder.Frame="Map" Width="120" Height="120" VerticalAlignment="Top"  HorizontalAlignment="Center" />
+
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                    <TextBox Style="{DynamicResource PlayerNameStyle}" framework:WPFBinder.Frame="Player4.Name"/>
+                    <TextBox Style="{DynamicResource PlayerRatingStyle}" framework:WPFBinder.Frame="Player4.Rating"/>
+
+                    <TextBox Style="{DynamicResource PlayerNameStyle}" framework:WPFBinder.Frame="Player5.Name"/>
+                    <TextBox Style="{DynamicResource PlayerRatingStyle}" framework:WPFBinder.Frame="Player5.Rating"/>
+
+                    <TextBox Style="{DynamicResource PlayerNameStyle}" framework:WPFBinder.Frame="Player6.Name"/>
+                    <TextBox Style="{DynamicResource PlayerRatingStyle}" framework:WPFBinder.Frame="Player6.Rating"/>
+
+                    <TextBox Style="{DynamicResource PlayerNameStyle}" framework:WPFBinder.Frame="Player7.Name"/>
+                    <TextBox Style="{DynamicResource PlayerRatingStyle}" framework:WPFBinder.Frame="Player7.Rating"/>
+                </StackPanel>
+            </StackPanel>
+
+
+
+            <!--StackPanel Orientation="Horizontal">
 
                 <StackPanel framework:WPFBinder.Frame="Player0" Orientation="Horizontal">
                     <TextBox Background="Transparent"
                        BorderThickness="0"
                        framework:WPFBinder.Frame="Player0.Name"
+                       Text="elamaunt"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -41,6 +78,7 @@
                     <TextBox Background="Transparent"
                        BorderThickness="0"
                        framework:WPFBinder.Frame="Player0.Rating"
+                       Text="(1024 +10)"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -54,6 +92,7 @@
                     <TextBox Background="Transparent"
                        BorderThickness="0"
                        framework:WPFBinder.Frame="Player1.Name"
+                       Text="gigamok"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -65,6 +104,7 @@
                     <TextBox Background="Transparent"
                        BorderThickness="0"
                        framework:WPFBinder.Frame="Player1.Rating"
+                       Text="(1200 -10)"
                        HorizontalAlignment="Left"
                        MaxWidth="200"
                        MaxLines="1"
@@ -218,7 +258,7 @@
                        FontSize="14"
                        Foreground="#c47731"/>
                 </StackPanel>
-            </StackPanel>
+            </StackPanel-->
             
         </StackPanel>
     </Grid>

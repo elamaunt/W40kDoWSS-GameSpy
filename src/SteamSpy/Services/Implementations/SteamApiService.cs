@@ -51,5 +51,10 @@ namespace ThunderHawk
             SteamFriends.RequestUserInformation(id, true);
             return SteamFriends.GetFriendPersonaName(id);
         }
+
+        public ulong GetUserSteamId()
+        {
+            return SteamUser.GetSteamID().m_SteamID;
+        }
     }
 }

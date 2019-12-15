@@ -10,8 +10,7 @@ namespace ThunderHawk.Core
         public ListFrame<PlayerItemViewModel> Top10Players { get; } = new ListFrame<PlayerItemViewModel>();
 
         public StatsPageViewModel()
-        {
-            TitleButton.Text = CoreContext.LangService.GetString("StatsPage");
+        {            TitleButton.Text = CoreContext.LangService.GetString("StatsPage");
         }
     }
 }

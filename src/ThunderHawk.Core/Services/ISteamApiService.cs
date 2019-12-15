@@ -14,5 +14,6 @@ namespace ThunderHawk.Core
 
         event Action<ulong> UserStateChanged;
         event Action<ulong> UserRichPresenceChanged;
+        ulong GetUserSteamId();
     }
 }

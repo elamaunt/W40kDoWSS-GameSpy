@@ -18,6 +18,8 @@ namespace ThunderHawk.Core
         public PlayerFrame Player6 { get; } = new PlayerFrame();
         public PlayerFrame Player7 { get; } = new PlayerFrame();
 
+        public UriFrame Map { get; } = new UriFrame();
+
         public GameInfo Game { get; }
 
         public GameItemViewModel(GameInfo game)
@@ -26,14 +28,83 @@ namespace ThunderHawk.Core
 
             Type.Text = ToStringValue(game);
 
-            Setup(Player0, game.Players.ElementAtOrDefault(0));
-            Setup(Player1, game.Players.ElementAtOrDefault(1));
-            Setup(Player2, game.Players.ElementAtOrDefault(2));
-            Setup(Player3, game.Players.ElementAtOrDefault(3));
-            Setup(Player4, game.Players.ElementAtOrDefault(4));
-            Setup(Player5, game.Players.ElementAtOrDefault(5));
-            Setup(Player6, game.Players.ElementAtOrDefault(6));
-            Setup(Player7, game.Players.ElementAtOrDefault(7));
+            if (game.Map != null && CoreContext.ResourcesService.HasImageWithName(game.Map))
+            {
+                Map.Uri = new Uri($"pack://application:,,,/ThunderHawk;component/Images/Maps/{game.Map?.ToLowerInvariant()}.jpg");
+            }
+            else
+            {
+                Map.Uri = new Uri("pack://application:,,,/ThunderHawk;component/Images/Maps/default.jpg");
+            }
+
+            switch (game.Type)
+            {
+                case GameType.Unknown:
+                    Setup(Player0, game.Players.ElementAtOrDefault(0));
+                    Setup(Player1, game.Players.ElementAtOrDefault(1));
+                    Setup(Player2, game.Players.ElementAtOrDefault(2));
+                    Setup(Player3, game.Players.ElementAtOrDefault(4));
+                    Setup(Player4, game.Players.ElementAtOrDefault(5));
+                    Setup(Player5, game.Players.ElementAtOrDefault(6));
+                    Setup(Player6, game.Players.ElementAtOrDefault(7));
+                    Setup(Player7, game.Players.ElementAtOrDefault(8));
+                    break;
+                case GameType._1v1:
+                    Setup(Player0, game.Players.ElementAtOrDefault(0));
+                    Setup(Player1, null);
+                    Setup(Player2, null);
+                    Setup(Player3, null);
+                    Setup(Player4, game.Players.ElementAtOrDefault(1));
+                    Setup(Player5, null);
+                    Setup(Player6, null);
+                    Setup(Player7, null);
+                    break;
+                case GameType._2v2:
+                    Setup(Player0, game.Players.ElementAtOrDefault(0));
+                    Setup(Player1, game.Players.ElementAtOrDefault(1));
+                    Setup(Player2, null);
+                    Setup(Player3, null);
+                    Setup(Player4, game.Players.ElementAtOrDefault(2));
+                    Setup(Player5, game.Players.ElementAtOrDefault(3));
+                    Setup(Player6, null);
+                    Setup(Player7, null);
+
+                    break;
+                case GameType._3v3_4v4:
+                    if (game.Players.Length == 6)
+                    {
+                        Setup(Player0, game.Players.ElementAtOrDefault(0));
+                        Setup(Player1, game.Players.ElementAtOrDefault(1));
+                        Setup(Player2, game.Players.ElementAtOrDefault(2));
+                        Setup(Player3, null);
+                        Setup(Player4, game.Players.ElementAtOrDefault(3));
+                        Setup(Player5, game.Players.ElementAtOrDefault(4));
+                        Setup(Player6, game.Players.ElementAtOrDefault(5));
+                        Setup(Player7, null);
+                    }
+                    else
+                    {
+                        Setup(Player0, game.Players.ElementAtOrDefault(0));
+                        Setup(Player1, game.Players.ElementAtOrDefault(1));
+                        Setup(Player2, game.Players.ElementAtOrDefault(2));
+                        Setup(Player3, game.Players.ElementAtOrDefault(4));
+                        Setup(Player4, game.Players.ElementAtOrDefault(5));
+                        Setup(Player5, game.Players.ElementAtOrDefault(6));
+                        Setup(Player6, game.Players.ElementAtOrDefault(7));
+                        Setup(Player7, game.Players.ElementAtOrDefault(8));
+                    }
+                    break;
+                default:
+                    Setup(Player0, game.Players.ElementAtOrDefault(0));
+                    Setup(Player1, game.Players.ElementAtOrDefault(1));
+                    Setup(Player2, game.Players.ElementAtOrDefault(2));
+                    Setup(Player3, game.Players.ElementAtOrDefault(4));
+                    Setup(Player4, game.Players.ElementAtOrDefault(5));
+                    Setup(Player5, game.Players.ElementAtOrDefault(6));
+                    Setup(Player6, game.Players.ElementAtOrDefault(7));
+                    Setup(Player7, game.Players.ElementAtOrDefault(8));
+                    break;
+            }
         }
 
         void Setup(PlayerFrame frame, PlayerInfo player)

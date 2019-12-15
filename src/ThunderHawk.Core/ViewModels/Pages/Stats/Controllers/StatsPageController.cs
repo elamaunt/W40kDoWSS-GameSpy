@@ -1,6 +1,4 @@
 ﻿using Framework;
-using SharedServices;
-using System;
 using System.Linq;
 
 namespace ThunderHawk.Core
@@ -30,6 +28,11 @@ namespace ThunderHawk.Core
                 CoreContext.MasterServer.RequestPlayersTop(0, 10);
             }
 
+            CoreContext.MasterServer.UserNameChanged += OnUserChanged;
+            CoreContext.MasterServer.UserStatsChanged += OnUserStatsChanged;
+
+            UpdateRatingLabel();
+
             /*Frame.LastGames.DataSource.Add(new GameItemViewModel(new GameInfo()
             {
                 IsRateGame = true,
@@ -43,6 +46,29 @@ namespace ThunderHawk.Core
                     new PlayerInfo() { Name = "tester", FinalState = PlayerFinalState.Loser, Race = Race.space_marine_race, Rating = 1260, RatingDelta=-16, Team = 1  },
                 }
             }));*/
+        }
+
+        void OnUserStatsChanged(StatsChangesInfo changes)
+        {
+            if (changes.User.IsUser)
+                UpdateRatingLabel();
+        }
+
+        void OnUserChanged(UserInfo user, long? profileId, string previousName, string name)
+        {
+            if (user.IsUser)
+                UpdateRatingLabel();
+        }
+
+        void UpdateRatingLabel()
+        {
+            RunOnUIThread(() =>
+            {
+                var user = CoreContext.MasterServer.CurrentProfile;
+
+                if (user != null)
+                    Frame.Rating.Text = $"{user.UIName}    {user.Wins}/{user.Games}  ({(((float)user.Wins) / user.Games)?.ToString("P")})     1v1: {user.Score1v1}   2v2: {user.Score2v2}   3v3/4v4: {user.Score3v3}";
+            });
         }
 
         void OnLastGamesLoaded(GameInfo[] games)
@@ -67,6 +93,8 @@ namespace ThunderHawk.Core
 
         protected override void OnUnbind()
         {
+            CoreContext.MasterServer.UserNameChanged -= OnUserChanged;
+            CoreContext.MasterServer.UserStatsChanged -= OnUserStatsChanged;
             CoreContext.MasterServer.LastGamesLoaded -= OnLastGamesLoaded;
             CoreContext.MasterServer.PlayersTopLoaded -= OnPlayersTopLoaded;
             base.OnUnbind();

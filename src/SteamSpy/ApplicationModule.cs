@@ -20,6 +20,8 @@ namespace ThunderHawk
             batch.RegisterServiceFactory<ISystemService>(() => new SystemService());
             batch.RegisterServiceFactory<IThunderHawkModManager>(() => new ThunderHawkModManager());
             batch.RegisterServiceFactory<IKeyValueStorage>(() => new ConfigKeyValueStorage());
+
+            batch.RegisterServiceFactory<IResourcesService>(() => new ResourcesService());
             
             batch.RegisterControllerFactory(() => new TabControlWithListFrameBinder());
             batch.RegisterControllerFactory(() => new TabItemWithPageViewModelBinder());

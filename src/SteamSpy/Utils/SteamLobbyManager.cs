@@ -24,6 +24,22 @@ namespace ThunderHawk.Utils
 
         public static bool IsInLobbyNow => _currentLobby != null;
 
+        public static bool IsLobbyFull
+        {
+            get
+            {
+                if (!IsInLobbyNow)
+                    return false;
+
+                var limit = SteamMatchmaking.GetLobbyMemberLimit(_currentLobby.Value);
+
+                if (limit == 0)
+                    return false;
+
+                return SteamMatchmaking.GetNumLobbyMembers(_currentLobby.Value) == limit;
+            }
+        }
+
         public static CSteamID? CurrentLobbyId => _currentLobby;
 
         static readonly Callback<LobbyChatUpdate_t> _lobbyChatUpdateCallback;
@@ -401,6 +417,17 @@ namespace ThunderHawk.Utils
             }
         }
 
+        public static void SetLobbyJoinable(bool joinable)
+        {
+            lock (LOCK)
+            {
+                if (_currentLobby == null)
+                    return;
+
+                SteamMatchmaking.SetLobbyJoinable(_currentLobby.Value, joinable);
+            }
+        }
+
         public static Task<GameServerDetails[]> LoadLobbies(string gameVariant = null, string indicator = null)
         {
             lock (LOCK)
@@ -480,7 +507,7 @@ namespace ThunderHawk.Utils
 
             return lobbies.ToArray();
         }
-        
+
         static class LobbyDataKeys
         {
             public const string TOPIC = "topic";

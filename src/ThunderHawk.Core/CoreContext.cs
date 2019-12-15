@@ -16,6 +16,7 @@ namespace ThunderHawk.Core
         public static IUpdaterService UpdaterService => Service<IUpdaterService>.Get();
         public static IMasterServer MasterServer => Service<IMasterServer>.Get();
         public static IClientServer ClientServer => Service<IClientServer>.Get();
+        public static IResourcesService ResourcesService => Service<IResourcesService>.Get();
         
         public static IThunderHawkModManager ThunderHawkModManager => Service<IThunderHawkModManager>.Get();
     }

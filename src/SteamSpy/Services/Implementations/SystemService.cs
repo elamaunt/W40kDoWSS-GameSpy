@@ -81,7 +81,7 @@ namespace ThunderHawk
                 }
             };
 
-            toastContent.Header = new ToastHeader(Interlocked.Increment(ref _idCounter).ToString(), "2", "3");
+            toastContent.Header = new ToastHeader(Interlocked.Increment(ref _idCounter).ToString(), "2", "ThunderHawk");
 
             // Create the XML document (BE SURE TO REFERENCE WINDOWS.DATA.XML.DOM)
             var doc = new XmlDocument();

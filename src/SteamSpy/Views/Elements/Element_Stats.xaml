@@ -7,13 +7,23 @@
              mc:Ignorable="d">
     <Grid Margin="0 0 0 0">
 
-        <TextBlock framework:WPFBinder.Frame="Rating"  Margin="10 8 0 30" Foreground="Green" />
+        <TextBlock framework:WPFBinder.Frame="Rating" FontSize="15" Margin="50 8 0 30" Foreground="#88FFFFFF" />
+        <TextBlock Text="Last games:" FontSize="17" Margin="40 58 0 30" Foreground="#55cccccc" />
 
-        <ListView Margin="40 32 440 30"
+        <Grid Margin="0 58 200 0" Width="200" HorizontalAlignment="Right">
+            <TextBlock 
+                Text="Best Top 10:"
+                FontSize="17" 
+                HorizontalAlignment="Left"
+                Foreground="#55cccccc"/>
+        </Grid>
+        <ListView 
                   ClipToBounds="False"
-                  Background="#55000000"
-                  BorderThickness="0" 
-                  HorizontalContentAlignment="Left"
+                  Background="#66161314"
+                  BorderThickness="1"
+                  BorderBrush="#22FFFFFF" 
+                  Margin="40 82 440 30"
+                  HorizontalContentAlignment="Right"
                   Padding="0 2 0 0"
                   VerticalAlignment="Stretch"
                   VerticalContentAlignment="Stretch"
@@ -21,6 +31,9 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                   ScrollViewer.PanningMode="VerticalOnly"
                   framework:WPFBinder.Frame="LastGames">
+            <ListView.BitmapEffect>
+                <DropShadowBitmapEffect Color="Black" Direction="270" ShadowDepth="2" Opacity="1" Softness="2" />
+            </ListView.BitmapEffect>
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
@@ -36,10 +49,10 @@
             </ListView.ItemContainerStyle>
         </ListView>
 
-        <ListView Margin="0 32 40 230"
+        <ListView Margin="0 82 40 230"
+                  BorderThickness="1" BorderBrush="#33FFFFFF"
                   ClipToBounds="False"
-                  Background="#55000000"
-                  BorderThickness="0" 
+                  Background="#88161314"
                   HorizontalContentAlignment="Left"
                   Width="360"
                   Padding="0 2 0 0"
@@ -49,7 +62,12 @@
                   ScrollViewer.HorizontalScrollBarVisibility="Hidden"
                   ScrollViewer.PanningMode="VerticalOnly"
                   framework:WPFBinder.Frame="Top10Players">
-
+            
+            <ScrollBar Background="#55000000"/>
+            <ListView.BitmapEffect>
+                <DropShadowBitmapEffect Color="Black" Direction="270" ShadowDepth="2" Opacity="1" Softness="2" />
+            </ListView.BitmapEffect>
+            
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">
                     <Setter Property="IsSelected" Value="{Binding Content.IsSelected, Mode=TwoWay, RelativeSource={RelativeSource Self}}"/>

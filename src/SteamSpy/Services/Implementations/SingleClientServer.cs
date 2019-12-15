@@ -260,16 +260,31 @@ namespace ThunderHawk
             // :Bambochuk2!Xu4FpqOa9X|4@192.168.159.128 JOIN #GSP!whamdowfr!76561198408785287
 
             if (values[1] == _user)
+            {
+                UpdateGameLaunchState();
                 return;
+            }
 
             var userValues = values[1].Split(new char[] { '!', '|', '@' });
             var nick = userValues[0];
 
             SendToClientChat($":{values[1]} JOIN #GSP!whamdowfr!{_enteredLobbyHash}\r\n");
 
+            UpdateGameLaunchState();
+
             /*SendToClientChat($":{nick}!Xu4FpqOa9X|{userValues[2]}@192.168.159.128 JOIN #GSP!whamdowfr!{_enteredLobbyHash}\r\n");
             SendToClientChat($":s 702 #GPG!1 #GPG!1 {nick} BCAST :\\b_flags\\s\r\n");
             SendToClientChat($":s 702 #GSP!whamdowfr!{_enteredLobbyHash} #GSP!whamdowfr!{_enteredLobbyHash} {nick} BCAST :\\b_flags\\s\r\n");*/
+        }
+
+        void UpdateGameLaunchState()
+        {
+            _gameLaunchReceived = SteamLobbyManager.IsLobbyFull;
+
+            if (_gameLaunchReceived)
+            {
+                Logger.Info("LOBBY IF FULL NOW");
+            }
         }
 
         void HandleRemoteSetckeyCommand(string[] values)
@@ -297,10 +312,9 @@ namespace ThunderHawk
 
         void HandleRemoteUtmCommand(string[] values)
         {
-            if (!SteamLobbyManager.IsInLobbyNow)
-                return;
+            //if (!SteamLobbyManager.IsInLobbyNow)
+            //    return;
 
-            _gameLaunchReceived = true;
             SendToClientChat($":{_user} UTM #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
         }
 
@@ -421,8 +435,7 @@ namespace ThunderHawk
                     break;
                 case "logout":
                     CoreContext.MasterServer.RequestLogout();
-                    //Users.TryRemove(state.ProfileId, out LoginSocketState removingState);
-                    //LoginServerMessages.Logout(ref state, keyValues);
+                    SteamLobbyManager.LeaveFromCurrentLobby();
                     break;
                 case "registernick":
                     handler.Send(node, DataFunctions.StringToBytes(string.Format(@"\rn\{0}\id\{1}\final\", pairs["uniquenick"], pairs["id"])));
@@ -436,8 +449,10 @@ namespace ThunderHawk
                 case "newuser":
                     CoreContext.MasterServer.RequestNewUser(pairs);
                     break;
+                case "getprofile":
+                    // TODO
+                    break;
                 default:
-
                     Debugger.Break();
                     break;
             }
@@ -823,6 +838,11 @@ namespace ThunderHawk
                 return;
             }
 
+            if (str.StartsWith(@"\newgame\", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
             Debugger.Break();
         }
 
@@ -916,13 +936,15 @@ namespace ThunderHawk
             else
             {
                 if (_gameLaunchReceived)
-                {
+                { 
+                    Logger.Info("PART AFTER GAME LAUNCH");
+
                     var hash = _enteredLobbyHash;
                     var lobbyId = SteamLobbyManager.CurrentLobbyId;
 
                     Thread.MemoryBarrier();
 
-                    Task.Delay(5000).ContinueWith(t =>
+                    Task.Delay(20000).ContinueWith(t =>
                     {
                         var currentHash = _enteredLobbyHash;
                         var currentLobbyId = SteamLobbyManager.CurrentLobbyId;
@@ -1808,7 +1830,7 @@ namespace ThunderHawk
                     if (details.StateChanged == "2")
                     {
                         Logger.Trace("REPORT: ClearServerDetails");
-                        SteamLobbyManager.LeaveFromCurrentLobby();
+                        SteamLobbyManager.SetLobbyJoinable(false);
                         _challengeResponded = false;
                         _localServer = null;
                     }
