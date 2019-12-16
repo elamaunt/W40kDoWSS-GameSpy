@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace ThunderHawk.Core
 {
@@ -14,6 +15,9 @@ namespace ThunderHawk.Core
 
         event Action<ulong> UserStateChanged;
         event Action<ulong> UserRichPresenceChanged;
+
+        Task<GameHostInfo[]> LoadLobbies();
         ulong GetUserSteamId();
+        DateTime GetCurrentTime();
     }
 }

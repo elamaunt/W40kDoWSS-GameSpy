@@ -2139,7 +2139,7 @@ namespace ThunderHawk
             return data;
         }
 
-        string GetIndicator()
+        public string GetIndicator()
         {
 #if SPACEWAR
             return "SOULSTORM";

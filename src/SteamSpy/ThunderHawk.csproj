@@ -237,6 +237,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Elements\Element_GamesSeparator.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Elements\Element_GameLobby.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Elements\Element_Player.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -835,6 +843,10 @@
     <Resource Include="Images\Maps\[tp_mod]meeting_of_minds.jpg" />
     <Resource Include="Images\Maps\[tp_mod]quests_triumph.jpg" />
     <Resource Include="Images\Maps\[tp_mod]shrine_of_excellion.jpg" />
+    <Resource Include="Images\Background_ChatNY.png" />
+    <Resource Include="Images\Background_DefaultNY.png" />
+    <Resource Include="Images\emptyslot_icon.png" />
+    <Resource Include="Images\fullslot_icon.png" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -13,7 +13,8 @@ namespace ThunderHawk.Core
         public TextFrame Winrate { get; } = new TextFrame();
         public ListFrame<ChatUserItemViewModel> Users { get; } = new ListFrame<ChatUserItemViewModel>();
         public ListFrame<ChatMessageItemViewModel> Messages { get; } = new ListFrame<ChatMessageItemViewModel>();
-
+        public ListFrame<ItemViewModel> GamesInAuto { get; } = new ListFrame<ItemViewModel>();
+        
         public TextEditorFrame TextInput { get; } = new TextEditorFrame();
         public ButtonFrame Send { get; } = new ButtonFrame() { Text = "Отправить" };
 

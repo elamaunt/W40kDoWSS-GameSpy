@@ -1,0 +1,48 @@
+﻿<framework:BindableControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+             ClipToBounds="False"
+             VerticalAlignment="Stretch"
+             HorizontalAlignment="Stretch"
+             mc:Ignorable="d">
+
+    <Grid>
+        <StackPanel Orientation="Horizontal" Margin="0 4 0 0" UseLayoutRounding="True">
+            <Grid>
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/emptyslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player0" />
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/fullslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="ActivePlayer0"/>
+            </Grid>
+            <Grid>
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/emptyslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player1" />
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/fullslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="ActivePlayer1"/>
+            </Grid>
+            <Grid>
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/emptyslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player2" />
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/fullslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="ActivePlayer2"/>
+            </Grid>
+            <Grid>
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/emptyslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player3" />
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/fullslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="ActivePlayer3"/>
+            </Grid>
+            <Grid>
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/emptyslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player4" />
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/fullslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="ActivePlayer4"/>
+            </Grid>
+            <Grid>
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/emptyslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player5" />
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/fullslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="ActivePlayer5"/>
+            </Grid>
+            <Grid>
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/emptyslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player6" />
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/fullslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="ActivePlayer6"/>
+            </Grid>
+            <Grid>
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/emptyslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player7" />
+                <Image Width="26" Height="26" Source="pack://application:,,,/ThunderHawk;component/Images/fullslot_icon.png" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="ActivePlayer7"/>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</framework:BindableControl>

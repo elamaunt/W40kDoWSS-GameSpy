@@ -13,14 +13,40 @@ namespace ThunderHawk
 {
     public class MainWindowBackgroundController : BindingController<Window_Main, MainWindowViewModel>, ICustomContentPresenter
     {
-        const string DefaultImagePath = "pack://application:,,,/ThunderHawk;component/Images/Background_Default.png";
+        string DefaultImagePath
+        { 
+            get
+            {
+                if (IsNewYear)
+                    return "pack://application:,,,/ThunderHawk;component/Images/Background_DefaultNY.png";
+                return "pack://application:,,,/ThunderHawk;component/Images/Background_Default.png";
+            }
+        }
 
-        string _currentPath = DefaultImagePath;
+        string _currentPath;
 
         object _currentContent;
 
+        public bool IsNewYear
+        {
+            get
+            {
+                var date = CoreContext.SteamApi.GetCurrentTime();
+
+                if (date.Month == 12 && date.Day > 25)
+                    return true;
+
+                if (date.Month == 1 && date.Day < 15)
+                    return true;
+
+                return false;
+            }
+        }
+
+
         protected override void OnBind()
         {
+            _currentPath = DefaultImagePath;
             Frame.NavigationPanel.SetExtension<ICustomContentPresenter>(this);
             SubscribeOnPropertyChanged(Frame.NavigationPanel, nameof(INavigationPanelFrame.CurrentContentViewModel), OnContentChanged);
             View.WindowBackground.Source = new BitmapImage(new Uri(DefaultImagePath, UriKind.RelativeOrAbsolute));
@@ -77,10 +103,22 @@ namespace ThunderHawk
 
             var name = $"Background_{content.GetName()}";
 
+            if (IsNewYear)
+            {
+                var nyName = name + "NY";
+
+                if (WPFPageHelper.TryGetImagePath(nyName, out string nyPath))
+                {
+                    ChangeTo(nyPath);
+                    return;
+                }
+            }
+
             if (WPFPageHelper.TryGetImagePath(name, out string path))
                 ChangeTo(path);
             else
                 SetupDefaultBackground();
+
         }
 
         private void SetupDefaultBackground()
@@ -97,6 +135,8 @@ namespace ThunderHawk
 
             if (!path.StartsWith("pack:"))
                 path = "pack://application:,,,/ThunderHawk;component/" + path;
+
+
             ChangeSource(View.WindowBackground, new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute)), TimeSpan.FromSeconds(0.25), TimeSpan.FromSeconds(0.5));
         }
 

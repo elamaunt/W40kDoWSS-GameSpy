@@ -16,6 +16,12 @@ namespace ThunderHawk
         {
             try
             {
+                if (Directory.Exists(Path.Combine("Mod", "ThunderHawk")))
+                    Directory.Delete(Path.Combine("Mod", "ThunderHawk"), true);
+
+                if (Directory.Exists(Path.Combine("Mod", ".git")))
+                    Directory.Delete(Path.Combine("Mod", ".git"), true);
+                
                 File.Copy(Path.Combine(ModFolderName, "ThunderHawk.module"), Path.Combine(gamePath, "ThunderHawk.module"), true);
 
                 var modPath = Path.Combine(gamePath, "ThunderHawk");

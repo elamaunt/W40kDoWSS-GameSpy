@@ -2,6 +2,7 @@
 {
     public interface IClientServer
     {
+        string GetIndicator();
         void SendAsServerMessage(string message);
 
         void Start();
