@@ -27,31 +27,23 @@ namespace GSMasterServer.DiscordBot
 
         public BotManager(SingleMasterServer singleMasterServer)
         {
-            try
-            {
-                var token = File.ReadAllText("discord_token.txt");
-                if (string.IsNullOrWhiteSpace(token))
-                    throw new Exception("Token is empty! Bot stopped working...");
-                _token = token;
+            var token = File.ReadAllText("discord_token.txt");
+            if (string.IsNullOrWhiteSpace(token))
+                throw new Exception("Token is empty! Bot stopped working...");
+            _token = token;
 
-                _serverInfoCollector = new ServerInfoCollector(singleMasterServer, this);
-                _botCommandsManager = new BotCommandsManager(this);
+            _serverInfoCollector = new ServerInfoCollector(singleMasterServer, this);
+            _botCommandsManager = new BotCommandsManager(this);
 
-                BotClient = new DiscordSocketClient();
+            BotClient = new DiscordSocketClient();
 
-                BotClient.Log += LogAsync;
-                BotClient.Ready += ReadyAsync;
-                BotClient.UserJoined += UserJoinedAsync;
-                BotClient.MessageReceived += MessageReceivedAsync;
+            BotClient.Log += LogAsync;
+            BotClient.Ready += ReadyAsync;
+            BotClient.UserJoined += UserJoinedAsync;
+            BotClient.MessageReceived += MessageReceivedAsync;
 
-                DiscordDatabase.InitDb();
-                Logger.Info("Discord bot is loaded!");
-            }
-            catch (Exception)
-            {
-                Logger.Info("discord_token.txt was not found! Bot stopped working...");
-                throw;
-            }
+            DiscordDatabase.InitDb();
+            Logger.Info("Discord bot is loaded!");
         }
 
         public async Task Run()

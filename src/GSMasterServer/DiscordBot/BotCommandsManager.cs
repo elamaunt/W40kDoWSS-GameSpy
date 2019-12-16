@@ -15,23 +15,28 @@ namespace GSMasterServer.DiscordBot
             _botManager = botManager;
         }
 
-        public string[] CommandStrings = new[] {"!"};
+        public string[] CommandStrings = {"!"};
 
         private readonly Dictionary<string, IBotCommand> _commands = new Dictionary<string, IBotCommand>()
         {
-            { "!ping", new PingCommand() },
-            { "!dm", new DeleteMessagesCommand() },
-            { "!stm", new MuteCommand(true) },
-            { "!mute", new MuteCommand(false) },
-            { "!unstm", new UnMuteCommand(true) },
-            { "!unmute", new UnMuteCommand(false) }
+            { "dm", new DeleteMessagesCommand() },
+            { "stm", new MuteCommand(true) },
+            { "mute", new MuteCommand(false) },
+            { "unstm", new UnMuteCommand(true) },
+            { "unmute", new UnMuteCommand(false) }
+        };
+
+        private readonly Dictionary<string, IBotDmCommand> _dmCommands = new Dictionary<string, IBotDmCommand>()
+        {
+            { "everyone", new WriteToEveryone() },
+            { "ping", new PingCommand() }
         };
 
         public async Task HandleCommand(SocketMessage arg)
         {
             try
             {
-                var commandName = arg.Content.Split()[0].ToLower();
+                var commandName = arg.Content.Split()[0].Substring(1).ToLower();
                 if (!_commands.TryGetValue(commandName, out var command))
                 {
                     Logger.Trace($"Command: \"{commandName}\" is not implemented!");
@@ -58,16 +63,11 @@ namespace GSMasterServer.DiscordBot
             }
         }
 
-        private readonly Dictionary<string, IBotDmCommand> _dmCommands = new Dictionary<string, IBotDmCommand>()
-        {
-            { "!everyone", new WriteToEveryone() }
-        };
-
         public async Task HandleDmCommand(SocketMessage arg)
         {
             try
             {
-                var commandName = arg.Content.Split()[0].ToLower();
+                var commandName = arg.Content.Split()[0].Substring(1).ToLower();
                 if (!_dmCommands.TryGetValue(commandName, out var command))
                 {
                     Logger.Trace($"DM Command: \"{commandName}\" is not implemented!");

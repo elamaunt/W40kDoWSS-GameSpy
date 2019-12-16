@@ -5,7 +5,7 @@
 #if Release
         public const ulong ServerId = 606832876369215491;
 
-        public const ulong ThunderHawkInfoChannelId = 654039446412460044;
+        public const ulong ThunderHawkInfoChannelId = 656215384453677056;
 
         public const ulong ReadOnlyRoleId = 623924991599181824;  
         public const ulong FloodOnlyRoleId = 623925234030084100;

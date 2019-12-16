@@ -1,11 +1,13 @@
 ﻿using GSMasterServer.Servers;
 using System;
+using System.Diagnostics;
 using System.IO;
 
 using System.Net;
 using System.Threading;
 using GSMasterServer.DiscordBot;
 using IrcNet.Tools;
+using Exception = System.Exception;
 
 namespace GSMasterServer
 {
@@ -65,8 +67,15 @@ namespace GSMasterServer
             //StatsServer statsServer = new StatsServer(bind, 29920);
 
             var singleServer = new SingleMasterServer();
-            var botManager = new BotManager(singleServer);
-            botManager.Run().GetAwaiter().GetResult();
+            try
+            {
+                var botManager = new BotManager(singleServer);
+                botManager.Run().GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }
 
             while (true)
                 Thread.Sleep(1000);
