@@ -53,9 +53,18 @@ namespace GSMasterServer.DiscordBot.Commands
             var sb = new StringBuilder();
             sb.AppendLine("Успешно отослали сообщение ВСЕМ пользователям сервера ThunderHawk!");
             sb.AppendLine("Список пользователей, которым было отослано сообщение:");
+            var first = true;
             foreach (var channel in channels)
             {
-                sb.AppendLine(channel.Recipient.Username);
+                if (first)
+                {
+                    first = false;
+                    sb.Append(channel.Recipient.Username);
+                }
+                else
+                {
+                    sb.Append(", " + channel.Recipient.Username);
+                }
             }
 
             await socketMessage.Channel.SendMessageAsync(sb.ToString());

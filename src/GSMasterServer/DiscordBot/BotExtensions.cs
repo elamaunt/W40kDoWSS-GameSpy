@@ -17,7 +17,7 @@ namespace GSMasterServer.DiscordBot
             return AccessLevel.User;
         }
 
-        public static async Task<AccessLevel> GetDMAccessLevel(this IUser user, IGuild thunderGuild)
+        public static async Task<AccessLevel> GetDmAccessLevel(this IUser user, IGuild thunderGuild)
         {
             var socketUser = await thunderGuild.GetUserAsync(user.Id) as SocketGuildUser;
             if (socketUser != null && (socketUser.Roles.Any(x => x.Id == DiscordServerConstants.AdminRoleId) || socketUser.GuildPermissions.Administrator))

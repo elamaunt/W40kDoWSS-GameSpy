@@ -6,6 +6,7 @@ using Discord;
 using Discord.Rest;
 using GSMasterServer.Servers;
 using IrcNet.Tools;
+using SharedServices;
 
 namespace GSMasterServer.DiscordBot
 {
@@ -16,12 +17,30 @@ namespace GSMasterServer.DiscordBot
 
         private static readonly string[] Numbers = new[] { ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:", ":one::zero:" };
 
+        private static string GetRaceName(Race race)
+        {
+            switch (race)
+            {
+                case Race.space_marine_race: return "Space Marines";
+                case Race.chaos_marine_race: return "Chaos Space Marines";
+                case Race.ork_race: return "Orks";
+                case Race.eldar_race: return "Eldar";
+                case Race.guard_race: return "Imperial Guard";
+                case Race.necron_race: return "Necrons";
+                case Race.tau_race: return "Tau";
+                case Race.dark_eldar_race: return "Dark Eldar";
+                case Race.sisters_race: return "Sisters of Battle";
+                default: return "Unknown";
+            }
+        }
+
 
         public ServerInfoCollector(SingleMasterServer singleMasterServer, BotManager botManager)
         {
             _singleMasterServer = singleMasterServer;
             _botManager = botManager;
         }
+
 
 
         public async Task UpdateServerMessage()
@@ -35,7 +54,7 @@ namespace GSMasterServer.DiscordBot
             for (var i = 0; i < top.Length; i++)
             {
                 var p = top[i];
-                textSb.AppendLine($"{Numbers[i]} **{p.Name}**  Rating: **{p.Score1v1}**  Games: **{p.GamesCount} ({Math.Round(p.WinRate * 100, 2)}%)**  Best Race: **{p.FavouriteRace}**");
+                textSb.AppendLine($"{Numbers[i]} **{p.Name}**  Rating: **{p.Score1v1}**  Games: **{p.GamesCount} ({Math.Round(p.WinRate * 100, 2)}%)**  Best Race: **{GetRaceName(p.FavouriteRace)}**");
             }
 
             var channel = _botManager.ThunderGuild.GetTextChannel(DiscordServerConstants.ThunderHawkInfoChannelId);
