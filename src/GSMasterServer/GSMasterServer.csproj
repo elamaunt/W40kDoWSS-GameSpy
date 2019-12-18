@@ -96,6 +96,7 @@
     <ProjectReference Include="..\ApiDomain\ApiDomain.csproj" />
     <ProjectReference Include="..\IrcD.Net\IrcD.Net.csproj" />
     <ProjectReference Include="..\SharedServices\SharedServices.csproj" />
+    <ProjectReference Include="..\SoulstormRandomTools\SoulstormRandomTools.csproj" />
   </ItemGroup>
 
   <ItemGroup>

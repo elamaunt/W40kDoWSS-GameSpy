@@ -23,7 +23,9 @@ namespace GSMasterServer.DiscordBot
             { "stm", new MuteCommand(true) },
             { "mute", new MuteCommand(false) },
             { "unstm", new UnMuteCommand(true) },
-            { "unmute", new UnMuteCommand(false) }
+            { "unmute", new UnMuteCommand(false) },
+            { "rr", new RandomCommand(false) },
+            { "rm", new RandomCommand(true) }
         };
 
         private readonly Dictionary<string, IBotDmCommand> _dmCommands = new Dictionary<string, IBotDmCommand>()
@@ -74,7 +76,7 @@ namespace GSMasterServer.DiscordBot
                     return;
                 }
 
-                var userAccessLevel = await arg.Author.GetDMAccessLevel(_botManager.ThunderGuild);
+                var userAccessLevel = await arg.Author.GetDmAccessLevel(_botManager.ThunderGuild);
                 if (userAccessLevel >= command.MinAccessLevel)
                 {
                     await _dmCommands[commandName].Execute(arg, _botManager.ThunderGuild);
