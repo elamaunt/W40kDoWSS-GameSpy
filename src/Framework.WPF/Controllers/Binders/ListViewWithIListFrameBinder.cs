@@ -40,8 +40,8 @@ namespace Framework.WPF
                     View.Items.Remove(e.OldItems[i]);
 
             if (e.NewItems != null)
-                for (int i = 0; i < e.NewItems.Count; i++)
-                    View.Items.Add(e.NewItems[i]);
+                for (int i = e.NewItems.Count - 1; i >= 0; i--)
+                    View.Items.Insert(e.NewStartingIndex, e.NewItems[i]);
 
             /* switch (e.Action)
              {

@@ -24,32 +24,18 @@ namespace ThunderHawk
         {
             var error = (EP2PSessionError)param.m_eP2PSessionError;
             Logger.Info($"OnSessionConnectFailReceived {param.m_steamIDRemote} {error}");
-            UserSessionChanged?.Invoke(param.m_steamIDRemote.m_SteamID, GetUserState(param.m_steamIDRemote.m_SteamID));
+            UserSessionChanged?.Invoke(param.m_steamIDRemote.m_SteamID, UserState.Disconnected);
         }
 
         public static void CheckConnection(ulong steamId)
         {
             var userId = new CSteamID(steamId);
 
-            if (CoreContext.LaunchService.GameProcess == null)
-            {
-                SteamAPI.RunCallbacks();
-                PortBindingManager.UpdateFrame();
-
-                SteamNetworking.SendP2PPacket(userId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
-
-                SteamAPI.RunCallbacks();
-                PortBindingManager.UpdateFrame();
-            }
-            else
-            {
-                SteamNetworking.SendP2PPacket(userId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
-            }
+            SteamNetworking.SendP2PPacket(userId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
 
             var state = GetUserState(steamId);
 
-            if (state == UserState.Connecting)
-                UserSessionChanged?.Invoke(steamId, state);
+            UserSessionChanged?.Invoke(steamId, state);
         }
 
         public static UserState GetUserState(ulong steamId)

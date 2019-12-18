@@ -1,4 +1,5 @@
 ﻿using Framework;
+using System;
 using System.Collections.ObjectModel;
 
 namespace ThunderHawk.Core
@@ -39,7 +40,7 @@ namespace ThunderHawk.Core
 
             RunOnUIThread(() =>
             {
-                Frame.StatsViewModel.LastGames.DataSource.Add(vm);
+                Frame.StatsViewModel.LastGames.DataSource.Insert(0, vm);
             });
         }
 
@@ -65,7 +66,7 @@ namespace ThunderHawk.Core
                 if (changes.Delta == 0)
                     text = $"Your games count has been changed.";
                 else
-                    text = $"Your rating{changes.GameType.ToString().Replace("_", " ")} has been changed on {GetDeltaStringValue(changes.Delta)} and now equals {changes.CurrentScore}.";
+                    text = $"Your rating{changes.GameType.ToString().Replace("_", " ")} has been changed on {GetDeltaStringValue(changes.Delta)} and now equals {Math.Max(1000, changes.CurrentScore)}.";
 
                 RunOnUIThread(() =>
                 {

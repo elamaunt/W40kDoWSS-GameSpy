@@ -1,5 +1,6 @@
 ﻿using Steamworks;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using ThunderHawk.Core;
 using ThunderHawk.Utils;
@@ -44,6 +45,17 @@ namespace ThunderHawk
             IsInitialized = true;
 
             CoreContext.MasterServer.Connect(SteamUser.GetSteamID().m_SteamID);
+
+            Task.Factory.StartNew(() =>
+            {
+                while (true)
+                {
+                    GameServer.RunCallbacks();
+                    SteamAPI.RunCallbacks();
+                    PortBindingManager.UpdateFrame();
+                    Thread.Sleep(5);
+                }
+            }, TaskCreationOptions.LongRunning);
         }
 
         public string GetUserName(ulong steamId)

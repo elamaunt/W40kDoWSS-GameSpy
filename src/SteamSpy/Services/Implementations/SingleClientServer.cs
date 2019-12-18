@@ -74,6 +74,8 @@ namespace ThunderHawk
 
         readonly ConcurrentDictionary<string, GameServerDetails> _lastLoadedLobbies = new ConcurrentDictionary<string, GameServerDetails>();
 
+        public event Action<GameHostInfo[]> LobbiesUpdatedByRequest;
+
         enum MessageType : byte
         {
             CHALLENGE_RESPONSE = 0x01,
@@ -946,8 +948,8 @@ namespace ThunderHawk
 
                     Thread.MemoryBarrier();
 
-                    Task.Delay(20000).ContinueWith(t =>
-                    {
+                    //Task.Delay(20000).ContinueWith(t =>
+                    //{
                         var currentHash = _enteredLobbyHash;
                         var currentLobbyId = SteamLobbyManager.CurrentLobbyId;
 
@@ -958,7 +960,7 @@ namespace ThunderHawk
 
                         if (hash == currentHash && currentLobbyId == lobbyId)
                             SteamLobbyManager.LeaveFromCurrentLobby();
-                    });
+                    //});
                 }
                 else
                 {
@@ -1683,6 +1685,16 @@ namespace ThunderHawk
                        Logger.Info("SERVERS bytes "+ encryptedBytes.Length);
 
                        handler.Send(node, encryptedBytes);
+
+                       LobbiesUpdatedByRequest?.Invoke(servers.Select(x => new GameHostInfo()
+                       {
+                           IsUser = x.HostSteamId == SteamUser.GetSteamID(),
+                           MaxPlayers = x.MaxPlayers.ParseToIntOrDefault(),
+                           Players = x.PlayersCount.ParseToIntOrDefault(),
+                           Ranked = x.Ranked,
+                           GameVariant = x.GameVariant,
+                           Teamplay = x.IsTeamplay
+                       }).ToArray());
                    }
                    finally
                    {

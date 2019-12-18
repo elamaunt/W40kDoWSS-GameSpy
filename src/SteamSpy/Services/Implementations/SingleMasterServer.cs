@@ -957,7 +957,7 @@ namespace ThunderHawk
             };
 
             if (IsLastGamesLoaded)
-                _lastGames.AddLast(game);
+                _lastGames.AddFirst(game);
             NewGameReceived?.Invoke(game);
         }
     }
