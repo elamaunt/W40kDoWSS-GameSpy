@@ -118,7 +118,7 @@ namespace ThunderHawk.Core
                 frame.Visible = true;
                 frame.Name.Text =  $"{player.Name}";
                 frame.Race.Value = player.Race;
-                frame.Rating.Text = $"({player.FinalState.ToString().Take(3).Select(x => x.ToString().ToUpperInvariant()).Aggregate((x,y) => x+y)} {player.Rating}{WithSign(player.RatingDelta)})";
+                frame.Rating.Text = $"{player.FinalState.ToString().Take(3).Select(x => x.ToString().ToUpperInvariant()).Aggregate((x,y) => x+y)} {player.Rating}{WithSign(player.RatingDelta)}";
                 frame.Team.Value = player.Team;
             }
         }
@@ -138,16 +138,26 @@ namespace ThunderHawk.Core
         {
             switch (game.Type)
             {
-                case GameType._1v1: return  $"1vs1   /   {game.Map}";
-                case GameType._2v2: return $"2vs2   /   {game.Map}";
+                case GameType._1v1: return  $"1vs1   /   {game.Map}   /   {ToTimeString(game.Duration)}";
+                case GameType._2v2: return $"2vs2   /   {game.Map}   /   {ToTimeString(game.Duration)}";
                 case GameType._3v3_4v4:
                     {
                         if (game.Players.Length == 8)
-                            return $"4vs4   /   {game.Map}";
-                        return $"3vs3   /   {game.Map}";
+                            return $"4vs4   /   {game.Map}   /   {ToTimeString(game.Duration)}";
+                        return $"3vs3   /   {game.Map}   /   {ToTimeString(game.Duration)}";
                     }
-                default: return $"non-standard   /   {game.Map}";
+                default: return $"non-standard   /   {game.Map}   /   {ToTimeString(game.Duration)}";
             }
+        }
+
+        private string ToTimeString(long duration)
+        {
+            var span = new TimeSpan(0,0,0, (int)duration);
+
+            if (span.TotalHours >= 1)
+                return span.ToString(@"h\:mm\:ss");
+
+            return span.ToString(@"mm\:ss");
         }
     }
 }

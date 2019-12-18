@@ -25,6 +25,11 @@ namespace ThunderHawk.Core
             OnUsersLoaded();
         }
 
+        void OnTimerCallback(object state)
+        {
+
+        }
+
         void OnNewGameReceived(GameInfo game)
         {
             if (!CoreContext.MasterServer.IsLastGamesLoaded)

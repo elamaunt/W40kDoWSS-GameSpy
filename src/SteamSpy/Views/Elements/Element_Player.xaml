@@ -44,11 +44,22 @@
                        Width="50"
                        MaxLines="1"
                        TextWrapping="NoWrap"
-                       Margin="10 1 10 1"     
+                       Margin="10 1 2 1"     
                        IsReadOnly="True"
                        FontSize="16"
-                       Foreground="#ffffff"/>
-
+                       Foreground="#c47731"/>
+            <TextBox   Background="Transparent"
+                       BorderThickness="0"
+                       framework:WPFBinder.Frame="Race"
+                       HorizontalAlignment="Left"
+                       Width="50"
+                       MaxLines="1"
+                       TextWrapping="NoWrap"
+                       Margin="4 1 4 1"     
+                       IsReadOnly="True"
+                       FontSize="14"
+                       Foreground="#99ffffff"/>
+            
 
         </StackPanel>
     </Grid>

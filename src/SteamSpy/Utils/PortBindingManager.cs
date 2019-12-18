@@ -1,6 +1,5 @@
 ﻿using GSMasterServer.Servers;
 using Steamworks;
-using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -9,28 +8,8 @@ namespace ThunderHawk.Utils
     public static class PortBindingManager
     {
         static byte[] _receiveBuffer = new byte[1024];
-        static Callback<P2PSessionRequest_t> _sessionRequestCallback = Callback<P2PSessionRequest_t>.Create(OnSessionCallbackReceived);
-        static Callback<P2PSessionConnectFail_t> _sessionConnectFailedCallback = Callback<P2PSessionConnectFail_t>.Create(OnSessionConnectFailReceived);
-        
+    
         static readonly ConcurrentDictionary<CSteamID, ServerSteamPortRetranslator> PortBindings = new ConcurrentDictionary<CSteamID, ServerSteamPortRetranslator>();
-        
-        private static void OnSessionCallbackReceived(P2PSessionRequest_t param)
-        {
-            Console.WriteLine($"AcceptP2PSessionWithUser {param.m_steamIDRemote}");
-            SteamNetworking.AcceptP2PSessionWithUser(param.m_steamIDRemote);
-        }
-
-        private static void OnSessionConnectFailReceived(P2PSessionConnectFail_t param)
-        {
-            var error = (EP2PSessionError)param.m_eP2PSessionError;
-
-            Console.WriteLine($"OnSessionConnectFailReceived {param.m_steamIDRemote} {error}");
-
-            /*if (PortBindings.TryRemove(param.m_steamIDRemote, out ServerRetranslator retranslator))
-            {
-                retranslator.Dispose();
-            }*/
-        }
 
         public static void ClearPortBindings()
         {

@@ -10,7 +10,11 @@
              mc:Ignorable="d">
 
     <Grid>
-        <StackPanel Orientation="Vertical" UseLayoutRounding="True">
+        <StackPanel Orientation="Horizontal"  UseLayoutRounding="True">
+            <Grid Height="9" Width="9" Margin="6 2 0 0" VerticalAlignment="Center">
+                <Ellipse x:Name="ConnectIndicator" Fill="#007700" StrokeThickness="2" Stroke="#66000000" />
+            </Grid>
+
             <TextBox   Background="Transparent"
                        BorderThickness="0"
                        x:Name="Name"
@@ -19,7 +23,7 @@
                        MaxWidth="200"
                        MaxLines="1"
                        TextWrapping="NoWrap"
-                       Margin="10 1 10 1"     
+                       Margin="4 1 10 1"     
                        IsReadOnly="True"
                        FontSize="14"
                        Foreground="#75f4ff">

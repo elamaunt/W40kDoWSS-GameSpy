@@ -183,10 +183,13 @@
     <Compile Include="Utils\SteamExtensionMethods.cs" />
     <Compile Include="Utils\SteamLobbyManager.cs" />
     <Compile Include="Utils\SteamRichPresences.cs" />
+    <Compile Include="Utils\SteamUserStates.cs" />
     <Compile Include="Utils\SystemExtensionMethods.cs" />
     <Compile Include="Utils\TaskHelper.cs" />
     <Compile Include="Views\Elements\Controllers\ChatUserColorController.cs" />
+    <Compile Include="Views\Elements\Controllers\GamePlayersColorController.cs" />
     <Compile Include="Views\Elements\Controllers\MainNewsPresentingController.cs" />
+    <Compile Include="Views\Elements\Element_Game.cs" />
     <Compile Include="Views\Elements\Element_ChatUser.cs" />
     <Compile Include="Views\ErrorNotificationWindow.xaml.cs">
       <DependentUpon>ErrorNotificationWindow.xaml</DependentUpon>

@@ -62,6 +62,8 @@ namespace ThunderHawk
 
 
         StatsInfo[] _currentLoadedLadderTop = new StatsInfo[0];
+        readonly Timer _userConnectionCheckTimer;
+
         public StatsInfo[] PlayersTop => _currentLoadedLadderTop;
 
         public string ModName => _hailMessage?.ModName;
@@ -86,6 +88,30 @@ namespace ThunderHawk
 
             _clientPeer.RegisterReceivedCallback(OnSendOrPost, SynchronizationContext.Current);
             _clientPeer.Start();
+
+            SteamUserStates.UserSessionChanged += OnUserSessionChanged;
+            _userConnectionCheckTimer = new Timer(OnTimerCallback, null, 2 * 1000, 2 * 1000);
+        }
+
+        void OnTimerCallback(object state)
+        {
+            foreach (var userPair in _users)
+            {
+                if (userPair.Value.IsUser)
+                    continue;
+
+                if (userPair.Value.State != UserState.Connected)
+                    SteamUserStates.CheckConnection(userPair.Key);
+            }
+        }
+
+        void OnUserSessionChanged(ulong steamId, UserState state)
+        {
+            if (_users.TryGetValue(steamId, out UserInfo info))
+            {
+                info.State = state;
+                UserChanged?.Invoke(info);
+            }
         }
 
         void OnSendOrPost(object state)
@@ -286,6 +312,9 @@ namespace ThunderHawk
         {
             var info = new UserInfo(message.SteamId, message.SteamId == SteamUser.GetSteamID().m_SteamID);
 
+            info.State = SteamUserStates.GetUserState(message.SteamId);
+
+
             info.ActiveProfileId = message.ActiveProfileId;
             info.Average = message.Average;
             info.Best1v1Winstreak = message.Best1v1Winstreak;
@@ -331,6 +360,8 @@ namespace ThunderHawk
 
             if (_users.TryAdd(message.SteamId, info))
                 UserConnected?.Invoke(info);
+
+            SteamUserStates.CheckConnection(message.SteamId);
         }
 
         public void HandleMessage(NetConnection connection, ChatMessageMessage message)
@@ -381,7 +412,8 @@ namespace ThunderHawk
                     Average = user.Average,
                     Disconnects = user.Disconnects,
                     Best1v1Winstreak = user.Best1v1Winstreak,
-                    Race = user.Race
+                    Race = user.Race,
+                    State = SteamUserStates.GetUserState(user.SteamId)
                 }, (id, info) =>
                 {
                     info.Name = user.Name;
@@ -398,11 +430,15 @@ namespace ThunderHawk
                     info.Disconnects = user.Disconnects;
                     info.Best1v1Winstreak = user.Best1v1Winstreak;
                     info.Race = user.Race;
+                    info.State = SteamUserStates.GetUserState(user.SteamId);
+
                     return info;
                 });
 
                 if (user.SteamId == SteamUser.GetSteamID().m_SteamID)
                     CurrentProfile = userInfo;
+                else
+                    SteamUserStates.CheckConnection(user.SteamId);
 
                 if (!user.ProfileId.HasValue)
                     continue;
@@ -812,6 +848,8 @@ namespace ThunderHawk
                     ModVersion = game.ModVersion,
                     IsRateGame = game.IsRateGame,
                     Type = game.Type,
+                    Duration = game.Duration,
+                    PlayedDate = game.Date,
 
                     Players = game.Players.Select(x => new PlayerInfo()
                     {
@@ -902,6 +940,9 @@ namespace ThunderHawk
                 IsRateGame = message.IsRateGame,
                 Map = message.Map,
                 ModName = message.ModName,
+                Duration = message.Duration,
+                PlayedDate = message.Date,
+                Url = message.Url,
                 ModVersion = message.ModVersion,
                 Type = message.Type,
                 Players = message.Players?.Select(x => new PlayerInfo()
