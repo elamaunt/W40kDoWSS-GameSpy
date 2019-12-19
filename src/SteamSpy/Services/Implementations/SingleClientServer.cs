@@ -17,6 +17,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ThunderHawk.Core;
+using ThunderHawk.StaticClasses.Soulstorm;
 using ThunderHawk.Utils;
 using static ThunderHawk.TcpPortHandler;
 
@@ -826,7 +827,7 @@ namespace ThunderHawk
                     players[i] = player;
                 }
 
-                CoreContext.MasterServer.SendGameFinishedInfo(new GameFinishedMessage()
+                var gameFinishedMessage = new GameFinishedMessage
                 {
                     Map = dictionary["Scenario"],
                     SessionId = uniqueSession,
@@ -835,7 +836,11 @@ namespace ThunderHawk
                     ModVersion = dictionary["ModVer"],
                     Players = players,
                     IsRateGame = dictionary["Ladder"] == "1"
-                });
+                };
+
+                CoreContext.MasterServer.SendGameFinishedInfo(gameFinishedMessage);
+
+                DowstatsReplaySender.SendReplay(gameFinishedMessage);
 
                 return;
             }

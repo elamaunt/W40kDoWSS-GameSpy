@@ -25,11 +25,11 @@ namespace GSMasterServer.Utils
         {
             DowstatsUploadGameUrl = "http://" + 
                                  (Environment.GetEnvironmentVariable("dowstatsServer") ?? "dowstats.ru") +
-                                 "/thunderhawkConnect.php?";
+                                 "/thunderhawkConnect/connect.php?";
             
             DowstatsUploadPlayerStatsUrl = "http://" + 
                                     (Environment.GetEnvironmentVariable("dowstatsServer") ?? "dowstats.ru") +
-                                    "/thunderhawkUpdatePlayer.php?";
+                                    "thunderhawkConnect/updatePlayer.php?";
             
         }
 
