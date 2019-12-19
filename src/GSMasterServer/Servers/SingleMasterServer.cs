@@ -371,6 +371,8 @@ namespace GSMasterServer.Servers
         {
             if (message.SessionId == null || message.Players.IsNullOrEmpty())
                 return;
+            
+            message.Date = DateTime.UtcNow;
 
             var game = new GameDBO();
             game.Id = message.SessionId;

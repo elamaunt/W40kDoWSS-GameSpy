@@ -1,11 +1,12 @@
 ﻿using SharedServices;
-using System.Threading;
 
 namespace ThunderHawk.Core
 {
     public class UserInfo
     {
         public readonly ulong SteamId;
+
+        public UserState State { get; set; }
 
         public string Status { get; set; }
         public string Name { get; set; }

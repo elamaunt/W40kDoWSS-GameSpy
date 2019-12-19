@@ -276,6 +276,7 @@ namespace ThunderHawk
             {
                 Logger.Info(_port + " send : " + ex);
                 KillClient(node);
+                _exceptionHandlerDelegate?.Invoke(ex, true, _port);
             }
             catch (SocketException ex)
             {

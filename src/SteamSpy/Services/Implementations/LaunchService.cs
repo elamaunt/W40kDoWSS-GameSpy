@@ -79,17 +79,6 @@ namespace ThunderHawk
                 {
                     try
                     {
-                        Task.Factory.StartNew(() =>
-                         {
-                             while (!tcs.Task.IsCompleted)
-                             {
-                                 GameServer.RunCallbacks();
-                                 SteamAPI.RunCallbacks();
-                                 PortBindingManager.UpdateFrame();
-                                 Thread.Sleep(5);
-                             }
-                         }, TaskCreationOptions.LongRunning);
-
                         var exeFileName = Path.Combine(Environment.CurrentDirectory,  "GameFiles", "Patch1.2", "Soulstorm.exe");
                         var procParams = "-nomovies -forcehighpoly";
                         if (AppSettings.ThunderHawkModAutoSwitch)

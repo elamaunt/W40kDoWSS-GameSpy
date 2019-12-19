@@ -39,7 +39,7 @@ namespace ThunderHawk
         public string StateChanged => GetOrDefault("statechanged");
         public string MaxPlayers => GetOrDefault("maxplayers");
         public string GameVer => GetOrDefault("gamever");
-        public string GameName => GetOrDefault("gamename");
+        public string GameName => GetOrDefault("gamename") ?? GetOrDefault("GameName");
         public string GameType => GetOrDefault("gametype");
         public string GameVariant => GetOrDefault("gamevariant");
         

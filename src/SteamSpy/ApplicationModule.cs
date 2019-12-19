@@ -29,6 +29,7 @@ namespace ThunderHawk
             batch.RegisterControllerFactory(() => new MainWindowBackgroundController());
             batch.RegisterControllerFactory(() => new MainNewsPresentingController());
             batch.RegisterControllerFactory(() => new ChatUserColorController());
+            batch.RegisterControllerFactory(() => new GamePlayersColorController());
             
             batch.RegisterControllerFactory(() => new PageExtendingController<IUserInteractions, UserInteractionsExtension>());
         }
