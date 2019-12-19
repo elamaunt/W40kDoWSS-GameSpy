@@ -19,9 +19,9 @@ namespace GSMasterServer.DiscordBot
     {
         public DiscordSocketClient BotClient { get; }
         public SocketGuild ThunderGuild { get; private set; }
+        public IGuild Guild => ThunderGuild;
+        public ServerInfoCollector ServerInfoCollector { get; }
 
-
-        private readonly ServerInfoCollector _serverInfoCollector;
         private readonly BotCommandsManager _botCommandsManager;
         private readonly string _token;
 
@@ -32,7 +32,7 @@ namespace GSMasterServer.DiscordBot
                 throw new Exception("Token is empty! Bot stopped working...");
             _token = token;
 
-            _serverInfoCollector = new ServerInfoCollector(singleMasterServer, this);
+            ServerInfoCollector = new ServerInfoCollector(singleMasterServer, this);
             _botCommandsManager = new BotCommandsManager(this);
 
             BotClient = new DiscordSocketClient();
@@ -115,7 +115,7 @@ namespace GSMasterServer.DiscordBot
                         await UnMuteCommand.UnMute(unmuteList, false, ThunderGuild);
                     }
 
-                    await _serverInfoCollector.UpdateServerMessage();
+                    await ServerInfoCollector.UpdateServerMessage();
                 }
                 catch (Exception ex)
                 {

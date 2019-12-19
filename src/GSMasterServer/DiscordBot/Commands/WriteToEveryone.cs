@@ -13,12 +13,12 @@ namespace GSMasterServer.DiscordBot.Commands
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.Admin;
 
-        public async Task Execute(SocketMessage socketMessage, IGuild thunderGuild)
+        public async Task Execute(SocketMessage socketMessage, BotManager botManager, AccessLevel accessLevel)
         {
             var skipedText = socketMessage.Content.Split().Skip(1);
             var text = string.Join("", skipedText);
 
-            var users = await thunderGuild.GetUsersAsync();
+            var users = await botManager.Guild.GetUsersAsync();
             var channelTasks = new List<Task<IDMChannel>>();
             foreach (var user in users)
             {

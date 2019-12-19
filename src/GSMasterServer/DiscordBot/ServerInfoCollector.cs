@@ -42,6 +42,19 @@ namespace GSMasterServer.DiscordBot
         }
 
 
+        public string GetPlayerInfo(string nickName, bool isAdmin)
+        {
+            var player = _singleMasterServer.GetPlayer(nickName);
+            var sb = new StringBuilder();
+            sb.AppendLine($"Nickname: **{player.Name}**");
+            sb.AppendLine($"MMR 1v1: **{player.Score1v1}**, 2v2: **{player.Score2v2}**, 3v3: **{player.Score3v3}**");
+            sb.AppendLine($"Wins: **{player.WinsCount}**, Games: **{player.GamesCount}** **({Math.Round(player.WinRate * 100, 2)}%)**");
+            sb.AppendLine($"Favourite race: **{GetRaceName(player.FavouriteRace)}**");
+            sb.AppendLine($"Time spent in battles: **{Math.Round(player.AllInGameTicks / 60f / 60f, 1)}** hours");
+            if (isAdmin)
+                sb.AppendLine($"Email: __{player.Email}__");
+            return sb.ToString();
+        }
 
         public async Task UpdateServerMessage()
         {

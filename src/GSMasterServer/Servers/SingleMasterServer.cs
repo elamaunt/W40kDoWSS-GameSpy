@@ -20,6 +20,12 @@ namespace GSMasterServer.Servers
     {
         // Public methods for Discord Bot
         public ProfileDBO[] GetTop => Database.MainDBInstance.Load1v1Top10();
+
+        public ProfileDBO GetPlayer(string nickName)
+        {
+            return Database.MainDBInstance.GetProfileByName(nickName);
+        }
+
         public int Online => _userStates.Count;
 
 

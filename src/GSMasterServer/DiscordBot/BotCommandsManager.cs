@@ -31,6 +31,7 @@ namespace GSMasterServer.DiscordBot
         private readonly Dictionary<string, IBotDmCommand> _dmCommands = new Dictionary<string, IBotDmCommand>()
         {
             { "everyone", new WriteToEveryone() },
+            { "getp", new GetPlayerProfile() },
             { "ping", new PingCommand() }
         };
 
@@ -79,7 +80,7 @@ namespace GSMasterServer.DiscordBot
                 var userAccessLevel = await arg.Author.GetDmAccessLevel(_botManager.ThunderGuild);
                 if (userAccessLevel >= command.MinAccessLevel)
                 {
-                    await _dmCommands[commandName].Execute(arg, _botManager.ThunderGuild);
+                    await _dmCommands[commandName].Execute(arg, _botManager, userAccessLevel);
                     Logger.Trace($"Executed DM command \"{commandName}\" by {arg.Author.Username}({arg.Author.Id})" +
                                  $" with Access Level {userAccessLevel}");
                 }

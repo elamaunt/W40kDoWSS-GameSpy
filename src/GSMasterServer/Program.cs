@@ -76,7 +76,7 @@ namespace GSMasterServer
             {
                 Logger.Warn(ex);
             }
-
+            
             while (true)
                 Thread.Sleep(1000);
         }
