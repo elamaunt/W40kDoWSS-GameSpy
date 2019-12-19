@@ -1,12 +1,11 @@
 ﻿using Discord.WebSocket;
 using System.Threading.Tasks;
-using Discord;
 
 namespace GSMasterServer.DiscordBot.Commands
 {
     public interface IBotDmCommand
     {
-        Task Execute(SocketMessage socketMessage, IGuild thunderGuild);
+        Task Execute(SocketMessage socketMessage, BotManager botManager, AccessLevel accessLevel);
 
         AccessLevel MinAccessLevel { get; }
     }

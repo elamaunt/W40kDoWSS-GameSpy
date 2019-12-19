@@ -128,7 +128,7 @@ namespace GSMasterServer.Services.Implementations
 
         public ProfileDBO GetProfileByName(string username)
         {
-            return ProfilesTable.FindOne(Query.EQ(nameof(ProfileDBO.Name), new BsonValue(username)));
+            return ProfilesTable.FindOne(Query.Where(nameof(ProfileDBO.Name), x => x.AsString == username));
         }
 
         public ProfileDBO GetProfileById(long profileId)

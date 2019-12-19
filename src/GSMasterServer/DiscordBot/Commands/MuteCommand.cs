@@ -46,7 +46,7 @@ namespace GSMasterServer.DiscordBot.Commands
         /// <returns></returns>
         public async Task Execute(SocketMessage socketMessage)
         {
-            string[] commandParams = socketMessage.CommandArgs();
+            var commandParams = socketMessage.CommandArgs();
             var paramCount = commandParams.Length;
             ulong howLong = 0;
             if (paramCount > 0)
