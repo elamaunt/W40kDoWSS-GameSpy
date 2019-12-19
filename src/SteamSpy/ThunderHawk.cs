@@ -76,7 +76,12 @@ namespace ThunderHawk
             {
                 PathFinder.Find();
 
-                if (!args.IsNullOrEmpty() && args[0] == "-original")
+                bool silence = false;
+
+                if (!args.IsNullOrEmpty() && args[0] == "-silence")
+                    silence = true;
+
+                /*if (!args.IsNullOrEmpty() && args[0] == "-original")
                 {
                     Thread.Sleep(5000);
                     File.Copy(Path.Combine(Environment.CurrentDirectory, "SoulstormBackup", "Soulstorm.exe" ), Path.Combine(PathFinder.GamePath, "Soulstorm.exe"), true);
@@ -89,11 +94,11 @@ namespace ThunderHawk
 
                     Environment.Exit(0);
                     return;
-                }
+                }*/
 
                 AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-                new App().Run();
+                new App(silence).Run();
                 CoreContext.MasterServer.Disconnect();
             }
             catch(Exception ex)

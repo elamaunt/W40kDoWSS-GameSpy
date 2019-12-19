@@ -28,8 +28,8 @@ namespace ThunderHawk.Core
                 new PageTabViewModel(new MainPageViewModel()),
                 (ChatTabViewModel = new PageTabViewModel(ChatViewModel = new ChatPageViewModel())),
                 new PageTabViewModel(StatsViewModel = new StatsPageViewModel()),
-                new PageTabViewModel(new TweaksPageViewModel()),
-                new PageTabViewModel(new FAQPageViewModel())
+                new PageTabViewModel(new TweaksPageViewModel())//,
+                //new PageTabViewModel(new FAQPageViewModel())
                 
                 //new ModificationsPageViewModel(){ Enabled = false },
                 //new AllNewsPageViewModel(){ Enabled = false }

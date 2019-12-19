@@ -21,6 +21,9 @@
                        TextWrapping="Wrap"
                        FontSize="14"
                        Foreground="White">
+                <TextBox.Effect>
+                    <DropShadowEffect Color="Black" Direction="270" ShadowDepth="1" BlurRadius="1" Opacity="1" />
+                </TextBox.Effect>
             </TextBox>
            
         </StackPanel>

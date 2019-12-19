@@ -11,11 +11,13 @@
         Title="Настройки" Height="340" Width="400" Style="{DynamicResource SettingsWindowStyle}">
     <Grid Margin="16 16 16 16">
         <StackPanel Orientation="Vertical">
-            
-            <CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" framework:WPFBinder.Frame="ThunderHawkModAutoSwitch" Style="{DynamicResource SettingsCheckBoxStyle}"/>
 
+            <CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" framework:WPFBinder.Frame="ThunderHawkModAutoSwitch" Style="{DynamicResource SettingsCheckBoxStyle}"/>
+            <CheckBox Margin="5 20 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" framework:WPFBinder.Frame="DesktopNotificationsEnabled" Style="{DynamicResource SettingsCheckBoxStyle}"/>
+            <CheckBox Margin="5 20 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" framework:WPFBinder.Frame="LaunchThunderHawkAtStartup" Style="{DynamicResource SettingsCheckBoxStyle}"/>
+            
             <Label  Margin="5 10 0 0"  Content="123" Foreground="White" framework:WPFBinder.Frame="GamePath"/>
-            <Button Margin="5 0 0 0"  Width="120" Height="22" Content="Сменить путь к игре" Foreground="White" framework:WPFBinder.Frame="ChangeGamePath" HorizontalAlignment="Left"/>
+            <Button Margin="5 0 0 0"  Width="120" Height="22" Content="Change game path" Foreground="White" framework:WPFBinder.Frame="ChangeGamePath" HorizontalAlignment="Left"/>
         </StackPanel>
     </Grid>
 

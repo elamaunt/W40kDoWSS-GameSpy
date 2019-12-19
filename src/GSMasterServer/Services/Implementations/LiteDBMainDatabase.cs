@@ -39,9 +39,9 @@ namespace GSMasterServer.Services.Implementations
             _db.Engine.EnsureIndex("GAMES", nameof(GameDBO.Duration), false);
 
             _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.Author), true);
-            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.CreatedDate), true);
-            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.EditedDate), true);
-            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.NewsType), true);
+            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.CreatedDate), false);
+            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.EditedDate), false);
+            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.NewsType), false);
 
         }
 

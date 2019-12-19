@@ -408,6 +408,9 @@ namespace GSMasterServer.Servers
                 game.Players[i] = player;
             }
 
+            if (!message.Players.Any(x => x.FinalState == PlayerFinalState.Winner))
+                return;
+
             var teams = playerInfos.GroupBy(x => x.Part.Team).ToDictionary(x => x.Key, x => x.ToArray());
 
             GameType gameType = GameType.Unknown;
@@ -661,7 +664,7 @@ namespace GSMasterServer.Servers
             }
             else
             {
-                for (int i = 0; i < message.Players.Length; i++)
+                /*for (int i = 0; i < message.Players.Length; i++)
                 {
                     var player = message.Players[i];
                     var playerFromDbo = game.Players[i];
@@ -672,7 +675,7 @@ namespace GSMasterServer.Servers
 
                 var mes = _serverPeer.CreateMessage();
                 mes.WriteJsonMessage(message);
-                _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+                _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);*/
 
                 Logger.Trace($"Stats socket: GAME REPEATE " + message.SessionId);
             }

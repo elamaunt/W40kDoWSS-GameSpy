@@ -157,7 +157,7 @@ namespace ThunderHawk.StaticClasses.Soulstorm
             {
             }
 
-            var steamPath = FindSteam();
+            var steamPath = FindSteamPath();
 
             if (steamPath == null)
                 return null;
@@ -221,7 +221,7 @@ namespace ThunderHawk.StaticClasses.Soulstorm
             return null;
         }
 
-        private static string FindSteam()
+        public static string FindSteamPath()
         {
             //32 - bit: HKEY_LOCAL_MACHINE\SOFTWARE\Valve\Steam
             //64 - bit: HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Valve\Steam

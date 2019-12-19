@@ -109,11 +109,11 @@ namespace ThunderHawk.Updater
 
         static bool ShouldSkipDirectory(string directory)
         {
-            if (directory.EndsWith("mod\\", StringComparison.OrdinalIgnoreCase))
-                return true;
+            //if (directory.EndsWith("mod\\", StringComparison.OrdinalIgnoreCase))
+            //    return true;
 
-            if (directory.EndsWith("\\mod", StringComparison.OrdinalIgnoreCase))
-                return true;
+            //if (directory.EndsWith("\\mod", StringComparison.OrdinalIgnoreCase))
+            //    return true;
 
             return false;
         }

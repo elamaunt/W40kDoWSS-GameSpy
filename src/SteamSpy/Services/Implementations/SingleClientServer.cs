@@ -596,7 +596,7 @@ namespace ThunderHawk
         {
             try
             {
-                var str = ToUtf8(buffer, count);
+                var str = ToUtf8(buffer, count); 
 
                 Logger.Trace("HTTP CLIENT HASH " + node.GetHashCode());
                 Logger.Trace("HTTP " + str);
@@ -771,12 +771,30 @@ namespace ThunderHawk
 
                 var gameDataString = str.Substring(gamedataIndex + 9, finalIndex - gamedataIndex - 10);
 
-                var valuesList = gameDataString.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "\\" }, StringSplitOptions.RemoveEmptyEntries);
+                var valuesList = gameDataString.Split(new string[] { "\u0001", "\\lid\\1\\final\\", "\\" }, StringSplitOptions.None);
 
                 var dictionary = new Dictionary<string, string>();
 
                 for (int i = 0; i < valuesList.Length - 1; i += 2)
+                {
+                    if (i == valuesList.Length - 1)
+                        continue;
+
                     dictionary[valuesList[i]] = valuesList[i + 1];
+                }
+
+                if (!dictionary.TryGetValue("Mod", out string v))
+                {
+                    dictionary.Clear();
+
+                    for (int i = 1; i < valuesList.Length - 1; i += 2)
+                    {
+                        if (i == valuesList.Length - 1)
+                            continue;
+
+                        dictionary[valuesList[i]] = valuesList[i + 1];
+                    }
+                }
 
                 var mod = dictionary["Mod"];
                 var modVersion = dictionary["ModVer"];

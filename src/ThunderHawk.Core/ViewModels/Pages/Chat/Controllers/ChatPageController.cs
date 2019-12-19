@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Framework;
 using System.Linq;
 using System.Threading;
-using Framework;
 
 namespace ThunderHawk.Core
 {
@@ -18,8 +17,8 @@ namespace ThunderHawk.Core
             CoreContext.MasterServer.Connected += OnConnectionChanged;
             CoreContext.MasterServer.ConnectionLost += OnConnectionChanged;
 
-            Frame.ConnectedLabel.Text = $"Соединение активно. Пользователей на сервере {Frame.Users.ItemsCount}";
-            Frame.DisconnectedLabel.Text = "Соединение потеряно... идет попытка восстановления";
+            Frame.ConnectedLabel.Text = $"Connection is active. Users on server {Frame.Users.ItemsCount}";
+            Frame.DisconnectedLabel.Text = "Connection lost... attempt to reconnect";
             OnConnectionChanged();
 
             _timer = new Timer(OnTime, null, 1000, 1000);
@@ -34,7 +33,7 @@ namespace ThunderHawk.Core
             {
                 _ticks++;
 
-                Frame.DisconnectedLabel.Text = "Соединение потеряно... идет попытка восстановления" + string.Join(string.Empty, Enumerable.Repeat(".", _ticks));
+                Frame.DisconnectedLabel.Text = "Connection lost... attempt to reconnect" + string.Join(string.Empty, Enumerable.Repeat(".", _ticks));
 
                 if (_ticks == 3)
                     _ticks = 0;
