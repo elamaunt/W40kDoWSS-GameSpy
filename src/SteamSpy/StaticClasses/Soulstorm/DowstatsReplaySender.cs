@@ -1,6 +1,8 @@
-using System;
-using System.Threading;
 using SharedServices;
+using System;
+using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using Logger = ThunderHawk.Core.Logger;
 
@@ -18,46 +20,41 @@ namespace ThunderHawk.StaticClasses.Soulstorm
                                       "/thunderhawkConnect/replayReceive.php?";
         }
 
-        public static void SendReplay(GameFinishedMessage gfm)
+        public static void SendReplay(GameFinishedMessage message)
         {
-            Thread dowstatsSendThread = new Thread(SendReplayAsync);
-            dowstatsSendThread.Start(gfm); 
-        }
-        private static void SendReplayAsync(object gameFinishedMessage)
-        {
-            try
+            Task.Delay(10000).ContinueWith(t =>
             {
-                // waiting 10 second, untill main server register game in dowstats
-                Thread.Sleep(10000);
-                
-                var updateRequestBuilder = new UriBuilder(DowstatsUploadReplayUrl);
-
-                var gfg = (GameFinishedMessage) gameFinishedMessage;
-
-                var parameters = HttpUtility.ParseQueryString(string.Empty);// url params storage
-
-                for (int index = 0; index < gfg.Players.Length; index++)
+                try
                 {
-                    parameters["p" + (index+1)] = gfg.Players[index].Name;
+                    var updateRequestBuilder = new UriBuilder(DowstatsUploadReplayUrl);
+
+                    var parameters = HttpUtility.ParseQueryString(string.Empty);// url params storage
+
+                    for (int index = 0; index < message.Players.Length; index++)
+                    {
+                        parameters["p" + (index + 1)] = message.Players[index].Name;
+                    }
+
+                    updateRequestBuilder.Query = parameters.ToString();
+
+                    System.Net.WebClient webClient = new System.Net.WebClient();
+                    webClient.Headers.Add("Content-Type", "binary/octet-stream");
+
+                    var filePath = Path.Combine(PathFinder.GamePath, "Playback", "temp.rec");
+
+                    if (!File.Exists(filePath))
+                        return;
+
+                    var result = webClient.UploadFile(updateRequestBuilder.Uri.ToString(), "POST", filePath);
+
+                    Logger.Info("Successful push replay to dowstats. Callback: " + System.Text.Encoding.UTF8.GetString(result));
                 }
-                
-                updateRequestBuilder.Query = parameters.ToString();
-                
-                System.Net.WebClient webClient = new System.Net.WebClient();
-                webClient.Headers.Add("Content-Type", "binary/octet-stream");
-
-                byte[] result = webClient.UploadFile(updateRequestBuilder.Uri.ToString(),
-                    "POST",
-                    $"{PathFinder.GamePath}\\Playback\\temp.rec");
-
-                Logger.Info("Successful push replay to dowstats. Callback: " + System.Text.Encoding.UTF8.GetString(result));
-            }
-            catch (Exception e)
-            {
-                Logger.Error("Error occurred while sending replay to dowstats dowstats");
-                Logger.Debug(e.StackTrace);
-            }
-            
+                catch (Exception e)
+                {
+                    Logger.Error("Error occurred while sending replay to dowstats dowstats");
+                    Logger.Debug(e.StackTrace);
+                }
+            });
         }
         
     }

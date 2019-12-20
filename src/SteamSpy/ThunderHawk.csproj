@@ -96,6 +96,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -136,6 +137,7 @@
     <Compile Include="Http\Route.cs" />
     <Compile Include="LogConfigurator.cs" />
     <Compile Include="Services\Implementations\ResourcesService.cs" />
+    <Compile Include="StaticClasses\Soulstorm\DowstatsReplaySender.cs" />
     <Compile Include="ThunderHawkNotificationActivator.cs" />
     <Compile Include="PageExtensions\UserInteractionsExtension.cs" />
     <Compile Include="Servers\TcpPortHandler.cs" />
