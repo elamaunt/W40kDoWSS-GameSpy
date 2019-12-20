@@ -49,7 +49,10 @@ namespace GSMasterServer.DiscordBot
             sb.AppendLine($"Nickname: **{player.Name}**");
             sb.AppendLine($"MMR 1v1: **{player.Score1v1}**, 2v2: **{player.Score2v2}**, 3v3: **{player.Score3v3}**");
             sb.AppendLine($"Wins: **{player.WinsCount}**, Games: **{player.GamesCount}** **({Math.Round(player.WinRate * 100, 2)}%)**");
-            sb.AppendLine($"Favourite race: **{GetRaceName(player.FavouriteRace)}**");
+            sb.AppendLine(
+                $"Games count: Sm: **{player.Smgamescount}**, Csm: **{player.Csmgamescount}**, Orks: **{player.Orkgamescount}**, Eldar: **{player.Eldargamescount}**, " +
+                $"Ig: **{player.Iggamescount}**, Tau: **{player.Taugamescount}**, Necrons: **{player.Necrgamescount}**, Sob: **{player.Sobgamescount}**, De: **{player.Degamescount}**");
+            //sb.AppendLine($"Favourite race: **{GetRaceName(player.FavouriteRace)}**");
             sb.AppendLine($"Time spent in battles: **{Math.Round(player.AllInGameTicks / 60f / 60f, 1)}** hours");
             if (isAdmin)
                 sb.AppendLine($"Email: __**{player.Email}**__");
