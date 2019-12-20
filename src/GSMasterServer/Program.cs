@@ -17,7 +17,7 @@ namespace GSMasterServer
         {
             AppDomain.CurrentDomain.UnhandledException += OnUnhandledException;
 
-            args = new[] { "+db", @"test.db" };
+            args = new[] { "+db", @"ServerData.db" };
             
             IPAddress bind = IPAddress.Any;
 

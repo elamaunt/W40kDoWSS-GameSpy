@@ -14,7 +14,7 @@ namespace GSMasterServer.DiscordBot.Database
 
         public static void InitDb()
         {
-            _db = new LiteDatabase("Discord.db");
+            _db = new LiteDatabase("DiscordData.db");
         }
 
         public static DiscordProfile CreateDiscordProfile(ulong userId)
