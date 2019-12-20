@@ -255,6 +255,7 @@ namespace ThunderHawk
             if (message.StartsWith("JOIN", StringComparison.OrdinalIgnoreCase)) { HandleRemoteJoinCommand(values); return; }
             if (message.StartsWith("SETCKEY", StringComparison.OrdinalIgnoreCase)) { HandleRemoteSetckeyCommand(values); return; }
 
+            
             Debugger.Break();
         }
 
@@ -483,6 +484,18 @@ namespace ThunderHawk
 
         void HandleLogin(TcpClientNode node, Dictionary<string, string> pairs)
         {
+
+            string userMode = ActiveModDetector.detectCurrentMode();
+
+            if (userMode.StartsWith("thunderhawk"))
+            {
+                Logger.Info("Чел входит с нужным модом(" + userMode +") всё в порядке");
+            }
+            else
+            {
+                Logger.Warn("Alarm! кто-то пытается войти с модом "+ userMode +" и поломать автоматч!");   
+            }
+            
             if (pairs.ContainsKey("uniquenick"))
                 _name = pairs["uniquenick"];
             else
