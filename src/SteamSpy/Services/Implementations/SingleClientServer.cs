@@ -1419,6 +1419,8 @@ namespace ThunderHawk
                 //SendToClientChat(node, $":s 366 {_name} {channelName} :End of NAMES list\r\n");
 
                 SendToClientChat(builder.ToString());
+
+                PortBindingManager.ClearPortBindings();
             }
             else
             {
@@ -2250,7 +2252,7 @@ http://forums.warforge.ru/ (RUS)";
 
         string EnNews => @" Hello! You are on elamaunt's server THUNDERHAWK.
 .
-Wellcome on BETA-test 2.0!
+Welcome on BETA-test 2.0!
 The server is almost complete. There are some minor bugs and the inability to play as a team of friends in automatch.
 Temporary you can play only with ThunderHawk mod.
 Bugfix, balance changes and pathfinding (for vehicle) fix are introduced in this mod.

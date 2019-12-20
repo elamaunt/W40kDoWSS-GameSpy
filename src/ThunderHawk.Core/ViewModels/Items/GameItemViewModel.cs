@@ -119,7 +119,7 @@ namespace ThunderHawk.Core
                 return "Some seconds ago";
 
             if (span.TotalSeconds < 60)
-                return "{(int)span.TotalSeconds} seconds ago";
+                return $"{(int)span.TotalSeconds} seconds ago";
 
             if (span.TotalMinutes < 2)
                 return "Minute ago";
