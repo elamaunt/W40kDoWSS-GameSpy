@@ -10,7 +10,7 @@ namespace ThunderHawk
         const string ModFolderName = @"Mod";
 
         public string ModName => "ThunderHawk";
-        public string ModVersion => "1.5.5";
+        public string ModVersion => "1.5.7";
         
         public void DeployModAndModule(string gamePath)
         {
