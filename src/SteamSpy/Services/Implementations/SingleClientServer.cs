@@ -609,6 +609,11 @@ namespace ThunderHawk
 
                 using (var ms = new MemoryStream())
                 {
+                    if (request.Url.StartsWith("/SS_StatsPage", StringComparison.OrdinalIgnoreCase))
+                    {
+                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.DowstatsRedirect());
+                        goto END;
+                    }
                     if (request.Url.EndsWith("news.txt", StringComparison.OrdinalIgnoreCase))
                     {
                         if (request.Url.EndsWith("Russiandow_news.txt", StringComparison.OrdinalIgnoreCase))

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Web;
 
 namespace Http
 {
@@ -109,6 +110,27 @@ namespace Http
             {
                 ReasonPhrase = "NotFound",
                 StatusCode = "404",
+                ContentAsUTF8 = content
+            };
+        }
+        
+        public static HttpResponse DowstatsRedirect()
+        {
+            
+            // Redirect to thunderhawk 1x1 ladder in dowstats
+            string dowstatsUrl = "http://" +
+                                 (Environment.GetEnvironmentVariable("dowstatsServer") ?? "dowstats.ru") +
+                                  "/index.php?ladderType=1x1&server=elSpy";
+            
+            string content = "<a href = '"+ dowstatsUrl +"'>Redirect to Soulstorm statistics site</a>" +
+                             "<script>" +
+                "window.location = '"+ dowstatsUrl + "';" +
+            "</script>";
+
+            return new HttpResponse()
+            {
+                ReasonPhrase = "Ok",
+                StatusCode = "200",
                 ContentAsUTF8 = content
             };
         }
