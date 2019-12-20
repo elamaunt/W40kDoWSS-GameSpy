@@ -35,6 +35,9 @@ namespace Framework.WPF
 
         void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (View == null)
+                return;
+
             if (e.OldItems != null)
                 for (int i = 0; i < e.OldItems.Count; i++)
                     View.Items.Remove(e.OldItems[i]);
@@ -107,14 +110,17 @@ namespace Framework.WPF
             return (FrameworkElement)view;
         }*/
 
-        /*protected override void OnUnbind()
+        protected override void OnUnbind()
         {
-            for (int i = 0; i < _bindedElements.Count; i++)
-                _bindedElements[i].ViewModel = null;
+            if (_previousSource != null)
+                _previousSource.CollectionChanged -= OnCollectionChanged;
 
-            _bindedElements.Clear();
+            _previousSource = Frame.DataSource as INotifyCollectionChanged;
+
+            if (_previousSource != null)
+                _previousSource.CollectionChanged -= OnCollectionChanged;
 
             base.OnUnbind();
-        }*/
+        }
     }
 }

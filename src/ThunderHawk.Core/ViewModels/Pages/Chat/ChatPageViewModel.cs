@@ -16,7 +16,7 @@ namespace ThunderHawk.Core
         public ListFrame<ItemViewModel> GamesInAuto { get; } = new ListFrame<ItemViewModel>();
         
         public TextEditorFrame TextInput { get; } = new TextEditorFrame();
-        public ButtonFrame Send { get; } = new ButtonFrame() { Text = "Отправить" };
+        public ButtonFrame Send { get; } = new ButtonFrame() { Text = "Send" };
 
         public ChatPageViewModel()
         {

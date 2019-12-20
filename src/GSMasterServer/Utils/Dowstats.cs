@@ -25,11 +25,11 @@ namespace GSMasterServer.Utils
         {
             DowstatsUploadGameUrl = "http://" + 
                                  (Environment.GetEnvironmentVariable("dowstatsServer") ?? "dowstats.ru") +
-                                 "/thunderhawkConnect.php?";
+                                 "/thunderhawkConnect/connect.php?";
             
             DowstatsUploadPlayerStatsUrl = "http://" + 
                                     (Environment.GetEnvironmentVariable("dowstatsServer") ?? "dowstats.ru") +
-                                    "/thunderhawkUpdatePlayer.php?";
+                                    "thunderhawkConnect/updatePlayer.php?";
             
         }
 
@@ -101,6 +101,7 @@ namespace GSMasterServer.Utils
             parameters["modVersion"] = game.ModVersion;
             parameters["gtime"] = game.Duration.ToString();
             parameters["isRate"] = game.IsRateGame.ToString();
+            parameters["thunderhawkId"] = game.Id;
             parameters["version"] = DowstatsVersion;
             
             updateRequestBuilder.Query = parameters.ToString();

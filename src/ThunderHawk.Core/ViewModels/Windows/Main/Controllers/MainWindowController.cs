@@ -1,6 +1,7 @@
 ﻿using Framework;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace ThunderHawk.Core
 {
@@ -24,11 +25,19 @@ namespace ThunderHawk.Core
             CoreContext.MasterServer.NewGameReceived += OnNewGameReceived;
 
             OnUsersLoaded();
-        }
 
-        void OnTimerCallback(object state)
-        {
+            if (AppSettings.IsFirstLaunch && !AppSettings.LaunchThunderHawkAtStartup)
+            {
+                Task.Delay(30000).OnContinueOnUi(() =>
+                {
+                    CoreContext.SystemService.AskUser("Would you like to add ThunderHawk at Windows startup? You can change it on Settings window in any time.").OnCompletedOnUi(result =>
+                    {
+                        AppSettings.LaunchThunderHawkAtStartup = result;
+                    });
 
+                    AppSettings.IsFirstLaunch = false;
+                });
+            }
         }
 
         void OnNewGameReceived(GameInfo game)
@@ -105,7 +114,7 @@ namespace ThunderHawk.Core
                     }
                 }
 
-                Frame.ChatViewModel.ConnectedLabel.Text = $"Соединение активно. Пользователей на сервере {Frame.ChatViewModel.Users.ItemsCount}";
+                Frame.ChatViewModel.ConnectedLabel.Text = $"Connection is active. Users on server {Frame.ChatViewModel.Users.ItemsCount}";
             });
         }
 
@@ -119,7 +128,7 @@ namespace ThunderHawk.Core
             RunOnUIThread(() =>
             {
                 Frame.ChatViewModel.Users.DataSource.Add(new ChatUserItemViewModel(info));
-                Frame.ChatViewModel.ConnectedLabel.Text = $"Соединение активно. Пользователей на сервере {Frame.ChatViewModel.Users.ItemsCount}";
+                Frame.ChatViewModel.ConnectedLabel.Text = $"Connection is active. Users on server {Frame.ChatViewModel.Users.ItemsCount}";
             });
         }
 
@@ -135,7 +144,7 @@ namespace ThunderHawk.Core
             RunOnUIThread(() =>
             {
                 Frame.ChatViewModel.Users.DataSource = collection;
-                Frame.ChatViewModel.ConnectedLabel.Text = $"Соединение активно. Пользователей на сервере {collection.Count}";
+                Frame.ChatViewModel.ConnectedLabel.Text = $"Connection is active. Users on server  {collection.Count}";
             });
         }
 

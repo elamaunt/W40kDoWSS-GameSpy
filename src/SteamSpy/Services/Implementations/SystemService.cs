@@ -1,9 +1,12 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using ThunderHawk.Core;
+using ThunderHawk.StaticClasses.Soulstorm;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
@@ -19,6 +22,13 @@ namespace ThunderHawk
         readonly Notifier _localNotifier;
 
         volatile int _idCounter;
+
+        public string GetSteamExePath()
+        {
+            return Path.Combine(PathFinder.FindSteamPath(), "Steam.exe");
+        }
+
+        public bool IsSteamRunning => Process.GetProcessesByName("Steam").Length > 0;
 
         public SystemService()
         {
@@ -40,16 +50,39 @@ namespace ThunderHawk
             });
         }
 
+        public bool CheckIsItInStartup()
+        {
+            var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+
+            var value = key.GetValue("ThunderHawk");
+
+            if (value == null)
+                return false;
+
+            if (String.Equals((string)value, "\"" + Path.Combine(Directory.GetCurrentDirectory(), @"ThunderHawk.exe") + "\" -silence"))
+                return true;
+
+            return false;
+        }
+
         public void AddInStartup()
         {
-            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            key.SetValue("ThunderHawk", Path.Combine(Directory.GetCurrentDirectory(), @"ThunderHawk.exe -silence"));
+            var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            key.SetValue("ThunderHawk", "\""+Path.Combine(Directory.GetCurrentDirectory(), @"ThunderHawk.exe")+"\" -silence");
+        }
+        public void RemoveFromStartup()
+        {
+            var key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            key.DeleteValue("ThunderHawk", false);
         }
 
         public void NotifyAsSystemToastMessage(MessageInfo info)
         {
+            if (!AppSettings.DesktopNotificationsEnabled)
+                return;
+
             // Construct the visuals of the toast (using Notifications library)
-            ToastContent toastContent = new ToastContent()
+                ToastContent toastContent = new ToastContent()
             {
                 // Arguments when the user taps body of toast
                 Launch = "action=viewConversation&conversationId=5",
@@ -106,6 +139,9 @@ namespace ThunderHawk
 
         public void NotifyAsSystemToastMessage(string title, string text)
         {
+            if (!AppSettings.DesktopNotificationsEnabled)
+                return;
+
             ToastContent toastContent = new ToastContent()
             {
                 // Arguments when the user taps body of toast
@@ -133,7 +169,7 @@ namespace ThunderHawk
                 }
             };
 
-            toastContent.Header = new ToastHeader(Interlocked.Increment(ref _idCounter).ToString(), "3", "4");
+            toastContent.Header = new ToastHeader(Interlocked.Increment(ref _idCounter).ToString(), "ThunderHawk", "");
 
             // Create the XML document (BE SURE TO REFERENCE WINDOWS.DATA.XML.DOM)
             var doc = new XmlDocument();
@@ -157,6 +193,13 @@ namespace ThunderHawk
             {
                 Logger.Error(ex);
             }
+        }
+
+        public Task<bool> AskUser(string question)
+        {
+            var result = MessageBox.Show(question, "ThunderHawk", MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            return Task.FromResult(result == MessageBoxResult.Yes);
         }
     }
 }

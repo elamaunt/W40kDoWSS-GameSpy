@@ -42,7 +42,7 @@
 
 
         <Border BorderThickness="1" BorderBrush="#33FFFFFF">
-            <ListView Margin="200 32 208 60"
+            <ListView Margin="200 32 236 60"
                   Padding="0 2 0 0"
                   ClipToBounds="False"
                   Background="Transparent"

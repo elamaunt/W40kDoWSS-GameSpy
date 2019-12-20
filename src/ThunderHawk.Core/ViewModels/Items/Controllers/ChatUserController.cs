@@ -1,4 +1,5 @@
 ﻿using Framework;
+using System;
 
 namespace ThunderHawk.Core
 {
@@ -26,11 +27,18 @@ namespace ThunderHawk.Core
         {
             RunOnUIThread(() =>
             {
-                Frame.ActiveProfile.Value = Frame.Info.IsProfileActive;
-                Frame.State.Value = userInfo.State;
+                try
+                {
+                    Frame.ActiveProfile.Value = Frame.Info.IsProfileActive;
+                    Frame.State.Value = userInfo.State;
 
-                if (userInfo.SteamId == Frame.Info.SteamId)
-                    Frame.Name.Text = userInfo.UIName;
+                    if (userInfo.SteamId == Frame.Info.SteamId)
+                        Frame.Name.Text = userInfo.UIName;
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex);
+                }
             });
         }
 

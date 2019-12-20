@@ -3,7 +3,10 @@ using Framework;
 using Framework.WPF;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Threading;
 using System.Windows;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
@@ -13,8 +16,11 @@ namespace ThunderHawk
 {
     public partial class App
     {
-        public App()
+        bool _silence;
+
+        public App(bool silence)
         {
+            _silence = silence;
             InitializeComponent();
         }
 
@@ -42,6 +48,8 @@ namespace ThunderHawk
                     File.Delete(steamworksPdbPathInGameFolder);
             }
 
+            Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
             if (Environment.Is64BitProcess)
                 File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api64.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api_th.dll"), true);
             else
@@ -49,12 +57,30 @@ namespace ThunderHawk
 
             base.OnStartup(e);
 
+            if (!CoreContext.SystemService.IsSteamRunning)
+            {
+                var steamPath = CoreContext.SystemService.GetSteamExePath();
+
+                if (steamPath != null)
+                {
+                    Process.Start(steamPath, "-silent").WaitForInputIdle();
+
+                    Thread.Sleep(10000);
+                }
+            }
+
             CoreContext.SteamApi.Initialize();
             CoreContext.UpdaterService.CheckForUpdates();
 
             var window = WPFPageHelper.InstantiateWindow<MainWindowViewModel>();
+
+           
             window.Show();
+
             MainWindow = window;
+            
+            if (_silence)
+                window.Visibility = Visibility.Collapsed;
 
             NLog.LogManager.Configuration = LogConfigurator.GetConfiguration("logs");
         }

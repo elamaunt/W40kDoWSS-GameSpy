@@ -21,13 +21,27 @@ namespace ThunderHawk
 
                 if (Directory.Exists(Path.Combine("Mod", ".git")))
                     Directory.Delete(Path.Combine("Mod", ".git"), true);
-                
-                File.Copy(Path.Combine(ModFolderName, "ThunderHawk.module"), Path.Combine(gamePath, "ThunderHawk.module"), true);
 
+                var launcherModulePath = Path.Combine(ModFolderName, "ThunderHawk.module");
+                var modulePath = Path.Combine(gamePath, "ThunderHawk.module");
                 var modPath = Path.Combine(gamePath, "ThunderHawk");
 
+                if (File.Exists(modulePath))
+                {
+                    var bytes = File.ReadAllBytes(modulePath);
+                    var currentBytes = File.ReadAllBytes(launcherModulePath);
+
+                    if (ArrayEquals(bytes, currentBytes) && Directory.Exists(modPath))
+                        return;
+                }
+
+                File.Copy(launcherModulePath, modulePath, true);
+
                 if (Directory.Exists(modPath))
+                {
+                    Directory.Delete(modPath, true);
                     return;
+                }
 
                 Directory.CreateDirectory(modPath);
                 using (var archive = ZipFile.Open(Path.Combine(ModFolderName, "Mod.zip"), ZipArchiveMode.Read))
@@ -37,6 +51,20 @@ namespace ThunderHawk
             {
                 Logger.Error(ex);
             }
+        }
+
+        private bool ArrayEquals(byte[] array1, byte[] array2)
+        {
+            if (array1.Length != array2.Length)
+                return false;
+
+            for (int i = 0; i < array1.Length; i++)
+            {
+                if (array1[i] != array2[i])
+                    return false;
+            }
+
+            return true;
         }
     }
 }
