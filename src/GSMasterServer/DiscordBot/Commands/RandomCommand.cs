@@ -6,7 +6,7 @@ using SoulstormRandomTools;
 
 namespace GSMasterServer.DiscordBot.Commands
 {
-    public class RandomCommand : IBotCommand
+    internal class RandomCommand : IBotCommand
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.User;
 

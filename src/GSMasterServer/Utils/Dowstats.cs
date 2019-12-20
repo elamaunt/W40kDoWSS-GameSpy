@@ -101,6 +101,7 @@ namespace GSMasterServer.Utils
             parameters["modVersion"] = game.ModVersion;
             parameters["gtime"] = game.Duration.ToString();
             parameters["isRate"] = game.IsRateGame.ToString();
+            parameters["thunderhawkId"] = game.Id;
             parameters["version"] = DowstatsVersion;
             
             updateRequestBuilder.Query = parameters.ToString();

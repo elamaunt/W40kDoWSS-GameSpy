@@ -52,7 +52,7 @@ namespace GSMasterServer.DiscordBot
             sb.AppendLine($"Favourite race: **{GetRaceName(player.FavouriteRace)}**");
             sb.AppendLine($"Time spent in battles: **{Math.Round(player.AllInGameTicks / 60f / 60f, 1)}** hours");
             if (isAdmin)
-                sb.AppendLine($"Email: __{player.Email}__");
+                sb.AppendLine($"Email: __**{player.Email}**__");
             return sb.ToString();
         }
 

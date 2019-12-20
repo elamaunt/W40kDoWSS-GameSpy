@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using Discord;
+﻿using System.Threading.Tasks;
 using Discord.WebSocket;
 
 namespace GSMasterServer.DiscordBot.Commands
 {
-    class GetPlayerProfile : IBotDmCommand
+    internal class GetPlayerProfile : IBotDmCommand
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.User;
         public async Task Execute(SocketMessage socketMessage, BotManager botManager, AccessLevel accessLevel)

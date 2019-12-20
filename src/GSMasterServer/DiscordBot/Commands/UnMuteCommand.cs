@@ -10,7 +10,7 @@ using GSMasterServer.DiscordBot.Database;
 
 namespace GSMasterServer.DiscordBot.Commands
 {
-    public class UnMuteCommand : IBotCommand
+    internal class UnMuteCommand : IBotCommand
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.Moderator;
 

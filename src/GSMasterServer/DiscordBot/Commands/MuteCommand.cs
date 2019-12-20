@@ -4,13 +4,12 @@ using GSMasterServer.DiscordBot.Database;
 using IrcNet.Tools;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace GSMasterServer.DiscordBot.Commands
 {
-    public class MuteCommand : IBotCommand
+    internal class MuteCommand : IBotCommand
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.Moderator;
 
@@ -37,13 +36,6 @@ namespace GSMasterServer.DiscordBot.Commands
         }
 
 
-        /// <summary>
-        /// Possible command params:
-        /// (optionally) How long (ulong minutes)
-        /// If not passed, user will be muted forever
-        /// </summary>
-        /// <param name="socketMessage"></param>
-        /// <returns></returns>
         public async Task Execute(SocketMessage socketMessage)
         {
             var commandParams = socketMessage.CommandArgs();
