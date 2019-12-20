@@ -15,5 +15,6 @@ namespace ThunderHawk.Core
         void NotifyAsSystemToastMessage(MessageInfo info);
         void NotifyAsSystemToastMessage(string title, string text);
         Task<bool> AskUser(string question);
+        void ShowMessageWindow(string message);
     }
 }

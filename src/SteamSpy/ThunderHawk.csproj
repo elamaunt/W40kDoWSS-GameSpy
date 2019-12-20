@@ -137,6 +137,7 @@
     <Compile Include="Http\Route.cs" />
     <Compile Include="LogConfigurator.cs" />
     <Compile Include="Services\Implementations\ResourcesService.cs" />
+    <Compile Include="StaticClasses\Soulstorm\ActiveModDetector.cs" />
     <Compile Include="StaticClasses\Soulstorm\DowstatsReplaySender.cs" />
     <Compile Include="ThunderHawkNotificationActivator.cs" />
     <Compile Include="PageExtensions\UserInteractionsExtension.cs" />

@@ -201,5 +201,10 @@ namespace ThunderHawk
 
             return Task.FromResult(result == MessageBoxResult.Yes);
         }
+
+        public void ShowMessageWindow(string message)
+        {
+            MessageBox.Show(message, "ThunderHawk", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }

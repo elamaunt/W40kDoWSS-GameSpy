@@ -161,13 +161,6 @@ namespace ThunderHawk
             if (nicks.IsNullOrEmpty())
             {
                 _searchManager.Send(DataFunctions.StringToBytes(@"\nr\0\ndone\\final\"));
-                //_searchManager.Send(DataFunctions.StringToBytes(@"\error\\err\551\fatal\\errmsg\Unable to get any associated profiles.\id\1\final\"));
-                return;
-            }
-
-            if (nicks.Length == 0)
-            {
-                _searchManager.Send(DataFunctions.StringToBytes(@"\nr\0\ndone\\final\"));
                 return;
             }
 
@@ -485,15 +478,23 @@ namespace ThunderHawk
         void HandleLogin(TcpClientNode node, Dictionary<string, string> pairs)
         {
 
-            string userMode = ActiveModDetector.detectCurrentMode();
+            var (activeMod, activeVersion) = ActiveModDetector.DetectCurrentMode();
 
-            if (userMode.StartsWith("thunderhawk"))
+            if (activeMod == null || activeVersion == null)
             {
-                Logger.Info("Чел входит с нужным модом(" + userMode +") всё в порядке");
+                _clientManager.Send(node, DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\You can login only with ThunderHawk active mod.\id\1\final\"));
+                CoreContext.SystemService.ShowMessageWindow($"Temporary entry is allowed only with the active {CoreContext.ThunderHawkModManager.ModName} {CoreContext.ThunderHawkModManager.ModVersion} mod.");
+                return;
             }
-            else
+
+            if (!activeMod.Equals(CoreContext.ThunderHawkModManager.ModName, StringComparison.OrdinalIgnoreCase))
             {
-                Logger.Warn("Alarm! кто-то пытается войти с модом "+ userMode +" и поломать автоматч!");   
+                if (!activeVersion.Equals(CoreContext.ThunderHawkModManager.ModVersion, StringComparison.OrdinalIgnoreCase))
+                {
+                    _clientManager.Send(node, DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\You can login only with ThunderHawk active mod.\id\1\final\"));
+                    CoreContext.SystemService.ShowMessageWindow($"Temporary entry is allowed only with the active {CoreContext.ThunderHawkModManager.ModName} {CoreContext.ThunderHawkModManager.ModVersion} mod.");
+                    return;
+                }
             }
             
             if (pairs.ContainsKey("uniquenick"))
@@ -2198,10 +2199,11 @@ namespace ThunderHawk
 
         string RusNews => @" Привет! Вы на сервере elamaunt'а под названием THUNDERHAWK
 .
-Добро пожаловать на бетатест сервера.
+Добро пожаловать на БЕТА-тест 2.0
 Функционально сервер почти полностью готов. Остались некоторые незначительные ошибки и невозможность играть командой в автоматче.
-Статистика начисляется только на последней версии мода ThunderHawk (обновляется автоматически при запуске лаунчера).
-Bugfix 1.56a и фикс пафинга (для Техники) внедрены в этот мод. В будущем будут новые изменения для благоприятной игры.
+Временно вы можете играть только с использование мода ThunderHawk.
+Фикс багов, доработки баланса и фикс пафинга (для Техники) внедрены в этот мод.
+Текущая версия сервера наиболее близка к тому, каким будет сервер в окончательном виде.
 .
 Текущие карты в авто: 
 .
@@ -2248,10 +2250,11 @@ http://forums.warforge.ru/ (RUS)";
 
         string EnNews => @" Hello! You are on elamaunt's server THUNDERHAWK.
 .
-Wellcome on betatest.
+Wellcome on BETA-test 2.0!
 The server is almost complete. There are some minor bugs and the inability to play as a team of friends in automatch.
-Statistics changes only on the latest version of the ThunderHawk mod (automatically updates by launcher as startup).
-Bugfix mod 1.56a and pathfinding (for vehicle) fix are introduced in this mod. In the future there will be new changes for an auspicious game.
+Temporary you can play only with ThunderHawk mod.
+Bugfix, balance changes and pathfinding (for vehicle) fix are introduced in this mod.
+The current version of the server is closest to what the server will be completely. 
 .
 Current maps in automatch: 
 .
@@ -2323,7 +2326,8 @@ automatch_defaults =
 	{
 		""Annihilate"",
 		""ControlArea"",
-		""StrategicObjective""
+		""StrategicObjective"",
+		""GameTimer""
 	},
 
 	--automatch maps
@@ -2376,7 +2380,8 @@ automatch_defaults_wxp =
 	{
 		""Annihilate"",
 		""ControlArea"",
-		""StrategicObjective""
+		""StrategicObjective"",
+		""GameTimer""
 	},
 
 	--automatch maps
@@ -2430,7 +2435,8 @@ automatch_defaults_dxp2 =
 	{
 		""Annihilate"",
 		""ControlArea"",
-		""StrategicObjective""
+		""StrategicObjective"",
+		""GameTimer""
 	},
 
 

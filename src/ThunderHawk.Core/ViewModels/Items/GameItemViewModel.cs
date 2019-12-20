@@ -8,7 +8,8 @@ namespace ThunderHawk.Core
     public class GameItemViewModel : ItemViewModel
     {
         public TextFrame UploadedName { get; } = new TextFrame();
-        public TextFrame Type { get; } = new TextFrame();
+        public TextFrame Date { get; } = new TextFrame();
+        public TextFrame Type { get; } = new TextFrame(); 
         public PlayerFrame Player0 { get; } = new PlayerFrame();
         public PlayerFrame Player1 { get; } = new PlayerFrame();
         public PlayerFrame Player2 { get; } = new PlayerFrame();
@@ -26,6 +27,7 @@ namespace ThunderHawk.Core
         {
             Game = game;
 
+            Date.Text = ToDateValue(game.PlayedDate);
             Type.Text = ToStringValue(game);
 
             if (game.Map != null && CoreContext.ResourcesService.HasImageWithName(game.Map))
@@ -105,6 +107,36 @@ namespace ThunderHawk.Core
                     Setup(Player7, game.Players.ElementAtOrDefault(8));
                     break;
             }
+        }
+
+        private string ToDateValue(DateTime playedDate)
+        {
+            var utcNow = DateTime.UtcNow;
+
+            var span = utcNow - playedDate;
+
+            if (span.TotalSeconds < 10)
+                return "Some seconds ago";
+
+            if (span.TotalSeconds < 60)
+                return "{(int)span.TotalSeconds} seconds ago";
+
+            if (span.TotalMinutes < 2)
+                return "Minute ago";
+
+            if (span.TotalMinutes < 60)
+                return $"{(int)span.TotalMinutes} minutes ago";
+
+            if (span.TotalHours < 24)
+                return $"{(int)span.TotalHours} hours ago";
+
+            if (span.TotalDays < 7)
+                return $"{(int)span.TotalDays} days ago";
+
+            if (playedDate == default(DateTime))
+                return "Undefined";
+
+            return playedDate.ToShortDateString();
         }
 
         void Setup(PlayerFrame frame, PlayerInfo player)
