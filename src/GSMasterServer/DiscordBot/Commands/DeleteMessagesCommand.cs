@@ -1,28 +1,19 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using IrcNet.Tools;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace GSMasterServer.DiscordBot.Commands
 {
-    public class DeleteMessagesCommand : IBotCommand
+    internal class DeleteMessagesCommand : IBotCommand
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.Moderator;
 
-        /// <summary>
-        /// Possible command params:
-        /// (required) From message(ulong messageId) or messages count(ushort)
-        /// If not passed, no delete admins messages and delete from all users
-        /// </summary>
-        /// <param name="socketMessage"></param>
-        /// <returns></returns>
         public async Task Execute(SocketMessage socketMessage)
         {
-            string[] commandParams = socketMessage.CommandArgs();
+            var commandParams = socketMessage.CommandArgs();
             var paramCount = commandParams.Length;
             ushort messagesCount = 0;
             ulong fromMessage = 0;
@@ -40,7 +31,7 @@ namespace GSMasterServer.DiscordBot.Commands
 
             var targetUsers = socketMessage.MentionedUsers;
 
-            var textChannel = socketMessage.Channel as SocketTextChannel;
+            var textChannel = (SocketTextChannel) socketMessage.Channel;
             IEnumerable<IMessage> messages;
             if (messagesCount == 0)
                 messages = await textChannel.GetMessagesAsync(fromMessage, Direction.After, limit: 10000).FlattenAsync();

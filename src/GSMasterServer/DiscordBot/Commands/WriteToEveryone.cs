@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,14 +10,16 @@ using IrcNet.Tools;
 
 namespace GSMasterServer.DiscordBot.Commands
 {
-    public class WriteToEveryone : IBotDmCommand
+    internal class WriteToEveryone : IBotDmCommand
     {
+        private const string FilePath = "nicks.txt";
+
         public AccessLevel MinAccessLevel { get; } = AccessLevel.Admin;
 
         public async Task Execute(SocketMessage socketMessage, BotManager botManager, AccessLevel accessLevel)
         {
             var skipedText = socketMessage.Content.Split().Skip(1);
-            var text = string.Join("", skipedText);
+            var text = string.Join(" ", skipedText);
 
             var users = await botManager.Guild.GetUsersAsync();
             var channelTasks = new List<Task<IDMChannel>>();
@@ -51,8 +54,6 @@ namespace GSMasterServer.DiscordBot.Commands
             await Task.WhenAll(messageTasks);
 
             var sb = new StringBuilder();
-            sb.AppendLine("Успешно отослали сообщение ВСЕМ пользователям сервера ThunderHawk!");
-            sb.AppendLine("Список пользователей, которым было отослано сообщение:");
             var first = true;
             foreach (var channel in channels)
             {
@@ -67,7 +68,14 @@ namespace GSMasterServer.DiscordBot.Commands
                 }
             }
 
-            await socketMessage.Channel.SendMessageAsync(sb.ToString());
+            using (var file = new StreamWriter(FilePath))
+            {
+                file.WriteLine(sb.ToString());
+            }
+
+
+            await socketMessage.Channel.SendFileAsync(FilePath, "Successfully sent everyone message to these users");
+            File.Delete(FilePath);
         }
     }
 }

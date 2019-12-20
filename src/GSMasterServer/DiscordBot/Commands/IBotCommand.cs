@@ -1,6 +1,5 @@
 ﻿using Discord.WebSocket;
 using System.Threading.Tasks;
-using Discord;
 
 namespace GSMasterServer.DiscordBot.Commands
 {
