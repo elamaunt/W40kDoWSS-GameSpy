@@ -25,8 +25,8 @@ namespace GSMasterServer.DiscordBot.Commands
             if (paramCount >= 1)
             {
                 byte.TryParse(commandParams[0], out count);
-                if (count >= 100)
-                    count = 100;
+                if (count >= 30)
+                    count = 30;
             }
 
             string[] data = null;
