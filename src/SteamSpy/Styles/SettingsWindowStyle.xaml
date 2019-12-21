@@ -34,6 +34,8 @@
                                         <RowDefinition Height="Auto"></RowDefinition>
                                         <RowDefinition Height="*"></RowDefinition>
                                     </Grid.RowDefinitions>
+
+                                    <TextBlock Grid.Row="0" HorizontalAlignment="Center" FontSize="24" Text="SETTINGS" FontWeight="Bold" Foreground="#bbffffff"/>
                                     <Button Grid.Row="0" HorizontalAlignment="Right" x:Name="CloseButton" Width="32" Height="25" Style="{DynamicResource ButtonStyle}"
                                                 Click="CloseButtonClick" WindowChrome.IsHitTestVisibleInChrome="True">
                                         <Grid Width="32" Height="25" Background="Transparent">

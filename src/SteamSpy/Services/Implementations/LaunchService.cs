@@ -353,5 +353,15 @@ namespace ThunderHawk
 
             return null;
         }
+
+        public void ActivateGameWindow()
+        {
+            var gameProcess = GameProcess;
+
+            if (gameProcess == null)
+                return;
+
+            ProcessHelper.RestoreGameWindow(gameProcess);
+        }
     }
 }

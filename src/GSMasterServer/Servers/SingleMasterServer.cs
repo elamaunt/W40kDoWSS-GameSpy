@@ -802,6 +802,7 @@ namespace GSMasterServer.Servers
                 Games = games.Select(x => new GameFinishedMessage()
                 {
                     SessionId = x.Id,
+                    Date = x.UploadedDate,
                     Map = x.Map,
                     Type = x.Type,
                     Duration = x.Duration,

@@ -8,10 +8,9 @@
         TextOptions.TextFormattingMode="Ideal"
         RenderOptions.ClearTypeHint="Auto"
         mc:Ignorable="d"
-        Title="Настройки" Height="340" Width="400" Style="{DynamicResource SettingsWindowStyle}">
+        Title="Settings" Height="340" Width="400" Style="{DynamicResource SettingsWindowStyle}">
     <Grid Margin="16 16 16 16">
         <StackPanel Orientation="Vertical">
-
             <CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" framework:WPFBinder.Frame="ThunderHawkModAutoSwitch" Style="{DynamicResource SettingsCheckBoxStyle}"/>
             <CheckBox Margin="5 20 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" framework:WPFBinder.Frame="DesktopNotificationsEnabled" Style="{DynamicResource SettingsCheckBoxStyle}"/>
             <CheckBox Margin="5 20 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" framework:WPFBinder.Frame="LaunchThunderHawkAtStartup" Style="{DynamicResource SettingsCheckBoxStyle}"/>

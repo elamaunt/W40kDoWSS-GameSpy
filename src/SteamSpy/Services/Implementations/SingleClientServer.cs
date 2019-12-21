@@ -309,9 +309,10 @@ namespace ThunderHawk
 
         void HandleRemoteUtmCommand(string[] values)
         {
-            //if (!SteamLobbyManager.IsInLobbyNow)
-            //    return;
+            if (!SteamLobbyManager.IsInLobbyNow)
+                return;
 
+            CoreContext.LaunchService.ActivateGameWindow();
             SendToClientChat($":{_user} UTM #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
         }
 
@@ -970,42 +971,16 @@ namespace ThunderHawk
         {
             //CHATLINE PART #GSP!whamdowfr!Ml39ll1K9M :
             var channelName = values[1];
-            
+
             if (channelName == "#GPG!1")
             {
             }
             else
             {
-                if (_gameLaunchReceived)
-                { 
-                    Logger.Info("PART AFTER GAME LAUNCH");
+                _enteredLobbyHash = null;
+                _localServerHash = null;
 
-                    var hash = _enteredLobbyHash;
-                    var lobbyId = SteamLobbyManager.CurrentLobbyId;
-
-                    Thread.MemoryBarrier();
-
-                    //Task.Delay(20000).ContinueWith(t =>
-                    //{
-                        var currentHash = _enteredLobbyHash;
-                        var currentLobbyId = SteamLobbyManager.CurrentLobbyId;
-
-                        Thread.MemoryBarrier();
-
-                        _enteredLobbyHash = null;
-                        _localServerHash = null;
-
-                        if (hash == currentHash && currentLobbyId == lobbyId)
-                            SteamLobbyManager.LeaveFromCurrentLobby();
-                    //});
-                }
-                else
-                {
-                    _enteredLobbyHash = null;
-                    _localServerHash = null;
-
-                    SteamLobbyManager.LeaveFromCurrentLobby();
-                }
+                SteamLobbyManager.LeaveFromCurrentLobby();
             }
 
             _gameLaunchReceived = false;
@@ -1419,6 +1394,8 @@ namespace ThunderHawk
                 //SendToClientChat(node, $":s 366 {_name} {channelName} :End of NAMES list\r\n");
 
                 SendToClientChat(builder.ToString());
+
+                PortBindingManager.ClearPortBindings();
             }
             else
             {
@@ -1897,7 +1874,14 @@ namespace ThunderHawk
                         details["hostport"] = remote.Port.ToString();
                         details["localport"] = remote.Port.ToString();
 
+                        var lobbyWasJoinable = SteamLobbyManager.IsLobbyJoinable;
+
                         SteamLobbyManager.UpdateCurrentLobby(details, GetIndicator());
+
+                        var isLobbyJoinable = SteamLobbyManager.IsLobbyJoinable;
+
+                        if (!lobbyWasJoinable && isLobbyJoinable)
+                            PortBindingManager.ClearPortBindings();
 
                         _localServer = details;
 
@@ -1927,18 +1911,10 @@ namespace ThunderHawk
                 {
                     byte[] response = new byte[] { 0xfe, 0xfd, 0x0a, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3] };
 
-                    var token = default(CancellationToken); //RecreateLobbyToken();
-                    //token.Register(() => SteamLobbyManager.LeaveFromCurrentLobby());
-                   
                     handler.Send(response, remote);
 
                     if (!SteamLobbyManager.IsInLobbyNow)
-                        SteamLobbyManager.CreatePublicLobby(token, _name, _shortUser, _flags, GetIndicator())/*.OnCompletedOnUi(lobbyId =>
-                        {
-                            //if (token.IsCancellationRequested)
-                            //    return;
-                            //handler.Send(response, remote);
-                        })*/.Wait();
+                        SteamLobbyManager.CreatePublicLobby(default, _name, _shortUser, _flags, GetIndicator()).Wait();
                 }
                 else
                 {
@@ -2208,6 +2184,7 @@ namespace ThunderHawk
 Текущие карты в авто: 
 .
 1на1
+- 2P Fallen City
 - [TP MOD]edemus gamble
 - 2P Shrine of Excellion
 - 2P Meeting of Minds
@@ -2228,6 +2205,7 @@ namespace ThunderHawk
 - 4p panrea lowlands (доработанная Дэвилом)
 - 4P Skerries (доработанная Дэвилом)
 - 4p Saints Square 
+- 4p Sad Place
 .
 3на3
 - 6p Mortalis
@@ -2235,6 +2213,7 @@ namespace ThunderHawk
 - 6P Shakun Coast
 - 6P Fury Island
 - 6p paynes retribution
+- 6p parmenian heath
 .
 4на4
 - 8P Oasis of Sharr
@@ -2250,7 +2229,7 @@ http://forums.warforge.ru/ (RUS)";
 
         string EnNews => @" Hello! You are on elamaunt's server THUNDERHAWK.
 .
-Wellcome on BETA-test 2.0!
+Welcome on BETA-test 2.0!
 The server is almost complete. There are some minor bugs and the inability to play as a team of friends in automatch.
 Temporary you can play only with ThunderHawk mod.
 Bugfix, balance changes and pathfinding (for vehicle) fix are introduced in this mod.
@@ -2259,6 +2238,7 @@ The current version of the server is closest to what the server will be complete
 Current maps in automatch: 
 .
 1vs1
+- 2P Fallen City
 - [TP MOD]edemus gamble
 - 2P Shrine of Excellion
 - 2P Meeting of Minds
@@ -2279,6 +2259,7 @@ Current maps in automatch:
 - 4p panrea lowlands (fixed by Devil)
 - 4P Skerries (fixed by Devil)
 - 4p Saints Square 
+- 4p Sad Place
 .
 3vs3
 - 6p Mortalis
@@ -2286,6 +2267,7 @@ Current maps in automatch:
 - 6P Shakun Coast
 - 6P Fury Island
 - 6p paynes retribution
+- 6p parmenian heath
 .
 4на4
 - 8P Oasis of Sharr
@@ -2443,6 +2425,7 @@ automatch_defaults_dxp2 =
 	--automatch maps
 	automatch_maps2p = 
 	{
+		""2p_Fallen_City"",
 		""[TP MOD]edemus gamble"",
 		""2P_Shrine_of_Excellion"",
 		""2P_Meeting_of_Minds"",
@@ -2463,7 +2446,8 @@ automatch_defaults_dxp2 =
 		""4P_Doom_Spiral"",
 		""4p_panrea_lowlands"",
 		""4P_Skerries"",
-		""4p_Saints_Square""
+		""4p_Saints_Square"",
+		""4p_sad_place""
 	},
 	automatch_maps6p = 
 	{
@@ -2471,7 +2455,8 @@ automatch_defaults_dxp2 =
 		""6P_Alvarus"",
 		""6P_Shakun_Coast"",
 		""6P_Fury_Island"",
-		""6p_paynes_retribution""
+		""6p_paynes_retribution"",
+		""6p_parmenian_heath""
 	},
 	automatch_maps8p = 
 	{
