@@ -79,6 +79,8 @@ namespace ThunderHawk.StaticClasses.Soulstorm
 
         static string GetDirectoryByBrowser(string root = null)
         {
+            MessageBox.Show("Please select Soulstorm folder", "ThunderHawk", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
             var folderDialog = new FolderBrowserDialog();
             if (root == null)
                 folderDialog.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer);

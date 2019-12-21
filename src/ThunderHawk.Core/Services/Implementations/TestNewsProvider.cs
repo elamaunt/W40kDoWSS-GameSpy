@@ -13,6 +13,28 @@ namespace ThunderHawk.Core
 
             return new NewsItemDTO[]
                 {
+                     new NewsItemDTO()
+                    {
+                        Author = "elamaunt",
+
+                        Russian = new NewsLanguageItemDTO()
+                        {
+                            Title = "ThunderHawk 2.0",
+                            Annotation = "Неужели, дождались?",
+                            Body =  "<b>Дорогие любители Soulstorm!</b>\n\n Прошло много времени с прошлого бетатеста, и теперь вы можете полноценно насладиться обновленной версией сервера. Месяцы кропотливой работы дали свои плоды. Множество проблем позади и теперь каждый может (неважно, лицензия или пиратка) играть вместе друг с другом в автоматче. Пока сервер временно позволяет играть только с использованием мода ThunderHawk. В будущем будет поддержка и других модов. Все зависит от вашей поддержки, мы вас точно не подведем =). А сейчас пора снова выяснить, кто лучший. \nУспехов на ладдере!",
+                        },
+
+                        English = new NewsLanguageItemDTO()
+                        {
+                            Title = "ThunderHawk 2.0",
+                            Annotation = "Really, have you waited?",
+                            Body =  "<b>Dear Soulstorm lovers!</b>\n\n A lot of time has passed since the last beta test, and now you can fully enjoy the updated version of the server. Months of hard work have borne fruit. A lot of problems are behind and now everyone can (whether it be a license or a pirate) play automatch together with each other. While the server temporarily allows you to play only using the ThunderHawk mod. In the future there will be support for other mods. It all depends on your support, we definitely won’t let you down =). Now it's time to find out again who is the best. \nSuccess on ladder!",
+                        },
+
+                        ImagePath = "pack://application:,,,/ThunderHawk;component/Images/Primarismarines.jpg",
+                        CreatedDate = new DateTime(2019, 12, 21)
+                    },
+
                     new NewsItemDTO()
                     {
                         Author = "elamaunt",
@@ -33,27 +55,6 @@ namespace ThunderHawk.Core
 
                         ImagePath = "pack://application:,,,/ThunderHawk;component/Images/MapContest.png",
                         CreatedDate = new DateTime(2019, 9, 12)
-                    },
-                    new NewsItemDTO()
-                    {
-                        Author = "elamaunt",
-
-                        Russian = new NewsLanguageItemDTO()
-                        {
-                            Title = "Открытый бетатест сервера",
-                            Annotation = "Этот день войдет в историю Soulstorm",
-                            Body =  "<b>Дорогие любители Soulstorm!</b>\n\nЯ объявляю начало новой эры, эры рейтинга, статистики и скилла. Теперь все желающие могут играть в Warhammer 40k Soulstorm без многочисленных проблем Steam версии. Многое еще необходимо сделать, но с сегодняшнего дня я постараюсь поддерживать сервер в активном состоянии. Сражайтесь, набирайте рейтинг! Возможно, в конце бетатеста будут организованы призы для лучших игроков рейтинговой таблицы ;)",
-                        },
-
-                        English = new NewsLanguageItemDTO()
-                        {
-                            Title = "Open server beta test",
-                            Annotation = "This day will go down in Soulstorm history.",
-                            Body =  "<b>Dear Soulstorm lovers!</b>\n\nI am announcing the start of a new era, an era of ranking, statistics and skill. Now everyone can play the Warhammer 40k Soulstorm without numerous Steam problems. Much more needs to be done, but from today I will try to keep the server active. Fight, gain rating! Perhaps at the end of the beta test prizes will be organized for the best players in the ranking table ;)",
-                        },
-
-                        ImagePath = "pack://application:,,,/ThunderHawk;component/Images/Primarismarines.jpg",
-                        CreatedDate = new DateTime(2019, 9, 7)
                     },
 
                     new NewsItemDTO()

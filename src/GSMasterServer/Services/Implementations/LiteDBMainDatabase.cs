@@ -128,7 +128,7 @@ namespace GSMasterServer.Services.Implementations
 
         public ProfileDBO GetProfileByName(string username)
         {
-            return ProfilesTable.FindOne(Query.Where(nameof(ProfileDBO.Name), x => x.AsString == username));
+            return ProfilesTable.FindOne(Query.Where(nameof(ProfileDBO.Name), x => string.Equals(x.AsString, username, StringComparison.OrdinalIgnoreCase)));
         }
 
         public ProfileDBO GetProfileById(long profileId)
@@ -158,7 +158,7 @@ namespace GSMasterServer.Services.Implementations
 
         public bool ProfileExists(string username)
         {
-            return ProfilesTable.Exists(Query.EQ(nameof(ProfileDBO.Name), new BsonValue(username)));
+            return ProfilesTable.Exists(Query.Where(nameof(ProfileDBO.Name), x => string.Equals(x.AsString, username, StringComparison.OrdinalIgnoreCase)));
         }
 
         public ProfileDBO[] Load1v1Top10()

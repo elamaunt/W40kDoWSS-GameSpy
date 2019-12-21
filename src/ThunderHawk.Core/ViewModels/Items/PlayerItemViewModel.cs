@@ -40,7 +40,7 @@ namespace ThunderHawk.Core
                 case SharedServices.Race.tau_race: return "TAU";
                 case SharedServices.Race.dark_eldar_race: return "DE";
                 case SharedServices.Race.sisters_race: return "SOB";
-                default: return "Unknown";
+                default: return "---";
             }
         }
     }
