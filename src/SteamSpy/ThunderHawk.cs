@@ -103,7 +103,10 @@ namespace ThunderHawk
             }
             catch(Exception ex)
             {
-                var text = ex.GetLowestBaseException().ToString();
+                ex = ex.GetLowestBaseException();
+
+                var text = $"{ex.Message} {ex.StackTrace}";
+
                 File.WriteAllText("StartupException.ex", text);
 
                 MessageBox.Show(text);

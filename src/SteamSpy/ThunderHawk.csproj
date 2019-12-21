@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{3F0C33F2-BBB7-45F2-91BE-A604C36EA0FE}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Exe</OutputType>
     <TargetPlatformVersion>10.0.10240.0</TargetPlatformVersion>
     <RootNamespace>ThunderHawk</RootNamespace>
     <AssemblyName>ThunderHawk</AssemblyName>
@@ -124,7 +124,6 @@
     <Compile Include="Controllers\IControlExtension.cs" />
     <Compile Include="Controllers\PageExtendingController.cs" />
     <Compile Include="Data\GameServerDetails.cs" />
-    <Compile Include="DesktopNotificationManagerCompat.cs" />
     <Compile Include="Effects\IndicatorEffect.cs" />
     <Compile Include="Effects\RectBlurEffect.cs" />
     <Compile Include="ExplorerExtensions.cs" />
@@ -139,7 +138,6 @@
     <Compile Include="Services\Implementations\ResourcesService.cs" />
     <Compile Include="StaticClasses\Soulstorm\ActiveModDetector.cs" />
     <Compile Include="StaticClasses\Soulstorm\DowstatsReplaySender.cs" />
-    <Compile Include="ThunderHawkNotificationActivator.cs" />
     <Compile Include="PageExtensions\UserInteractionsExtension.cs" />
     <Compile Include="Servers\TcpPortHandler.cs" />
     <Compile Include="Servers\UdpPortHandler.cs" />
@@ -853,6 +851,22 @@
     <Resource Include="Images\Background_DefaultNY.png" />
     <Resource Include="Images\emptyslot_icon.png" />
     <Resource Include="Images\fullslot_icon.png" />
+    <Resource Include="Images\ThunderHawk2.png" />
+    <Resource Include="Images\Maps\2p_deadly_fun_archeology.jpg" />
+    <Resource Include="Images\Maps\2p_sugaroasis.jpg" />
+    <Resource Include="Images\Maps\2p_terror psyclaw.jpg" />
+    <Resource Include="Images\Maps\4p_aztek%27s_demise.jpg" />
+    <Resource Include="Images\Maps\4p_sad_place.jpg" />
+    <Resource Include="Images\Maps\6p_snowblind.jpg" />
+    <Resource Include="Images\Maps\[tp mod]4p_ice_flow.jpg" />
+    <Resource Include="Images\Maps\[tp mod]edemus gamble.jpg" />
+    <Resource Include="Images\Maps\[tp mod]galenas_crusade.jpg" />
+    <Resource Include="Images\Maps\[tp mod]jungle_morning.jpg" />
+    <Resource Include="Images\Maps\[tp mod]light_brigade.jpg" />
+    <Resource Include="Images\Maps\[tp mod]meeting_of_minds.jpg" />
+    <Resource Include="Images\Maps\[tp mod]quests_triumph.jpg" />
+    <Resource Include="Images\Maps\[tp mod]shrine of excellion.jpg" />
+    <Resource Include="Images\Maps\[tp mod]tower ruins.jpg" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

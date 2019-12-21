@@ -1,4 +1,4 @@
-﻿using DesktopNotifications;
+﻿//using DesktopNotifications;
 using Framework;
 using Framework.WPF;
 using System;
@@ -34,8 +34,23 @@ namespace ThunderHawk
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            DesktopNotificationManagerCompat.RegisterAumidAndComServer<ThunderHawkNotificationActivator>("ThunderHawk");
-            DesktopNotificationManagerCompat.RegisterActivator<ThunderHawkNotificationActivator>();
+           /* try
+            {
+                DesktopNotificationManagerCompat.RegisterAumidAndComServer<ThunderHawkNotificationActivator>("ThunderHawk");
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }
+
+            try
+            {
+                DesktopNotificationManagerCompat.RegisterActivator<ThunderHawkNotificationActivator>();
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }*/
 
             if (PathFinder.GamePath != null)
             {

@@ -137,6 +137,9 @@ namespace ThunderHawk
 
         void OnUserKeyValueChanged(string name, string key, string value)
         {
+            if (!_inChat)
+                return;
+
             if (name == null || _name == name)
                 return;
 
@@ -169,6 +172,9 @@ namespace ThunderHawk
 
         void OnUserNameChanged(UserInfo user, long? previousProfile, string previousName, string newName)
         {
+            if (!_inChat)
+                return;
+
             if (user.SteamId == SteamUser.GetSteamID().m_SteamID)
                 return;
 
@@ -191,6 +197,9 @@ namespace ThunderHawk
 
         void OnUserConnected(UserInfo user)
         {
+            if (!_inChat)
+                return;
+
             if (user.SteamId == SteamUser.GetSteamID().m_SteamID)
                 return;
 
@@ -210,6 +219,9 @@ namespace ThunderHawk
 
         void OnUserDisconnected(UserInfo user)
         {
+            if (!_inChat)
+                return;
+
             if (user.SteamId == SteamUser.GetSteamID().m_SteamID)
                 return;
 
@@ -301,25 +313,17 @@ namespace ThunderHawk
 
         void HandleRemotePrivmsgCommand(string[] values)
         {
-            if (!SteamLobbyManager.IsInLobbyNow)
-                return;
-
             SendToClientChat($":{_user} PRIVMSG #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
         }
 
         void HandleRemoteUtmCommand(string[] values)
         {
-            if (!SteamLobbyManager.IsInLobbyNow)
-                return;
-
             CoreContext.LaunchService.ActivateGameWindow();
             SendToClientChat($":{_user} UTM #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
         }
 
         void OnTopicUpdated(string topic)
         {
-            if (!SteamLobbyManager.IsInLobbyNow)
-                return;
         }
 
         void OnLobbyMemberLeft(ulong memberSteamId, bool disconnected)
@@ -1281,16 +1285,16 @@ namespace ThunderHawk
             // Fake
             var builder = new StringBuilder();
 
-            builder.Append((char)(user.ActiveProfileId ?? 0));
+            var chars = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGJHKLZXCVBM1234567890";
 
-            for (int i = 1; i < 8; i++)
+            for (int i = 0; i < 8; i++)
             {
                 var ch = name?.ElementAtOrDefault(i);
 
-                if (ch == (char)0)
-                    ch = 'a';
-
-                builder.Append(ch);
+                if (!ch.HasValue)
+                    builder.Append('a');
+                else
+                    builder.Append(chars[((int)ch)%(chars.Length - 1)]);
             }
 
             return builder.ToString();
@@ -1874,14 +1878,14 @@ namespace ThunderHawk
                         details["hostport"] = remote.Port.ToString();
                         details["localport"] = remote.Port.ToString();
 
-                        var lobbyWasJoinable = SteamLobbyManager.IsLobbyJoinable;
+                        //var lobbyWasJoinable = SteamLobbyManager.IsLobbyJoinable;
 
                         SteamLobbyManager.UpdateCurrentLobby(details, GetIndicator());
 
-                        var isLobbyJoinable = SteamLobbyManager.IsLobbyJoinable;
+                        //var isLobbyJoinable = SteamLobbyManager.IsLobbyJoinable;
 
-                        if (!lobbyWasJoinable && isLobbyJoinable)
-                            PortBindingManager.ClearPortBindings();
+                        //if (!lobbyWasJoinable && isLobbyJoinable)
+                        //    PortBindingManager.ClearPortBindings();
 
                         _localServer = details;
 
@@ -2259,7 +2263,6 @@ Current maps in automatch:
 - 4p panrea lowlands (fixed by Devil)
 - 4P Skerries (fixed by Devil)
 - 4p Saints Square 
-- 4p Sad Place
 .
 3vs3
 - 6p Mortalis
@@ -2267,7 +2270,6 @@ Current maps in automatch:
 - 6P Shakun Coast
 - 6P Fury Island
 - 6p paynes retribution
-- 6p parmenian heath
 .
 4на4
 - 8P Oasis of Sharr
@@ -2446,8 +2448,7 @@ automatch_defaults_dxp2 =
 		""4P_Doom_Spiral"",
 		""4p_panrea_lowlands"",
 		""4P_Skerries"",
-		""4p_Saints_Square"",
-		""4p_sad_place""
+		""4p_Saints_Square""
 	},
 	automatch_maps6p = 
 	{
@@ -2455,8 +2456,7 @@ automatch_defaults_dxp2 =
 		""6P_Alvarus"",
 		""6P_Shakun_Coast"",
 		""6P_Fury_Island"",
-		""6p_paynes_retribution"",
-		""6p_parmenian_heath""
+		""6p_paynes_retribution""
 	},
 	automatch_maps8p = 
 	{

@@ -270,11 +270,10 @@ namespace ThunderHawk.StaticClasses.Soulstorm
             if (path == null)
                 return false;
 
-            return File.Exists(path + "\\Soulstorm.exe") &&
-                //File.Exists(path + "\\steam_api.dll") &&
-                Directory.Exists(path + "\\DXP2") &&
-                Directory.Exists(path + "\\W40K") &&
-                Directory.Exists(path + "\\Engine");
+            return File.Exists(Path.Combine(path, "Soulstorm.exe")) &&
+                Directory.Exists(Path.Combine(path, "DXP2")) &&
+                Directory.Exists(Path.Combine(path, "W40K")) &&
+                Directory.Exists(Path.Combine(path, "Engine"));
         }
     }
 }

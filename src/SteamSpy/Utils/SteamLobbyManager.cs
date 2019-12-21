@@ -20,7 +20,7 @@ namespace ThunderHawk.Utils
 
         static readonly byte[] _chatMessageBuffer = new byte[4096];
 
-        public static bool IsLobbyJoinable => IsInLobbyNow && _currentServer.Valid;
+        public static bool IsLobbyJoinable => IsInLobbyNow && _currentServer != null && _currentServer.Valid;
 
         public static bool IsInLobbyNow => _currentLobby != null;
 

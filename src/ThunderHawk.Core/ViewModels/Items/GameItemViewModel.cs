@@ -113,7 +113,7 @@ namespace ThunderHawk.Core
         {
             var utcNow = DateTime.UtcNow;
 
-            var span = utcNow - playedDate;
+            var span = playedDate - utcNow;
 
             if (span.TotalSeconds < 10)
                 return "Some seconds ago";
@@ -150,7 +150,7 @@ namespace ThunderHawk.Core
                 frame.Visible = true;
                 frame.Name.Text =  $"{player.Name}";
                 frame.Race.Value = player.Race;
-                frame.Rating.Text = $"{player.FinalState.ToString().Take(3).Select(x => x.ToString().ToUpperInvariant()).Aggregate((x,y) => x+y)} {player.Rating}{WithSign(player.RatingDelta)}";
+                frame.Rating.Text = $"{player.FinalState.ToString().Take(3).Select(x => x.ToString().ToUpperInvariant()).Aggregate((x,y) => x+y)} {Math.Max(1000,player.Rating)}{WithSign(player.RatingDelta)}";
                 frame.Team.Value = player.Team;
             }
         }

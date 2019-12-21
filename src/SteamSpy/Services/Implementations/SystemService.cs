@@ -12,13 +12,13 @@ using ToastNotifications.Lifetime;
 using ToastNotifications.Position;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
-using DesktopNotificationManagerCompat = DesktopNotifications.DesktopNotificationManagerCompat;
+//using DesktopNotificationManagerCompat = DesktopNotifications.DesktopNotificationManagerCompat;
 
 namespace ThunderHawk
 {
     public class SystemService : ISystemService
     {
-        readonly ToastNotifier _desktopNotifier;
+        //readonly ToastNotifier _desktopNotifier;
         readonly Notifier _localNotifier;
 
         volatile int _idCounter;
@@ -32,22 +32,29 @@ namespace ThunderHawk
 
         public SystemService()
         {
-            _desktopNotifier = DesktopNotificationManagerCompat.CreateToastNotifier();
-
-            _localNotifier = new Notifier(cfg =>
+            try
             {
-                cfg.PositionProvider = new WindowPositionProvider(
-                    parentWindow: Application.Current.MainWindow,
-                    corner: Corner.TopRight,
-                    offsetX: 10,
-                    offsetY: 10);
+                //_desktopNotifier = DesktopNotificationManagerCompat.CreateToastNotifier();
 
-                cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
-                    notificationLifetime: TimeSpan.FromSeconds(3),
-                    maximumNotificationCount: MaximumNotificationCount.FromCount(5));
+                _localNotifier = new Notifier(cfg =>
+                {
+                    cfg.PositionProvider = new WindowPositionProvider(
+                        parentWindow: Application.Current.MainWindow,
+                        corner: Corner.TopRight,
+                        offsetX: 10,
+                        offsetY: 10);
 
-                cfg.Dispatcher = Application.Current.Dispatcher;
-            });
+                    cfg.LifetimeSupervisor = new TimeAndCountBasedLifetimeSupervisor(
+                        notificationLifetime: TimeSpan.FromSeconds(3),
+                        maximumNotificationCount: MaximumNotificationCount.FromCount(5));
+
+                    cfg.Dispatcher = Application.Current.Dispatcher;
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }
         }
 
         public bool CheckIsItInStartup()
@@ -78,25 +85,21 @@ namespace ThunderHawk
 
         public void NotifyAsSystemToastMessage(MessageInfo info)
         {
-            if (!AppSettings.DesktopNotificationsEnabled)
+           /* if (!AppSettings.DesktopNotificationsEnabled)
                 return;
-
-            // Construct the visuals of the toast (using Notifications library)
-                ToastContent toastContent = new ToastContent()
+            try
             {
-                // Arguments when the user taps body of toast
-                Launch = "action=viewConversation&conversationId=5",
-
-               /* Header = new ToastHeader("chat", "ThunderHawk Chat", null)
+                // Construct the visuals of the toast (using Notifications library)
+                ToastContent toastContent = new ToastContent()
                 {
-                    ActivationType = ToastActivationType.Foreground
-                },*/
+                    // Arguments when the user taps body of toast
+                    Launch = "action=viewConversation&conversationId=5",
 
-                Visual = new ToastVisual()
-                {
-                    BindingGeneric = new ToastBindingGeneric()
+                    Visual = new ToastVisual()
                     {
-                        Children =
+                        BindingGeneric = new ToastBindingGeneric()
+                        {
+                            Children =
                         {
                              new AdaptiveText()
                              {
@@ -110,48 +113,47 @@ namespace ThunderHawk
                                 HintAlign = AdaptiveTextAlign.Left
                             }
                         }
+                        }
                     }
-                }
-            };
+                };
 
-            toastContent.Header = new ToastHeader(Interlocked.Increment(ref _idCounter).ToString(), "2", "ThunderHawk");
+                toastContent.Header = new ToastHeader(Interlocked.Increment(ref _idCounter).ToString(), "ThunderHawk", "ThunderHawk");
 
-            // Create the XML document (BE SURE TO REFERENCE WINDOWS.DATA.XML.DOM)
-            var doc = new XmlDocument();
-            doc.LoadXml(toastContent.GetContent());
+                // Create the XML document (BE SURE TO REFERENCE WINDOWS.DATA.XML.DOM)
+                var doc = new XmlDocument();
+                doc.LoadXml(toastContent.GetContent());
 
-            // And create the toast notification
-            var toast = new ToastNotification(doc);
-            toast.Group = "chat";
+                // And create the toast notification
+                var toast = new ToastNotification(doc);
+                toast.Group = "chat";
 
-            // And then show it
-            _desktopNotifier.Show(toast);
+                // And then show it
+                //_desktopNotifier.Show(toast);
 
-            //_localNotifier.ShowInformation(info.Text);
-
-            /*  var message = "Sample message";
-              var xml = $"<?xml version=\"1.0\"?><toast><visual><binding template=\"ToastText01\"><text id=\"1\">{message}</text></binding></visual></toast>";
-              var toastXml = new XmlDocument();
-              toastXml.LoadXml(xml);
-              var toast = new ToastNotification(toastXml);
-              ToastNotificationManager.CreateToastNotifier("Sample toast").Show(toast);*/
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }*/
         }
 
         public void NotifyAsSystemToastMessage(string title, string text)
         {
-            if (!AppSettings.DesktopNotificationsEnabled)
+          /*  if (!AppSettings.DesktopNotificationsEnabled)
                 return;
 
-            ToastContent toastContent = new ToastContent()
+            try
             {
-                // Arguments when the user taps body of toast
-                Launch = "action=viewConversation&conversationId=5",
-
-                Visual = new ToastVisual()
+                ToastContent toastContent = new ToastContent()
                 {
-                    BindingGeneric = new ToastBindingGeneric()
+                    // Arguments when the user taps body of toast
+                    Launch = "action=viewConversation&conversationId=5",
+
+                    Visual = new ToastVisual()
                     {
-                        Children =
+                        BindingGeneric = new ToastBindingGeneric()
+                        {
+                            Children =
                         {
                              new AdaptiveText()
                              {
@@ -165,22 +167,27 @@ namespace ThunderHawk
                                 HintAlign = AdaptiveTextAlign.Left
                             }
                         }
+                        }
                     }
-                }
-            };
+                };
 
-            toastContent.Header = new ToastHeader(Interlocked.Increment(ref _idCounter).ToString(), "ThunderHawk", "");
+                toastContent.Header = new ToastHeader(Interlocked.Increment(ref _idCounter).ToString(), "ThunderHawk", "");
 
-            // Create the XML document (BE SURE TO REFERENCE WINDOWS.DATA.XML.DOM)
-            var doc = new XmlDocument();
-            doc.LoadXml(toastContent.GetContent());
+                // Create the XML document (BE SURE TO REFERENCE WINDOWS.DATA.XML.DOM)
+                var doc = new XmlDocument();
+                doc.LoadXml(toastContent.GetContent());
 
-            // And create the toast notification
-            var toast = new ToastNotification(doc);
-            toast.Group = "info";
+                // And create the toast notification
+                var toast = new ToastNotification(doc);
+                toast.Group = "info";
 
-            // And then show it
-            _desktopNotifier.Show(toast);
+                // And then show it
+                //_desktopNotifier.Show(toast);
+            }
+            catch (Exception ex)
+            {
+                Logger.Warn(ex);
+            }*/
         }
 
         public void OpenLink(Uri uri)
@@ -191,7 +198,7 @@ namespace ThunderHawk
             }
             catch (Exception ex)
             {
-                Logger.Error(ex);
+                Logger.Warn(ex);
             }
         }
 
