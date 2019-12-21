@@ -67,8 +67,10 @@ namespace ThunderHawk.Core
             {
                 var user = CoreContext.MasterServer.CurrentProfile;
 
-                if (user != null)
+                if (user != null && user.IsProfileActive)
                     Frame.Rating.Text = $"{user.UIName}    {user.Wins}/{user.Games}  ({(((float)user.Wins) / user.Games)?.ToString("P")})     1v1: {user.Score1v1}   2v2: {user.Score2v2}   3v3/4v4: {user.Score3v3}";
+                else
+                    Frame.Rating.Text = $"Your profile not active";
             });
         }
 
