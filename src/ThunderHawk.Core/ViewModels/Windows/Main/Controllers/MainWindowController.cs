@@ -61,8 +61,8 @@ namespace ThunderHawk.Core
             }
             else
             {
-                CoreContext.SystemService.NotifyAsSystemToastMessage("New automatch host", $"GameVariant: {info.GameVariant}. GameType: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}. {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}");
-                CoreContext.ClientServer.SendAsServerMessage($"New automatch host: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}, {info.GameVariant}.  {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}");
+                CoreContext.SystemService.NotifyAsSystemToastMessage("New automatch host", $"GameVariant: {info.GameVariant}. GameType: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}. {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}. Rated: {info.Ranked}");
+                CoreContext.ClientServer.SendAsServerMessage($"New automatch host: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}, {info.GameVariant}.  {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}. Rated: {info.Ranked}");
             }
         }
 
