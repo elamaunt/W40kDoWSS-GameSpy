@@ -48,7 +48,7 @@
 
             <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
                 
-                <TextBlock framework:WPFBinder.Frame="FAQLabel"
+                <!--TextBlock framework:WPFBinder.Frame="FAQLabel"
                            Margin="0 8 0 0"
                            Style="{DynamicResource FreeTextStyle}">
                     <TextBlock.Effect>
@@ -59,7 +59,7 @@
                             FAQ
                         </Hyperlink>
                         .
-                </TextBlock>
+                </-->
 
                 <TextBlock framework:WPFBinder.Frame="ActiveModRevision"
                            MaxWidth="250"

@@ -168,17 +168,19 @@ namespace ThunderHawk.Core
 
         string ToStringValue(GameInfo game)
         {
+            var ranked = game.IsRateGame ? "ranked" : "unranked";
+
             switch (game.Type)
             {
-                case GameType._1v1: return  $"1vs1   /   {game.Map}   /   {ToTimeString(game.Duration)}";
-                case GameType._2v2: return $"2vs2   /   {game.Map}   /   {ToTimeString(game.Duration)}";
+                case GameType._1v1: return  $"1vs1 {ranked}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
+                case GameType._2v2: return $"2vs2 {ranked}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
                 case GameType._3v3_4v4:
                     {
                         if (game.Players.Length == 8)
-                            return $"4vs4   /   {game.Map}   /   {ToTimeString(game.Duration)}";
-                        return $"3vs3   /   {game.Map}   /   {ToTimeString(game.Duration)}";
+                            return $"4vs4 {ranked}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
+                        return $"3vs3 {ranked}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
                     }
-                default: return $"non-standard   /   {game.Map}   /   {ToTimeString(game.Duration)}";
+                default: return $"non-standard   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
             }
         }
 

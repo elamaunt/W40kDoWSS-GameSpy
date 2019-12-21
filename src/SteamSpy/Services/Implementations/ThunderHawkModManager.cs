@@ -38,10 +38,7 @@ namespace ThunderHawk
                 File.Copy(launcherModulePath, modulePath, true);
 
                 if (Directory.Exists(modPath))
-                {
                     Directory.Delete(modPath, true);
-                    return;
-                }
 
                 Directory.CreateDirectory(modPath);
                 using (var archive = ZipFile.Open(Path.Combine(ModFolderName, "Mod.zip"), ZipArchiveMode.Read))
