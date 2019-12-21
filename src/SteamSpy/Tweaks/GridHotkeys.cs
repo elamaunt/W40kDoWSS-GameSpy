@@ -9,9 +9,9 @@ namespace ThunderHawk.Tweaks
 {
     public class GridHotkeys : ITweak
     {
-        public string TweakTitle => Core.CoreContext.LangService.GetString("HotKeysTweakTitle");
+        public string TweakTitle => CoreContext.LangService.GetString("HotKeysTweakTitle");
 
-        public string TweakDescription => Core.CoreContext.LangService.GetString("HotKeysTweakDescription");
+        public string TweakDescription => CoreContext.LangService.GetString("HotKeysTweakDescription");
 
         public bool IsRecommendedTweak { get; } = false;
 
@@ -40,12 +40,7 @@ namespace ThunderHawk.Tweaks
             var profilePath = Path.Combine(gamePath, "Profiles", profileName, "thunderhawk");
             var keyDefPath = Path.Combine(profilePath, "KEYDEFAULTS.LUA");
 
-            if (File.Exists(keyDefPath) && File.ReadLines(gridKeys).SequenceEqual(File.ReadLines(keyDefPath)))
-            {
-                return true;
-            }
-            return false;
-
+            return File.Exists(keyDefPath) && File.ReadLines(gridKeys).SequenceEqual(File.ReadLines(keyDefPath));
         }
 
         public void EnableTweak()
