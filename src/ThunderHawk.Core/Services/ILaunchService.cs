@@ -14,5 +14,6 @@ namespace ThunderHawk.Core
         Task LaunchThunderHawkGameAndWait();
         bool TryGetOrChoosePath(out string path);
         void ChangeGamePath();
+        void ActivateGameWindow();
     }
 }

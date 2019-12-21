@@ -309,9 +309,10 @@ namespace ThunderHawk
 
         void HandleRemoteUtmCommand(string[] values)
         {
-            //if (!SteamLobbyManager.IsInLobbyNow)
-            //    return;
+            if (!SteamLobbyManager.IsInLobbyNow)
+                return;
 
+            CoreContext.LaunchService.ActivateGameWindow();
             SendToClientChat($":{_user} UTM #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
         }
 
@@ -970,42 +971,16 @@ namespace ThunderHawk
         {
             //CHATLINE PART #GSP!whamdowfr!Ml39ll1K9M :
             var channelName = values[1];
-            
+
             if (channelName == "#GPG!1")
             {
             }
             else
             {
-                if (_gameLaunchReceived)
-                { 
-                    Logger.Info("PART AFTER GAME LAUNCH");
+                _enteredLobbyHash = null;
+                _localServerHash = null;
 
-                    var hash = _enteredLobbyHash;
-                    var lobbyId = SteamLobbyManager.CurrentLobbyId;
-
-                    Thread.MemoryBarrier();
-
-                    //Task.Delay(20000).ContinueWith(t =>
-                    //{
-                        var currentHash = _enteredLobbyHash;
-                        var currentLobbyId = SteamLobbyManager.CurrentLobbyId;
-
-                        Thread.MemoryBarrier();
-
-                        _enteredLobbyHash = null;
-                        _localServerHash = null;
-
-                        if (hash == currentHash && currentLobbyId == lobbyId)
-                            SteamLobbyManager.LeaveFromCurrentLobby();
-                    //});
-                }
-                else
-                {
-                    _enteredLobbyHash = null;
-                    _localServerHash = null;
-
-                    SteamLobbyManager.LeaveFromCurrentLobby();
-                }
+                SteamLobbyManager.LeaveFromCurrentLobby();
             }
 
             _gameLaunchReceived = false;
@@ -1899,7 +1874,14 @@ namespace ThunderHawk
                         details["hostport"] = remote.Port.ToString();
                         details["localport"] = remote.Port.ToString();
 
+                        var lobbyWasJoinable = SteamLobbyManager.IsLobbyJoinable;
+
                         SteamLobbyManager.UpdateCurrentLobby(details, GetIndicator());
+
+                        var isLobbyJoinable = SteamLobbyManager.IsLobbyJoinable;
+
+                        if (!lobbyWasJoinable && isLobbyJoinable)
+                            PortBindingManager.ClearPortBindings();
 
                         _localServer = details;
 
@@ -1929,18 +1911,10 @@ namespace ThunderHawk
                 {
                     byte[] response = new byte[] { 0xfe, 0xfd, 0x0a, uniqueId[0], uniqueId[1], uniqueId[2], uniqueId[3] };
 
-                    var token = default(CancellationToken); //RecreateLobbyToken();
-                    //token.Register(() => SteamLobbyManager.LeaveFromCurrentLobby());
-                   
                     handler.Send(response, remote);
 
                     if (!SteamLobbyManager.IsInLobbyNow)
-                        SteamLobbyManager.CreatePublicLobby(token, _name, _shortUser, _flags, GetIndicator())/*.OnCompletedOnUi(lobbyId =>
-                        {
-                            //if (token.IsCancellationRequested)
-                            //    return;
-                            //handler.Send(response, remote);
-                        })*/.Wait();
+                        SteamLobbyManager.CreatePublicLobby(default, _name, _shortUser, _flags, GetIndicator()).Wait();
                 }
                 else
                 {

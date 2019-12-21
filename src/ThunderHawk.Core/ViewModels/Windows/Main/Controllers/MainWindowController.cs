@@ -58,11 +58,20 @@ namespace ThunderHawk.Core
             if (info.IsUser)
             {
                 CoreContext.SystemService.NotifyAsSystemToastMessage("Your host updated", $"{info.MaxPlayers / 2}vs{info.MaxPlayers / 2}, {info.Players}/{info.MaxPlayers}");
+
+                RunOnUIThread(() =>
+                {
+                    Frame.ChatViewModel.Messages.DataSource.Add(new ChatMessageItemViewModel(new MessageInfo()
+                    {
+                        IsPrivate = true,
+                        Text = $"Your host updated. {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}, {info.Players}/{info.MaxPlayers}"
+                    }));
+                });
             }
             else
             {
-                CoreContext.SystemService.NotifyAsSystemToastMessage("New automatch host", $"GameVariant: {info.GameVariant}. GameType: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}. {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}. Rated: {info.Ranked}");
-                CoreContext.ClientServer.SendAsServerMessage($"New automatch host: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}, {info.GameVariant}.  {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}. Rated: {info.Ranked}");
+                CoreContext.SystemService.NotifyAsSystemToastMessage("Automatch host", $"GameVariant: {info.GameVariant}. GameType: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}. {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}. Ranked: {info.Ranked}");
+                CoreContext.ClientServer.SendAsServerMessage($"Automatch host: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}, {info.GameVariant}.  {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}. Ranked: {info.Ranked}");
             }
         }
 

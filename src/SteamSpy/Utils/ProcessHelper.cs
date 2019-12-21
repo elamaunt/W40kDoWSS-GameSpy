@@ -20,7 +20,14 @@ namespace ThunderHawk.Utils
             if (gameProcess == null || gameProcess.MainWindowHandle == IntPtr.Zero)
                 return;
 
-            ShowWindow(gameProcess.MainWindowHandle, WindowShowStyle.Restore);
+            try
+            {
+                ShowWindow(gameProcess.MainWindowHandle, WindowShowStyle.Restore);
+            }
+            catch(Exception)
+            {
+
+            }
             
           /*  var processes = Process.GetProcessesByName("Soulstorm");
 
