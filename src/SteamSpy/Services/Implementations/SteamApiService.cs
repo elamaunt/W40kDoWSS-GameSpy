@@ -53,7 +53,7 @@ namespace ThunderHawk
                     GameServer.RunCallbacks();
                     SteamAPI.RunCallbacks();
                     PortBindingManager.UpdateFrame();
-                    Thread.Sleep(5);
+                    Thread.Sleep(1);
                 }
             }, TaskCreationOptions.LongRunning);
         }

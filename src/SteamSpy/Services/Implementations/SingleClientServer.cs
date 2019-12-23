@@ -1398,8 +1398,6 @@ namespace ThunderHawk
                 //SendToClientChat(node, $":s 366 {_name} {channelName} :End of NAMES list\r\n");
 
                 SendToClientChat(builder.ToString());
-
-                PortBindingManager.ClearPortBindings();
             }
             else
             {

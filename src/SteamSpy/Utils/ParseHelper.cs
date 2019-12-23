@@ -80,8 +80,6 @@ namespace ThunderHawk.Utils
                 data.AddRange(new byte[] { 0, 0 });
             }
 
-            PortBindingManager.ClearPortBindings();
-
             foreach (var server in servers)
             {
                 if (server.Properties.TryGetValue("gamename", out string gamename))

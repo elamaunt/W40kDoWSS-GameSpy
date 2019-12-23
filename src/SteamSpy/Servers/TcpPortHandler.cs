@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using ThunderHawk.Core;
 using ThunderHawk.Utils;
 
@@ -166,7 +167,17 @@ namespace ThunderHawk
             var addresses = NetworkHelper.GetLocalIpAddresses();
 
             _listener = _setting.Create();
-            _listener.Bind(new IPEndPoint(/*addresses.FirstOrDefault() ?? IPAddress.Loopback*/IPAddress.Any, _port));
+
+            try
+            {
+                _listener.Bind(new IPEndPoint(IPAddress.Loopback, _port));
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"Can not bind to port {_port}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                throw;
+            }
+
             _listener.Listen(10);
             _listener.AcceptAsync().ContinueWith(OnAccept);
         }

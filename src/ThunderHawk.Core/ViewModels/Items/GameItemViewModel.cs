@@ -111,9 +111,9 @@ namespace ThunderHawk.Core
 
         private string ToDateValue(DateTime playedDate)
         {
-            var utcNow = DateTime.UtcNow;
+            var utcNow = DateTime.Now;
 
-            var span = playedDate - utcNow;
+            var span = utcNow - playedDate;
 
             if (span.TotalSeconds < 10)
                 return "Some seconds ago";
