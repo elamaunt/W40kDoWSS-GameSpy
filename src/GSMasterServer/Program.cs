@@ -67,6 +67,7 @@ namespace GSMasterServer
             //StatsServer statsServer = new StatsServer(bind, 29920);
 
             var singleServer = new SingleMasterServer();
+           
             try
             {
                 var botManager = new BotManager(singleServer);

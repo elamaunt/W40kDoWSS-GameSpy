@@ -40,6 +40,9 @@ namespace ThunderHawk
                 if (Directory.Exists(modPath))
                     Directory.Delete(modPath, true);
 
+                if (File.Exists(Path.Combine(gamePath, "KEYDEFAULTS.LUA")))
+                    File.Delete(Path.Combine(gamePath, "KEYDEFAULTS.LUA"));
+
                 Directory.CreateDirectory(modPath);
                 using (var archive = ZipFile.Open(Path.Combine(ModFolderName, "Mod.zip"), ZipArchiveMode.Read))
                     archive.ExtractToDirectory(gamePath);

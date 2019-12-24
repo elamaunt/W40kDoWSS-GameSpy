@@ -111,7 +111,7 @@ namespace ThunderHawk.Core
 
         private string ToDateValue(DateTime playedDate)
         {
-            var utcNow = DateTime.UtcNow;
+            var utcNow = DateTime.Now;
 
             var span = utcNow - playedDate;
 
@@ -150,7 +150,7 @@ namespace ThunderHawk.Core
                 frame.Visible = true;
                 frame.Name.Text =  $"{player.Name}";
                 frame.Race.Value = player.Race;
-                frame.Rating.Text = $"{player.FinalState.ToString().Take(3).Select(x => x.ToString().ToUpperInvariant()).Aggregate((x,y) => x+y)} {player.Rating}{WithSign(player.RatingDelta)}";
+                frame.Rating.Text = $"{player.FinalState.ToString().Take(3).Select(x => x.ToString().ToUpperInvariant()).Aggregate((x,y) => x+y)} {Math.Max(1000,player.Rating)}{WithSign(player.RatingDelta)}";
                 frame.Team.Value = player.Team;
             }
         }

@@ -21,17 +21,17 @@ namespace ThunderHawk.Core
                         {
                             Title = "ThunderHawk 2.0",
                             Annotation = "Неужели, дождались?",
-                            Body =  "<b>Дорогие любители Soulstorm!</b>\n\n Прошло много времени с прошлого бетатеста, и теперь вы можете полноценно насладиться обновленной версией сервера. Месяцы кропотливой работы дали свои плоды. Множество проблем позади и теперь каждый может (неважно, лицензия или пиратка) играть вместе друг с другом в автоматче. Пока сервер временно позволяет играть только с использованием мода ThunderHawk. В будущем будет поддержка и других модов. Все зависит от вашей поддержки, мы вас точно не подведем =). А сейчас пора снова выяснить, кто лучший. \nУспехов на ладдере!",
+                            Body =  "<b>Дорогие любители Soulstorm!</b>\n\n   Прошло много времени с прошлого бетатеста, и теперь вы можете полноценно насладиться обновленной версией сервера. Месяцы кропотливой работы дали свои плоды. Множество проблем позади и теперь каждый может (неважно, лицензия или пиратка) играть вместе друг с другом в автоматче. Пока сервер временно позволяет играть только с использованием мода ThunderHawk. В будущем будет поддержка и других модов. Все зависит от вашей поддержки, мы вас точно не подведем =). А сейчас пора снова выяснить, кто лучший. \nУспехов на ладдере!",
                         },
 
                         English = new NewsLanguageItemDTO()
                         {
                             Title = "ThunderHawk 2.0",
                             Annotation = "Really, have you waited?",
-                            Body =  "<b>Dear Soulstorm lovers!</b>\n\n A lot of time has passed since the last beta test, and now you can fully enjoy the updated version of the server. Months of hard work have borne fruit. A lot of problems are behind and now everyone can (whether it be a license or a pirate) play automatch together with each other. While the server temporarily allows you to play only using the ThunderHawk mod. In the future there will be support for other mods. It all depends on your support, we definitely won’t let you down =). Now it's time to find out again who is the best. \nSuccess on ladder!",
+                            Body =  "<b>Dear Soulstorm lovers!</b>\n\n   A lot of time has passed since the last beta test, and now you can fully enjoy the updated version of the server. Months of hard work have borne fruit. A lot of problems are behind and now everyone can (whether it be a license or a pirate) play automatch together with each other. While the server temporarily allows you to play only using the ThunderHawk mod. In the future there will be support for other mods. It all depends on your support, we definitely won’t let you down =). Now it's time to find out again who is the best. \nSuccess on ladder!",
                         },
 
-                        ImagePath = "pack://application:,,,/ThunderHawk;component/Images/Primarismarines.jpg",
+                        ImagePath = "pack://application:,,,/ThunderHawk;component/Images/ThunderHawk2.png",
                         CreatedDate = new DateTime(2019, 12, 21)
                     },
 

@@ -30,10 +30,12 @@ namespace ThunderHawk.Core
                 try
                 {
                     Frame.ActiveProfile.Value = Frame.Info.IsProfileActive;
-                    Frame.State.Value = userInfo.State;
 
                     if (userInfo.SteamId == Frame.Info.SteamId)
+                    {
+                        Frame.State.Value = userInfo.State;
                         Frame.Name.Text = userInfo.UIName;
+                    }
                 }
                 catch (Exception ex)
                 {

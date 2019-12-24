@@ -1,13 +1,9 @@
 ﻿using Steamworks;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using ThunderHawk;
 using ThunderHawk.Core;
 using ThunderHawk.Utils;
@@ -19,7 +15,7 @@ namespace GSMasterServer.Servers
         public const string Category = "ServerRetranslator";
         const int BufferSize = 65535;
 
-        public CSteamID RemoteUserSteamId { get; set; }
+        public CSteamID RemoteUserSteamId { get; }
 
         public GameServerDetails AttachedServer { get; set; }
 
@@ -27,12 +23,10 @@ namespace GSMasterServer.Servers
         SocketAsyncEventArgs _socketReadEvent;
         byte[] _socketReceivedBuffer;
 
-        private UdpClient _idsRetrievingClient;
-
         static readonly IPEndPoint GameEndPoint = new IPEndPoint(IPAddress.Loopback, 6112);
 
         public ushort Port { get; private set; }
-        public IPEndPoint LocalPoint { get; set; }
+        public IPEndPoint LocalPoint;
 
         public ServerSteamPortRetranslator(CSteamID userId)
             : this()
@@ -68,23 +62,11 @@ namespace GSMasterServer.Servers
                         _socket.Dispose();
                         _socket = null;
                     }
-
-                    if (_idsRetrievingClient != null)
-                    {
-                        (_idsRetrievingClient as IDisposable)?.Dispose();
-                        _idsRetrievingClient = null;
-                    }
                 }
             }
             catch (Exception)
             {
             }
-        }
-
-        public void Clear()
-        {
-            LocalPoint = null;
-            AttachedServer = null;
         }
 
         ~ServerSteamPortRetranslator()
@@ -129,9 +111,6 @@ namespace GSMasterServer.Servers
 
         private void WaitForData()
         {
-            Thread.Sleep(10);
-            GC.Collect();
-
             try
             {
                 if (_socket == null)
@@ -167,9 +146,9 @@ namespace GSMasterServer.Servers
 
                 // there by a bunch of different message formats...
 
-                //Log(Category, $">> {RemoteUserSteamId} "+str);
-                //Log(Category, ">> BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
-                
+                //Console.WriteLine(">> BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
+                //Console.WriteLine($">> STRING {LocalPoint?.Port}:" + str);
+
                 //Console.WriteLine("SendTo "+ _userId.m_SteamID+" "+ e.BytesTransferred);
                 // IPEndPoint remote = (IPEndPoint)e.RemoteEndPoint;
 
@@ -194,7 +173,7 @@ namespace GSMasterServer.Servers
                         e.Buffer[9] == 255 &&
                         e.Buffer[10] == 1)
                     {
-                       // Log(Category, ">> REQUEST BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
+                        // Log(Category, ">> REQUEST BYTES:" + string.Join(" ", receivedBytes.Select(x => x.ToString())));
 
                         var builder = new StringBuilder("\0$��Jsplitnum\0�");
 
@@ -249,7 +228,7 @@ namespace GSMasterServer.Servers
                 {
                     Console.WriteLine(ex);
                 }
-                
+
                 SteamNetworking.SendP2PPacket(RemoteUserSteamId, e.Buffer, count, EP2PSend.k_EP2PSendReliable);
             }
             catch (Exception ex)
@@ -290,7 +269,27 @@ namespace GSMasterServer.Servers
                // Log(Category, $"<= {RemoteUserSteamId} :: " + str);
 
                 // there by a bunch of different message formats...
-                //Log(Category,"<= BYTES:"+ string.Join(" ", buffer.Where((b,i) => i< size).Select(x => x.ToString())));
+                //Console.WriteLine("<= BYTES:"+ string.Join(" ", buffer.Where((b,i) => i< size).Select(x => x.ToString())));
+                //Console.WriteLine("<= STRING:"+ str);
+                
+                //254 253 0
+                if (size > 4 &&
+                   buffer[0] == 254 &&
+                   buffer[1] == 253 &&
+                   buffer[2] == 0 &&
+                   buffer[3] == 92)
+                {
+                    LocalPoint = null;
+                }
+
+                if (size > 4 &&
+                  buffer[0] == 254 &&
+                  buffer[1] == 254 &&
+                  buffer[2] == 1 &&
+                  buffer[3] == 0)
+                {
+                    LocalPoint = null;
+                }
 
                 int m = 0;
                 if (size > 4 &&

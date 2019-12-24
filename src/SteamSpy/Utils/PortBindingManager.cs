@@ -11,12 +11,6 @@ namespace ThunderHawk.Utils
     
         static readonly ConcurrentDictionary<CSteamID, ServerSteamPortRetranslator> PortBindings = new ConcurrentDictionary<CSteamID, ServerSteamPortRetranslator>();
 
-        public static void ClearPortBindings()
-        {
-            foreach (var item in PortBindings)
-                item.Value.Clear();
-        }
-        
         public static CSteamID? GetSteamIdByPort(ushort port)
         {
             return PortBindings.Values.FirstOrDefault(x => x.Port == port)?.RemoteUserSteamId;
