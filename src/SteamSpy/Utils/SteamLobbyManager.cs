@@ -430,6 +430,7 @@ namespace ThunderHawk.Utils
                 if (_currentLobby == null)
                     return;
 
+                CoreContext.OpenLogsService.Log($"SetLobbyJoinable [{joinable}]");
                 SteamMatchmaking.SetLobbyJoinable(_currentLobby.Value, joinable);
             }
         }

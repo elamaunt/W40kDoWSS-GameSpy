@@ -337,7 +337,10 @@ namespace ThunderHawk
                 var pairs = keyValues.Split(':', '\\');
 
                 for (int i = 1; i < pairs.Length; i += 2)
+                {
+                    CoreContext.OpenLogsService.Log($"RemoteSetckey {_enteredLobbyHash} {GetNickHash(values[2])} [{pairs[i]}] [{pairs[i + 1]}]");
                     SendToClientChat($":s 702 #GSP!whamdowfr!{_enteredLobbyHash} #GSP!whamdowfr!{_enteredLobbyHash} {values[2]} BCAST :\\{pairs[i]}\\{pairs[i + 1]}\r\n");
+                }
             }
         }
 
@@ -2359,6 +2362,7 @@ Current maps in automatch:
 - 4p panrea lowlands (fixed by Devil)
 - 4P Skerries (fixed by Devil)
 - 4p Saints Square 
+- 4p Sad Place
 .
 3vs3
 - 6p Mortalis
@@ -2366,6 +2370,7 @@ Current maps in automatch:
 - 6P Shakun Coast
 - 6P Fury Island
 - 6p paynes retribution
+- 6p parmenian heath
 .
 4на4
 - 8P Oasis of Sharr
@@ -2544,7 +2549,8 @@ automatch_defaults_dxp2 =
 		""4P_Doom_Spiral"",
 		""4p_panrea_lowlands"",
 		""4P_Skerries"",
-		""4p_Saints_Square""
+		""4p_Saints_Square"",
+		""4p_Sad_Place""
 	},
 	automatch_maps6p = 
 	{
@@ -2552,7 +2558,8 @@ automatch_defaults_dxp2 =
 		""6P_Alvarus"",
 		""6P_Shakun_Coast"",
 		""6P_Fury_Island"",
-		""6p_paynes_retribution""
+		""6p_paynes_retribution"",
+		""6p_parmenian_heath""
 	},
 	automatch_maps8p = 
 	{

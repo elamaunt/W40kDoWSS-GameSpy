@@ -1,4 +1,5 @@
 ﻿using Framework;
+using System;
 using System.Windows.Media;
 using ThunderHawk.Core;
 
@@ -13,10 +14,24 @@ namespace ThunderHawk
 
         protected override void OnBind()
         {
+            SubscribeOnPropertyChanged(Frame.GameState, nameof(Frame.GameState.Value), OnGameStateChanged);
             SubscribeOnPropertyChanged(Frame.ActiveProfile, nameof(Frame.ActiveProfile.Value), OnActiveProfileChanged);
             SubscribeOnPropertyChanged(Frame.State, nameof(Frame.State.Value), OnStateChanged);
             OnActiveProfileChanged();
             OnStateChanged();
+        }
+
+        void OnGameStateChanged()
+        {
+            switch (Frame.GameState.Value)
+            {
+                //case Core.GameState.Playing:
+                //    View.Name.Foreground = new SolidColorBrush(Color.FromRgb(200, 244, 100));
+                //    break;
+                default:
+                    View.Name.Foreground = new SolidColorBrush(Color.FromRgb(117, 244, 255));
+                    break;
+            }
         }
 
         void OnStateChanged()
@@ -47,7 +62,7 @@ namespace ThunderHawk
         void OnActiveProfileChanged()
         {
             if (Frame.ActiveProfile.Value)
-                View.Name.Foreground = new SolidColorBrush(Color.FromRgb(117,244,255));
+                OnGameStateChanged();
             else
                 View.Name.Foreground = new SolidColorBrush(Color.FromRgb(50, 53, 58));
         }

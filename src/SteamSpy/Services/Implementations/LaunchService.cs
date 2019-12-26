@@ -38,6 +38,8 @@ namespace ThunderHawk
             if (!CoreContext.LaunchService.TryGetOrChoosePath(out string path))
                 return Task.CompletedTask;
 
+            CoreContext.OpenLogsService.Log($"Launch ThunderHawk Game");
+
             return Task.Factory.StartNew(async () =>
             {
                 ProcessManager.KillAllGameProccessesWithoutWindow();
@@ -116,6 +118,7 @@ namespace ThunderHawk
                 }
                 finally
                 {
+                    CoreContext.OpenLogsService.Log($"Game process cleared");
                     GameProcess = null;
                     CoreContext.ClientServer.Stop();
                     SteamLobbyManager.LeaveFromCurrentLobby();

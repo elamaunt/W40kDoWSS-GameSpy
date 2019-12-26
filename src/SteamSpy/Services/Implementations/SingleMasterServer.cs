@@ -924,6 +924,7 @@ namespace ThunderHawk
                 }
 
                 UserKeyValueChanged?.Invoke(message.Name, message.Key, message.Value);
+                UserChanged?.Invoke(info);
             }
         }
 

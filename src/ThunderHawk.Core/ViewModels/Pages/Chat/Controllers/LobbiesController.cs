@@ -9,12 +9,21 @@ namespace ThunderHawk.Core
     public class LobbiesController : FrameController<ChatPageViewModel>
     {
         volatile int _lastUpdateTime;
+        Timer _timer;
 
         protected override void OnBind()
         {
             CoreContext.MasterServer.GameBroadcastReceived += OnBroadcastReceived;
             CoreContext.ClientServer.LobbiesUpdatedByRequest += OnLobbiesUpdatedByRequest;
+
+            _timer = new Timer(OnTimerReceived, null, 5000, 5000);
+
             ReloadLobbies();
+        }
+
+        void OnTimerReceived(object state)
+        {
+            UpdateLobbiesIfNeeded();
         }
 
         private void OnLobbiesUpdatedByRequest(GameHostInfo[] hosts)
@@ -28,6 +37,11 @@ namespace ThunderHawk.Core
         }
 
         void OnBroadcastReceived(GameHostInfo host)
+        {
+            UpdateLobbiesIfNeeded();
+        }
+
+        void UpdateLobbiesIfNeeded()
         {
             if ((Environment.TickCount - _lastUpdateTime) > 1000)
             {
@@ -72,6 +86,7 @@ namespace ThunderHawk.Core
 
         protected override void OnUnbind()
         {
+            _timer?.Dispose();
             CoreContext.MasterServer.GameBroadcastReceived -= OnBroadcastReceived;
             base.OnUnbind();
         }

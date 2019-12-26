@@ -19,7 +19,10 @@ namespace ThunderHawk.Core
                 Frame.ActiveProfile.Value = Frame.Info.IsProfileActive;
 
                 if (steamId == Frame.Info.SteamId)
+                {
+                    Frame.GameState.Value = (Frame.Info.BFlags?.Contains("g") ?? false) ? GameState.Playing : GameState.Idle;
                     Frame.Name.Text = Frame.Info.UIName;
+                }
             });
         }
 
@@ -33,6 +36,7 @@ namespace ThunderHawk.Core
 
                     if (userInfo.SteamId == Frame.Info.SteamId)
                     {
+                        Frame.GameState.Value = (userInfo.BFlags?.Contains("g") ?? false) ? GameState.Playing : GameState.Idle;
                         Frame.State.Value = userInfo.State;
                         Frame.Name.Text = userInfo.UIName;
                     }
