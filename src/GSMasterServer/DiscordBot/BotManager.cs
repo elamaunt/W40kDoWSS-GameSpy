@@ -146,7 +146,9 @@ namespace GSMasterServer.DiscordBot
 
                         break;
                     }
-                    case SocketTextChannel socketTextChannel when socketTextChannel.Guild.Id == DiscordServerConstants.ServerId:
+                    case SocketTextChannel socketTextChannel 
+                        when socketTextChannel.Guild.Id == DiscordServerConstants.ServerId &&
+                             socketTextChannel.CategoryId == DiscordServerConstants.BotCategoryId:
                     {
                         if (_botCommandsManager.CommandStrings.Any(x => arg.Content.StartsWith(x)))
                         {

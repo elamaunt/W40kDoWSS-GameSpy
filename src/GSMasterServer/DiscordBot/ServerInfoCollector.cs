@@ -45,17 +45,24 @@ namespace GSMasterServer.DiscordBot
         public string GetPlayerInfo(string nickName, bool isAdmin)
         {
             var player = _singleMasterServer.GetPlayer(nickName);
+            if (player == null)
+                return "This player is not registered!";
             var sb = new StringBuilder();
             sb.AppendLine($"Nickname: **{player.Name}**");
             sb.AppendLine($"MMR 1v1: **{player.Score1v1}**, 2v2: **{player.Score2v2}**, 3v3: **{player.Score3v3}**");
-            sb.AppendLine($"Wins: **{player.WinsCount}**, Games: **{player.GamesCount}** **({Math.Round(player.WinRate * 100, 2)}%)**");
+            sb.AppendLine($"Wins: **{player.WinsCount}**, Games: **{player.GamesCount}** **({Math.Round(player.WinRate * 100, 2)}%)**, Winstreak: **{player.Best1v1Winstreak}**");
             sb.AppendLine(
                 $"Games count: Sm: **{player.Smgamescount}**, Csm: **{player.Csmgamescount}**, Orks: **{player.Orkgamescount}**, Eldar: **{player.Eldargamescount}**, " +
                 $"Ig: **{player.Iggamescount}**, Tau: **{player.Taugamescount}**, Necrons: **{player.Necrgamescount}**, Sob: **{player.Sobgamescount}**, De: **{player.Degamescount}**");
             //sb.AppendLine($"Favourite race: **{GetRaceName(player.FavouriteRace)}**");
             sb.AppendLine($"Time spent in battles: **{Math.Round(player.AllInGameTicks / 60f / 60f, 1)}** hours");
+            sb.AppendLine($"Dowstats profile: https://dowstats.ru/player.php?sid={player.Id}&server=elSpy");
             if (isAdmin)
+            {
+                sb.AppendLine("--------------------------");
                 sb.AppendLine($"Email: __**{player.Email}**__");
+                sb.AppendLine($"Steam profile: __https://steamcommunity.com/profiles/{player.SteamId}__");
+            }
             return sb.ToString();
         }
 
