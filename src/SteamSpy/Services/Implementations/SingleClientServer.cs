@@ -148,19 +148,31 @@ namespace ThunderHawk
 
         void OnLoginErrorReceived(string name)
         {
+            CoreContext.OpenLogsService.Log($"LoginError {name}");
+
             _clientManager.Send(DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\Invalid Query!\id\1\final\"));
         }
 
         void OnNameCheckReceived(string name, long? profileId)
         {
             if (profileId == null)
+            {
+                CoreContext.OpenLogsService.Log($"NameCheckReceived [{name}] doesn't exist");
+
                 _searchManager.Send(DataFunctions.StringToBytes(String.Format(@"\error\\err\265\fatal\\errmsg\Username [{0}] doesn't exist!\id\1\final\", name)));
+            }
             else
+            {
+                CoreContext.OpenLogsService.Log($"NameCheckReceived [{name}] has id {profileId}");
+
                 _searchManager.Send(DataFunctions.StringToBytes($@"\cur\0\pid\{profileId}\final\"));
+            }
         }
 
         void OnNicksReceived(string[] nicks)
         {
+            CoreContext.OpenLogsService.Log($"Nicks received {nicks?.Length}");
+
             if (nicks.IsNullOrEmpty())
             {
                 _searchManager.Send(DataFunctions.StringToBytes(@"\nr\0\ndone\\final\"));
@@ -277,6 +289,8 @@ namespace ThunderHawk
             var userValues = values[1].Split(new char[] { '!', '|', '@' });
             var nick = userValues[0];
 
+            CoreContext.OpenLogsService.Log($"RemoteJoin {_enteredLobbyHash} {GetNickHash(nick)}");
+
             SendToClientChat($":{values[1]} JOIN #GSP!whamdowfr!{_enteredLobbyHash}\r\n");
 
             UpdateGameLaunchState();
@@ -286,12 +300,28 @@ namespace ThunderHawk
             SendToClientChat($":s 702 #GSP!whamdowfr!{_enteredLobbyHash} #GSP!whamdowfr!{_enteredLobbyHash} {nick} BCAST :\\b_flags\\s\r\n");*/
         }
 
+        string GetNickHash(string nick)
+        {
+            if (string.IsNullOrWhiteSpace(nick))
+                return "---";
+
+            int v = int.MaxValue;
+
+            for (int i = 0; i < nick.Length; i++)
+            {
+                v ^= nick[i];
+            }
+
+            return Math.Abs(v).ToString();
+        }
+
         void UpdateGameLaunchState()
         {
             _gameLaunchReceived = SteamLobbyManager.IsLobbyFull;
 
             if (_gameLaunchReceived)
             {
+                CoreContext.OpenLogsService.Log("LOBBY IF FULL NOW");
                 Logger.Info("LOBBY IF FULL NOW");
             }
         }
@@ -313,11 +343,15 @@ namespace ThunderHawk
 
         void HandleRemotePrivmsgCommand(string[] values)
         {
+            CoreContext.OpenLogsService.Log($"RemotePrivmsg {_enteredLobbyHash} {values[2]}");
+
             SendToClientChat($":{_user} PRIVMSG #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
         }
 
         void HandleRemoteUtmCommand(string[] values)
         {
+            CoreContext.OpenLogsService.Log($"RemoteUtm {values[2]}");
+
             CoreContext.LaunchService.ActivateGameWindow();
             SendToClientChat($":{_user} UTM #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
         }
@@ -331,7 +365,24 @@ namespace ThunderHawk
             var info = CoreContext.MasterServer.GetUserInfo(memberSteamId);
 
             if (info == null)
+            {
+                CoreContext.OpenLogsService.Log($"RemoteLeft but unknown");
                 return;
+            }
+
+            var details = _localServer;
+
+            try
+            {
+                if (details != null)
+                    SteamLobbyManager.UpdateCurrentLobby(details, GetIndicator());
+            }
+            catch(Exception ex)
+            {
+                Logger.Warn(ex);
+            }
+
+            CoreContext.OpenLogsService.Log($"RemoteLeft {_enteredLobbyHash} {GetNickHash(info.Name)}");
 
             SendToClientChat($":{info.Name}!X{GetEncodedIp(info, info.Name)}X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{_enteredLobbyHash} :Leaving\r\n");
         }
@@ -391,6 +442,7 @@ namespace ThunderHawk
 
         void Restart()
         {
+            CoreContext.OpenLogsService.Log($"ThunderHawk restart");
             Stop();
             RecreateLobbyToken();
             Start();
@@ -487,6 +539,8 @@ namespace ThunderHawk
 
             if (activeMod == null || activeVersion == null)
             {
+                CoreContext.OpenLogsService.Log($"HandleLogin invalid mode");
+
                 _clientManager.Send(node, DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\You can login only with ThunderHawk active mod.\id\1\final\"));
                 CoreContext.SystemService.ShowMessageWindow($"Temporary entry is allowed only with the active {CoreContext.ThunderHawkModManager.ModName} {CoreContext.ThunderHawkModManager.ModVersion} mod.");
                 return;
@@ -496,12 +550,15 @@ namespace ThunderHawk
             {
                 if (!activeVersion.Equals(CoreContext.ThunderHawkModManager.ModVersion, StringComparison.OrdinalIgnoreCase))
                 {
+                    CoreContext.OpenLogsService.Log($"HandleLogin invalid mode {activeMod}");
+
                     _clientManager.Send(node, DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\You can login only with ThunderHawk active mod.\id\1\final\"));
                     CoreContext.SystemService.ShowMessageWindow($"Temporary entry is allowed only with the active {CoreContext.ThunderHawkModManager.ModName} {CoreContext.ThunderHawkModManager.ModVersion} mod.");
                     return;
                 }
             }
-            
+
+
             if (pairs.ContainsKey("uniquenick"))
                 _name = pairs["uniquenick"];
             else
@@ -514,11 +571,14 @@ namespace ThunderHawk
             _clientChallenge = pairs.GetOrDefault("challenge");
             _response = pairs.GetOrDefault("response");
 
+            CoreContext.OpenLogsService.Log($"HandleLogin send request");
             CoreContext.MasterServer.RequestLogin(_name);
         }
 
-        void SendLoginResponce( LoginInfo loginInfo)
+        void SendLoginResponce(LoginInfo loginInfo)
         {
+            CoreContext.OpenLogsService.Log($"LoginResponce [{loginInfo.Name}] [{loginInfo.Email}] [{loginInfo.ProfileId}]");
+
             _email = loginInfo.Email;
             _profileId = loginInfo.ProfileId;
 
@@ -981,10 +1041,32 @@ namespace ThunderHawk
             }
             else
             {
-                _enteredLobbyHash = null;
-                _localServerHash = null;
+                if (_gameLaunchReceived)
+                {
+                    _enteredLobbyHash = null;
+                    _localServerHash = null;
 
-                SteamLobbyManager.LeaveFromCurrentLobby();
+                    var hash = _enteredLobbyHash;
+                    Thread.MemoryBarrier();
+
+                    Task.Delay(30000).ContinueWith(t =>
+                    {
+                        if (hash == _enteredLobbyHash)
+                        {
+                            SteamLobbyManager.LeaveFromCurrentLobby();
+
+                            _enteredLobbyHash = null;
+                            _localServerHash = null;
+                        }
+                    });
+                }
+                else
+                {
+                    _enteredLobbyHash = null;
+                    _localServerHash = null;
+
+                    SteamLobbyManager.LeaveFromCurrentLobby();
+                }
             }
 
             _gameLaunchReceived = false;
@@ -1405,8 +1487,12 @@ namespace ThunderHawk
                 {
                     var roomHash = channelName.Split('!')[2];
 
+                    CoreContext.OpenLogsService.Log($"Try to get lobby [{roomHash}]");
+
                     if (_lastLoadedLobbies.TryGetValue(roomHash, out GameServerDetails details))
                     {
+                        CoreContext.OpenLogsService.Log($"Try to enter lobby [{roomHash}]");
+
                         var lobbyId = details.LobbySteamId;
                         SteamLobbyManager.EnterInLobby(lobbyId, _shortUser, _name, _profileId.ToString(), RecreateLobbyToken())
                             .OnFaultOnUi(() =>
@@ -1417,18 +1503,24 @@ namespace ThunderHawk
                             {
                                 if (!res)
                                 {
+                                    CoreContext.OpenLogsService.Log($"Failed enter lobby [{roomHash}]");
+
                                     SendToClientChat(node, $":{_user} {channelName} :Bad Channel Mask\r\n");
                                     return;
                                 }
 
                                 _enteredLobbyHash = details.RoomHash;
+                                CoreContext.OpenLogsService.Log($"Entered to lobby [{roomHash}]");
 
                                 var playersList = new StringBuilder();
 
                                 var usersInLobby = SteamLobbyManager.GetCurrentLobbyMembers();
 
                                 for (int i = 0; i < usersInLobby.Length; i++)
+                                {
+                                    CoreContext.OpenLogsService.Log($"Player {i} [{GetNickHash(usersInLobby[i])}]");
                                     playersList.Append(usersInLobby[i] + " ");
+                                }
 
                                 SteamLobbyManager.SendInLobbyChat($"JOIN {_user}");
 
@@ -1443,6 +1535,9 @@ namespace ThunderHawk
                     }
                     else
                     {
+                        CoreContext.OpenLogsService.Log($"This lobby is local [{roomHash}]");
+                        CoreContext.OpenLogsService.Log($"Player 0 [{GetNickHash(_name)}]");
+
                         _localServerHash = roomHash;
                         _enteredLobbyHash = roomHash;
 
@@ -1859,6 +1954,8 @@ namespace ThunderHawk
 
                     if (details.StateChanged == "2")
                     {
+                        CoreContext.OpenLogsService.Log($"Clear local server");
+
                         Logger.Trace("REPORT: ClearServerDetails");
                         SteamLobbyManager.SetLobbyJoinable(false);
                         _challengeResponded = false;
@@ -1884,6 +1981,7 @@ namespace ThunderHawk
 
                         //if (!lobbyWasJoinable && isLobbyJoinable)
                         //    PortBindingManager.ClearPortBindings();
+                        CoreContext.OpenLogsService.Log($"Update local server [{details.IsValid}]");
 
                         _localServer = details;
 

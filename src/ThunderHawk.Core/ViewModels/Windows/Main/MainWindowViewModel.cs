@@ -20,7 +20,8 @@ namespace ThunderHawk.Core
         public StatsPageViewModel StatsViewModel { get; }
         public ChatPageViewModel ChatViewModel { get; }
         public PageTabViewModel ChatTabViewModel { get; }
-
+        public LogsPageViewModel LogsViewModel { get; }
+        
         public MainWindowViewModel()
         {
             Pages.DataSource = new ObservableCollection<PageTabViewModel>()
@@ -28,7 +29,8 @@ namespace ThunderHawk.Core
                 new PageTabViewModel(new MainPageViewModel()),
                 (ChatTabViewModel = new PageTabViewModel(ChatViewModel = new ChatPageViewModel())),
                 new PageTabViewModel(StatsViewModel = new StatsPageViewModel()),
-                new PageTabViewModel(new TweaksPageViewModel())//,
+                new PageTabViewModel(new TweaksPageViewModel()),
+                new PageTabViewModel(LogsViewModel = new LogsPageViewModel())//,
                 //new PageTabViewModel(new FAQPageViewModel())
                 
                 //new ModificationsPageViewModel(){ Enabled = false },

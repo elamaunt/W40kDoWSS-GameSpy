@@ -24,6 +24,8 @@ namespace ThunderHawk.Core
             CoreContext.MasterServer.GameBroadcastReceived += OnGameBroadcastReceived;
             CoreContext.MasterServer.NewGameReceived += OnNewGameReceived;
 
+            CoreContext.OpenLogsService.LogMessageReceived += OnLogMessageReceived;
+
             OnUsersLoaded();
 
             if (AppSettings.IsFirstLaunch && !AppSettings.LaunchThunderHawkAtStartup)
@@ -38,6 +40,14 @@ namespace ThunderHawk.Core
                     AppSettings.IsFirstLaunch = false;
                 });
             }
+        }
+
+        void OnLogMessageReceived(string message)
+        {
+            RunOnUIThread(() =>
+            {
+                Frame.LogsViewModel.Messages.DataSource.Add(new LogMessageItemViewModel(message));
+            });
         }
 
         void OnNewGameReceived(GameInfo game)
@@ -184,6 +194,7 @@ namespace ThunderHawk.Core
 
         protected override void OnUnbind()
         {
+            CoreContext.OpenLogsService.LogMessageReceived -= OnLogMessageReceived;
             CoreContext.MasterServer.NewGameReceived -= OnNewGameReceived;
             CoreContext.MasterServer.ChatMessageReceived -= OnMessageReceived;
             CoreContext.MasterServer.UsersLoaded -= OnUsersLoaded;

@@ -41,33 +41,73 @@
             </TextBox>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                    <TextBox x:Name="Player0" Style="{DynamicResource PlayerNameStyleRight}" framework:WPFBinder.Frame="Player0.Name"/>
-                    <TextBox Style="{DynamicResource PlayerRatingStyleRight}" framework:WPFBinder.Frame="Player0.Rating"/>
+                    <Grid HorizontalAlignment="Stretch">
+                        <TextBox x:Name="Player0" Style="{DynamicResource PlayerNameStyleRight}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player0.Name"/>
+                        <TextBox Style="{DynamicResource PlayerRatingStyleRight}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player0.Rating"/>
+                        <Image Margin="0 0 8 0" Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player0.Race"/>
+                    </Grid>
 
-                    <TextBox x:Name="Player1" Style="{DynamicResource PlayerNameStyleRight}" framework:WPFBinder.Frame="Player1.Name"/>
-                    <TextBox Style="{DynamicResource PlayerRatingStyleRight}" framework:WPFBinder.Frame="Player1.Rating"/>
+                    <Grid HorizontalAlignment="Stretch">
+                        <TextBox x:Name="Player1" Style="{DynamicResource PlayerNameStyleRight}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player1.Name"/>
+                        <TextBox Style="{DynamicResource PlayerRatingStyleRight}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player1.Rating"/>
+                        <Image Margin="0 0 8 0" Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player1.Race"/>
+                    </Grid>
 
-                    <TextBox x:Name="Player2" Style="{DynamicResource PlayerNameStyleRight}" framework:WPFBinder.Frame="Player2.Name"/>
-                    <TextBox Style="{DynamicResource PlayerRatingStyleRight}" framework:WPFBinder.Frame="Player2.Rating"/>
+                    <Grid HorizontalAlignment="Stretch">
+                        <TextBox x:Name="Player2" Style="{DynamicResource PlayerNameStyleRight}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player2.Name"/>
+                        <TextBox Style="{DynamicResource PlayerRatingStyleRight}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player2.Rating"/>
+                        <Image Margin="0 0 8 0" Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player2.Race"/>
+                    </Grid>
 
-                    <TextBox x:Name="Player3" Style="{DynamicResource PlayerNameStyleRight}" framework:WPFBinder.Frame="Player3.Name"/>
-                    <TextBox Style="{DynamicResource PlayerRatingStyleRight}" framework:WPFBinder.Frame="Player3.Rating"/>
+                    <Grid HorizontalAlignment="Stretch">
+                        <TextBox x:Name="Player3" Style="{DynamicResource PlayerNameStyleRight}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player3.Name"/>
+                        <TextBox Style="{DynamicResource PlayerRatingStyleRight}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player3.Rating"/>
+                        <Image Margin="0 0 8 0" Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Right" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player3.Race"/>
+                    </Grid>
                 </StackPanel>
 
-                <Image Name="Map" framework:WPFBinder.Frame="Map" Width="120" Height="120" VerticalAlignment="Top"  HorizontalAlignment="Center" />
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Top" >
+                    <Image Name="Map" framework:WPFBinder.Frame="Map" RenderOptions.BitmapScalingMode="HighQuality" Width="120" Height="120" VerticalAlignment="Top"  HorizontalAlignment="Center" />
+                    <TextBlock Margin="0 124 0 10" HorizontalAlignment="Center" TextAlignment="Center" VerticalAlignment="Top" 
+                        Style="{DynamicResource FreeTextStyle}" framework:WPFBinder.Frame="Download" TextWrapping="Wrap" MaxWidth="500">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="4" Opacity="1" />
+                        </TextBlock.Effect>
+                        <Hyperlink Style="{DynamicResource LinkStyle}">
+                            <TextBlock Text="Download"></TextBlock>
+                        </Hyperlink>
+                    </TextBlock>
+                    <TextBlock Margin="0 124 0 10" HorizontalAlignment="Center" TextAlignment="Center" VerticalAlignment="Top" 
+                        Style="{DynamicResource FreeTextStyle}" Foreground="#4e5353" framework:WPFBinder.Frame="Downloaded" TextWrapping="Wrap" MaxWidth="500">
+                        <TextBlock.Effect>
+                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2"  BlurRadius="4" Opacity="1" />
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    
+                </Grid>
 
                 <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                    <TextBox x:Name="Player4" Style="{DynamicResource PlayerNameStyle}" framework:WPFBinder.Frame="Player4.Name"/>
-                    <TextBox Style="{DynamicResource PlayerRatingStyle}" framework:WPFBinder.Frame="Player4.Rating"/>
+                    <Grid HorizontalAlignment="Stretch">
+                        <TextBox x:Name="Player4" Style="{DynamicResource PlayerNameStyle}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player4.Name"/>
+                        <TextBox Style="{DynamicResource PlayerRatingStyle}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player4.Rating"/>
+                        <Image Margin="8 0 0 0" Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player4.Race"/>
+                    </Grid>
+                    <Grid HorizontalAlignment="Stretch">
+                        <TextBox x:Name="Player5" Style="{DynamicResource PlayerNameStyle}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player5.Name"/>
+                        <TextBox Style="{DynamicResource PlayerRatingStyle}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player5.Rating"/>
+                        <Image Margin="8 0 0 0" Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player5.Race"/>
+                    </Grid>
+                    <Grid HorizontalAlignment="Stretch">
+                        <TextBox x:Name="Player6" Style="{DynamicResource PlayerNameStyle}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player6.Name"/>
+                        <TextBox Style="{DynamicResource PlayerRatingStyle}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player6.Rating"/>
+                        <Image Margin="8 0 0 0" Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player6.Race"/>
+                    </Grid>
 
-                    <TextBox x:Name="Player5" Style="{DynamicResource PlayerNameStyle}" framework:WPFBinder.Frame="Player5.Name"/>
-                    <TextBox Style="{DynamicResource PlayerRatingStyle}" framework:WPFBinder.Frame="Player5.Rating"/>
-
-                    <TextBox x:Name="Player6" Style="{DynamicResource PlayerNameStyle}" framework:WPFBinder.Frame="Player6.Name"/>
-                    <TextBox Style="{DynamicResource PlayerRatingStyle}" framework:WPFBinder.Frame="Player6.Rating"/>
-
-                    <TextBox x:Name="Player7" Style="{DynamicResource PlayerNameStyle}" framework:WPFBinder.Frame="Player7.Name"/>
-                    <TextBox Style="{DynamicResource PlayerRatingStyle}" framework:WPFBinder.Frame="Player7.Rating"/>
+                    <Grid HorizontalAlignment="Stretch">
+                        <TextBox x:Name="Player7" Style="{DynamicResource PlayerNameStyle}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player7.Name"/>
+                        <TextBox Style="{DynamicResource PlayerRatingStyle}" VerticalAlignment="Top" framework:WPFBinder.Frame="Player7.Rating"/>
+                        <Image Margin="8 0 0 0" Width="40" Height="40" VerticalAlignment="Top" HorizontalAlignment="Left" RenderOptions.BitmapScalingMode="HighQuality" framework:WPFBinder.Frame="Player7.Race"/>
+                    </Grid>
                 </StackPanel>
             </StackPanel>
 

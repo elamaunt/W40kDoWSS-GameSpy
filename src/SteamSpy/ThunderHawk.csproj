@@ -119,6 +119,7 @@
       <SubType>Designer</SubType>
     </Page>
     <Compile Include="ApplicationModule.cs" />
+    <Compile Include="Controllers\Binders\ImageWithValueFrameRaceBinder.cs" />
     <Compile Include="Controllers\Binders\TabControlWithListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TabItemWithPageViewModelBinder.cs" />
     <Compile Include="Controllers\IControlExtension.cs" />
@@ -147,7 +148,6 @@
     <Compile Include="ThunderHawk.cs" />
     <Compile Include="Data\AddressInfo.cs" />
     <Compile Include="Data\GameServer.cs" />
-    <Compile Include="Data\Race.cs" />
     <Compile Include="Data\ServerFlags.cs" />
     <Compile Include="Services\Implementations\ConfigKeyValueStorage.cs" />
     <Compile Include="Services\Implementations\LaunchService.cs" />
@@ -240,6 +240,14 @@
     <Page Include="Styles\WindowStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Elements\Element_Logs.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Elements\Element_LogMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Elements\Element_GamesSeparator.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -867,6 +875,16 @@
     <Resource Include="Images\Maps\[tp mod]quests_triumph.jpg" />
     <Resource Include="Images\Maps\[tp mod]shrine of excellion.jpg" />
     <Resource Include="Images\Maps\[tp mod]tower ruins.jpg" />
+    <Resource Include="Images\Background_Logs.jpg" />
+    <Resource Include="Images\Races\chaos.png" />
+    <Resource Include="Images\Races\darkEldar.png" />
+    <Resource Include="Images\Races\eldar.png" />
+    <Resource Include="Images\Races\ig.png" />
+    <Resource Include="Images\Races\necron.png" />
+    <Resource Include="Images\Races\ork.png" />
+    <Resource Include="Images\Races\sob.png" />
+    <Resource Include="Images\Races\spaceMarine.png" />
+    <Resource Include="Images\Races\tau.png" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

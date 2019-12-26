@@ -25,6 +25,7 @@ namespace ThunderHawk
             
             batch.RegisterControllerFactory(() => new TabControlWithListFrameBinder());
             batch.RegisterControllerFactory(() => new TabItemWithPageViewModelBinder());
+            batch.RegisterControllerFactory(() => new ImageWithValueFrameRaceBinder());
 
             batch.RegisterControllerFactory(() => new MainWindowBackgroundController());
             batch.RegisterControllerFactory(() => new MainNewsPresentingController());

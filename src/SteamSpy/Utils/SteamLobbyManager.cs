@@ -278,6 +278,8 @@ namespace ThunderHawk.Utils
                         //SteamMatchmaking.SetLobbyJoinable(id, false);
                         SteamMatchmaking.SetLobbyData(id, LobbyDataKeys.HOST_STEAM_ID, "0");
 
+                        CoreContext.OpenLogsService.Log($"Leave lobby " + id.m_SteamID);
+
                         SteamMatchmaking.LeaveLobby(id);
                         Console.WriteLine("Лобби покинуто " + id);
                         _currentLobby = null;
@@ -353,6 +355,8 @@ namespace ThunderHawk.Utils
             {
                 LeaveFromCurrentLobby();
 
+                CoreContext.OpenLogsService.Log($"CreatePublicLobby");
+
                 Console.WriteLine("Создание лобби Steam");
 
                 return SteamApiHelper.HandleApiCall<CSteamID, LobbyCreated_t>(SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, 3), token,
@@ -390,6 +394,8 @@ namespace ThunderHawk.Utils
                           SteamMatchmaking.SetLobbyType(id, ELobbyType.k_ELobbyTypePublic);
 
                           Console.WriteLine("Лобби успешно создано. ID: " + id.m_SteamID);
+                          CoreContext.OpenLogsService.Log($"Lobby created " + id.m_SteamID);
+
                           tcs.TrySetResult(id);
                       });
             }

@@ -313,6 +313,7 @@ namespace GSMasterServer.Servers
                     Array.Copy(buffer, clone, s);
 
                     //Log(Category, "<= BYTES:" + string.Join(" ", buffer.Where((b, i) => i < size).Select(x => x.ToString())));
+                    CoreContext.OpenLogsService.Log($"Received ports from host {RemoteUserSteamId} on {Port}");
 
                     var bytes = ReplaceIPAdresses(clone);
 
@@ -326,12 +327,16 @@ namespace GSMasterServer.Servers
                 if (index != -1)
                 {
                     Console.WriteLine("INCOME " + str);
+
+                    var score = GetRating(AttachedServer?.MaxPlayers);
                     // \0#\u001a�\u0001splitnum\0�\0numplayers\01\0maxplayers\02\0hostname\0Bambochuk2\0hostport\063181\0mapname\0\0password\00\0gamever\01.2.120R\0numplayers\01\0maxplayers\02\0score_\0teamplay\00\0gametype\0ranked\0gamevariant\01.56bugfix\0groupid\00\0numobservers\00\0maxobservers\00\0modname\0\0moddisplayname\0\0modversion\0\0devmode\00\0gametype0\0gametype1\0gametype2\0gametype3\0gametype4\0gametype5\0gametype6\0gametype7\0gametype8\0gametype9\0gametype10\0gametype11\0gametype12\0gametype13\0gametype14\0gametype15\0gametype16\0gametype17\0gametype18\0gametype19\0gametype20\0gametype21\0gametype22\0gametype23\0gametype24\0gametype25\0gametype26\0gametype27\0gametype28\0gametype29\0gametype30\0gametype31\0\0\u0001player_\0\0Bambochuk2\0\0ping_\0\00\0\0player_\0\0Bambochuk2\0\0\0\u0002\0"
                     var newStr = str
-                        .Replace("score_\0", $"score_\0{GetRating(AttachedServer?.MaxPlayers)}\0")
+                        .Replace("score_\0", $"score_\0{score}\0")
                         .Replace("hostport\06112", "hostport\0" + Port.ToString())
                         .Replace("hostport\00", "hostport\0"+ Port.ToString());
 
+                    CoreContext.OpenLogsService.Log($"Replace gamehost {RemoteUserSteamId} score to {score}");
+                    CoreContext.OpenLogsService.Log($"Replace gamehost {RemoteUserSteamId} port to {Port}");
 
 
                     var bytes = Encoding.UTF8.GetBytes(newStr);
@@ -402,7 +407,12 @@ namespace GSMasterServer.Servers
                     bytes[pointStart++] = 0;
                     bytes[pointStart++] = 1;
 
+
+
                     var port = PortBindingManager.AddOrUpdatePortBinding(id).Port;
+
+                    CoreContext.OpenLogsService.Log($"Replace player port [{GetNickHash(nick)}] to {port}");
+
                     var portBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(port).Reverse().ToArray() : BitConverter.GetBytes(port);
 
                     bytes[pointStart++] = portBytes[1];
@@ -412,45 +422,22 @@ namespace GSMasterServer.Servers
                 }
             }
 
-            /* OLD
-            for (int k = 10; k < bytes.Length - 3; k++)
-            {
-                if (bytes[k] == 'K' &&
-                    bytes[k + 1] == '0' &&
-                    bytes[k + 2] == '4')
-                {
-                    if (bytes[k + 3] != 'W')
-                        k--;
-
-                    var nickLength = bytes[k + 4];
-
-                    var nickStart = k + 4 + 3;
-                    var nickEnd = nickStart + (nickLength << 1);
-
-                    var nick = GetUnicodeString(bytes, nickStart, nickEnd);
-
-                    var stats = CoreContext.MasterServer.GetStatsInfo(nick);
-
-                    var id = new CSteamID(stats.SteamId);
-
-                    var pointStart = nickEnd + 7;
-
-                    bytes[pointStart++] = 127;
-                    bytes[pointStart++] = 0;
-                    bytes[pointStart++] = 0;
-                    bytes[pointStart++] = 1;
-
-                    var port = PortBindingManager.AddOrUpdatePortBinding(id).Port;
-                    var portBytes = BitConverter.IsLittleEndian ? BitConverter.GetBytes(port).Reverse().ToArray() : BitConverter.GetBytes(port);
-
-                    bytes[pointStart++] = portBytes[1];
-                    bytes[pointStart++] = portBytes[0];
-
-                    k += nickLength + 4 + 6;
-                }
-            }
-            */
             return bytes;
+        }
+
+        string GetNickHash(string nick)
+        {
+            if (string.IsNullOrWhiteSpace(nick))
+                return "---";
+
+            int v = int.MaxValue;
+
+            for (int i = 0; i < nick.Length; i++)
+            {
+                v ^= nick[i];
+            }
+
+            return Math.Abs(v).ToString();
         }
 
         private static string GetUnicodeString(byte[] bytes, int index, int index2)

@@ -19,9 +19,12 @@ namespace ThunderHawk.Core
             batch.RegisterControllerFactory(() => new ChatUserController());
             batch.RegisterControllerFactory(() => new StatsPageController());
             batch.RegisterControllerFactory(() => new LobbiesController());
-
+            batch.RegisterControllerFactory(() => new GameItemController());
+            
             batch.RegisterServiceFactory<IHttpService>(() => new ThunderHawkHttpService());
             batch.RegisterServiceFactory<INewsProvider>(() => new TestNewsProvider());
+            batch.RegisterServiceFactory<IOpenLogsService>(() => new OpenLogsService());
         }
+        
     }
 }

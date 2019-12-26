@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
-using Framework;
+﻿using Framework;
 using SharedServices;
+using System;
+using System.Linq;
 
 namespace ThunderHawk.Core
 {
@@ -22,9 +22,14 @@ namespace ThunderHawk.Core
         public UriFrame Map { get; } = new UriFrame();
 
         public GameInfo Game { get; }
+        public ActionFrame Download { get; } = new ActionFrame();
+        public TextFrame Downloaded { get; } = new TextFrame();
 
         public GameItemViewModel(GameInfo game)
         {
+            Downloaded.Text = "In playback";
+            Downloaded.Visible = false;
+
             Game = game;
 
             Date.Text = ToDateValue(game.PlayedDate);
@@ -109,11 +114,11 @@ namespace ThunderHawk.Core
             }
         }
 
-        private string ToDateValue(DateTime playedDate)
+        public string ToDateValue(DateTime playedDate)
         {
             var utcNow = DateTime.Now;
 
-            var span = utcNow - playedDate;
+            var span = utcNow - playedDate.ToLocalTime();
 
             if (span.TotalSeconds < 10)
                 return "Some seconds ago";
@@ -144,10 +149,12 @@ namespace ThunderHawk.Core
             if (player == null)
             {
                 frame.Visible = false;
+                frame.Race.Visible = false;
             }
             else
             {
                 frame.Visible = true;
+                frame.Race.Visible = true;
                 frame.Name.Text =  $"{player.Name}";
                 frame.Race.Value = player.Race;
                 frame.Rating.Text = $"{player.FinalState.ToString().Take(3).Select(x => x.ToString().ToUpperInvariant()).Aggregate((x,y) => x+y)} {Math.Max(1000,player.Rating)}{WithSign(player.RatingDelta)}";

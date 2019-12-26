@@ -1,12 +1,10 @@
-﻿using Steamworks;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;

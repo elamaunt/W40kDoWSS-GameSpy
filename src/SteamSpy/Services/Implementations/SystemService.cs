@@ -9,6 +9,7 @@ using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 using ToastNotifications;
 using ToastNotifications.Lifetime;
+using ToastNotifications.Messages;
 using ToastNotifications.Position;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
@@ -212,6 +213,11 @@ namespace ThunderHawk
         public void ShowMessageWindow(string message)
         {
             MessageBox.Show(message, "ThunderHawk", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        public void NotifyAsWindowToastMessage(string message)
+        {
+            _localNotifier.ShowError(message);
         }
     }
 }
