@@ -550,6 +550,8 @@ namespace ThunderHawk
                 GameVariant = message.GameVariant,
                 MaxPlayers = message.MaxPlayers,
                 Players = message.Players,
+                Score = message.Score,
+                LimitedByRating = message.LimitedByRating,
                 IsUser = message.HostSteamId == SteamUser.GetSteamID().m_SteamID
             });
         }
@@ -676,6 +678,8 @@ namespace ThunderHawk
 
         public void RequestNewUser(Dictionary<string, string> pairs)
         {
+            CoreContext.OpenLogsService.Log($"RequestNewUser");
+
             var message = _clientPeer.CreateMessage();
 
             message.WriteJsonMessage(new RequestNewUserMessage()
@@ -711,7 +715,7 @@ namespace ThunderHawk
         }
 
 
-        public void RequestGameBroadcast(bool teamplay, string gameVariant, int maxPlayers, int players, bool ranked)
+        public void RequestGameBroadcast(bool teamplay, string gameVariant, int maxPlayers, int players, int score, bool limitedByRating, bool ranked)
         {
             var message = _clientPeer.CreateMessage();
 
@@ -721,7 +725,9 @@ namespace ThunderHawk
                 GameVariant = gameVariant,
                 MaxPlayers = maxPlayers,
                 Players = players,
-                Ranked = ranked
+                Ranked = ranked,
+                LimitedByRating = limitedByRating,
+                Score = score
             });
 
             _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);

@@ -21,7 +21,7 @@ namespace Framework.WPF
 
         public static bool IsImageExists(string name)
         {
-            return ImageResources.ContainsKey(name?.ToLowerInvariant());
+            return ImageResources.ContainsKey(name.Replace(" ", "%20")?.ToLowerInvariant());
         }
 
         public static bool TryGetImagePath(string name, out string path)

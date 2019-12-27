@@ -17,7 +17,7 @@ namespace ThunderHawk.Core
         StatsInfo GetStatsInfo(long profileId);
         StatsInfo GetStatsInfo(string nick);
         void RequestPlayersTop(int offset, int count);
-        void RequestGameBroadcast(bool teamplay, string gameVariant, int maxPlayers, int players, bool ranked);
+        void RequestGameBroadcast(bool teamplay, string gameVariant, int maxPlayers, int players, int score, bool limitedByRating, bool ranked);
         void RequestLastGames();
         StatsInfo[] GetPlayersTop(int offset, int count);
         void RequestUserStats(long profileId);

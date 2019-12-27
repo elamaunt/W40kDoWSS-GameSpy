@@ -500,9 +500,45 @@ namespace ThunderHawk.Utils
                         for (int k = 0; k < rowCount; k++)
                             if (SteamMatchmaking.GetLobbyDataByIndex(lobbyId, k, out key, 100, out value, 100))
                                 server.Set(key, value);
-
+                        
                         if (server.Ranked)
+                        {
                             server.Set("numplayers", SteamMatchmaking.GetNumLobbyMembers(lobbyId).ToString());
+                        }
+
+                        if (server.Ranked && (AppSettings.LimitRatingLobby || server.LobbyLimited))
+                        {
+                            var max = SteamMatchmaking.GetLobbyMemberLimit(lobbyId);
+                            var profile = CoreContext.MasterServer.CurrentProfile;
+                            var serverScore = server.Score;
+
+                            long? score = null;
+
+                            switch (max)
+                            {
+                                case 2:
+                                    score = profile.Score1v1;
+                                    break;
+                                case 4:
+                                    score = profile.Score2v2;
+                                    break;
+                                case 6:
+                                case 8:
+                                    score = profile.Score3v3;
+                                    break;
+
+                                default:
+                                    break;
+                            }
+
+                            if (score.HasValue)
+                            {
+                                var scoreValue = score.Value;
+
+                                if (Math.Abs(scoreValue - serverScore) > 180)
+                                    continue;
+                            }
+                        }
 
                         if (!server.HasPlayers)
                             continue;

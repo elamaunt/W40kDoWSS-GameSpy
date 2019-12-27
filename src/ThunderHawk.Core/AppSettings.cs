@@ -36,6 +36,12 @@ namespace ThunderHawk.Core
             }
         }
 
+        public static bool LimitRatingLobby
+        {
+            get => Storage.GetValue(nameof(LimitRatingLobby)).ConvertToOrDefault<bool>();
+            set => Storage.SetValue(nameof(LimitRatingLobby), value.ToString());
+        }
+
         public static bool IsFirstLaunch
         {
             get => Storage.GetValue(nameof(IsFirstLaunch)).ConvertToOrDefault<bool>();

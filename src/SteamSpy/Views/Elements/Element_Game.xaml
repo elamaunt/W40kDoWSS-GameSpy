@@ -17,7 +17,7 @@
                        framework:WPFBinder.Frame="Type"
                        HorizontalAlignment="Center"
                        TextAlignment="Center"
-                       MaxWidth="400"
+                       MaxWidth="600"
                        MaxLines="1"
                        TextWrapping="NoWrap"
                        Margin="0 8 10 0"     

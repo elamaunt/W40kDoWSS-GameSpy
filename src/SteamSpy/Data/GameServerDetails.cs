@@ -42,7 +42,14 @@ namespace ThunderHawk
         public string GameName => GetOrDefault("gamename") ?? GetOrDefault("GameName");
         public string GameType => GetOrDefault("gametype");
         public string GameVariant => GetOrDefault("gamevariant");
-        
+        public int Score => GetOrDefault("score_").ParseToIntOrDefault();
+
+        public bool LobbyLimited
+        {
+            get => GetOrDefault("limitedByRating") == "1";
+            set => this["limitedByRating"] = value ? "1" : "0";
+        }
+
         public string GetOrDefault(string key)
         {
             _values.TryGetValue(key, out string value);

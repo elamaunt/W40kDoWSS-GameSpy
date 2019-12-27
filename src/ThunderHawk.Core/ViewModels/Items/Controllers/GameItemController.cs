@@ -9,7 +9,17 @@ namespace ThunderHawk.Core
     public class GameItemController : FrameController<GameItemViewModel>
     {
         static HttpClient _client = new HttpClient();
-        string FilePath => Path.Combine(CoreContext.LaunchService.GamePath, "Playback", Frame.Game.SessionId.Replace('<', '#').Replace(">", string.Empty) + ".rec");
+        string FilePath => Path.Combine(CoreContext.LaunchService.GamePath, "Playback", Frame.Game.SessionId
+            .Replace('<', '#')
+            .Replace(">", string.Empty)
+            .Replace("{", string.Empty)
+            .Replace("}", string.Empty)
+            .Replace("|", string.Empty)
+            .Replace("[", string.Empty)
+            .Replace("]", string.Empty)
+            .Replace("/", string.Empty)
+            .Replace("\\", string.Empty)
+            + ".rec");
 
         protected override void OnBind()
         {

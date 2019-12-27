@@ -80,8 +80,35 @@ namespace ThunderHawk.Core
             }
             else
             {
+                if (info.Ranked && (AppSettings.LimitRatingLobby || info.LimitedByRating))
+                {
+                    var profile = CoreContext.MasterServer.CurrentProfile;
+
+                    long? userScore = null;
+
+                    switch (info.MaxPlayers)
+                    {
+                        case 2:
+                            userScore = profile.Score1v1;
+                            break;
+                        case 4:
+                            userScore = profile.Score2v2;
+                            break;
+                        case 6:
+                        case 8:
+                            userScore = profile.Score3v3;
+                            break;
+                        default:
+                            return;
+                    }
+
+                    if (userScore.HasValue && Math.Abs(info.Score - userScore.Value) > 180)
+                        return;
+                }
+
                 CoreContext.SystemService.NotifyAsSystemToastMessage("Automatch host", $"GameVariant: {info.GameVariant}. GameType: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}. {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}. Ranked: {info.Ranked}");
                 CoreContext.ClientServer.SendAsServerMessage($"Automatch host: {info.MaxPlayers / 2}vs{info.MaxPlayers / 2}, {info.GameVariant}.  {info.Players}/{info.MaxPlayers}. Fixed teams: {info.Teamplay}. Ranked: {info.Ranked}");
+
             }
         }
 

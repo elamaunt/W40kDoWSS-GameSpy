@@ -122,10 +122,12 @@ namespace ThunderHawk
         {
             if (string.IsNullOrWhiteSpace(name) || id == null)
             {
+                CoreContext.OpenLogsService.Log($"NewUserReceived error already exists!");
                 _clientManager.SendAskii(@"\error\\err\516\fatal\\errmsg\This account name is already in use!\id\1\final\");
             }
             else
             {
+                CoreContext.OpenLogsService.Log($"NewUserReceived success {id}");
                 _clientManager.SendAskii(string.Format(@"\nur\\userid\{0}\profileid\{1}\id\1\final\", id + 10000000, id));
             }
         }
@@ -537,8 +539,9 @@ namespace ThunderHawk
 
         void HandleLogin(TcpClientNode node, Dictionary<string, string> pairs)
         {
-
             var (activeMod, activeVersion) = ActiveModDetector.DetectCurrentMode();
+
+            CoreContext.OpenLogsService.Log($"Active mod [{activeMod}] [{activeVersion}]");
 
             if (activeMod == null || activeVersion == null)
             {
@@ -693,6 +696,8 @@ namespace ThunderHawk
                 {
                     if (request.Url.EndsWith("news.txt", StringComparison.OrdinalIgnoreCase))
                     {
+                        CoreContext.OpenLogsService.Log($"News requested");
+
                         if (request.Url.EndsWith("Russiandow_news.txt", StringComparison.OrdinalIgnoreCase))
                             HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(RusNews, Encoding.Unicode));
                         else
@@ -708,6 +713,7 @@ namespace ThunderHawk
 
                     if (request.Url.StartsWith("/motd/vercheck", StringComparison.OrdinalIgnoreCase))
                     {
+                        CoreContext.OpenLogsService.Log($"Motd requested");
                         //HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(@"\newver\1\newvername\1.4\dlurl\http://127.0.0.1/NewPatchHere.exe"));
                         HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(@"\newver\0", Encoding.UTF8));
                         goto END;
@@ -715,12 +721,14 @@ namespace ThunderHawk
 
                     if (request.Url.EndsWith("LobbyRooms.lua", StringComparison.OrdinalIgnoreCase))
                     {
+                        CoreContext.OpenLogsService.Log($"LobbyRooms requested");
                         HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(RoomPairs, Encoding.ASCII));
                         goto END;
                     }
 
                     if (request.Url.EndsWith("AutomatchDefaultsSS.lua", StringComparison.OrdinalIgnoreCase) || request.Url.EndsWith("AutomatchDefaultsDXP2Fixed.lua", StringComparison.OrdinalIgnoreCase))
                     {
+                        CoreContext.OpenLogsService.Log($"AutomatchDefaults requested");
                         //HttpHelper.WriteResponse(ms, HttpResponceBuilder.TextFileBytes(CoreContext.MasterServer.AutomatchDefaultsBytes));
                         HttpHelper.WriteResponse(ms, HttpResponceBuilder.Text(AutomatchDefaults, Encoding.ASCII));
                         goto END;
@@ -1052,6 +1060,8 @@ namespace ThunderHawk
                     var hash = _enteredLobbyHash;
                     Thread.MemoryBarrier();
 
+                    CoreContext.OpenLogsService.Log($"Lobby leave with delay");
+
                     Task.Delay(30000).ContinueWith(t =>
                     {
                         if (hash == _enteredLobbyHash)
@@ -1078,6 +1088,8 @@ namespace ThunderHawk
 
             if (profile == null || !profile.IsProfileActive)
                 return;
+
+            CoreContext.OpenLogsService.Log($"Part sended {channelName}");
 
             SendToClientChat($":{_user} PART {channelName} :Leaving\r\n");
         }
@@ -1559,6 +1571,8 @@ namespace ThunderHawk
 
         void HandleCdkeyCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
         {
+            CoreContext.OpenLogsService.Log($"Cdkey check");
+
             SendToClientChat(node, $":s 706 {_name}: 1 :\"Authenticated\"\r\n");
         }
 
@@ -1976,20 +1990,17 @@ namespace ThunderHawk
                         details["hostport"] = remote.Port.ToString();
                         details["localport"] = remote.Port.ToString();
 
-                        //var lobbyWasJoinable = SteamLobbyManager.IsLobbyJoinable;
+                        var serverScore = GetCurrentRating(details.MaxPlayers);
+                        details["score_"] = serverScore;
+                        details.LobbyLimited = AppSettings.LimitRatingLobby;
 
                         SteamLobbyManager.UpdateCurrentLobby(details, GetIndicator());
-
-                        //var isLobbyJoinable = SteamLobbyManager.IsLobbyJoinable;
-
-                        //if (!lobbyWasJoinable && isLobbyJoinable)
-                        //    PortBindingManager.ClearPortBindings();
                         CoreContext.OpenLogsService.Log($"Update local server [{details.IsValid}]");
 
                         _localServer = details;
 
                         if (details.IsValid && details.Ranked)
-                            CoreContext.MasterServer.RequestGameBroadcast(details.IsTeamplay, details.GameVariant, details.MaxPlayers.ParseToIntOrDefault(), details.PlayersCount.ParseToIntOrDefault(), details.Ranked);
+                            CoreContext.MasterServer.RequestGameBroadcast(details.IsTeamplay, details.GameVariant, details.MaxPlayers.ParseToIntOrDefault(), details.PlayersCount.ParseToIntOrDefault(), serverScore.ParseToIntOrDefault(), AppSettings.LimitRatingLobby, details.Ranked);
                     }
                 }
             }

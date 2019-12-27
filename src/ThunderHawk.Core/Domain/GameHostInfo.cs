@@ -8,5 +8,7 @@
         public string GameVariant { get; set; }
         public int MaxPlayers { get; set; }
         public int Players { get; set; }
+        public int Score { get; set; }
+        public bool LimitedByRating { get; set; }
     }
 }
