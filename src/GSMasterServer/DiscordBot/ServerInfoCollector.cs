@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Rest;
+using Discord.WebSocket;
 using GSMasterServer.Servers;
 using IrcNet.Tools;
 using SharedServices;
@@ -39,6 +40,12 @@ namespace GSMasterServer.DiscordBot
         {
             _singleMasterServer = singleMasterServer;
             _botManager = botManager;
+        }
+
+
+        public void SendSyncMessage(string nickName, string text)
+        {
+            _singleMasterServer.MessageFromDiscord(nickName, text);
         }
 
 

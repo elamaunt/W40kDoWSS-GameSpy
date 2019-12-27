@@ -22,6 +22,8 @@ namespace GSMasterServer.DiscordBot
         public IGuild Guild => ThunderGuild;
         public ServerInfoCollector ServerInfoCollector { get; }
 
+        private SocketTextChannel _syncChannel;
+
         private readonly BotCommandsManager _botCommandsManager;
         private readonly string _token;
 
@@ -41,9 +43,21 @@ namespace GSMasterServer.DiscordBot
             BotClient.Ready += ReadyAsync;
             BotClient.UserJoined += UserJoinedAsync;
             BotClient.MessageReceived += MessageReceivedAsync;
+            singleMasterServer.OnChatMessageReceived += OnChatMessageReceived;
 
             DiscordDatabase.InitDb();
             Logger.Info("Discord bot is loaded!");
+        }
+
+        private void OnChatMessageReceived(object sender, SharedServices.ChatMessageMessage e)
+        {
+            if (BotClient == null || BotClient.Status != UserStatus.Online || _syncChannel == null)
+                return;
+
+            // это нужно для того, чтобы в Discord не проходили @everyone и @here от тех, у кого нет на это доступа.
+            var text = e.Text.Replace("@", "");
+
+            _syncChannel.SendMessageAsync($"[{e.UserName}] {text}");
         }
 
         public async Task Run()
@@ -64,6 +78,7 @@ namespace GSMasterServer.DiscordBot
         private async Task ReadyAsync()
         {
             ThunderGuild = BotClient.GetGuild(DiscordServerConstants.ServerId);
+            _syncChannel = ThunderGuild.GetTextChannel(DiscordServerConstants.SyncChatId);
             Logger.Info($"{BotClient} is ready!");
 
             await Task.Run(UpdateLoop);
@@ -135,28 +150,28 @@ namespace GSMasterServer.DiscordBot
                 if (arg.Author.Id == BotClient.CurrentUser.Id)
                     return;
 
-                switch (arg.Channel)
+                if (arg.Channel is SocketDMChannel)
                 {
-                    case SocketDMChannel _:
+                    if (_botCommandsManager.CommandStrings.Any(x => arg.Content.StartsWith(x)))
                     {
-                        if (_botCommandsManager.CommandStrings.Any(x => arg.Content.StartsWith(x)))
-                        {
-                            await _botCommandsManager.HandleDmCommand(arg);
-                        }
-
-                        break;
-                    }
-                    case SocketTextChannel socketTextChannel 
-                        when socketTextChannel.Guild.Id == DiscordServerConstants.ServerId &&
-                             socketTextChannel.CategoryId == DiscordServerConstants.BotCategoryId:
-                    {
-                        if (_botCommandsManager.CommandStrings.Any(x => arg.Content.StartsWith(x)))
-                        {
-                            await _botCommandsManager.HandleCommand(arg);
-                        }
-                        break;
+                        await _botCommandsManager.HandleDmCommand(arg);
                     }
                 }
+                else if (arg.Channel is SocketTextChannel guildChannel)
+                {
+                    if (guildChannel.CategoryId == DiscordServerConstants.BotCategoryId)
+                    {
+                        await _botCommandsManager.HandleCommand(arg);
+                    }
+                    else if (guildChannel.Id == DiscordServerConstants.SyncChatId)
+                    {
+                        var nickName = (arg.Author as SocketGuildUser)?.Nickname ?? arg.Author.Username;
+
+                        var text = arg.Content;
+                        ServerInfoCollector.SendSyncMessage(nickName, text);
+                    }
+                }
+
             }
             catch (Exception ex)
             {

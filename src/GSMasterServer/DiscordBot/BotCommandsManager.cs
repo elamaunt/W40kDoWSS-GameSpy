@@ -95,5 +95,6 @@ namespace GSMasterServer.DiscordBot
                 Logger.Error(ex);
             }
         }
+
     }
 }
