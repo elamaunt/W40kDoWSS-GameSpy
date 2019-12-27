@@ -26,6 +26,8 @@ namespace GSMasterServer.Servers
             return Database.MainDBInstance.GetProfileByName(nickName);
         }
 
+        public event EventHandler<ChatMessageMessage> OnChatMessageReceived;
+
         public int Online => _userStates.Count;
 
 
@@ -226,12 +228,18 @@ namespace GSMasterServer.Servers
 
         //-------------- HANDLERS ---------------
 
+        public void HandleDiscordMessage(string nickname, string text)
+        {
+            //TODO for elamaunt
+        }
+
         public void HandleMessage(NetConnection connection, ChatMessageMessage message)
         {
             var mes = _serverPeer.CreateMessage();
             message.LongDate = DateTime.UtcNow.ToBinary();
             mes.WriteJsonMessage(message);
             _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableUnordered);
+            OnChatMessageReceived?.Invoke(this, message);
         }
 
         public void HandleMessage(NetConnection connection, UserStatusChangedMessage message)
