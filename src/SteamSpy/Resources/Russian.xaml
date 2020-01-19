@@ -7,6 +7,7 @@
     <system:String x:Key="ChatPage">Чат</system:String>
     <system:String x:Key="TweaksPage">Модификации</system:String>
     <system:String x:Key="StatsPage">Статы</system:String>
+    <system:String x:Key="InGamePage">В игре</system:String>
 
     <!-- Main Page -->
     <system:String x:Key="LaunchGame">Запустить игру</system:String>
@@ -15,6 +16,9 @@
     <system:String x:Key="SteamNotLaunched">Стим не запущен!</system:String>
     <system:String x:Key="Active revision">Активная ревизия:</system:String>
     <system:String x:Key="FaqInfo">Есть вопросы? Ответы в</system:String>
+    
+    <!-- InGame Page -->
+    <system:String x:Key="CurrentGame">Текущая игра:</system:String>
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPageHeader">Конфигуратор улучшений</system:String>

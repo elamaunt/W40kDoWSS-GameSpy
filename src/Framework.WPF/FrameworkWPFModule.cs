@@ -10,6 +10,7 @@
             
             batch.RegisterControllerFactory(() => new ButtonWithIActionFrameBinder());
             batch.RegisterControllerFactory(() => new ButtonWithITextFrameBinder());
+            batch.RegisterControllerFactory(() => new GridWithBackgroundBinder());
             batch.RegisterControllerFactory(() => new ImageWithByteArrayFrameBinder());
             batch.RegisterControllerFactory(() => new LabelWithITextFrameBinder());
             batch.RegisterControllerFactory(() => new StackPanelWithListFrameBinder());

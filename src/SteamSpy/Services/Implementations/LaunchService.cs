@@ -103,6 +103,9 @@ namespace ThunderHawk
 
                         Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
 
+                        // to read warning.log from the begining after start game
+                        Task.Delay(10000).ContinueWith(t => { CoreContext.InGameService.DropSsConsoleOffset(); });
+
                         ssProc.Exited += (s, e) =>
                         {
                             tcs.TrySetResult(ssProc);

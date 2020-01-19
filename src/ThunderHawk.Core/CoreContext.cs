@@ -18,6 +18,7 @@ namespace ThunderHawk.Core
         public static IClientServer ClientServer => Service<IClientServer>.Get();
         public static IResourcesService ResourcesService => Service<IResourcesService>.Get();
         public static IOpenLogsService OpenLogsService => Service<IOpenLogsService>.Get();
+        public static IInGameService InGameService => Service<IInGameService>.Get();
         
         public static IThunderHawkModManager ThunderHawkModManager => Service<IThunderHawkModManager>.Get();
     }

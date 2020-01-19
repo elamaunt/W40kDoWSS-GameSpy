@@ -23,6 +23,8 @@ namespace ThunderHawk
 
             batch.RegisterServiceFactory<IResourcesService>(() => new ResourcesService());
             
+            batch.RegisterServiceFactory<IInGameService>(() => new InGameService());
+            
             batch.RegisterControllerFactory(() => new TabControlWithListFrameBinder());
             batch.RegisterControllerFactory(() => new TabItemWithPageViewModelBinder());
             batch.RegisterControllerFactory(() => new ImageWithValueFrameRaceBinder());

@@ -190,6 +190,7 @@ namespace ThunderHawk.Core
             RunOnUIThread(() =>
             {
                 Frame.ChatViewModel.Users.DataSource = collection;
+                CoreContext.InGameService.serverOnlinePlayers = collection; // share online users to this service to receive mmr there
                 Frame.ChatViewModel.ConnectedLabel.Text = $"Connection is active. Users on server  {collection.Count}";
             });
         }
