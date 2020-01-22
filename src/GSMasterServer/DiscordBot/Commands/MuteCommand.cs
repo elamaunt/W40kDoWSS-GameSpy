@@ -13,6 +13,8 @@ namespace GSMasterServer.DiscordBot.Commands
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.Moderator;
 
+        public AllowLevel AllowLevel { get; } = AllowLevel.Everywhere;
+
         private readonly bool _softMute;
         public MuteCommand(bool softMute)
         {

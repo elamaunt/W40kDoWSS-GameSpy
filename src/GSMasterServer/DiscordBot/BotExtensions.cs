@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using System.Linq;
 using System.Threading.Tasks;
+using GSMasterServer.DiscordBot.Commands;
 
 namespace GSMasterServer.DiscordBot
 {

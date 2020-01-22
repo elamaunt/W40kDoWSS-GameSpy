@@ -7,7 +7,11 @@
 
         public const ulong ThunderHawkInfoChannelId = 656215384453677056;
         
-        public const ulong BotCategoryId = 608338832194273299;
+        public const ulong RuChatsCategoryId = 608338832194273299;
+        public const ulong EnChatsCategoryId = 659006236561244181;
+
+        public const ulong BotChannelId = 669510712531615754;
+
         public const ulong ReadOnlyRoleId = 623924991599181824;  
         public const ulong FloodOnlyRoleId = 623925234030084100;
         public const ulong SyncChatId = 659007052370411550;
@@ -23,7 +27,10 @@
 
         public const ulong ThunderHawkInfoChannelId = 635516606465835030;
 
-        public const ulong BotCategoryId = 624962245914525698;
+        public const ulong RuChatsCategoryId = 624962245914525698;
+        public const ulong EnChatsCategoryId = 624962245914525698;
+        public const ulong BotChannelId = 669510610869944331;
+
         public const ulong ReadOnlyRoleId = 624963432105639936;
         public const ulong FloodOnlyRoleId = 624963455002083329;
         public const ulong SyncChatId = 635516606465835030;

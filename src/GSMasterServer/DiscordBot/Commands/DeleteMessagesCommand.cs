@@ -11,6 +11,8 @@ namespace GSMasterServer.DiscordBot.Commands
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.Moderator;
 
+        public AllowLevel AllowLevel { get; } = AllowLevel.Everywhere;
+
         public async Task Execute(SocketMessage socketMessage)
         {
             var commandParams = socketMessage.CommandArgs();

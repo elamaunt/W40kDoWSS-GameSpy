@@ -8,5 +8,7 @@ namespace GSMasterServer.DiscordBot.Commands
         Task Execute(SocketMessage socketMessage);
 
         AccessLevel MinAccessLevel { get; }
+
+        AllowLevel AllowLevel { get; }
     }
 }

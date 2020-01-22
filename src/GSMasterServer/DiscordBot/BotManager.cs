@@ -159,16 +159,16 @@ namespace GSMasterServer.DiscordBot
                 }
                 else if (arg.Channel is SocketTextChannel guildChannel)
                 {
-                    if (guildChannel.CategoryId == DiscordServerConstants.BotCategoryId)
-                    {
-                        await _botCommandsManager.HandleCommand(arg);
-                    }
-                    else if (guildChannel.Id == DiscordServerConstants.SyncChatId)
+                    if (guildChannel.Id == DiscordServerConstants.SyncChatId)
                     {
                         var nickName = (arg.Author as SocketGuildUser)?.Nickname ?? arg.Author.Username;
 
                         var text = arg.Content;
                         ServerInfoCollector.SendSyncMessage(nickName, text);
+                    }
+                    else
+                    {
+                        await _botCommandsManager.HandleCommand(arg);
                     }
                 }
 

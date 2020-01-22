@@ -10,6 +10,9 @@ namespace GSMasterServer.DiscordBot.Commands
     {
         public AccessLevel MinAccessLevel { get; } = AccessLevel.User;
 
+        public AllowLevel AllowLevel { get; } = AllowLevel.OnlyChannel;
+
+
         private readonly bool _isMapRandomizer;
         private readonly Randomizer _randomizer = new Randomizer();
         public RandomCommand(bool isMapRandomizer)

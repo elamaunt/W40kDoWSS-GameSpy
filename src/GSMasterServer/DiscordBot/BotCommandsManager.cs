@@ -3,6 +3,7 @@ using GSMasterServer.DiscordBot.Commands;
 using IrcNet.Tools;
 using System;
 using System.Collections.Generic;
+using System.Net.Sockets;
 using System.Threading.Tasks;
 
 namespace GSMasterServer.DiscordBot
@@ -39,14 +40,29 @@ namespace GSMasterServer.DiscordBot
         {
             try
             {
+                if (!(arg.Channel is SocketTextChannel channel))
+                    return;
+
                 var commandName = arg.Content.Split()[0].Substring(1).ToLower();
                 if (!_commands.TryGetValue(commandName, out var command))
                 {
-                    Logger.Trace($"Command: \"{commandName}\" is not implemented!");
+                    //Logger.Trace($"Command: \"{commandName}\" is not implemented!");
                     return;
                 }
 
+                if (command.AllowLevel == AllowLevel.WholeCategory &&
+                    (channel.CategoryId != DiscordServerConstants.RuChatsCategoryId && channel.CategoryId != DiscordServerConstants.EnChatsCategoryId))
+                    return;
+
+                if (command.AllowLevel == AllowLevel.OnlyChannel &&
+                    channel.Id != DiscordServerConstants.BotChannelId)
+                    return;
+
+
+
                 var userAccessLevel = arg.Author.GetAccessLevel();
+
+
 
                 if (userAccessLevel >= command.MinAccessLevel)
                 {

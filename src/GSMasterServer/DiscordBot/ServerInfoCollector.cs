@@ -16,7 +16,7 @@ namespace GSMasterServer.DiscordBot
         private readonly SingleMasterServer _singleMasterServer;
         private readonly BotManager _botManager;
 
-        private static readonly string[] Numbers = new[] { ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:", ":one::zero:" };
+        private static readonly string[] Numbers = { ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:", ":one::zero:" };
 
         private static string GetRaceName(Race race)
         {
@@ -45,7 +45,7 @@ namespace GSMasterServer.DiscordBot
 
         public void SendSyncMessage(string nickName, string text)
         {
-            _singleMasterServer.MessageFromDiscord(nickName, text);
+            _singleMasterServer.HandleDiscordMessage(nickName, text);
         }
 
 
