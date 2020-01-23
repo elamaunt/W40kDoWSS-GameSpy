@@ -26,7 +26,7 @@ namespace ThunderHawk.Core
 
             foreach (var playerFrame in playerViewInGames)
             {
-                playerFrame.LoadBackground.BackgroundOpacity = 0.2;
+                playerFrame.LoadBackground.BackgroundOpacity = 0;
             }
 
             Frame.Change.Action = ShowGame;
@@ -73,6 +73,7 @@ namespace ThunderHawk.Core
             playerFrame.Race.Value = Race.unknown;
             playerFrame.Rating.Text = "";
             playerFrame.LoadBackground.BackgroundColor = "#bdbebd";
+            playerFrame.LoadBackground.BackgroundOpacity = 0;
             playerFrame.Name.Text = "";
             playerFrame.Name.Text = "";
         }

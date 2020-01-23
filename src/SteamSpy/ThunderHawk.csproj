@@ -192,7 +192,6 @@
     <Compile Include="Utils\SteamUserStates.cs" />
     <Compile Include="Utils\SystemExtensionMethods.cs" />
     <Compile Include="Utils\TaskHelper.cs" />
-    <Compile Include="Utils\UserActivityHook.cs" />
     <Compile Include="Views\Elements\Controllers\ChatUserColorController.cs" />
     <Compile Include="Views\Elements\Controllers\GamePlayersColorController.cs" />
     <Compile Include="Views\Elements\Controllers\MainNewsPresentingController.cs" />

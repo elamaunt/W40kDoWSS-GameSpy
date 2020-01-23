@@ -1,12 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
-using gma.System.Windows;
 using SharedServices;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
@@ -22,18 +19,15 @@ namespace ThunderHawk
         public ObservableCollection<ChatUserItemViewModel> serverOnlinePlayers { private get; set; }
         public InGamePlayer[] inGamePlayers { get; set; }
 
-        private UserActivityHook uHook = new UserActivityHook();
-
         private string activeProfilePath;
 
         private int totalActions = 0;
         private int actionsIn4Seconds = 0;
 
-        private long lastMaxOffset = 0;
+        private long lastMaxOffset = 100500;
 
         public InGameService()
         {
-            Task.Run(CalculateApm);
             Task.Run(ReadGameConsole);
         }
 
@@ -271,7 +265,7 @@ namespace ThunderHawk
                         index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
                         if (index != -1)
                         {
-                            SetupActiveProfileFolder(line.Substring(index + searchLine.Length).Trim());
+                            SetupActiveProfileFolder();
                         }
                     }
                     //update the last max offset
@@ -290,43 +284,18 @@ namespace ThunderHawk
             }
         }
 
-        private void SetupActiveProfileFolder(string activeProfile)
+        private void SetupActiveProfileFolder()
         {
             var profiles = Directory.GetDirectories(Path.Combine(PathFinder.GamePath, "Profiles"));
+            DateTime timeStamp = DateTime.MinValue;
             foreach (var profile in profiles)
             {
-                if (File.ReadAllText(profile + "\\name.dat").Equals(activeProfile))
+                DateTime profileLastActivity = File.GetLastWriteTimeUtc(profile + "\\playercfg.lua");
+                if (timeStamp < profileLastActivity)
                 {
+                    timeStamp = profileLastActivity;
                     activeProfilePath = profile;
                 }
-            }
-        }
-
-        private void IncrementAction(object sender, KeyEventArgs e)
-        {
-            totalActions++;
-            actionsIn4Seconds++;
-        }
-
-        private void IncrementMouseAction(object sender, MouseEventArgs e)
-        {
-            if (e.Clicks > 0)
-            {
-                totalActions++;
-                actionsIn4Seconds++;
-            }
-        }
-
-        private void CalculateApm()
-        {
-            uHook.OnMouseActivity += new MouseEventHandler(IncrementMouseAction);
-            uHook.KeyUp += new KeyEventHandler(IncrementAction);
-            uHook.Start();
-            while (true)
-            {
-                apmCurrent = actionsIn4Seconds * 15;
-                actionsIn4Seconds = 0;
-                Thread.Sleep(4000);
             }
         }
     }

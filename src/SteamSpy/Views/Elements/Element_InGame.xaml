@@ -19,7 +19,6 @@
                 <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center"
                             Margin="10 10 10 10">
                     <StackPanel Orientation="Horizontal" Margin="0 0 0 4">
-                        <TextBlock framework:WPFBinder.Frame="ApmLabel" FontSize="15" Foreground="Orange" Width="70" />
                         <TextBlock framework:WPFBinder.Frame="InfoLabel" FontSize="15" Foreground="Orange" HorizontalAlignment="Right"  />
                         <!--<Button Margin="22,0,0,0" HorizontalAlignment="Right"
                                 Background="Transparent"
