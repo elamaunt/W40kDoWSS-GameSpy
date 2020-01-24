@@ -46,7 +46,7 @@ namespace GSMasterServer.DiscordBot.Commands
             var targetUsers = socketMessage.MentionedUsers;
             if (targetUsers.Count == 0)
             {
-                Logger.Debug("[UnMuteCommand]No users were mentioned!");
+                Logger.Trace("[UnMuteCommand]No users were mentioned!");
                 return;
             }
             await UnMute(targetUsers, _softUnmute, ((SocketGuildChannel) socketMessage.Channel).Guild);

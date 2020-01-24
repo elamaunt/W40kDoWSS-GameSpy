@@ -109,8 +109,8 @@ namespace GSMasterServer.Utils
             var request = (HttpWebRequest)WebRequest.Create( updateRequestBuilder.Uri );
             request.Method = "get";
  
-            Logger.Trace("Start request to " + DowstatsUploadGameUrl);
-            Logger.Debug($"request uri: {updateRequestBuilder.Uri}");
+            Logger.Trace("[UploadGame]Start request to " + DowstatsUploadGameUrl);
+            Logger.Trace($"request uri: {updateRequestBuilder.Uri}");
             IAsyncResult result = request.BeginGetResponse( OnAsyncCallback, request );
             
             for (int i = 0; i < gameUserInfo.Length; i++)
@@ -225,7 +225,7 @@ namespace GSMasterServer.Utils
             request.Method = "get";
  
             Logger.Trace("Start request to " + DowstatsUploadPlayerStatsUrl);
-            Logger.Debug($"request uri: {updateRequestBuilder.Uri}");
+            Logger.Trace($"request uri: {updateRequestBuilder.Uri}");
             IAsyncResult result = request.BeginGetResponse( OnAsyncCallback, request );
         }
 

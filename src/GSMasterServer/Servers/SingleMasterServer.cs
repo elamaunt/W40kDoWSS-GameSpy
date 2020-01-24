@@ -78,7 +78,7 @@ namespace GSMasterServer.Servers
                         case NetIncomingMessageType.Data: message.ReadJsonMessage(this); break;
                         case NetIncomingMessageType.ErrorMessage: Logger.Error(message.ReadString()); break;
                         case NetIncomingMessageType.VerboseDebugMessage: Logger.Debug(message.ReadString()); break;
-                        case NetIncomingMessageType.WarningMessage: Logger.Warn(message.ReadString()); break;
+                        case NetIncomingMessageType.WarningMessage: Logger.Trace(message.ReadString()); break; // workaround for spamming "Unhandled message" in error log
                         case NetIncomingMessageType.DebugMessage: Logger.Debug(message.ReadString()); break;
                         case NetIncomingMessageType.StatusChanged: HandleStatusChanged(message); break;
                         default: break;
@@ -86,7 +86,7 @@ namespace GSMasterServer.Servers
                 }
                 catch (Exception ex)
                 {
-                    Logger.Debug(ex.Message);
+                    Logger.Warn(ex.Message);
                 }
                 finally
                 {

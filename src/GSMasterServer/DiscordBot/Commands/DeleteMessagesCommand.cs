@@ -27,7 +27,7 @@ namespace GSMasterServer.DiscordBot.Commands
 
             if (messagesCount == 0 && fromMessage == 0)
             {
-                Logger.Debug("[DeleteMessagesCommand]No required arg was passed");
+                Logger.Trace("[DeleteMessagesCommand]No required arg was passed");
                 return;
             }
 
