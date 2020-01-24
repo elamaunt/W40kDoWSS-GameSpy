@@ -39,7 +39,7 @@ namespace GSMasterServer.DiscordBot
 
             BotClient = new DiscordSocketClient();
 
-            BotClient.Log += LogAsync;
+            BotClient.Log += BotLog;
             BotClient.Ready += ReadyAsync;
             BotClient.UserJoined += UserJoinedAsync;
             BotClient.MessageReceived += MessageReceivedAsync;
@@ -47,6 +47,12 @@ namespace GSMasterServer.DiscordBot
 
             DiscordDatabase.InitDb();
             Logger.Info("Discord bot is loaded!");
+        }
+
+        private static Task BotLog(LogMessage arg)
+        {
+            Logger.Debug(arg);
+            return Task.CompletedTask;
         }
 
         private void OnChatMessageReceived(object sender, SharedServices.ChatMessageMessage e)
@@ -134,11 +140,12 @@ namespace GSMasterServer.DiscordBot
                 }
                 catch (Exception ex)
                 {
-                    Logger.Error(ex);
+                    Logger.Warn(ex);
+                    await Task.Delay(1000 * 180);
                 }
                 finally
                 {
-                    await Task.Delay(10000);
+                    await Task.Delay(1000 * 30);
                 }
             }
         }
@@ -177,12 +184,6 @@ namespace GSMasterServer.DiscordBot
             {
                 Logger.Error(ex);
             }
-        }
-
-        private static Task LogAsync(LogMessage arg)
-        {
-            Logger.Debug(arg);
-            return Task.CompletedTask;
         }
     }
 }

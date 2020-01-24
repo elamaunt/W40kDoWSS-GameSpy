@@ -98,9 +98,7 @@ namespace GSMasterServer.DiscordBot
             {
                 await channel.SendMessageAsync(textSb.ToString());
             }
-            Logger.Trace("[Discord bot]Updated server message!");
-
-
+            // Logger.Trace("[Discord bot]Updated server message!"); // слишком много логов спамит
         }
         public int GetOnline()
         {

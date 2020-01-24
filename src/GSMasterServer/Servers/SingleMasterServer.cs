@@ -68,8 +68,7 @@ namespace GSMasterServer.Servers
         void OnSendOrPost(object state)
         {
             //  _serverPeer.
-            NetIncomingMessage message = null;
-            while (ReadMessage(out message))
+            while (ReadMessage(out var message))
             {
                 var type = message.MessageType;
                 try
@@ -87,12 +86,11 @@ namespace GSMasterServer.Servers
                 }
                 catch (Exception ex)
                 {
-                    Logger.Warn(ex.Message);
+                    Logger.Debug(ex.Message);
                 }
                 finally
                 {
                     _serverPeer.Recycle(message);
-                    message = null;
                 }
             }
         }
