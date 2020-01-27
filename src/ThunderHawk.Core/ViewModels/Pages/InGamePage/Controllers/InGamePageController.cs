@@ -38,21 +38,30 @@ namespace ThunderHawk.Core
         {
             RunOnUIThread(() =>
             {
-                if (CoreContext.InGameService.isGameNow && CoreContext.LaunchService.GameProcess != null)
+                if (CoreContext.InGameService.errorOccured)
                 {
-                    ShowGame();
-                    Frame.InfoLabel.Text = "";
+                    Frame.InfoLabel.Text = "Fatal error occured. Pls send launcher log to Anibus";
+                    SetTabsToDefault();
                 }
                 else
                 {
-                    if (CoreContext.LaunchService.GameProcess == null) {
-                        Frame.InfoLabel.Text = "Soulstorm is not running or has been launched in another way";
-                    } else Frame.InfoLabel.Text = "Successful subscribe to Soulstorm - waiting for the game start";
-                    
-                    SetTabsToDefault();
-                }
+                    if (CoreContext.InGameService.isGameNow && CoreContext.LaunchService.GameProcess != null)
+                    {
+                        ShowGame();
+                        Frame.InfoLabel.Text = "";
+                    }
+                    else
+                    {
+                        if (CoreContext.LaunchService.GameProcess == null)
+                        {
+                            Frame.InfoLabel.Text = "Soulstorm is not running or has been launched in another way";
+                        }
+                        else Frame.InfoLabel.Text = "Successful subscribe to Soulstorm - waiting for the game start";
 
-                Frame.ApmLabel.Text = "APM: " + CoreContext.InGameService.apmCurrent;
+                        
+                    }
+                }
+                
             });
         }
 

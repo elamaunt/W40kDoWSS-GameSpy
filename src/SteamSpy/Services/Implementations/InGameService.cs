@@ -16,6 +16,8 @@ namespace ThunderHawk
         public float apmAverageGame { get; set; }
         public bool isGameNow { get; private set; }
         public string inGameMap { get; private set; }
+        
+        public bool errorOccured { get; private set; }
         public ObservableCollection<ChatUserItemViewModel> serverOnlinePlayers { private get; set; }
         public InGamePlayer[] inGamePlayers { get; set; }
 
@@ -211,68 +213,78 @@ namespace ThunderHawk
 
         private void ReadGameConsole()
         {
-            //Open the stream and read it back.
-            FileInfo soulstormConsole = new FileInfo(PathFinder.GamePath + "\\warnings.log");
-
-            string activeMod = null;
-
-            using (var streamReader =
-                new StreamReader(soulstormConsole.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
+            try
             {
-                while (true)
+                //Open the stream and read it back.
+                FileInfo soulstormConsole = new FileInfo(PathFinder.GamePath + "\\warnings.log");
+
+                string activeMod = null;
+
+                using (var streamReader =
+                    new StreamReader(soulstormConsole.Open(FileMode.Open, FileAccess.Read, FileShare.ReadWrite)))
                 {
-                    Thread.Sleep(100);
-
-
-                    //if the file size has not changed, idle
-                    if (streamReader.BaseStream.Length == lastMaxOffset)
-                        continue;
-
-                    //seek to the last max offset
-                    streamReader.BaseStream.Seek(lastMaxOffset, SeekOrigin.Begin);
-
-                    //read out of the file until the EOF
-                    string line = "";
-                    while ((line = streamReader.ReadLine()) != null)
+                    while (true)
                     {
-                        var searchLine =
-                            "GAME -- Initializing Team Colour Systems"; // before this initializing, ss write to teststats
-                        var index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
-                        if (index != -1)
+                        Thread.Sleep(100);
+
+
+                        //if the file size has not changed, idle
+                        if (streamReader.BaseStream.Length == lastMaxOffset)
+                            continue;
+
+                        //seek to the last max offset
+                        streamReader.BaseStream.Seek(lastMaxOffset, SeekOrigin.Begin);
+
+                        //read out of the file until the EOF
+                        string line = "";
+                        while ((line = streamReader.ReadLine()) != null)
                         {
-                            isGameNow = true;
-                            readTestStats();
+                            var searchLine =
+                                "GAME -- Initializing Team Colour Systems"; // before this initializing, ss write to teststats
+                            var index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
+                            if (index != -1)
+                            {
+                                isGameNow = true;
+                                readTestStats();
+                            }
+
+                            searchLine = "finished loading";
+                            index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
+                            if (index != -1)
+                            {
+                                string playerFinishLoad =
+                                    Regex.Replace(line, @".*\((.*), .*\) finished loading.*", "$1");
+                                UpdatePlayerFinishLoadStatus(playerFinishLoad);
+                            }
+
+                            searchLine = "APP -- Game Stop";
+                            index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
+                            if (index != -1) isGameNow = false;
+
+                            searchLine = "SOULSTORM started";
+                            index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
+                            if (index != -1) isGameNow = false;
+
+
+                            searchLine = "GAME -- Using player profile";
+                            index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
+                            if (index != -1)
+                            {
+                                SetupActiveProfileFolder();
+                            }
                         }
+                        //update the last max offset
 
-                        searchLine = "finished loading";
-                        index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
-                        if (index != -1)
-                        {
-                            string playerFinishLoad = Regex.Replace(line, @".*\((.*), .*\) finished loading.*", "$1");
-                            UpdatePlayerFinishLoadStatus(playerFinishLoad);
-                        }
-
-                        searchLine = "APP -- Game Stop";
-                        index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
-                        if (index != -1) isGameNow = false;
-
-                        searchLine = "SOULSTORM started";
-                        index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
-                        if (index != -1) isGameNow = false;
-
-
-                        searchLine = "GAME -- Using player profile";
-                        index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
-                        if (index != -1)
-                        {
-                            SetupActiveProfileFolder();
-                        }
+                        lastMaxOffset = streamReader.BaseStream.Position;
                     }
-                    //update the last max offset
-
-                    lastMaxOffset = streamReader.BaseStream.Position;
                 }
             }
+            catch(Exception e)
+            {
+                errorOccured = true;
+                Logger.Error(e);
+            }
+            
         }
 
         private void UpdatePlayerFinishLoadStatus(string playerName)

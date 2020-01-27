@@ -14,6 +14,8 @@ namespace ThunderHawk.Core
         bool isGameNow{ get;}
         
         string inGameMap { get; }
+        
+        bool errorOccured { get; }
 
         ObservableCollection<ChatUserItemViewModel> serverOnlinePlayers { set;}
         
