@@ -68,6 +68,7 @@
     <Compile Include="Bindable\BindableTabItem.cs" />
     <Compile Include="Bindable\BindableWindow.cs" />
     <Compile Include="Bindable\BindablePage.cs" />
+    <Compile Include="Controllers\Binders\GridWithBackgroundBinder.cs" />
     <Compile Include="Controllers\Binders\ButtonWithIActionFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ButtonWithITextFrameBinder.cs" />
     <Compile Include="Controllers\Binders\FrameWithIListFrameBinder.cs" />

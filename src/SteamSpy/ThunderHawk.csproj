@@ -88,6 +88,9 @@
     <ApplicationManifest>ThunderHawk.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="Reality.Net, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>External\Reality.Net.dll</HintPath>
@@ -136,6 +139,7 @@
     <Compile Include="Http\QuickMimeTypeMapper.cs" />
     <Compile Include="Http\Route.cs" />
     <Compile Include="LogConfigurator.cs" />
+    <Compile Include="Services\Implementations\InGameService.cs" />
     <Compile Include="Services\Implementations\ResourcesService.cs" />
     <Compile Include="StaticClasses\Soulstorm\ActiveModDetector.cs" />
     <Compile Include="StaticClasses\Soulstorm\DowstatsReplaySender.cs" />
@@ -145,6 +149,7 @@
     <Compile Include="Services\Implementations\SingleClientServer.cs" />
     <Compile Include="Services\Implementations\SingleMasterServer.cs" />
     <Compile Include="Services\Implementations\UpdaterService.cs" />
+    <Compile Include="StaticClasses\Soulstorm\InGameHelper.cs" />
     <Compile Include="ThunderHawk.cs" />
     <Compile Include="Data\AddressInfo.cs" />
     <Compile Include="Data\GameServer.cs" />
@@ -279,6 +284,10 @@
     </Page>
     <Page Include="Views\Elements\Element_Stats.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Elements\Element_InGame.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Elements\Element_Tweak.xaml">
       <SubType>Designer</SubType>
@@ -666,6 +675,8 @@
     <Resource Include="Images\Background_Chat.png" />
     <Resource Include="Images\Background_FAQ.png" />
     <Resource Include="Images\Background_NewsViewer.jpg" />
+    <Resource Include="Images\Background_InGame.jpg" />
+    <Resource Include="Images\Background_InGameNY.jpg" />
     <Resource Include="Images\BackButton.png" />
     <Resource Include="Images\star.png" />
     <Resource Include="Images\Indicator_Aquila.png" />
@@ -885,6 +896,7 @@
     <Resource Include="Images\Races\sob.png" />
     <Resource Include="Images\Races\spaceMarine.png" />
     <Resource Include="Images\Races\tau.png" />
+    <Resource Include="Images\Races\default.png" />
     <Content Include="steam_api64.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

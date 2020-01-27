@@ -49,7 +49,7 @@ namespace ThunderHawk
                     uri = new Uri("pack://application:,,,/ThunderHawk;component/Images/Races/sob.png");
                     break;
                 default:
-                    uri = new Uri("pack://application:,,,/ThunderHawk;component/Images/Races/spaceMarine.png");
+                    uri = new Uri("pack://application:,,,/ThunderHawk;component/Images/Races/default.png");
                     break;
             }
 
