@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using SoulstormRandomTools.Types;
 
 namespace SoulstormRandomTools
 {
@@ -18,6 +20,17 @@ namespace SoulstormRandomTools
                 list[k] = list[n];
                 list[n] = value;
             }
+        }
+
+        public static Dictionary<string, SoulstormItem> CreateDict(this SoulstormItem[] items)
+        {
+            var retDict = new Dictionary<string, SoulstormItem>();
+            foreach (var item in items)
+            {
+                retDict[item.Key] = item;
+            }
+
+            return retDict;
         }
     }
 }

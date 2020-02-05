@@ -21,7 +21,7 @@ namespace SoulstormRandomTools
                 count = 1;
 
             if (items == null || items.Length == 0)
-                items = itemsType == SoulstormItemType.Race ? ItemsProvider.Races : ItemsProvider.Maps;
+                items = itemsType == SoulstormItemType.Race ? ItemsProvider.Races: ItemsProvider.Maps;
             
             var returnItems = new SoulstormItem[count];
             for (var i = 0; i < count; i++)
@@ -43,26 +43,26 @@ namespace SoulstormRandomTools
 
         public SoulstormItem[] GenerateRandomRaces(uint racesCount, string[] racesFrom = null)
         {
-            var races = racesFrom?.Distinct().Select(raceName => ItemsProvider.Races.FirstOrDefault(x => x.Key == raceName)).ToArray();
+            var races = racesFrom?.Distinct().Where(x => ItemsProvider.RacesDict.ContainsKey(x)).Select(y => ItemsProvider.RacesDict[y]).ToArray();
             return GenerateSoulstormItems(SoulstormItemType.Race, racesCount, races);
         }
 
         public SoulstormItem[] GenerateRandomMaps(uint mapsCount, string[] mapsFrom = null)
         {
-            var maps = mapsFrom?.Distinct().Select(mapName => ItemsProvider.Maps.FirstOrDefault(x => x.Key == mapName)).ToArray();
+            var maps = mapsFrom?.Distinct().Where(x => ItemsProvider.MapsDict.ContainsKey(x)).Select(y => ItemsProvider.MapsDict[y]).ToArray();
             return GenerateSoulstormItems(SoulstormItemType.Map, mapsCount, maps);
         }
 
 
         public SoulstormItem[] ShuffleRaces(string[] racesFrom)
         {
-            var races = racesFrom.Distinct().Select(raceName => ItemsProvider.Races.FirstOrDefault(x => x.Key == raceName)).ToArray();
+            var races = racesFrom?.Distinct().Where(x => ItemsProvider.RacesDict.ContainsKey(x)).Select(y => ItemsProvider.RacesDict[y]).ToArray();
             return ShuffleSoulstormItems(SoulstormItemType.Race, races);
         }
 
         public SoulstormItem[] ShuffleMaps(string[] mapsFrom)
         {
-            var maps = mapsFrom.Distinct().Select(mapName => ItemsProvider.Maps.FirstOrDefault(x => x.Key == mapName)).ToArray();
+            var maps = mapsFrom?.Distinct().Where(x => ItemsProvider.MapsDict.ContainsKey(x)).Select(y => ItemsProvider.MapsDict[y]).ToArray();
             return ShuffleSoulstormItems(SoulstormItemType.Map, maps);
         }
 

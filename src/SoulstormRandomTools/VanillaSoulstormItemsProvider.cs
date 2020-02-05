@@ -1,10 +1,11 @@
-﻿using SoulstormRandomTools.Types;
+﻿using System.Collections.Generic;
+using SoulstormRandomTools.Types;
 
 namespace SoulstormRandomTools
 {
     public class VanillaSoulstormItemsProvider : ISoulstormItemsProvider
     {
-        public SoulstormItem[] Races { get; } = new SoulstormItem[]
+        public SoulstormItem[] Races { get; } = 
         {
             SoulstormItem.NewRace("csm", "Хаос", "Chaos"),
             SoulstormItem.NewRace("de", "Темные эльдары", "Dark Eldars"),
@@ -17,7 +18,8 @@ namespace SoulstormRandomTools
             SoulstormItem.NewRace("tau", "Тау", "Tau")
         };
 
-        public SoulstormItem[] Maps { get; } = new SoulstormItem[]
+
+        public SoulstormItem[] Maps { get; } = 
         {
             SoulstormItem.NewMap("bm", "Битва в болотах", "Battle Marshes"),
             SoulstormItem.NewMap("br", "Кровавая река", "Blood River"),
@@ -33,5 +35,16 @@ namespace SoulstormRandomTools
             SoulstormItem.NewMap("tf", "Падение Титана", "Titan's Fall"),
             SoulstormItem.NewMap("vp", "Вихревое плато", "Vortex Plateau")
         };
+
+        public Dictionary<string, SoulstormItem> RacesDict { get; }
+
+        public Dictionary<string, SoulstormItem> MapsDict { get; }
+
+        public VanillaSoulstormItemsProvider()
+        {
+            MapsDict = Maps.CreateDict();
+            RacesDict = Races.CreateDict();
+        }
+
     }
 }
