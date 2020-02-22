@@ -669,6 +669,7 @@
     <Resource Include="Images\Primarismarines.jpg" />
     <Resource Include="Images\BestPlayer.png" />
     <Resource Include="Images\YbubakaGuide.png" />
+    <Resource Include="Images\InGame.jpg" />
     <Resource Include="Images\settings.png" />
     <Resource Include="Images\thunderhawk_full.png" />
     <Resource Include="Images\thunderhawk_icon.png" />

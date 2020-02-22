@@ -6,5 +6,9 @@
     <SolidColorBrush x:Key="DarkMainBlue" Color="#266987" />
     <SolidColorBrush x:Key="DarkMainOrange" Color="#67340f" />
     
+    <SolidColorBrush x:Key="MainRed" Color="#990000" />
+    <SolidColorBrush x:Key="MainRedHover" Color="#dd0000" />
+    <SolidColorBrush x:Key="DarkMainRed" Color="#990000" />
+    
     <SolidColorBrush x:Key="ElectricBlue" Color="#0a8fcc" />
 </ResourceDictionary>

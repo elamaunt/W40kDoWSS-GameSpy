@@ -207,15 +207,15 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Grid x:Name="ContentGrid" Background="{DynamicResource MainOrange}">
+                    <Grid x:Name="ContentGrid" Background="{DynamicResource MainRed}">
                         <ContentPresenter x:Name="Content" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="ContentGrid" Property="Background" Value="#f47018" />
+                            <Setter TargetName="ContentGrid" Property="Background" Value="{DynamicResource MainRedHover}" />
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter TargetName="ContentGrid" Property="Background" Value="{DynamicResource DarkMainBlue}" />
+                            <Setter TargetName="ContentGrid" Property="Background" Value="{DynamicResource DarkMainRed}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

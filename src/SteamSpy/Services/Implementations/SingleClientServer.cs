@@ -25,6 +25,9 @@ namespace ThunderHawk
 {
     public class SingleClientServer : IClientServer
     {
+        
+        public static bool ShouldShowGames; // Для костыля с миганием
+        
         UdpPortHandler _serverReport;
         TcpPortHandler _serverRetrieve;
         TcpPortHandler _clientManager;
@@ -1730,11 +1733,13 @@ namespace ThunderHawk
             _chat.Send(node, bytesToSend);
         }
 
+       
+
         void OnServerRetrieve(TcpPortHandler handler, TcpClientNode node, byte[] buffer, int count)
         {
             var str = ToASCII(buffer, count);
             Logger.Trace("RETRIEVE " + str);
-
+            
             var endPoint = node.RemoteEndPoint;
 
             if (endPoint == null)
@@ -1812,7 +1817,15 @@ namespace ThunderHawk
 
                        Logger.Info("SERVERS bytes "+ encryptedBytes.Length);
 
-                       handler.Send(node, encryptedBytes);
+                       if (ShouldShowGames)
+                       {
+                           CoreContext.ClientServer.SendAsServerMessage("Refreshing Games found (" + servers.Length + " games). Preparing games list...");
+                           handler.Send(node, encryptedBytes);
+                       }else
+                       {
+                           CoreContext.ClientServer.SendAsServerMessage("Searching games...");
+                           ShouldShowGames = true;
+                       }
 
                        LobbiesUpdatedByRequest?.Invoke(servers.Select(x => new GameHostInfo()
                        {
@@ -2288,8 +2301,11 @@ namespace ThunderHawk
         }
 
         string RusNews => @" Привет! Вы на сервере elamaunt'а под названием THUNDERHAWK
+
+Welcome to Beta-test 2.1
 .
-Добро пожаловать на БЕТА-тест 2.0
+Pls, don't play here 3x3 and 4x4 untill we fix blocks. 
+.
 Функционально сервер почти полностью готов. Остались некоторые незначительные ошибки и невозможность играть командой в автоматче.
 Временно вы можете играть только с использование мода ThunderHawk.
 Фикс багов, доработки баланса и фикс пафинга (для Техники) внедрены в этот мод.
@@ -2299,7 +2315,7 @@ namespace ThunderHawk
 .
 1на1
 - 2P Fallen City
-- [TP MOD]edemus gamble
+- 2P Sugar Oasis
 - 2P Shrine of Excellion
 - 2P Meeting of Minds
 - 2P Battle Marshes
@@ -2320,6 +2336,7 @@ namespace ThunderHawk
 - 4P Skerries (доработанная Дэвилом)
 - 4p Saints Square 
 - 4p Sad Place
+- 4p Cold War
 .
 3на3
 - 6p Mortalis
@@ -2338,12 +2355,14 @@ namespace ThunderHawk
 - 8p thurabis plateau
 .
 .
-Сервер активно обсуждается здесь и в Дискорд.
-http://forums.warforge.ru/ (RUS)";
+Сервер активно обсуждается здесь и в Дискорд.";
 
         string EnNews => @" Hello! You are on elamaunt's server THUNDERHAWK.
 .
-Welcome on BETA-test 2.0!
+Welcome on BETA-test 2.1!
+.
+Pls, don't play here 3x3 and 4x4 untill we fix blocks. 
+.
 The server is almost complete. There are some minor bugs and the inability to play as a team of friends in automatch.
 Temporary you can play only with ThunderHawk mod.
 Bugfix, balance changes and pathfinding (for vehicle) fix are introduced in this mod.
@@ -2353,7 +2372,7 @@ Current maps in automatch:
 .
 1vs1
 - 2P Fallen City
-- [TP MOD]edemus gamble
+- 2P Sugar Oasis
 - 2P Shrine of Excellion
 - 2P Meeting of Minds
 - 2P Battle Marshes
@@ -2374,6 +2393,7 @@ Current maps in automatch:
 - 4P Skerries (fixed by Devil)
 - 4p Saints Square 
 - 4p Sad Place
+- 4p Cold War
 .
 3vs3
 - 6p Mortalis
@@ -2392,8 +2412,7 @@ Current maps in automatch:
 - 8p thurabis plateau
 .
 .
-The server is being actively discussed here and on Discord.
-http://forums.warforge.ru/ (RUS)";
+The server is being actively discussed here and on Discord.";
 
         string RoomPairs => @"
 room_pairs = 
@@ -2540,7 +2559,7 @@ automatch_defaults_dxp2 =
 	automatch_maps2p = 
 	{
 		""2p_Fallen_City"",
-		""[TP MOD]edemus gamble"",
+		""2p_SugarOasis"",
 		""2P_Shrine_of_Excellion"",
 		""2P_Meeting_of_Minds"",
 		""2P_Battle_Marshes"",
@@ -2561,7 +2580,8 @@ automatch_defaults_dxp2 =
 		""4p_panrea_lowlands"",
 		""4P_Skerries"",
 		""4p_Saints_Square"",
-		""4p_Sad_Place""
+		""4p_Sad_Place"",
+        ""4p_cold_war""
 	},
 	automatch_maps6p = 
 	{

@@ -10,7 +10,8 @@
     <system:String x:Key="InGamePage">В игре</system:String>
 
     <!-- Main Page -->
-    <system:String x:Key="LaunchGame">Запустить игру</system:String>
+    <system:String x:Key="LaunchGame">Запустить игру (1x1, 2x2)</system:String>
+    <system:String x:Key="LaunchSteamGame">Запустить steam (3x3, 4x4, FFA)</system:String>
     <system:String x:Key="FoundErrors">Есть несколько рекомендации для повышения комфорта Вашей игры!</system:String>
     <system:String x:Key="ShowIt">Посмотреть!</system:String>
     <system:String x:Key="SteamNotLaunched">Стим не запущен!</system:String>

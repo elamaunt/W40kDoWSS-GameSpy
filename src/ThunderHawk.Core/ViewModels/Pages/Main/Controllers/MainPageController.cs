@@ -51,7 +51,7 @@ namespace ThunderHawk.Core
             }
 
             Frame.ActiveModRevision.Text = $"Thunderhawk <b>" + CoreContext.ThunderHawkModManager.ModVersion + "</b>";
-            Frame.LaunchGame.Text = "Launch Thunderhawk";
+            Frame.LaunchGame.Text = "Launch Thunderhawk\n          (1x1, 2x2)";
             Frame.LaunchGame.Action = LaunchGame;
         }
 
@@ -74,7 +74,7 @@ namespace ThunderHawk.Core
                 .OnFaultOnUi(ex => Frame.UserInteractions.ShowErrorNotification(ex.Message))
                 .OnContinueOnUi(t =>
                 {
-                    Frame.LaunchGame.Text = "Launch Thunderhawk";
+                    Frame.LaunchGame.Text = "Launch Thunderhawk\n          (1x1, 2x2)";
                     Frame.LaunchGame.Enabled = true;
                 });
         }

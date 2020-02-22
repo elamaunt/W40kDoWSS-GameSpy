@@ -18,15 +18,15 @@ namespace ThunderHawk
 {
     public class UpdaterService : IUpdaterService
     {
-        const string ApiKey = "AIzaSyD8_wjaIxgrQG0m-DwBYLR3ZDQiQjPB7bk";
+        const string ApiKey = "AIzaSyBUW0bH38EQPzp2CyKeGhBcTJtLucOjyz01";
 
-        const string Version = "2.07-1-beta";
-        const string VersionForUI = "BETA 2.07-1";
+        const string Version = "2.10-beta";
+        const string VersionForUI = "BETA 2.10";
 
         // If modifying these scopes, delete your previously saved credentials
         // at ~/.credentials/drive-dotnet-quickstart.json
         string[] Scopes = { DriveService.Scope.DriveReadonly };
-        string ApplicationName = "ThunderHawk";
+        string ApplicationName = "ThunderHawk1";
 
         UserCredential _credential;
         DriveService _service;
@@ -51,7 +51,7 @@ namespace ThunderHawk
                     _service = await CreateDriveService();
 
                 var listRequest = _service.Files.List();
-                listRequest.Q = "'1xi63t6lKE_EkldNWz9l-QM_8y99d_q9H' in parents";
+                listRequest.Q = "'1Ek8VuiC14SdYoW4Z7zcgeM-973S2sGzD' in parents";
 
                 var list = await listRequest.ExecuteAsync();
 
@@ -141,7 +141,7 @@ namespace ThunderHawk
                 _credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                     GoogleClientSecrets.Load(stream).Secrets,
                     Scopes,
-                    "user",
+                    "Thunderhawk1",
                     CancellationToken.None,
                     new FileDataStore(Path.Combine(Environment.CurrentDirectory, credPath), true));
             }

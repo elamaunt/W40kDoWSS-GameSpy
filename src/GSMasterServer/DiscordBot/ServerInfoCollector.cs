@@ -16,7 +16,8 @@ namespace GSMasterServer.DiscordBot
         private readonly SingleMasterServer _singleMasterServer;
         private readonly BotManager _botManager;
 
-        private static readonly string[] Numbers = { ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:", ":one::zero:" };
+        private static readonly string[] Numbers =
+            {":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:", ":one::zero:"};
 
         private static string GetRaceName(Race race)
         {
@@ -57,7 +58,8 @@ namespace GSMasterServer.DiscordBot
             var sb = new StringBuilder();
             sb.AppendLine($"Nickname: **{player.Name}**");
             sb.AppendLine($"MMR 1v1: **{player.Score1v1}**, 2v2: **{player.Score2v2}**, 3v3: **{player.Score3v3}**");
-            sb.AppendLine($"Wins: **{player.WinsCount}**, Games: **{player.GamesCount}** **({Math.Round(player.WinRate * 100, 2)}%)**, Winstreak: **{player.Best1v1Winstreak}**");
+            sb.AppendLine(
+                $"Wins: **{player.WinsCount}**, Games: **{player.GamesCount}** **({Math.Round(player.WinRate * 100, 2)}%)**, Winstreak: **{player.Best1v1Winstreak}**");
             sb.AppendLine(
                 $"Games count: Sm: **{player.Smgamescount}**, Csm: **{player.Csmgamescount}**, Orks: **{player.Orkgamescount}**, Eldar: **{player.Eldargamescount}**, " +
                 $"Ig: **{player.Iggamescount}**, Tau: **{player.Taugamescount}**, Necrons: **{player.Necrgamescount}**, Sob: **{player.Sobgamescount}**, De: **{player.Degamescount}**");
@@ -70,6 +72,7 @@ namespace GSMasterServer.DiscordBot
                 sb.AppendLine($"Email: __**{player.Email}**__");
                 sb.AppendLine($"Steam profile: __https://steamcommunity.com/profiles/{player.SteamId}__");
             }
+
             return sb.ToString();
         }
 
@@ -77,14 +80,18 @@ namespace GSMasterServer.DiscordBot
         {
             var textSb = new StringBuilder();
             var online = GetOnline();
-            textSb.AppendLine($"➡️ Server Online: {online}\n");
+            if (online > 50)
+            {
+                textSb.AppendLine($"➡️ Server Online: {online}\n");
+            }
 
             var top = _singleMasterServer.GetTop.Take(10).ToArray();
             textSb.AppendLine($"➡️ Best Players: ");
             for (var i = 0; i < top.Length; i++)
             {
                 var p = top[i];
-                textSb.AppendLine($"{Numbers[i]} **{p.Name}**  Rating: **{p.Score1v1}**  Games: **{p.GamesCount} ({Math.Round(p.WinRate * 100, 2)}%)**  Best Race: **{GetRaceName(p.FavouriteRace)}**");
+                textSb.AppendLine(
+                    $"{Numbers[i]} **{p.Name}**  Rating: **{p.Score1v1}**  Games: **{p.GamesCount} ({Math.Round(p.WinRate * 100, 2)}%)**  Best Race: **{GetRaceName(p.FavouriteRace)}**");
             }
 
             var channel = _botManager.ThunderGuild.GetTextChannel(DiscordServerConstants.ThunderHawkInfoChannelId);
@@ -98,12 +105,13 @@ namespace GSMasterServer.DiscordBot
             {
                 await channel.SendMessageAsync(textSb.ToString());
             }
+
             // Logger.Trace("[Discord bot]Updated server message!"); // слишком много логов спамит
         }
+
         public int GetOnline()
         {
             return _singleMasterServer.Online;
         }
-
     }
 }

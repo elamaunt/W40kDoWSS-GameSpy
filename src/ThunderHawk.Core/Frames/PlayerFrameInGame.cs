@@ -1,4 +1,4 @@
-﻿using Framework;
+﻿using Framework.Frames;
 
 namespace ThunderHawk.Core.Frames
 {

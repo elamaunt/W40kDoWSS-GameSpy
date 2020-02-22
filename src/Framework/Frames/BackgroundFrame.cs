@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Framework
+﻿namespace Framework.Frames
 {
     public class BackgroundFrame : ControlFrame, IBackgroundFrame
     {

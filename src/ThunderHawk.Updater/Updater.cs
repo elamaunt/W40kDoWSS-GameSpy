@@ -24,7 +24,7 @@ namespace ThunderHawk.Updater
             if (fileName == null)
             {
                 MessageBox.Show("Nothing to update. Launcher reinstallation may fix the problem." +
-                    "Also you can install update manually from https://drive.google.com/drive/folders/1xi63t6lKE_EkldNWz9l-QM_8y99d_q9H");
+                    "Also you can install update manually from https://drive.google.com/drive/folders/15DqgnwQflWlDEgvf4S6AZaATrs4-uvCX");
                 return;
             }
 

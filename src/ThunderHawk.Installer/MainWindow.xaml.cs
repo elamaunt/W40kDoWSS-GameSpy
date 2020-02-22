@@ -20,7 +20,7 @@ namespace ThunderHawk.Installer
 {
     public partial class MainWindow : Window
     {
-        const string ApiKey = "AIzaSyD8_wjaIxgrQG0m-DwBYLR3ZDQiQjPB7bk";
+        const string ApiKey = "AIzaSyAEf-48F1isO00CotwNw2WkPybV3ToVZhU";
         // If modifying these scopes, delete your previously saved credentials
         // at ~/.credentials/drive-dotnet-quickstart.json
         string[] Scopes = { DriveService.Scope.DriveReadonly };
@@ -89,7 +89,7 @@ namespace ThunderHawk.Installer
                     _service = await CreateDriveService();
 
                 var listRequest = _service.Files.List();
-                listRequest.Q = "'1xi63t6lKE_EkldNWz9l-QM_8y99d_q9H' in parents";
+                listRequest.Q = "'15DqgnwQflWlDEgvf4S6AZaATrs4-uvCX' in parents";
 
                 var list = await listRequest.ExecuteAsync();
 
@@ -210,40 +210,6 @@ namespace ThunderHawk.Installer
                 }
             });
         }
-
-        /*void RemoveOldFiles()
-        {
-            foreach (var directory in Directory.EnumerateDirectories(Environment.CurrentDirectory).ToArray())
-            {
-                if (ShouldSkipDirectory(directory))
-                    continue;
-
-                try
-                {
-                    Directory.Delete(directory, true);
-                }
-                catch (Exception ex)
-                {
-
-                }
-
-            }
-
-            foreach (var file in Directory.EnumerateFiles(Environment.CurrentDirectory).ToArray())
-            {
-                if (ShouldSkipFile(file))
-                    continue;
-
-                try
-                {
-                    File.Delete(file);
-                }
-                catch (Exception ex)
-                {
-
-                }
-            }
-        }*/
 
         bool ShouldSkipDirectory(string directory)
         {
