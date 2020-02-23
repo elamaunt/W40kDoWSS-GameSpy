@@ -33,12 +33,12 @@ namespace ThunderHawk
             }
         }*/
 
-        public Task LaunchThunderHawkGameAndWait()
+        public Task LaunchThunderHawkGameAndWait(String server)
         {
             if (!CoreContext.LaunchService.TryGetOrChoosePath(out string path))
                 return Task.CompletedTask;
 
-            CoreContext.OpenLogsService.Log($"Launch ThunderHawk Game");
+            CoreContext.OpenLogsService.Log($"Launch Game");
 
             return Task.Factory.StartNew(async () =>
             {
@@ -79,37 +79,58 @@ namespace ThunderHawk
                 {
                     try
                     {
-                        var exeFileName = Path.Combine(Environment.CurrentDirectory,  "GameFiles", "Patch1.2", "Soulstorm.exe");
+                        
+                        var exeFileName = server == "thunderhawk" ? 
+                            Path.Combine(Environment.CurrentDirectory,  "GameFiles", "Patch1.2", "Soulstorm.exe") : 
+                            Path.Combine(PathFinder.GamePath, "Soulstorm.exe");
                         var procParams = "-nomovies -forcehighpoly";
                         if (AppSettings.ThunderHawkModAutoSwitch)
-                            procParams += " -modname ThunderHawk";
+                            procParams += server == "thunderhawk" ? " -modname ThunderHawk" : " -modname DXP2";
 
-                        CopySchemes(path);
-                        CopyHotkeys(path);
-
-                        ProcessManager.KillDowStatsProccesses();
-
-                        var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
+                        if (server == "thunderhawk")
                         {
-                            UseShellExecute = true,
-                            WorkingDirectory = path
-                        });
+                            CopySchemes(path);
+                            CopyHotkeys(path);
 
-                        GameProcess = ssProc;
+                            ProcessManager.KillDowStatsProccesses();
 
-                        CoreContext.ClientServer.Start();
+                            var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
+                            {
+                                UseShellExecute = true,
+                                WorkingDirectory = path
+                            });
 
-                        ssProc.EnableRaisingEvents = true;
+                            GameProcess = ssProc;
 
-                        Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
+                            CoreContext.ClientServer.Start();
 
-                        // to read warning.log from the begining after start game
-                        Task.Delay(10000).ContinueWith(t => { CoreContext.InGameService.DropSsConsoleOffset(); });
+                            ssProc.EnableRaisingEvents = true;
 
-                        ssProc.Exited += (s, e) =>
+                            Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
+
+                            // to read warning.log from the begining after start game
+                            Task.Delay(10000).ContinueWith(t => { CoreContext.InGameService.DropSsConsoleOffset(); });
+
+                            ssProc.Exited += (s, e) =>
+                            {
+                                tcs.TrySetResult(ssProc);
+                            };
+                        }
+                        else
                         {
-                            tcs.TrySetResult(ssProc);
-                        };
+                            Process steamGameProc = new Process();
+
+                            StartApp();
+
+                            void StartApp()
+                            {
+                                steamGameProc.StartInfo.FileName = SteamApiHelper.GetSteamExePath();
+                                steamGameProc.StartInfo.Arguments = "-applaunch 9450 -modname DXP2 -nomovies -forcehighpoly";
+                                steamGameProc.Start();
+                            }
+                        }
+
+                        
                     }
                     catch (Exception ex)
                     {
@@ -171,7 +192,7 @@ namespace ThunderHawk
                         if (!Directory.Exists(targetDir))
                             Directory.CreateDirectory(targetDir);
 
-                        File.Copy(hotKeysPath, targetPath, true);
+                        File.Copy(hotKeysPath, targetPath, false);
                     }
                 }
             }

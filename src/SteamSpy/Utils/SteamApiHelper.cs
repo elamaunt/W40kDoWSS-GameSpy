@@ -29,7 +29,7 @@ namespace ThunderHawk.Utils
             {
                 var split = ((string)result).Split('"');
 
-                if (split.Length == 2)
+                if (split.Length > 2)
                     return split[1];
 
                 return null;

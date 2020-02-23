@@ -1819,10 +1819,9 @@ namespace ThunderHawk
 
                        if (ShouldShowGames)
                        {
-                           CoreContext.ClientServer.SendAsServerMessage("Refreshing Games found (" + servers.Length + " games). Preparing games list...");
+                           CoreContext.ClientServer.SendAsServerMessage("Refreshing. Games found (" + servers.Length + " games). Preparing games list...");
                            handler.Send(node, encryptedBytes);
-                       }else
-                       {
+                       } else {
                            CoreContext.ClientServer.SendAsServerMessage("Searching games...");
                            ShouldShowGames = true;
                        }
