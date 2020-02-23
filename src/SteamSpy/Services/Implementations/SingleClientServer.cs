@@ -697,6 +697,11 @@ namespace ThunderHawk
 
                 using (var ms = new MemoryStream())
                 {
+                    if (request.Url.StartsWith("/SS_StatsPage", StringComparison.OrdinalIgnoreCase))
+                    {
+                        HttpHelper.WriteResponse(ms, HttpResponceBuilder.DowstatsRedirect());
+                        goto END;
+                    }
                     if (request.Url.EndsWith("news.txt", StringComparison.OrdinalIgnoreCase))
                     {
                         CoreContext.OpenLogsService.Log($"News requested");
