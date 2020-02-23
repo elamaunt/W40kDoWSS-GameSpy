@@ -561,7 +561,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <None Include="ThunderHawk.manifest" />
-    <None Include="token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-user">
+    <None Include="token.json\Google.Apis.Auth.OAuth2.Responses.TokenResponse-thunderhawk1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
