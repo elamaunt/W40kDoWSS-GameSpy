@@ -69,6 +69,8 @@ namespace ThunderHawk
                 }
                 catch (Exception ex)
                 {
+                    Logger.Error("Can't find steam path: " + ex);
+                    
                     // TODO перенести в отдельный класс для алертов
                     Form f = new Form();
                     f.Icon = new Icon("thunderhaw_notify.ico");
@@ -109,7 +111,32 @@ namespace ThunderHawk
                 }
             }
 
-            CoreContext.SteamApi.Initialize();
+            try
+            {
+                CoreContext.SteamApi.Initialize();
+            }
+            catch(Exception ex)
+            {
+                Logger.Error("Can't init steam api: " + ex);
+                    
+                // TODO перенести в отдельный класс для алертов
+                Form f = new Form();
+                f.Icon = new Icon("thunderhaw_notify.ico");
+                f.Size = new System.Drawing.Size(400, 150);
+                f.Text = "Can't launch steam api";
+                Label label = new Label();
+                label.Location = new System.Drawing.Point(15, 20);
+                label.Size = new System.Drawing.Size(300, 30);
+                label.Text = "LogIn to steam and try again";
+                f.Controls.Add(label);
+                    
+                f.FormClosed += (sender, args) =>
+                {
+                    Environment. Exit(0);
+                };
+                return;
+            }
+            
             CoreContext.UpdaterService.CheckForUpdates();
 
             var window = WPFPageHelper.InstantiateWindow<MainWindowViewModel>();
