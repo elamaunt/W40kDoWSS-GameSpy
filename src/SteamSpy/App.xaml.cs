@@ -4,10 +4,12 @@ using Framework.WPF;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Threading;
 using System.Windows;
+using System.Windows.Forms;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 using Module = Framework.Module;
@@ -34,23 +36,6 @@ namespace ThunderHawk
 
         protected override void OnStartup(StartupEventArgs e)
         {
-           /* try
-            {
-                DesktopNotificationManagerCompat.RegisterAumidAndComServer<ThunderHawkNotificationActivator>("ThunderHawk");
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn(ex);
-            }
-
-            try
-            {
-                DesktopNotificationManagerCompat.RegisterActivator<ThunderHawkNotificationActivator>();
-            }
-            catch (Exception ex)
-            {
-                Logger.Warn(ex);
-            }*/
 
             if (PathFinder.GamePath != null)
             {
@@ -66,15 +51,55 @@ namespace ThunderHawk
             Environment.CurrentDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
             if (Environment.Is64BitProcess)
-                File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api64.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api_th.dll"), true);
+                File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api64.dll"),
+                    Path.Combine(Environment.CurrentDirectory, "steam_api_th.dll"), true);
             else
-                File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api86.dll"), Path.Combine(Environment.CurrentDirectory, "steam_api_th.dll"), true);
+                File.Copy(Path.Combine(Environment.CurrentDirectory, "steam_api86.dll"),
+                    Path.Combine(Environment.CurrentDirectory, "steam_api_th.dll"), true);
 
             base.OnStartup(e);
 
             if (!CoreContext.SystemService.IsSteamRunning)
             {
-                var steamPath = CoreContext.SystemService.GetSteamExePath();
+                String steamPath;
+
+                try
+                {
+                    steamPath = CoreContext.SystemService.GetSteamExePath();
+                }
+                catch (Exception ex)
+                {
+                    // TODO перенести в отдельный класс для алертов
+                    Form f = new Form();
+                    f.Icon = new Icon("thunderhaw_notify.ico");
+                    f.Size = new System.Drawing.Size(400, 150);
+                    f.Text = "Can't detect steam";
+                    Label label = new Label();
+                    label.Location = new System.Drawing.Point(15, 20);
+                    label.Size = new System.Drawing.Size(300, 30);
+                    label.Text = "You should install steam to play on this server.";
+                    f.Controls.Add(label);
+                    
+                    Button goToSteamWebSite = new Button();
+                    // Configure the LinkLabel's location. 
+                    goToSteamWebSite.SetBounds(15,70, 350,20);
+                    goToSteamWebSite.Click += (sender, args) =>
+                    {
+                        Process.Start("https://store.steampowered.com/about/");
+                    };
+
+                    // Set the text for the LinkLabel.
+                    goToSteamWebSite.Text = "Download steam";
+                    f.Controls.Add(goToSteamWebSite);
+                    
+                    f.Show();
+                    f.FormClosed += (sender, args) =>
+                    {
+                        Environment. Exit(0);
+                    };
+                    return;
+                }
+
 
                 if (steamPath != null)
                 {
@@ -89,11 +114,11 @@ namespace ThunderHawk
 
             var window = WPFPageHelper.InstantiateWindow<MainWindowViewModel>();
 
-           
+
             window.Show();
 
             MainWindow = window;
-            
+
             if (_silence)
                 window.Visibility = Visibility.Collapsed;
 
