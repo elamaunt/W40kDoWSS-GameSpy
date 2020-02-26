@@ -28,7 +28,6 @@ namespace ThunderHawk.Core
             {
                 new PageTabViewModel(new MainPageViewModel()),
                 (ChatTabViewModel = new PageTabViewModel(ChatViewModel = new ChatPageViewModel())),
-                new PageTabViewModel(new InGamePageViewModel()),
                 new PageTabViewModel(StatsViewModel = new StatsPageViewModel()),
                 new PageTabViewModel(new TweaksPageViewModel()),
                 new PageTabViewModel(LogsViewModel = new LogsPageViewModel())//,

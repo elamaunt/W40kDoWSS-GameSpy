@@ -33,7 +33,7 @@ namespace ThunderHawk
             }
         }*/
 
-        public Task LaunchThunderHawkGameAndWait(String server)
+        public Task LaunchGameAndWait(String server)
         {
             if (!CoreContext.LaunchService.TryGetOrChoosePath(out string path))
                 return Task.CompletedTask;
@@ -44,14 +44,14 @@ namespace ThunderHawk
             {
                 ProcessManager.KillAllGameProccessesWithoutWindow();
 
-                if (!CoreContext.MasterServer.IsConnected)
+                if (!CoreContext.MasterServer.IsConnected && server == "thunderhawk")
                     throw new Exception("Server is unavailable");
 
                 if (ProcessManager.GameIsRunning())
                     throw new Exception("Game is running");
 
                 if (!PathFinder.IsPathFound())
-                    throw new Exception("Path to game not found in Steam");
+                    throw new Exception("Path to game not found");
 
                 CoreContext.ThunderHawkModManager.DeployModAndModule(path);
 

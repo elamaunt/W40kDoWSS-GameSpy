@@ -2564,6 +2564,7 @@ automatch_defaults_dxp2 =
 	{
 		""2p_Fallen_City"",
 		""2p_SugarOasis"",
+        ""2p_Deadly_Fun_Archeology"",
 		""2P_Shrine_of_Excellion"",
 		""2P_Meeting_of_Minds"",
 		""2P_Battle_Marshes"",

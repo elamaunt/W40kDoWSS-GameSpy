@@ -301,10 +301,13 @@ namespace ThunderHawk
 
         private void UpdatePlayerFinishLoadStatus(string playerName)
         {
-            foreach (var inGamePlayer in inGamePlayers)
+            if (inGamePlayers != null)
             {
-                if (inGamePlayer.Name.Equals(playerName))
-                    inGamePlayer.IsLoadComplete = true;
+                foreach (var inGamePlayer in inGamePlayers)
+                {
+                    if (inGamePlayer.Name.Equals(playerName))
+                        inGamePlayer.IsLoadComplete = true;
+                }
             }
         }
 

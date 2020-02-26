@@ -17,28 +17,30 @@ namespace ThunderHawk.Core
                     {
                         Author = "Anibus",
 
-                        Russian = new NewsLanguageItemDTO()
+                        Russian = new NewsLanguageItemDTO
                         {
-                            Title = "ThunderHawk 2.1",
+                            Title = "ThunderHawk 2.10",
                             Annotation = "Изменения в проекте",
-                            Body =  "<b>Дорогие игроки!</b>\n\n Добавлена новая вкладка 'В игре'. Теперь станет понятно, кто играет с калькулятора и за какую расу! Добавлены две новые карты в автоматч:\n" +
+                            Body =  "<b>Дорогие игроки!</b>\n\n По многочисленным просьбам мы вернули кнопку запуска стим версии и упростили первоначальную установку, а также пофиксили часть багов. Удачи в рейтинге!\n" +
                                     "- sugar_oasis(2)\n" +
+                                    "- deadly_fun_archeology(2)\n"+
                                     "- cold_war(4)\n" +
                                     "удалена карта: edemus gamble(2)"
                         },
 
-                        English = new NewsLanguageItemDTO()
+                        English = new NewsLanguageItemDTO
                         {
-                            Title = "ThunderHawk 2.1",
+                            Title = "ThunderHawk 2.10",
                             Annotation = "Global changes",
-                            Body =  "<b>Dear Players!</b>\n\n Add new tab InGame, now you can see, who use calculator to play soulstorm and show cunning random player's races! Added two new maps in automatch:\n" +
+                            Body =  "<b>Dear Players!</b>\n\n Add new tab InGame, now you can see random player's races, mmr and loading status! Added three new maps in automatch:\n" +
                                     "- sugar_oasis(2)\n" +
+                                    "- deadly_fun_archeology(2)\n"+
                                     "- cold_war(4)\n" + 
                             "map remove: edemus gamble(2)"
                         },
 
                         ImagePath = "pack://application:,,,/ThunderHawk;component/Images/InGame.jpg",
-                        CreatedDate = new DateTime(2020, 02, 19)
+                        CreatedDate = new DateTime(2020, 02, 28)
                     },
                     
                      new NewsItemDTO()
@@ -85,7 +87,7 @@ namespace ThunderHawk.Core
                         CreatedDate = new DateTime(2019, 9, 12)
                     },
 
-                    new NewsItemDTO()
+                    /*new NewsItemDTO()
                     {
                         Author = "elamaunt",
 
@@ -105,7 +107,7 @@ namespace ThunderHawk.Core
 
                         ImagePath = "pack://application:,,,/ThunderHawk;component/Images/YbubakaGuide.png",
                         CreatedDate = new DateTime(2019, 7, 30)
-                    }
+                    }*/
                 };
         }
     }

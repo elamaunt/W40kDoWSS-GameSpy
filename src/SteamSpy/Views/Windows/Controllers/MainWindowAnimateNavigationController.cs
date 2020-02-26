@@ -11,10 +11,11 @@ using ThunderHawk.Core;
 
 namespace ThunderHawk
 {
-    public class MainWindowBackgroundController : BindingController<Window_Main, MainWindowViewModel>, ICustomContentPresenter
+    public class MainWindowBackgroundController : BindingController<Window_Main, MainWindowViewModel>,
+        ICustomContentPresenter
     {
         string DefaultImagePath
-        { 
+        {
             get
             {
                 if (IsNewYear)
@@ -48,7 +49,8 @@ namespace ThunderHawk
         {
             _currentPath = DefaultImagePath;
             Frame.NavigationPanel.SetExtension<ICustomContentPresenter>(this);
-            SubscribeOnPropertyChanged(Frame.NavigationPanel, nameof(INavigationPanelFrame.CurrentContentViewModel), OnContentChanged);
+            SubscribeOnPropertyChanged(Frame.NavigationPanel, nameof(INavigationPanelFrame.CurrentContentViewModel),
+                OnContentChanged);
             View.WindowBackground.Source = new BitmapImage(new Uri(DefaultImagePath, UriKind.RelativeOrAbsolute));
 
             View.NavigationFrame.Navigated += OnNavigated;
@@ -56,7 +58,7 @@ namespace ThunderHawk
 
         void OnNavigated(object sender, NavigationEventArgs e)
         {
-            var uiElement = (UIElement)e.Content;
+            var uiElement = (UIElement) e.Content;
 
             if (_currentContent == uiElement)
                 return;
@@ -66,29 +68,19 @@ namespace ThunderHawk
             if (uiElement != null)
             {
                 uiElement.Opacity = 0;
-                uiElement.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, TimeSpan.FromSeconds(0.25)));
+                uiElement.BeginAnimation(UIElement.OpacityProperty, new DoubleAnimation(1d, TimeSpan.FromSeconds(0.1)));
             }
         }
 
         public void Present(System.Windows.Controls.Frame frame, IBindableView content)
         {
-             var currentContent = (UIElement)frame.Content;
+            var currentContent = (UIElement) frame.Content;
 
             if (currentContent == content)
                 return;
 
-             Action complete = () => frame.Content = content;
-
-             if (currentContent != null)
-             {
-                 var fadeOutAnimation = new DoubleAnimation(0d, TimeSpan.FromSeconds(0.25));
-                 fadeOutAnimation.Completed += (s, e) => complete();
-                 currentContent.BeginAnimation(UIElement.OpacityProperty, fadeOutAnimation);
-             }
-             else
-             {
-                 complete();
-             }
+            Action complete = () => frame.Content = content;
+            complete();
         }
 
         void OnContentChanged()
@@ -118,7 +110,6 @@ namespace ThunderHawk
                 ChangeTo(path);
             else
                 SetupDefaultBackground();
-
         }
 
         private void SetupDefaultBackground()
@@ -137,7 +128,8 @@ namespace ThunderHawk
                 path = "pack://application:,,,/ThunderHawk;component/" + path;
 
 
-            ChangeSource(View.WindowBackground, new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute)), TimeSpan.FromSeconds(0.25), TimeSpan.FromSeconds(0.5));
+            ChangeSource(View.WindowBackground, new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute)),
+                TimeSpan.FromSeconds(0.2), TimeSpan.FromSeconds(0.2));
         }
 
         public static void ChangeSource(Image image, ImageSource source, TimeSpan fadeOutTime, TimeSpan fadeInTime)
@@ -172,7 +164,7 @@ namespace ThunderHawk
 
         public void GoForward(System.Windows.Controls.Frame view)
         {
-            var currentContent = (UIElement)view.Content;
+            var currentContent = (UIElement) view.Content;
 
             if (currentContent == null)
                 return;
@@ -191,7 +183,7 @@ namespace ThunderHawk
 
         public void GoBack(System.Windows.Controls.Frame view)
         {
-            var currentContent = (UIElement)view.Content;
+            var currentContent = (UIElement) view.Content;
 
             if (currentContent == null)
                 return;

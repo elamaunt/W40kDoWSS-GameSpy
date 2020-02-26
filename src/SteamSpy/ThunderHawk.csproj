@@ -285,10 +285,6 @@
     <Page Include="Views\Elements\Element_Stats.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Elements\Element_InGame.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Views\Elements\Element_Tweak.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

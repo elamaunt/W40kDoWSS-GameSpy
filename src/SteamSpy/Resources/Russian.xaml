@@ -19,7 +19,7 @@
     <system:String x:Key="FaqInfo">Есть вопросы? Ответы в</system:String>
     
     <!-- InGame Page -->
-    <system:String x:Key="CurrentGame">Текущая игра:</system:String>
+    <system:String x:Key="GameInfo">Игровая информация:</system:String>
 
     <!-- Tweaks Page -->
     <system:String x:Key="TweaksPageHeader">Конфигуратор улучшений</system:String>
