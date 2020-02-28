@@ -64,15 +64,12 @@ namespace IrcD.Commands
 
         public void Handle(UserInfo info, string prefix, string command, List<string> args, int bytes)
         {
-            CommandBase commandObject;
-
-            if (_commandList.TryGetValue(command, out commandObject))
+            if (_commandList.TryGetValue(command, out var commandObject))
             {
                 bool skipHandle = false;
                 var handleMethodInfo = commandObject.GetType().GetMethod("Handle");
 
-                var checkRegistered = Attribute.GetCustomAttribute(handleMethodInfo, typeof(CheckRegisteredAttribute)) as CheckRegisteredAttribute;
-                if (checkRegistered != null)
+                if (Attribute.GetCustomAttribute(handleMethodInfo, typeof(CheckRegisteredAttribute)) is CheckRegisteredAttribute checkRegistered)
                 {
                     if (!info.Registered)
                     {
