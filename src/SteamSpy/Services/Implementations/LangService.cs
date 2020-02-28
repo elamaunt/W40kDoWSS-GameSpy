@@ -20,7 +20,10 @@ namespace ThunderHawk
             var langResource = Application.Current.Resources.MergedDictionaries.FirstOrDefault(x =>
                 x.Source != null && x.Source.OriginalString.StartsWith("Resources"));
             if (langResource == null)
+            {
+                Logger.Warn("Could not find language resource. It is null!");
                 return;
+            }
 
             langResource.Source = CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru"
                 ? new Uri("pack://application:,,,/ThunderHawk;component/Resources/Russian.xaml",
