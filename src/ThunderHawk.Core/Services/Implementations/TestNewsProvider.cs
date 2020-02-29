@@ -21,17 +21,16 @@ namespace ThunderHawk.Core
                         {
                             Title = "ThunderHawk 2.09",
                             Annotation = "Изменения в проекте",
-                            Body =  "<b>Дорогие игроки!</b>\n\n По многочисленным просьбам мы вернули кнопку запуска стим версии и упростили первоначальную установку, а также пофиксили часть багов. Удачи в рейтинге!\n" +
-                                    "- sugar_oasis(2)\n" +
-                                    "- deadly_fun_archeology(2)\n"+
-                                    "- cold_war(4)\n" +
-                                    "удалена карта: edemus gamble(2)"
-                        },
+                            Body =  "<b>Дорогие игроки!</b>\n\n По многочисленным просьбам мы вернули кнопку запуска стим версии и упростили первоначальную установку, а также пофиксили часть багов. " +
+                                    "Изменен маппул автоподбора:\nдобавлены карты: " +
+                                    "sugar_oasis(2), deadly_fun_archeology(2), cold_war(4)\n" +
+                                    "удалена карта: edemus gamble(2)\n\n Удачи в рейтинге!"
+                            },
 
                         English = new NewsLanguageItemDTO
                         {
                             Title = "ThunderHawk 2.09",
-                            Annotation = "Global changes",
+                            Annotation = "Changes in project",
                             Body =  "<b>Dear Players!</b>\n\n Add new tab InGame, now you can see random player's races, mmr and loading status! Added three new maps in automatch:\n" +
                                     "- sugar_oasis(2)\n" +
                                     "- deadly_fun_archeology(2)\n"+

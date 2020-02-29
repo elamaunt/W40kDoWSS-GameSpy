@@ -25,11 +25,11 @@ namespace GSMasterServer.Utils
         {
             DowstatsUploadGameUrl = "http://" + 
                                  (Environment.GetEnvironmentVariable("dowstatsServer") ?? "dowstats.ru") +
-                                 "/thunderhawkConnect/connect.php?";
+                                 "/thunderhawk/connect.php?";
             
             DowstatsUploadPlayerStatsUrl = "http://" + 
                                     (Environment.GetEnvironmentVariable("dowstatsServer") ?? "dowstats.ru") +
-                                    "/thunderhawkConnect/updatePlayer.php?";
+                                    "/thunderhawk/updatePlayer.php?";
             
         }
 
@@ -49,6 +49,7 @@ namespace GSMasterServer.Utils
                 var dowStatsPIndex = i + 1;
                 parameters["p" + dowStatsPIndex] = gameUserInfo[i].Profile.Name;
                 parameters["id" + dowStatsPIndex] = gameUserInfo[i].Profile.Id.ToString();
+                parameters["sid" + dowStatsPIndex] = gameUserInfo[i].Profile.SteamId.ToString();
                 parameters["mmr1x1p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score1v1.ToString();
                 parameters["mmr2x2p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score2v2.ToString();
                 parameters["mmr3x3p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score3v3.ToString();
