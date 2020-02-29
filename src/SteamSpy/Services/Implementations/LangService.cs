@@ -17,10 +17,19 @@ namespace ThunderHawk
 
         private void Reload()
         {
-            if (CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru")
-                Application.Current.Resources.MergedDictionaries[6].Source = new Uri("pack://application:,,,/ThunderHawk;component/Resources/Russian.xaml", UriKind.Absolute);
-            else
-                Application.Current.Resources.MergedDictionaries[6].Source = new Uri("pack://application:,,,/ThunderHawk;component/Resources/English.xaml", UriKind.Absolute);
+            var langResource = Application.Current.Resources.MergedDictionaries.FirstOrDefault(x =>
+                x.Source != null && x.Source.OriginalString.StartsWith("Resources"));
+            if (langResource == null)
+            {
+                Logger.Warn("Could not find language resource. It is null!");
+                return;
+            }
+
+            langResource.Source = CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru"
+                ? new Uri("pack://application:,,,/ThunderHawk;component/Resources/Russian.xaml",
+                    UriKind.Absolute)
+                : new Uri("pack://application:,,,/ThunderHawk;component/Resources/English.xaml",
+                    UriKind.Absolute);
         }
 
         public CultureInfo CurrentCulture

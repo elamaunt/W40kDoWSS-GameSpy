@@ -48,12 +48,10 @@ namespace Framework
 
         public bool Bind(object view, object frame)
         {
-            var typedView = view as ViewType;
-            if (typedView == null)
+            if (!(view is ViewType typedView))
                 throw new ArgumentException(nameof(view));
 
-            var typedFrame = frame as FrameType;
-            if (typedFrame == null)
+            if (!(frame is FrameType typedFrame))
                 throw new ArgumentException(nameof(frame));
 
             _weakView.SetTarget(typedView);
@@ -103,13 +101,13 @@ namespace Framework
 
         public void RunOnUIThread(Action action)
         {
-            Action @do = () =>
+            void Do()
             {
                 if (IsBinded)
                     action();
-            };
+            }
 
-            Dispatcher.RunOnMainThread(@do);
+            Dispatcher.RunOnMainThread(Do);
         }
 
         protected void RunWhenUnbind(Action unbindAction)

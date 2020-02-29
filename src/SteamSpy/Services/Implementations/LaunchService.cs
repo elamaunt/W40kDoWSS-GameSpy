@@ -293,18 +293,16 @@ namespace ThunderHawk
 
             if (process != null)
             {
-                SystemInfo si;
-                GetSystemInfo(out si);
+                GetSystemInfo(out var si);
 
                 byte[] chunk = new byte[1024];
 
                 byte* p = (byte*)0;
                 var max = (byte*)si.MaximumApplicationAddress;
-                MEMORY_BASIC_INFORMATION info;
 
                 while (p < max)
                 {
-                    if (VirtualQueryEx(process.Handle, (IntPtr)p, out info, (uint)sizeof(MEMORY_BASIC_INFORMATION)) == sizeof(MEMORY_BASIC_INFORMATION))
+                    if (VirtualQueryEx(process.Handle, (IntPtr)p, out var info, (uint)sizeof(MEMORY_BASIC_INFORMATION)) == sizeof(MEMORY_BASIC_INFORMATION))
                     {
                         p = (byte*)info.BaseAddress;
                         //chunk.resize(info.RegionSize);
@@ -314,8 +312,7 @@ namespace ThunderHawk
                         if (chunk.Length < s)
                             chunk = new byte[s];
 
-                        IntPtr bytesRead;
-                        if (ReadProcessMemory(process.Handle, (IntPtr)p, chunk, s, out bytesRead))
+                        if (ReadProcessMemory(process.Handle, (IntPtr)p, chunk, s, out var bytesRead))
                         {
                             var rs = (int)bytesRead;
 
