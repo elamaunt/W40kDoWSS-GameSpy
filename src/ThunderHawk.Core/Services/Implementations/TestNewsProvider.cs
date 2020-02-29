@@ -19,7 +19,7 @@ namespace ThunderHawk.Core
 
                         Russian = new NewsLanguageItemDTO
                         {
-                            Title = "ThunderHawk 2.10",
+                            Title = "ThunderHawk 2.09",
                             Annotation = "Изменения в проекте",
                             Body =  "<b>Дорогие игроки!</b>\n\n По многочисленным просьбам мы вернули кнопку запуска стим версии и упростили первоначальную установку, а также пофиксили часть багов. Удачи в рейтинге!\n" +
                                     "- sugar_oasis(2)\n" +
@@ -30,7 +30,7 @@ namespace ThunderHawk.Core
 
                         English = new NewsLanguageItemDTO
                         {
-                            Title = "ThunderHawk 2.10",
+                            Title = "ThunderHawk 2.09",
                             Annotation = "Global changes",
                             Body =  "<b>Dear Players!</b>\n\n Add new tab InGame, now you can see random player's races, mmr and loading status! Added three new maps in automatch:\n" +
                                     "- sugar_oasis(2)\n" +

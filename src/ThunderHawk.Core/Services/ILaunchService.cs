@@ -9,7 +9,7 @@ namespace ThunderHawk.Core
         void SwitchGameToMod(string modName);
         string GetCurrentModName();
         string GamePath { get; }
-        bool CanLaunchGame { get; }
+        bool IsGamePreparingToStart { set; get; }
         Process GameProcess { get; }
 
         Task LaunchGameAndWait(String server);

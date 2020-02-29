@@ -34,7 +34,10 @@ namespace ThunderHawk
                     if (ArrayEquals(bytes, currentBytes) && Directory.Exists(modPath))
                         return;
                 }
-
+                
+                // Начинается долгая распаковка мода, надо предупредить юзера, что придется подождать
+                CoreContext.LaunchService.IsGamePreparingToStart = true;
+                
                 File.Copy(launcherModulePath, modulePath, true);
 
                 if (Directory.Exists(modPath))
@@ -46,10 +49,12 @@ namespace ThunderHawk
                 Directory.CreateDirectory(modPath);
                 using (var archive = ZipFile.Open(Path.Combine(ModFolderName, "Mod.zip"), ZipArchiveMode.Read))
                     archive.ExtractToDirectory(gamePath);
+                CoreContext.LaunchService.IsGamePreparingToStart = false;
             }
             catch (Exception ex)
             {
                 Logger.Error(ex);
+                CoreContext.LaunchService.IsGamePreparingToStart = false;
             }
         }
 

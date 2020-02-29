@@ -129,31 +129,13 @@ namespace ThunderHawk
 
 
             ChangeSource(View.WindowBackground, new BitmapImage(new Uri(path, UriKind.RelativeOrAbsolute)),
-                TimeSpan.FromSeconds(0.2), TimeSpan.FromSeconds(0.2));
+                TimeSpan.FromSeconds(0.2));
         }
 
-        public static void ChangeSource(Image image, ImageSource source, TimeSpan fadeOutTime, TimeSpan fadeInTime)
+        public static void ChangeSource(Image image, ImageSource source, TimeSpan fadeInTime)
         {
-            var fadeInAnimation = new DoubleAnimation(1d, fadeInTime);
-
-            if (image.Source != null)
-            {
-                var fadeOutAnimation = new DoubleAnimation(0d, fadeOutTime);
-
-                fadeOutAnimation.Completed += (o, e) =>
-                {
-                    image.Source = source;
-                    image.BeginAnimation(Image.OpacityProperty, fadeInAnimation);
-                };
-
-                image.BeginAnimation(Image.OpacityProperty, fadeOutAnimation);
-            }
-            else
-            {
-                image.Opacity = 0d;
-                image.Source = source;
-                image.BeginAnimation(Image.OpacityProperty, fadeInAnimation);
-            }
+            image.Source = source;
+            image.BeginAnimation(Image.OpacityProperty, new DoubleAnimation(0d, 1d, TimeSpan.FromSeconds(2)));
         }
 
         protected override void OnUnbind()

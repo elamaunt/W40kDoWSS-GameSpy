@@ -1824,9 +1824,23 @@ namespace ThunderHawk
 
                        if (ShouldShowGames)
                        {
-                           CoreContext.ClientServer.SendAsServerMessage("Refreshing. Games found (" + servers.Length + " games). Preparing games list...");
+                           int autoGames = 0;
+                           int customGames = 0;
+                           // TODO вынести в отдельно
+                           for (int i = 0; i < servers.Length; i++)
+                           {
+                               var server = servers[i];
+                               if (server.Ranked) autoGames++;
+                               else customGames++;
+                           }
+                           
+                           CoreContext.ClientServer.SendAsServerMessage(
+                               "Received game list: " + customGames + " - custom; " + autoGames +
+                               " - auto. Processing...");
                            handler.Send(node, encryptedBytes);
-                       } else {
+                       }
+                       else
+                       {
                            CoreContext.ClientServer.SendAsServerMessage("Searching games...");
                            ShouldShowGames = true;
                        }
@@ -2320,6 +2334,7 @@ Pls, don't play here 3x3 and 4x4 untill we fix blocks.
 1на1
 - 2P Fallen City
 - 2P Sugar Oasis
+- 2p Deadly Fun Archeology
 - 2P Shrine of Excellion
 - 2P Meeting of Minds
 - 2P Battle Marshes
@@ -2377,6 +2392,7 @@ Current maps in automatch:
 1vs1
 - 2P Fallen City
 - 2P Sugar Oasis
+- 2p Deadly Fun Archeology
 - 2P Shrine of Excellion
 - 2P Meeting of Minds
 - 2P Battle Marshes

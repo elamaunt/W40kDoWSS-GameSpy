@@ -73,12 +73,5 @@ namespace ThunderHawk
             viewModel.PassData(bundle);
         }
 
-        protected override void OnStateChanged(EventArgs e)
-        {
-            if (WindowState == WindowState.Minimized)
-                this.Hide();
-
-            base.OnStateChanged(e);
-        }
     }
 }

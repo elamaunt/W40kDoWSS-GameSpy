@@ -149,7 +149,7 @@ namespace ThunderHawk.Core
             {
                 if (CoreContext.InGameService.errorOccured)
                 {
-                    Frame.InfoLabel.Text = "Fatal error occured. Pls send launcher log to Anibus";
+                    Frame.InfoLabel.Text = "Fatal error occured. Pls send launcher log to developers";
                     SetTabsToDefault();
                 }
                 else
@@ -163,9 +163,12 @@ namespace ThunderHawk.Core
                     {
                         if (CoreContext.LaunchService.GameProcess == null)
                         {
-                            Frame.InfoLabel.Text = "Soulstorm is not running or has been launched in another way";
+                            Frame.InfoLabel.Text = "Can't subscribe to soulstorm process";
                         }
                         else Frame.InfoLabel.Text = "Successful subscribe to Soulstorm - waiting for the game start";
+                        
+                        if (CoreContext.LaunchService.IsGamePreparingToStart) Frame.InfoLabel.Text = "Preparing thunderhawk mod, pls wait...";
+                        
 
                         SetTabsToDefault();
                     }

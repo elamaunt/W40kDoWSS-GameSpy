@@ -34,6 +34,14 @@
             <ListView.BitmapEffect>
                 <DropShadowBitmapEffect Color="Black" Direction="270" ShadowDepth="2" Opacity="1" Softness="2" />
             </ListView.BitmapEffect>
+            
+            <!-- для нормального выделения игр, может потом пригодиться -->
+            <!--<ListView.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Width" Value="660"/>
+                    <Setter Property="HorizontalAlignment" Value="Center"/>
+                </Style>
+            </ListView.ItemContainerStyle>-->
 
             <ListView.ItemContainerStyle>
                 <Style TargetType="ListBoxItem">

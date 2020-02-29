@@ -14,9 +14,9 @@ namespace ThunderHawk
 {
     public class LaunchService : ILaunchService
     {
-        public bool CanLaunchGame => !ProcessManager.GameIsRunning() && PathFinder.IsPathFound();
 
         public string GamePath => PathFinder.GamePath;
+        public bool IsGamePreparingToStart { get; set; }
 
         public Process GameProcess { get; private set; }
 
@@ -90,8 +90,6 @@ namespace ThunderHawk
                         if (server == "thunderhawk")
                         {
                             CopySchemes(path);
-                            CopyHotkeys(path);
-
                             ProcessManager.KillDowStatsProccesses();
 
                             var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
@@ -169,30 +167,6 @@ namespace ThunderHawk
                         {
                             File.Copy(file, Path.Combine(targetDir, Path.GetFileName(file)), true);
                         }
-                    }
-                }
-            }
-        }
-        void CopyHotkeys(string gamePath)
-        {
-            var profiles = Directory.GetDirectories(Path.Combine(gamePath, "Profiles"));
-            foreach (var profile in profiles)
-            {
-                var hotKeysPath = Path.Combine(profile, "dxp2", "KEYDEFAULTS.LUA");
-                if (File.Exists(hotKeysPath))
-                {
-                    var targetDir = Path.Combine(profile, "thunderhawk");
-
-                    if (!Directory.Exists(targetDir))
-                        Directory.CreateDirectory(targetDir);
-
-                    var targetPath = Path.Combine(targetDir, "KEYDEFAULTS.LUA");
-                    if (!File.Exists(targetPath))
-                    {
-                        if (!Directory.Exists(targetDir))
-                            Directory.CreateDirectory(targetDir);
-
-                        File.Copy(hotKeysPath, targetPath, false);
                     }
                 }
             }
