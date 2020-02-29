@@ -63,7 +63,7 @@ namespace IrcNet.Tools
         }
 
 
-        private static void Write(object obj, LogLevel logLevel, string callerFilePath, string callerMemberName, int sourceLineNumber)
+        public static void Write(object obj, LogLevel logLevel, string callerFilePath, string callerMemberName, int sourceLineNumber)
         {
             var name = $"{Path.GetFileName(callerFilePath)} line {sourceLineNumber} / {callerMemberName}";
             var logger = LogManager.GetLogger(name);

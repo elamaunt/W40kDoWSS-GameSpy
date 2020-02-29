@@ -88,12 +88,13 @@
   <ItemGroup>
     <PackageReference Include="Discord.Net" Version="2.1.1" />
     <PackageReference Include="Lidgren.Network" Version="1.0.2" />
-    <PackageReference Include="LiteDB" Version="4.1.4" />
     <PackageReference Include="System.Runtime.Caching" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ApiDomain\ApiDomain.csproj" />
+    <ProjectReference Include="..\DowBot\DowBot\DowBot.csproj" />
+    <ProjectReference Include="..\DowBot\DowRandomTools\DowRandomTools.csproj" />
     <ProjectReference Include="..\IrcD.Net\IrcD.Net.csproj" />
     <ProjectReference Include="..\SharedServices\SharedServices.csproj" />
     <ProjectReference Include="..\SoulstormRandomTools\SoulstormRandomTools.csproj" />
