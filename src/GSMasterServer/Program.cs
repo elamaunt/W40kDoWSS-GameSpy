@@ -1,11 +1,9 @@
 ﻿using GSMasterServer.Servers;
 using System;
-using System.Diagnostics;
 using System.IO;
-
 using System.Net;
 using System.Threading;
-using GSMasterServer.DiscordBot;
+using GSMasterServer.DowExpertBot;
 using IrcNet.Tools;
 using Exception = System.Exception;
 
@@ -68,26 +66,38 @@ namespace GSMasterServer
 
             var singleServer = new SingleMasterServer();
            
-            try
+            using (var bot = new BotManager(singleServer))
             {
-                var botManager = new BotManager(singleServer);
-                botManager.Run().GetAwaiter().GetResult();
+                try
+                {
+                    bot.LaunchBot();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Warn(ex);
+                }
+                
+                while (true)
+                    Thread.Sleep(1000);
             }
-            catch (Exception ex)
-            {
-                Logger.Warn(ex);
-            }
-            
-            while (true)
-                Thread.Sleep(1000);
-        }
-
-        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            Logger.Fatal(e.ExceptionObject);
-
-            Directory.CreateDirectory("Crashes");
-            File.WriteAllText(Path.Combine("Crashes","FatalException-"+DateTime.Now.ToLongTimeString()+".ex"), e.ExceptionObject.ToString());
-        }
+
+        }
+
+
+
+        private static void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+
+        {
+
+            Logger.Fatal(e.ExceptionObject);
+
+
+
+            Directory.CreateDirectory("Crashes");
+
+            File.WriteAllText(Path.Combine("Crashes","FatalException-"+DateTime.Now.ToLongTimeString()+".ex"), e.ExceptionObject.ToString());
+
+        }
+
     }
 }
