@@ -39,7 +39,7 @@ namespace GSMasterServer.DowExpertBot
 
             _dowBot.OnSyncMessageReceived += DowBotOnOnSyncMessageReceived;
 
-            _dowBot.Start();
+            _dowBot.StartLoop();
         }
 
         private void OnChatMessageReceived(object sender, SharedServices.ChatMessageMessage e)
