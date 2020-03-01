@@ -1,0 +1,3 @@
+[submodule "src/DowBot"]
+	path = src/DowBot
+	url = https://github.com/AnImperialMan/DoWBot
