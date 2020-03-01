@@ -84,13 +84,13 @@ namespace ThunderHawk
                             Path.Combine(Environment.CurrentDirectory,  "GameFiles", "Patch1.2", "Soulstorm.exe") : 
                             Path.Combine(PathFinder.GamePath, "Soulstorm.exe");
                         var procParams = "-nomovies -forcehighpoly";
-                        if (AppSettings.ThunderHawkModAutoSwitch)
-                            procParams += server == "thunderhawk" ? " -modname ThunderHawk" : " -modname DXP2";
 
                         if (server == "thunderhawk")
                         {
                             CopySchemes(path);
                             ProcessManager.KillDowStatsProccesses();
+
+                            procParams += " -modname ThunderHawk";
 
                             var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
                             {

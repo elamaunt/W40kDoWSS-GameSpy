@@ -18,9 +18,9 @@
 
     <Grid Margin="16 16 16 16">
         <StackPanel Orientation="Vertical">
-            <CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="ThunderHawkModAutoSwitch" Style="{DynamicResource SettingsCheckBoxStyle}"/>
+            <!--<CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="ThunderHawkModAutoSwitch" Style="{DynamicResource SettingsCheckBoxStyle}"/>-->
             <CheckBox Margin="5 20 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="DesktopNotificationsEnabled" Style="{DynamicResource SettingsCheckBoxStyle}"/>
-            <CheckBox Margin="5 20 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="LaunchThunderHawkAtStartup" Style="{DynamicResource SettingsCheckBoxStyle}"/>
+            <!--<CheckBox Margin="5 20 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="LaunchThunderHawkAtStartup" Style="{DynamicResource SettingsCheckBoxStyle}"/>-->
 
             <CheckBox Margin="5 20 0 0" VerticalAlignment="Top" HorizontalAlignment="Left" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="LimitRatingLobby" Style="{DynamicResource SettingsCheckBoxStyle}"/>
             <TextBlock MaxWidth="300" HorizontalAlignment="Left" Margin="5 6 0 10" Foreground="White" TextWrapping="Wrap" framework:WPFBinder.Frame="LimitRatingLobbyInfo"/>

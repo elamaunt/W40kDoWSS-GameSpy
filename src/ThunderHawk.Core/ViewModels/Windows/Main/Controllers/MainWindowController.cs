@@ -28,7 +28,10 @@ namespace ThunderHawk.Core
 
             OnUsersLoaded();
 
-            if (AppSettings.IsFirstLaunch && !AppSettings.LaunchThunderHawkAtStartup)
+            
+            // Если у юзера нет в автозапуске стима, и он отклоняет ввод пароля - приводит к вечному багу Can't init steam api, поэтому автозапуск подождет
+            
+            /*if (AppSettings.IsFirstLaunch && !AppSettings.LaunchThunderHawkAtStartup)
             {
                 Task.Delay(30000).OnContinueOnUi(() =>
                 {
@@ -39,7 +42,7 @@ namespace ThunderHawk.Core
 
                     AppSettings.IsFirstLaunch = false;
                 });
-            }
+            }*/
         }
 
         void OnLogMessageReceived(string message)
