@@ -29,7 +29,7 @@ namespace ThunderHawk.Core
 
             Frame.Download.Action = () =>
             {
-                var url = new Uri(@"http://dowstats.ru/thunderhawkConnect/replayByServerId.php?id=" + HttpUtility.UrlEncode(Frame.Game.SessionId));
+                var url = new Uri(@"http://dowstats.ru/thunderhawk/replayByServerId.php?id=" + HttpUtility.UrlEncode(Frame.Game.SessionId));
 
                 _client.GetAsync(url, HttpCompletionOption.ResponseContentRead).OnContinueOnUi(task =>
                 {

@@ -1836,12 +1836,12 @@ namespace ThunderHawk
                            
                            CoreContext.ClientServer.SendAsServerMessage(
                                "Received game list: " + customGames + " - custom; " + autoGames +
-                               " - auto. Processing...");
+                               " - auto. Processing");
                            handler.Send(node, encryptedBytes);
                        }
                        else
                        {
-                           CoreContext.ClientServer.SendAsServerMessage("Searching games...");
+                           CoreContext.ClientServer.SendAsServerMessage("PreSearching games");
                            ShouldShowGames = true;
                        }
 
