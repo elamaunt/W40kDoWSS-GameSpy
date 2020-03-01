@@ -2320,9 +2320,9 @@ namespace ThunderHawk
 
         string RusNews => @" Привет! Вы на сервере elamaunt'а под названием THUNDERHAWK
 
-Welcome to Beta-test 2.1
+Добро пожаловать на бета-тест 2.09
 .
-Pls, don't play here 3x3 and 4x4 untill we fix blocks. 
+Пожалуйста, не играете в режимах 3х3 и 4х4, пока мы не пофиксим блоки игроков друг с другом, это может вызвать проблемы на сервере. 
 .
 Функционально сервер почти полностью готов. Остались некоторые незначительные ошибки и невозможность играть командой в автоматче.
 Временно вы можете играть только с использование мода ThunderHawk.
@@ -2378,7 +2378,7 @@ Pls, don't play here 3x3 and 4x4 untill we fix blocks.
 
         string EnNews => @" Hello! You are on elamaunt's server THUNDERHAWK.
 .
-Welcome on BETA-test 2.1!
+Welcome on BETA-test 2.09!
 .
 Pls, don't play here 3x3 and 4x4 untill we fix blocks. 
 .
@@ -2423,7 +2423,7 @@ Current maps in automatch:
 - 6p paynes retribution
 - 6p parmenian heath
 .
-4на4
+4vs4
 - 8P Oasis of Sharr
 - 8P Forbidden Jungle
 - 8P Jalaganda Lowlands

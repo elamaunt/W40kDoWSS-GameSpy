@@ -17,7 +17,7 @@ namespace ThunderHawk.StaticClasses.Soulstorm
         {
             DowstatsUploadReplayUrl = "http://" +
                                       (Environment.GetEnvironmentVariable("dowstatsServer") ?? "dowstats.ru") +
-                                      "/thunderhawkConnect/replayReceive.php?";
+                                      "/thunderhawk/replayReceive.php?";
         }
 
         public static void SendReplay(GameFinishedMessage message)
