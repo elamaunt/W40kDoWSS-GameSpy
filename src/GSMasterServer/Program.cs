@@ -65,21 +65,18 @@ namespace GSMasterServer
             //StatsServer statsServer = new StatsServer(bind, 29920);
 
             var singleServer = new SingleMasterServer();
-           
-            using (var bot = new BotManager(singleServer))
+
+            try
             {
-                try
-                {
-                    bot.LaunchBot();
-                }
-                catch (Exception ex)
-                {
-                    Logger.Warn(ex);
-                }
-                
-                while (true)
-                    Thread.Sleep(1000);
+                var bot = new BotManager(singleServer);
+                bot.LaunchBot().GetAwaiter().GetResult();
             }
+            catch (Exception ex)
+            {
+                Logger.Error(ex);
+            }
+            while (true)
+                Thread.Sleep(1000);
 
         }
 
