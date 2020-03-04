@@ -3,12 +3,9 @@
     public static class DiscordServerConstants
     {
 #if Release
-        public const ulong ServerId = 606832876369215491;
+        public const ulong ThunderGuildId = 606832876369215491;
 
         public const ulong ThunderHawkInfoChannelId = 656215384453677056;
-        
-        public const ulong RuChatsCategoryId = 608338832194273299;
-        public const ulong EnChatsCategoryId = 659006236561244181;
 
         public const ulong BotChannelId = 669510712531615754;
 
@@ -22,12 +19,10 @@
 #endif
 
 #if Debug || SPACEWAR
-        public const ulong ServerId = 624305167743057921;
+        public const ulong ThunderGuildId = 624305167743057921;
 
         public const ulong ThunderHawkInfoChannelId = 635516606465835030;
 
-        public const ulong RuChatsCategoryId = 624962245914525698;
-        public const ulong EnChatsCategoryId = 624962245914525698;
         public const ulong BotChannelId = 669510610869944331;
 
         public const ulong ReadOnlyRoleId = 624963432105639936;

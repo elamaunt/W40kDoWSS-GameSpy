@@ -13,6 +13,9 @@ namespace GSMasterServer.DowExpertBot
         {
             get
             {
+                if (_singleMasterServer == null)
+                    return null;
+
                 var textSb = new StringBuilder();
                 var online = GetOnline();
                 if (online > 10)

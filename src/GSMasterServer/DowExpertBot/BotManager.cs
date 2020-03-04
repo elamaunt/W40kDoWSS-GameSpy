@@ -21,22 +21,22 @@ namespace GSMasterServer.DowExpertBot
                 throw new Exception("Token is empty! Bot stopped working...");
             var botParams = new BotParams(new List<IModuleParams>
             {
-                new GeneralModuleParams(DiscordServerConstants.ServerId),
+                new GeneralModuleParams(token, DiscordServerConstants.ThunderGuildId, new DowLogger()),
                 new RandomModuleParams( new[]{ DiscordServerConstants.BotChannelId }),
                 new AdministrativeModuleParams(DiscordServerConstants.AdminRoleId, DiscordServerConstants.ModerRoleId, DiscordServerConstants.ReadOnlyRoleId),
                 new DynamicModuleParams(new List<IDynamicDataProvider> {new ServerInfoProvider(_singleMasterServer)}),
-                new SyncModuleParams(DiscordServerConstants.SyncChatId),
+                //new SyncModuleParams(DiscordServerConstants.SyncChatId),
             });
-            _dowBot = new DowBot(token, new DowLogger(), botParams);
+            _dowBot = new DowBot(botParams);
             _dowBot.OnSyncMessageReceived += DowBotOnOnSyncMessageReceived;
 
             _singleMasterServer = singleMasterServer;
-            _singleMasterServer.OnChatMessageReceived += OnChatMessageReceived;
+            //_singleMasterServer.OnChatMessageReceived += OnChatMessageReceived;
         }
         
         public async Task LaunchBot()
         {
-            await _dowBot.ForceStart();
+            await _dowBot.Start();
         }
 
 
