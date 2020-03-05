@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using Framework;
 using ThunderHawk.Core.Frames;
 
@@ -33,6 +34,8 @@ namespace ThunderHawk.Core
         
         public PlayerFrameInGame Player6 { get; } = new PlayerFrameInGame();
         public PlayerFrameInGame Player7 { get; } = new PlayerFrameInGame();
+        
+        //public Uri Map { get; set; } = new Uri("pack://application:,,,/ThunderHawk;component/Images/Maps/default.jpg");
 
         
         private bool inGameVisible = false;
@@ -73,10 +76,13 @@ namespace ThunderHawk.Core
             }
         }
         
-        //public UriFrame Map { get; } = new UriFrame();
+        public UriFrame Map { get; } = new UriFrame();
+        
+        
         public MainPageViewModel()
         {
             TitleButton.Text = CoreContext.LangService.GetString("MainPage").ToUpperInvariant();
+            Map.Uri = new Uri("pack://application:,,,/ThunderHawk;component/Images/Maps/default.jpg");
         }
     }
 }

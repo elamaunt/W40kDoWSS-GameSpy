@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Forms;
@@ -33,9 +34,25 @@ namespace ThunderHawk
             yield return new ThunderHawkCoreModule();
             yield return new ApplicationModule();
         }
+        
+        // Pinvoke declaration for ShowWindow
+        private const int SW_RESTORE = 9;
 
+        [DllImport("user32.dll")]
+        static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        // Sample usage
         protected override void OnStartup(StartupEventArgs e)
         {
+            var procs = Process.GetProcessesByName("thunderhawk");
+            foreach(var proc in procs)
+            {
+                if (proc.Id != Process.GetCurrentProcess().Id)
+                {
+                    proc.Kill();
+                    Thread.Sleep(1000);
+                }
+            }
 
             if (PathFinder.GamePath != null)
             {

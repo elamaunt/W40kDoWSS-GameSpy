@@ -2320,7 +2320,7 @@ namespace ThunderHawk
 
         string RusNews => @" Привет! Вы на сервере elamaunt'а под названием THUNDERHAWK
 
-Добро пожаловать на бета-тест 2.09
+Добро пожаловать на бета-тест 2.10
 .
 Пожалуйста, не играете в режимах 3х3 и 4х4, пока мы не пофиксим блоки игроков друг с другом, это может вызвать проблемы на сервере. 
 .
@@ -2336,13 +2336,12 @@ namespace ThunderHawk
 - 2P Sugar Oasis
 - 2p Deadly Fun Archeology
 - 2P Shrine of Excellion
-- 2P Meeting of Minds
+- 2P Vortex Plauteau
 - 2P Battle Marshes
 - 2P Outer Reaches (доработанная Дэвилом)
 - 2P Blood River
 - 2P Fata Morgana
 - 2P Titan Fall (доработанная Дэвилом)
-- 2P Tranquilitys End (доработанная  Дэвилом)
 - 2P FraziersDemise (доработанная Дэвилом)
 - 2P Moonbase (доработанная Дэвилом)
 .
@@ -2378,7 +2377,7 @@ namespace ThunderHawk
 
         string EnNews => @" Hello! You are on elamaunt's server THUNDERHAWK.
 .
-Welcome on BETA-test 2.09!
+Welcome on BETA-test 2.10!
 .
 Pls, don't play here 3x3 and 4x4 untill we fix blocks. 
 .
@@ -2394,6 +2393,7 @@ Current maps in automatch:
 - 2P Sugar Oasis
 - 2p Deadly Fun Archeology
 - 2P Shrine of Excellion
+- 2P Vortex Plauteau
 - 2P Meeting of Minds
 - 2P Battle Marshes
 - 2P Outer Reaches (fixed by Devil)
@@ -2584,11 +2584,10 @@ automatch_defaults_dxp2 =
 		""2P_Shrine_of_Excellion"",
 		""2P_Meeting_of_Minds"",
 		""2P_Battle_Marshes"",
-		""2P_Outer_Reaches"",
 		""2P_Blood_River"",
 		""2P_Fata_Morgana"",
 		""2P_Titan_Fall"",
-		""2P_Tranquilitys_End"",
+		""2p_vortex_plateau"",
 		""2P_FraziersDemise"",
 		""2P_Moonbase""
 	},

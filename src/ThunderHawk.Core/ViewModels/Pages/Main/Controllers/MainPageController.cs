@@ -184,7 +184,7 @@ namespace ThunderHawk.Core
                 setPlayerFrameTabToDefault(playerFrame);
             }
 
-            //Frame.Map.Uri = new Uri("pack://application:,,,/ThunderHawk;component/Images/Maps/default.jpg");
+            Frame.Map.Uri = new Uri("pack://application:,,,/ThunderHawk;component/Images/Maps/default.jpg");
         }
 
         void setPlayerFrameTabToDefault(PlayerFrameInGame playerFrame)
@@ -239,6 +239,17 @@ namespace ThunderHawk.Core
                     for (int i = 0; i < inGamePlayers.Length; i++)
                         setPlayerInGameToPlayerTab(playerViewInGames[i], inGamePlayers[i]);
                     break;
+            }
+            
+            if (Frame.Map != null && CoreContext.ResourcesService.HasImageWithName(CoreContext.InGameService.inGameMap))
+            {
+                Frame.Map.Uri =
+                    new Uri(
+                        $"pack://application:,,,/ThunderHawk;component/Images/Maps/{CoreContext.InGameService.inGameMap?.ToLowerInvariant()}.jpg");
+            }
+            else
+            {
+                Frame.Map.Uri = new Uri("pack://application:,,,/ThunderHawk;component/Images/Maps/default.jpg");
             }
         }
 
