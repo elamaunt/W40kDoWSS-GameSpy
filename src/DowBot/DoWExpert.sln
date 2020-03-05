@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DowBot", "DowBot\DowBot.csproj", "{BD9EA509-8948-4E88-90A9-8098541DAB04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DowRandomTools", "DowRandomTools\DowRandomTools.csproj", "{5EE16026-CC51-4D64-889A-A886F4A87F19}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BotLauncher", "BotLauncher\BotLauncher.csproj", "{29A555C2-375E-4E0D-9530-FB4ED019F54F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BD9EA509-8948-4E88-90A9-8098541DAB04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD9EA509-8948-4E88-90A9-8098541DAB04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD9EA509-8948-4E88-90A9-8098541DAB04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD9EA509-8948-4E88-90A9-8098541DAB04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5EE16026-CC51-4D64-889A-A886F4A87F19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EE16026-CC51-4D64-889A-A886F4A87F19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EE16026-CC51-4D64-889A-A886F4A87F19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EE16026-CC51-4D64-889A-A886F4A87F19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29A555C2-375E-4E0D-9530-FB4ED019F54F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29A555C2-375E-4E0D-9530-FB4ED019F54F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29A555C2-375E-4E0D-9530-FB4ED019F54F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29A555C2-375E-4E0D-9530-FB4ED019F54F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

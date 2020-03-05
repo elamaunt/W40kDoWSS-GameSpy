@@ -39,7 +39,7 @@ namespace ThunderHawk.Core
                     },
 
                     ImagePath = "pack://application:,,,/ThunderHawk;component/Images/InGame.jpg",
-                    CreatedDate = new DateTime(2020, 02, 28)
+                    CreatedDate = new DateTime(2020, 03, 07)
                 },
 
                 new NewsItemDTO()
