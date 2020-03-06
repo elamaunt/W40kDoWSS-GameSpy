@@ -257,7 +257,6 @@ namespace ThunderHawk.Core
         {
             playerInGameTab.Name.Text = inGamePlayer.Name;
             playerInGameTab.Race.Value = inGamePlayer.Race;
-            playerInGameTab.LoadBackground.BackgroundOpacity = 0.2;
             // team 0 is not human-readable, so team increment on 1
             playerInGameTab.Rating.Text = "Team " + (inGamePlayer.Team + 1) + " - " + inGamePlayer.Mmr;
             if (inGamePlayer.IsLoadComplete)
@@ -268,7 +267,7 @@ namespace ThunderHawk.Core
             else
             {
                 playerInGameTab.LoadBackground.BackgroundColor = "#bdbebd";
-                playerInGameTab.LoadBackground.BackgroundOpacity = 0.2;
+                playerInGameTab.LoadBackground.BackgroundOpacity = 0;
             }
         }
 
