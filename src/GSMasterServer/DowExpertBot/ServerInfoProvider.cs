@@ -13,15 +13,9 @@ namespace GSMasterServer.DowExpertBot
         {
             get
             {
-                if (_singleMasterServer == null)
-                    return null;
-
                 var textSb = new StringBuilder();
                 var online = GetOnline();
-                if (online > 10)
-                {
-                    textSb.AppendLine($"➡️ Server Online: {online}\n");
-                }
+                textSb.AppendLine($"➡️ Server Online: {online}\n");
 
                 var top = _singleMasterServer.GetTop.Take(10).ToArray();
                 textSb.AppendLine($"➡️ Best Players: ");
