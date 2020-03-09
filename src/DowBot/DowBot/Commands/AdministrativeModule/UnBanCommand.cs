@@ -17,7 +17,7 @@ namespace DiscordBot.Commands.AdministrativeModule
         }
 
         // Usage: list of @mentions>
-        public override async Task Execute(SocketMessage socketMessage)
+        public override async Task Execute(SocketMessage socketMessage, bool isRus)
         {
             var targetUsers = socketMessage.MentionedUsers;
             if (targetUsers.Count == 0)
@@ -27,15 +27,17 @@ namespace DiscordBot.Commands.AdministrativeModule
             }
 
             var unBannedUsers = await _adminManager.UnBanAsync(targetUsers);
+            
+            await socketMessage.DeleteAsync();
 
+            if (unBannedUsers.Count <= 0)
+                return;
             var respMessage = new StringBuilder();
             respMessage.Append("Successfully unbanned: ");
             foreach (var user in unBannedUsers)
             {
                 respMessage.AppendLine($"<@{user.Id}>");
             }
-            
-            await socketMessage.DeleteAsync();
             var respChannel = await socketMessage.Author.GetOrCreateDMChannelAsync();
             await respChannel.SendMessageAsync(respMessage.ToString());
         }

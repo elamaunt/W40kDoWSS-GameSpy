@@ -7,6 +7,7 @@ using DiscordBot.BotParams;
 using DiscordBot.Commands.AdministrativeModule;
 using DiscordBot.Commands.Primitives;
 using DiscordBot.Commands.RandomModule;
+using DiscordBot.Database;
 using RandomTools.Types;
 
 namespace DiscordBot.Commands
@@ -14,6 +15,17 @@ namespace DiscordBot.Commands
     internal class GuildCommandsHandler
     {
         private readonly BotParams.BotParams _botParams;
+
+        public GuildCommand GetCommand(string key)
+        {
+            return _commands.ContainsKey(key) ? _commands[key] : null;
+        }
+        
+        public IEnumerable<string> GetCommands(CommandAccessLevel authorAccess)
+        {
+            return _commands.Where(x => authorAccess >= x.Value.Params.AccessLevel ).Select(k => k.Key);
+        }
+        
         private readonly Dictionary<string, GuildCommand> _commands = new Dictionary<string, GuildCommand>();
         
         public GuildCommandsHandler(DowBot dowBot, BotParams.BotParams botParams)
@@ -113,7 +125,7 @@ namespace DiscordBot.Commands
 
                 if (userAccessLevel >= command.Params.AccessLevel)
                 {
-                    await _commands[commandName].Execute(arg);
+                    await _commands[commandName].Execute(arg,  arg.Author.IsRussian());
                     DowBotLogger.Trace($"Executed command \"{commandName}\" by {arg.Author.Username}({arg.Author.Id})" +
                                        $" with Access Level {userAccessLevel}");
                 }

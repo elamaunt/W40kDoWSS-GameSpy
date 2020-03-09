@@ -19,7 +19,7 @@ namespace DiscordBot.Commands.AdministrativeModule
         }
 
         // Usage: <messages count OR fromMessage ID> <list of @mentions>
-        public override async Task Execute(SocketMessage socketMessage)
+        public override async Task Execute(SocketMessage socketMessage, bool isRus)
         {
             var commandParams = socketMessage.CommandArgs();
             var paramCount = commandParams.Length;

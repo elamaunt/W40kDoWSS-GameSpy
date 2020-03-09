@@ -21,7 +21,7 @@
 #if Debug || SPACEWAR
         public const ulong ThunderGuildId = 624305167743057921;
 
-        public const ulong ThunderHawkInfoChannelId = 635516606465835030;
+        public const ulong ThunderHawkInfoChannelId = 685892199740735545;
 
         public const ulong BotChannelId = 669510610869944331;
 

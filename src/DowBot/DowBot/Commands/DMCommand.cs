@@ -12,6 +12,6 @@ namespace DiscordBot.Commands
         {
             Params = commandParams;
         }
-        public abstract Task Execute(SocketMessage socketMessage, CommandAccessLevel accessLevel);
+        public abstract Task Execute(SocketMessage socketMessage, bool isRus, CommandAccessLevel accessLevel);
     }
 }

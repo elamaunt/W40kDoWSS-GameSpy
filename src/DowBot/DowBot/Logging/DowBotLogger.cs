@@ -43,7 +43,7 @@ namespace DiscordBot
         internal static IDowLogger Logger;
         private static void Write(object obj, DowBotLogLevel logLevel)
         {
-            Logger?.Write(obj, logLevel);
+            Logger?.Write("[DowBot] " + obj, logLevel);
         }
     }
 }

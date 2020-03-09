@@ -17,7 +17,7 @@ namespace DiscordBot.Commands.AdministrativeModule
         }
 
         // Usage: <how-long in days> <list of @mentions>
-        public override async Task Execute(SocketMessage socketMessage)
+        public override async Task Execute(SocketMessage socketMessage, bool isRus)
         {
             var commandParams = socketMessage.CommandArgs();
             var paramCount = commandParams.Length;
@@ -39,14 +39,17 @@ namespace DiscordBot.Commands.AdministrativeModule
 
             var bannedUsers = await _adminManager.BanAsync(targetUsers, howLong);
 
+
+            await socketMessage.DeleteAsync();
+
+            if (bannedUsers.Count <= 0)
+                return;
             var respMessage = new StringBuilder();
             respMessage.Append("Successfully banned: ");
             foreach (var user in bannedUsers)
             {
                 respMessage.AppendLine($"<@{user.Id}>");
             }
-            
-            await socketMessage.DeleteAsync();
             var respChannel = await socketMessage.Author.GetOrCreateDMChannelAsync();
             await respChannel.SendMessageAsync(respMessage.ToString());
         }

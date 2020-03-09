@@ -17,7 +17,7 @@ namespace DiscordBot.Commands.AdministrativeModule
         }
 
         // Usage: <list of @mentions>
-        public override async Task Execute(SocketMessage socketMessage)
+        public override async Task Execute(SocketMessage socketMessage, bool isRus)
         {
             var targetUsers = socketMessage.MentionedUsers;
             if (targetUsers.Count == 0)
@@ -27,6 +27,12 @@ namespace DiscordBot.Commands.AdministrativeModule
             }
             
             var unMutedUsers = await _adminManager.UnMuteAsync(targetUsers);
+            
+            await socketMessage.DeleteAsync();
+
+            
+            if (unMutedUsers.Count <= 0)
+                return;
             
             var respMessage = new StringBuilder();
             respMessage.Append("Successfully unmuted: ");
@@ -39,10 +45,12 @@ namespace DiscordBot.Commands.AdministrativeModule
                     logMessage.Append("Congrats! You have been unmuted!");
                     var channelToWrite = await user.GetOrCreateDMChannelAsync();
                     await channelToWrite.SendMessageAsync(logMessage.ToString());
-                } catch {}
+                }
+                catch (Exception ex)
+                {
+                    DowBotLogger.Debug($"Could not unmute user: {user.Id}\n" + ex);
+                }
             }
-
-            await socketMessage.DeleteAsync();
             var respChannel = await socketMessage.Author.GetOrCreateDMChannelAsync();
             await respChannel.SendMessageAsync(respMessage.ToString());
         }

@@ -14,7 +14,8 @@ namespace DiscordBot.BotParams
         
         public Dictionary<CommandId, DmCommandParams> DmCommandsParams { get; } = new Dictionary<CommandId, DmCommandParams>()
         {
-            { CommandId.HelpCommand, new DmCommandParams(CommandAccessLevel.Everyone) }
+            { CommandId.HelpCommand, new DmCommandParams(CommandAccessLevel.Everyone) },
+            { CommandId.SetLangCommand, new DmCommandParams(CommandAccessLevel.Everyone) }
         };
 
         public GeneralModuleParams(string token, ulong mainGuildId, IDowLogger dowLogger = null)

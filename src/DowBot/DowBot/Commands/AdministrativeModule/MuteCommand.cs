@@ -17,7 +17,7 @@ namespace DiscordBot.Commands.AdministrativeModule
         }
 
         // Usage: <how-long in minutes> <list of @mentions>
-        public override async Task Execute(SocketMessage socketMessage)
+        public override async Task Execute(SocketMessage socketMessage, bool isRus)
         {
             var commandParams = socketMessage.CommandArgs();
             var paramCount = commandParams.Length;
@@ -43,7 +43,10 @@ namespace DiscordBot.Commands.AdministrativeModule
             {
                 mutedUsers = await _adminManager.MuteAsync(targetUsers, -1);
             }
-
+            
+            await socketMessage.DeleteAsync();
+            if (mutedUsers.Count <= 0)
+                return;
             var respMessage = new StringBuilder();
             respMessage.Append("Successfully muted: ");
             foreach (var user in mutedUsers)
@@ -58,10 +61,11 @@ namespace DiscordBot.Commands.AdministrativeModule
                     var channelToWrite = await user.GetOrCreateDMChannelAsync();
                     await channelToWrite.SendMessageAsync(logMessage.ToString());
                 }
-                catch {}
+                catch (Exception ex)
+                {
+                    DowBotLogger.Debug($"Could not mute user: {user.Id}\n" + ex);
+                }
             }
-            
-            await socketMessage.DeleteAsync();
             var respChannel = await socketMessage.Author.GetOrCreateDMChannelAsync();
             await respChannel.SendMessageAsync(respMessage.ToString());
         }

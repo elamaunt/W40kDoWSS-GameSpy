@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord.WebSocket;
 using DiscordBot.Commands.AdministrativeModule;
 using DiscordBot.Commands.GeneralModule;
 using DiscordBot.Commands.Primitives;
+using DiscordBot.Database;
 
 namespace DiscordBot.Commands
 {
@@ -13,13 +15,30 @@ namespace DiscordBot.Commands
         private readonly BotParams.BotParams _botParams;
         private readonly DowBot _dowBot;
         private readonly Dictionary<string, DmCommand> _commands = new Dictionary<string, DmCommand>();
+        
+        public DmCommand GetCommand(string key)
+        {
+            return _commands.ContainsKey(key) ? _commands[key] : null;
+        }
 
-        public DmCommandsHandler(DowBot dowBot, BotParams.BotParams botParams)
+        public IEnumerable<string> GetCommands(CommandAccessLevel authorAccess)
+        {
+            return _commands.Where(x => authorAccess >= x.Value.Params.AccessLevel ).Select(k => k.Key);
+        }
+
+        public DmCommandsHandler(DowBot dowBot, BotParams.BotParams botParams, GuildCommandsHandler guildCommandsHandler)
         {
             _botParams = botParams;
             _dowBot = dowBot;
             if (botParams.GeneralModuleParams.DmCommandsParams.ContainsKey(CommandId.HelpCommand))
-                _commands.Add("help", new HelpCommand(botParams.GeneralModuleParams.DmCommandsParams[CommandId.HelpCommand]));
+                _commands.Add("help", new HelpCommand(botParams.GeneralModuleParams.DmCommandsParams[CommandId.HelpCommand], guildCommandsHandler, this));
+
+            if (botParams.GeneralModuleParams.DmCommandsParams.ContainsKey(CommandId.SetLangCommand))
+            {
+                var slc = new SetLanguageCommand(botParams.GeneralModuleParams.DmCommandsParams[CommandId.SetLangCommand]);
+                _commands.Add("sl", slc);
+                _commands.Add("setlang", slc);
+            }
 
             if (botParams.AdministrativeModuleParams != null)
             {
@@ -52,10 +71,13 @@ namespace DiscordBot.Commands
                 }
 
                 var userAccessLevel = await _botParams.GetAccessLevel(arg.Author, _dowBot.MainGuild);
+                
 
                 if (userAccessLevel >= command.Params.AccessLevel)
                 {
-                    await _commands[commandName].Execute(arg, userAccessLevel);
+
+                    
+                    await _commands[commandName].Execute(arg, arg.Author.IsRussian(), userAccessLevel);
                     DowBotLogger.Trace($"Executed command \"{commandName}\" by {arg.Author.Username}({arg.Author.Id})" +
                                        $" with Access Level {userAccessLevel}");
                 }

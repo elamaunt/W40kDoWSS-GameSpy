@@ -12,6 +12,6 @@ namespace DiscordBot.Commands
         {
             Params = guildCommandParams;
         }
-        public abstract Task Execute(SocketMessage socketMessage);
+        public abstract Task Execute(SocketMessage socketMessage, bool isRus);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using DiscordBot;
 using DiscordBot.BotParams;
 using DiscordBot.Commands;
@@ -11,7 +12,7 @@ namespace BotLauncher
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
             var getpCommand = new GetpCommand(new DmCommandParams(CommandAccessLevel.Admin));
             var token = Environment.GetEnvironmentVariable("DowExpertBotToken", EnvironmentVariableTarget.User);
@@ -28,15 +29,17 @@ namespace BotLauncher
             var dowBot = new DowBot(botParams);
             dowBot.OnSyncMessageReceived += DowBotOnOnSyncMessageReceived;
             
-            
-            dowBot.Start();
+            await dowBot.Start();
+            //await dowBot.SendSyncMessage("Me", "Hello!!!");
+            /*while (true)
+            {
+                await dowBot.SendSyncMessage("Me", "Hello!!!");
+                await Task.Delay(10);
+            }*/
             Console.ReadKey();
-            dowBot.SendSyncMessage("Me", "Hello!!!");
-            dowBot.Stop();
+            await dowBot.Start();
             Console.ReadKey();
-            dowBot.Start();
-            Console.ReadKey();
-            dowBot.Destroy();
+            await dowBot.Destroy();
         }
 
         private static void DowBotOnOnSyncMessageReceived(object sender, SyncEventArgs e)

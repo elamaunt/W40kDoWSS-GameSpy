@@ -12,7 +12,7 @@ namespace BotLauncher
             
         }
 
-        public override async Task Execute(SocketMessage socketMessage, CommandAccessLevel accessLevel)
+        public override async Task Execute(SocketMessage socketMessage, bool isRus, CommandAccessLevel accessLevel)
         {
             await socketMessage.Channel.SendMessageAsync("Here is custom command!");
         }

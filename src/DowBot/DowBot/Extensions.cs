@@ -1,10 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
 using DiscordBot.BotParams;
 using DiscordBot.Commands;
 using DiscordBot.Commands.Primitives;
+using DiscordBot.Database;
+using RandomTools.Types;
 
 namespace DiscordBot
 {
@@ -34,5 +37,8 @@ namespace DiscordBot
         {
             return arg.Content.Split().Skip(1).ToArray();
         }
+
+
+        public static bool IsRussian(this SocketUser socketUser) => BotDatabase.IsUserRussian(socketUser.Id);
     }
 }

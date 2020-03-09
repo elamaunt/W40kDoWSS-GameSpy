@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Discord;
@@ -31,9 +32,13 @@ namespace DiscordBot
         
         internal readonly AdminCommandsManager AdminCommandsManager;
         
-        private const ushort UpdatePeriod = 1000 * 60; // in ms. Now equals to 1 minute.
+        private const ushort UpdateDeltaPeriod = 1000 ; // 1 second
+        private const ushort SyncUpdatePeriod = 2; // in UpdatePeriods
+        private const ushort DefaultUpdatePeriod = 30; // in UpdatePeriods
 
         internal event EventHandler<SocketGuild> OnBotReady;
+
+        private readonly StringBuilder _syncMessagesQueue = new StringBuilder(2000);
         
         #region external
         /// <summary>
@@ -53,7 +58,7 @@ namespace DiscordBot
                 AdminCommandsManager = new AdminCommandsManager(this, botParams);
             
             _guildCommands = new GuildCommandsHandler(this, botParams);
-            _dmCommands = new DmCommandsHandler(this, botParams);
+            _dmCommands = new DmCommandsHandler(this, botParams, _guildCommands);
 
             _botParams = botParams;
             
@@ -68,7 +73,7 @@ namespace DiscordBot
             // это нужно для того, чтобы в Discord не проходили @everyone и @here от тех, у кого нет на это доступа.
             text = text.Replace("@", "");
 
-            SyncChannel.SendMessageAsync($"[{author}] {text}");
+            await AddMessageToSyncQueue($"[{author}] {text}");
         }
         
         /// <summary>
@@ -91,7 +96,7 @@ namespace DiscordBot
             _isNormalStop = false;
             
             _cancelStartCheck = new CancellationTokenSource();
-            Task.Delay(UpdatePeriod, _cancelStartCheck.Token).ContinueWith(x => StartCheck(), 
+            Task.Delay(UpdateDeltaPeriod * DefaultUpdatePeriod, _cancelStartCheck.Token).ContinueWith(x => StartCheck(), 
                 _cancelStartCheck.Token, TaskContinuationOptions.NotOnCanceled, TaskScheduler.Default);
             DowBotLogger.Debug("DowBot launched connection loop!");
             await _socketClient.LoginAsync(TokenType.Bot, _botParams.GeneralModuleParams.Token);
@@ -215,7 +220,6 @@ namespace DiscordBot
                     if (_botParams.SyncModuleParams == null || arg.Channel.Id != _botParams.SyncModuleParams.ChannelId)
                         return;
 
-
                     var nickName = (arg.Author as SocketGuildUser)?.Nickname ?? arg.Author.Username;
                     var text = arg.Content;
                     OnSyncMessageReceived?.Invoke(this, new SyncEventArgs(nickName, text));
@@ -249,7 +253,9 @@ namespace DiscordBot
             OnBotReady?.Invoke(this, MainGuild);
             _cancelUpdateLoop?.Dispose();
             _cancelUpdateLoop = new CancellationTokenSource();
-            await Task.Run(UpdateLoop, _cancelUpdateLoop.Token);
+            var t = Task.Run(UpdateLoop, _cancelUpdateLoop.Token);
+            await t;
+
         }
 
         private Task BotOnLog(LogMessage arg)
@@ -260,73 +266,111 @@ namespace DiscordBot
         
         private async Task ProcessAdminDynamic()
         {
-            var timeNow = DateTime.UtcNow.Ticks;
-            var unmuteList = new List<SocketUser>();
-            foreach (var tableUser in BotDatabase.ProfilesTable.FindAll())
+            try
             {
-                if (tableUser.IsMuteActive && tableUser.MuteUntil != -1 && timeNow >= tableUser.MuteUntil)
+                var timeNow = DateTime.UtcNow.Ticks;
+                var unmuteList = new List<SocketUser>();
+                foreach (var tableUser in BotDatabase.ProfilesTable.FindAll())
                 {
-                    unmuteList.Add(MainGuild.GetUser(tableUser.DiscordUserId));
+                    if (tableUser.IsMuteActive && tableUser.MuteUntil != -1 && timeNow >= tableUser.MuteUntil)
+                    {
+                        unmuteList.Add(MainGuild.GetUser(tableUser.DiscordUserId));
+                    }
+                }
+                if (unmuteList.Count != 0)
+                {
+                    await AdminCommandsManager.UnMuteAsync(unmuteList);
                 }
             }
-            if (unmuteList.Count != 0)
+            catch (Exception e)
             {
-                await AdminCommandsManager.UnMuteAsync(unmuteList);
+                DowBotLogger.Warn("[ProcessAdminDynamic] " + e);
             }
+
         }
 
         private async Task ProcessDynamic()
         {
-            foreach (var dynamicProvider in _botParams.DynamicModuleParams.DataProviders)
+            try
             {
-                var text = dynamicProvider.Text;
-                if (text == null)
-                    continue;
-                var channel = MainGuild.GetTextChannel(dynamicProvider.ChannelId);
-                var messages = await channel.GetMessagesAsync(1).FlattenAsync();
-                var message = messages.FirstOrDefault(x => x.Author.Id == _socketClient.CurrentUser.Id);
-                if (message != null && message is RestUserMessage socketMessage)
-                {
-                    await socketMessage.ModifyAsync(x => x.Content = text);
-                }
-                else
-                {
-                    await channel.SendMessageAsync(dynamicProvider.Text);
+                foreach (var dynamicProvider in _botParams.DynamicModuleParams.DataProviders)
+                { 
+                    var text = dynamicProvider.Text;
+                    if (text == null)
+                        continue;
+                    var channel = MainGuild.GetTextChannel(dynamicProvider.ChannelId);
+                    var messages = await channel.GetMessagesAsync(1).FlattenAsync();
+                    var message = messages.FirstOrDefault(x => x.Author.Id == _socketClient.CurrentUser.Id);
+                    if (message != null && message is RestUserMessage socketMessage)
+                    {
+                        await socketMessage.ModifyAsync(x => x.Content = text);
+                    }
+                    else
+                    {
+                        await channel.SendMessageAsync(dynamicProvider.Text);
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                DowBotLogger.Warn("[ProcessDynamic] " + e);
+            }
+
         }
+
+        private async Task AddMessageToSyncQueue(string msg)
+        {
+            if (_syncMessagesQueue.Length + msg.Length >= _syncMessagesQueue.Capacity)
+            {
+                await ProcessSyncMessage();
+            }
+
+            _syncMessagesQueue.AppendLine(msg);
+        }
+
+        private async Task ProcessSyncMessage()
+        {
+            try
+            {
+                if (SyncChannel != null && _syncMessagesQueue.Length > 0)
+                {
+                    await SyncChannel.SendMessageAsync(_syncMessagesQueue.ToString());
+                    _syncMessagesQueue.Clear();
+                }
+            }
+            catch (Exception e)
+            {
+                DowBotLogger.Warn("[ProcessSyncMessage] " + e);
+            }
+
+        }
+
         
         private async Task UpdateLoop()
         {
-            while (true)
+            for (ulong accum = 0; ; accum++)
             {
-                try
+                if (_cancelUpdateLoop != null && _cancelUpdateLoop.IsCancellationRequested)
                 {
-                    if (_cancelUpdateLoop.IsCancellationRequested)
-                    {
-                        _cancelUpdateLoop?.Dispose();
-                        return;
-                    }
-                    
+                    _cancelUpdateLoop.Dispose();
+                    return;
+                }
+                
+                if (accum % DefaultUpdatePeriod == 0)
+                {
                     if (_botParams.AdministrativeModuleParams != null)
-                    {
                         await ProcessAdminDynamic();
-                    }
 
                     if (_botParams.DynamicModuleParams != null)
-                    {
                         await ProcessDynamic();
-                    }
+                }
 
-                }
-                catch (Exception ex)
+                if (accum % SyncUpdatePeriod == 0)
                 {
-                    DowBotLogger.Warn(ex);
+                    await ProcessSyncMessage();
                 }
-                finally
-                {
-                    await Task.Delay(UpdatePeriod);
-                }
+                
+                await Task.Delay(UpdateDeltaPeriod);
             }
         }
         
@@ -341,7 +385,7 @@ namespace DiscordBot
                 return;
             }
             DowBotLogger.Warn("Bot has been disconnected, enabled recreate task and it will be restored in 2 minutes!");
-            await Task.Delay(UpdatePeriod * 2);
+            await Task.Delay(DefaultUpdatePeriod * 2);
             await Recreate();
         }
     }

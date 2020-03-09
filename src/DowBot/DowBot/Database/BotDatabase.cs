@@ -2,7 +2,7 @@
 
 namespace DiscordBot.Database
 {
-    internal class BotDatabase
+    internal static class BotDatabase
     {
         private static LiteDatabase _db;
 
@@ -21,14 +21,28 @@ namespace DiscordBot.Database
 
         public static UserProfile CreateDiscordProfile(ulong discordUserId)
         {
-            var profile = new UserProfile()
+            var profile = new UserProfile
             {
                 DiscordUserId = discordUserId,
                 MuteUntil = 0,
                 IsMuteActive = false,
+                IsRussianLanguage = false,
             };
             ProfilesTable.Insert(profile);
             return profile;
+        }
+
+        public static bool IsUserRussian(ulong discordUserId)
+        {
+            var profile = GetProfile(discordUserId);
+            return profile.IsRussianLanguage;
+        }
+
+        public static void SetUserLanguage(ulong discordUserId, bool isRusLanguage)
+        {
+            var profile = GetProfile(discordUserId);
+            profile.IsRussianLanguage = isRusLanguage;
+            ProfilesTable.Update(profile);
         }
 
         public static UserProfile GetProfile(ulong discordUserId)

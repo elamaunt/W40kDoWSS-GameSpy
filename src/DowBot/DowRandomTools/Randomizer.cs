@@ -8,20 +8,22 @@ namespace RandomTools
     public class Randomizer
     {
         private readonly Random _random = new Random();
-        private DowItemsProvider ItemsProvider { get; }
+        private DowItemsProvider ItemsHandler { get; }
+        
+        public IDowItemsProvider ItemsProvider { get; }
 
         public Randomizer(IDowItemsProvider dowItemsProvider = null)
         {
-            var items =  dowItemsProvider ?? new DefaultDowItemsProvider();
-            ItemsProvider = new DowItemsProvider(items);
+            ItemsProvider =  dowItemsProvider ?? new DefaultDowItemsProvider();
+            ItemsHandler = new DowItemsProvider(ItemsProvider);
         }
         public DowItem[] GenerateRandomItems(DowItemType itemType, uint itemsCount, IEnumerable<string> inItems = null)
         {
             var items = inItems?.Distinct().Where(x => 
-                ItemsProvider.Items[itemType].ContainsKey(x)).Select(y => ItemsProvider.Items[itemType][y]).ToArray();
+                ItemsHandler.Items[itemType].ContainsKey(x)).Select(y => ItemsHandler.Items[itemType][y]).ToArray();
 
             if (items == null || items.Length == 0)
-                items = ItemsProvider.Items[itemType].Values.ToArray();
+                items = ItemsHandler.Items[itemType].Values.ToArray();
                 
             if (itemsCount < 1)
                 itemsCount = 1;
@@ -39,7 +41,7 @@ namespace RandomTools
         public DowItem[] ShuffleItems(DowItemType itemType, IEnumerable<string> inItems)
         {
             var items = inItems?.Where(x => 
-                ItemsProvider.Items[itemType].ContainsKey(x)).Select(y => ItemsProvider.Items[itemType][y]).ToArray();
+                ItemsHandler.Items[itemType].ContainsKey(x)).Select(y => ItemsHandler.Items[itemType][y]).ToArray();
             
             if (items == null || items.Length == 0)
                 return new DowItem[] { };

@@ -19,7 +19,7 @@ namespace DiscordBot.Commands.AdministrativeModule
             _adminManager = adminManager;
         }
 
-        public override async Task Execute(SocketMessage socketMessage, CommandAccessLevel accessLevel)
+        public override async Task Execute(SocketMessage socketMessage, bool isRus, CommandAccessLevel accessLevel)
         {
             var skipedText = socketMessage.Content.Split().Skip(1);
             var text = string.Join(" ", skipedText);
