@@ -33,10 +33,10 @@ namespace GSMasterServer.DowExpertBot
                 DmCommandParams(CommandAccessLevel.Everyone))} })
             });
             _dowBot = new DowBot(botParams);
-            _dowBot.OnSyncMessageReceived += DowBotOnOnSyncMessageReceived;
+            //_dowBot.OnSyncMessageReceived += DowBotOnOnSyncMessageReceived;
 
             _singleMasterServer = singleMasterServer;
-            _singleMasterServer.OnChatMessageReceived += OnChatMessageReceived;
+            //_singleMasterServer.OnChatMessageReceived += OnChatMessageReceived;
         }
         
         public async Task LaunchBot()
