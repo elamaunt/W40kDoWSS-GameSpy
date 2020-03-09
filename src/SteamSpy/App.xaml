@@ -13,7 +13,7 @@
                 <ResourceDictionary Source="Styles/ButtonStyles.xaml" />
                 <ResourceDictionary Source="Styles/TextStyles.xaml" />
                 <ResourceDictionary Source="Styles/CheckBoxStyles.xaml" />
-                <ResourceDictionary x:Name="Language" Source="Resources/Russian.xaml" />
+                <ResourceDictionary x:Name="Language" Source="Resources/Language/Russian.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

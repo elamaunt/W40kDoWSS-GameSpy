@@ -26,9 +26,9 @@ namespace ThunderHawk
             }
 
             langResource.Source = CultureInfo.CurrentCulture.TwoLetterISOLanguageName == "ru"
-                ? new Uri("pack://application:,,,/ThunderHawk;component/Resources/Russian.xaml",
+                ? new Uri("pack://application:,,,/ThunderHawk;component/Resources/Language/Russian.xaml",
                     UriKind.Absolute)
-                : new Uri("pack://application:,,,/ThunderHawk;component/Resources/English.xaml",
+                : new Uri("pack://application:,,,/ThunderHawk;component/Resources/Language/English.xaml",
                     UriKind.Absolute);
         }
 

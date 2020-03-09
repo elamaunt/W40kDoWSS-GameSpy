@@ -37,11 +37,11 @@ namespace ThunderHawk.Core
 
             if (game.Map != null && CoreContext.ResourcesService.HasImageWithName(game.Map))
             {
-                Map.Uri = new Uri($"pack://application:,,,/ThunderHawk;component/Images/Maps/{game.Map?.ToLowerInvariant()}.jpg");
+                Map.Uri = new Uri($"pack://application:,,,/ThunderHawk;component/Resources/Images/Maps/{game.Map?.ToLowerInvariant()}.jpg");
             }
             else
             {
-                Map.Uri = new Uri("pack://application:,,,/ThunderHawk;component/Images/Maps/default.jpg");
+                Map.Uri = new Uri("pack://application:,,,/ThunderHawk;component/Resources/Images/Maps/default.jpg");
             }
 
             switch (game.Type)

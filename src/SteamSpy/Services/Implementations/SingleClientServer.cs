@@ -500,6 +500,7 @@ namespace ThunderHawk
                     SteamLobbyManager.LeaveFromCurrentLobby();
                     break;
                 case "registernick":
+                    Thread.Sleep(2000);
                     handler.Send(node, DataFunctions.StringToBytes(string.Format(@"\rn\{0}\id\{1}\final\", pairs["uniquenick"], pairs["id"])));
                     break;
                 case "ka":
@@ -509,6 +510,7 @@ namespace ThunderHawk
                     HandleStatus(node, pairs);
                     break;
                 case "newuser":
+                    Thread.Sleep(2000);
                     CoreContext.MasterServer.RequestNewUser(pairs);
                     break;
                 case "getprofile":

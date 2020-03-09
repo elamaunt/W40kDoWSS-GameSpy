@@ -38,7 +38,7 @@ namespace ThunderHawk.Core
                             "maps remove: Edemus gamble(2), Tranquilitys End (2), "
                     },
 
-                    ImagePath = "pack://application:,,,/ThunderHawk;component/Images/InGame.jpg",
+                    ImagePath = "pack://application:,,,/ThunderHawk;component/Resources/Images/InGame.jpg",
                     CreatedDate = new DateTime(2020, 03, 07)
                 },
 
@@ -62,7 +62,7 @@ namespace ThunderHawk.Core
                             "<b>Dear Soulstorm lovers!</b>\n\n   A lot of time has passed since the last beta test, and now you can fully enjoy the updated version of the server. Months of hard work have borne fruit. A lot of problems are behind and now everyone can (whether it be a license or a pirate) play automatch together with each other. While the server temporarily allows you to play only using the ThunderHawk mod. In the future there will be support for other mods. It all depends on your support, we definitely won’t let you down =). Now it's time to find out again who is the best. \nSuccess on ladder!",
                     },
 
-                    ImagePath = "pack://application:,,,/ThunderHawk;component/Images/ThunderHawk2.png",
+                    ImagePath = "pack://application:,,,/ThunderHawk;component/Resources/Images/ThunderHawk2.png",
                     CreatedDate = new DateTime(2019, 12, 21)
                 },
 
@@ -88,7 +88,7 @@ namespace ThunderHawk.Core
                             "The final competition has come and now the judges have to choose the best maps that have every chance of being in automatch in the near future!\n\nYou can also familiarize yourself with all the maps of the participants yourself and vote for the community prize at the link <href>http://forums.warforge.ru/index.php?showtopic=258595</href>. The winner will be announced on September 15th, so stay tuned.",
                     },
 
-                    ImagePath = "pack://application:,,,/ThunderHawk;component/Images/MapContest.png",
+                    ImagePath = "pack://application:,,,/ThunderHawk;component/Resources/Images/MapContest.png",
                     CreatedDate = new DateTime(2019, 9, 12)
                 },
 
@@ -110,7 +110,7 @@ namespace ThunderHawk.Core
                         Body = "<b>Hello, Grunt!</b>\n\nCharge your bigshoot and look ahead <href>https://www.youtube.com/watch?v=eAZi9Ef1iY4</href>! After watching, you should report on the ladder about everything that you learned, and also collect teeth for us. Waaaargh!",
                     },
 
-                    ImagePath = "pack://application:,,,/ThunderHawk;component/Images/YbubakaGuide.png",
+                    ImagePath = "pack://application:,,,/ThunderHawk;component/Resources/Images/YbubakaGuide.png",
                     CreatedDate = new DateTime(2019, 7, 30)
                 }*/
             };

@@ -19,8 +19,8 @@ namespace ThunderHawk
             get
             {
                 if (IsNewYear)
-                    return "pack://application:,,,/ThunderHawk;component/Images/Background_DefaultNY.png";
-                return "pack://application:,,,/ThunderHawk;component/Images/Background_Default.png";
+                    return "pack://application:,,,/ThunderHawk;component/Resources/Images/Background_DefaultNY.png";
+                return "pack://application:,,,/ThunderHawk;component/Resources/Images/Background_Default.png";
             }
         }
 
