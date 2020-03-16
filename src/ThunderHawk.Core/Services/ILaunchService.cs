@@ -12,7 +12,7 @@ namespace ThunderHawk.Core
         bool IsGamePreparingToStart { set; get; }
         Process GameProcess { get; }
 
-        Task LaunchGameAndWait(String server);
+        Task LaunchGameAndWait(String server, String mode = "Classic");
         bool TryGetOrChoosePath(out string path);
         void ChangeGamePath();
         void ActivateGameWindow();

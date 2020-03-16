@@ -7,13 +7,166 @@
     <SolidColorBrush x:Key="BrushColor" Color="#FFFFFF" />
     <SolidColorBrush x:Key="BackgroundColor" Color="Black" />
 
+    
+    <!-- CUSTOM COMBO BOX -->
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#0e1116" />
+
+
+    <ControlTemplate x:Key="ComboBoxToggleButton" TargetType="ToggleButton">
+        <Grid>
+            <Border
+                x:Name="DropDownBorder1"
+                Background="#777777" />
+            <Border
+                Margin="1 1 1 1"
+                Background="{StaticResource WindowBackgroundBrush}">
+                <Image HorizontalAlignment="Right" Width="10" Height="10" Margin="5 5 5 5"
+                       Source="../Resources/Images/bottomArrow.png" />
+            </Border>
+        </Grid>
+    </ControlTemplate>
+
+    
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHover.Background" Color="#1F26A0DA"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHover.Border" Color="#A826A0DA"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelected.Background" Color="#000e1116"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelected.Border" Color="#0026A0DA"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedHover.Background" Color="#5426A0DA"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedHover.Border" Color="#FF26A0DA"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedNoFocus.Background" Color="#000e1116"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewSelectedNoFocus.Border" Color="#00DADADA"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewFocus.Border" Color="#FF26A0DA"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHoverFocus.Background" Color="#5426A0DA"/>
+    <SolidColorBrush x:Key="ComboBoxItem.ItemsviewHoverFocus.Border" Color="#FF26A0DA"/>
+    
+    <Style x:Key="ComboBoxItemStyle" TargetType="ComboBoxItem">
+        <Setter Property="Background" Value="#000e1116" />
+    <Setter Property="BorderBrush" Value="#000e1116" />
+    <Setter Property="Template">
+        <Setter.Value>
+            <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+                <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" SnapsToDevicePixels="true">
+                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                    </Trigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="False"/>
+                            <Condition Property="IsMouseOver" Value="True"/>
+                            <Condition Property="IsKeyboardFocused" Value="False"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewHover.Background}"/>
+                        <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewHover.Border}"/>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="True"/>
+                            <Condition Property="IsMouseOver" Value="False"/>
+                            <Condition Property="IsKeyboardFocused" Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelected.Background}"/>
+                        <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelected.Border}"/>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="True"/>
+                            <Condition Property="IsMouseOver" Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelectedHover.Background}"/>
+                        <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelectedHover.Border}"/>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="True"/>
+                            <Condition Property="IsMouseOver" Value="False"/>
+                            <Condition Property="IsKeyboardFocused" Value="False"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelectedNoFocus.Background}"/>
+                        <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewSelectedNoFocus.Border}"/>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="False"/>
+                            <Condition Property="IsMouseOver" Value="False"/>
+                            <Condition Property="IsKeyboardFocused" Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewFocus.Border}"/>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsSelected" Value="False"/>
+                            <Condition Property="IsMouseOver" Value="True"/>
+                            <Condition Property="IsKeyboardFocused" Value="True"/>
+                        </MultiTrigger.Conditions>
+                        <Setter Property="Background" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewHoverFocus.Background}"/>
+                        <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ComboBoxItem.ItemsviewHoverFocus.Border}"/>
+                    </MultiTrigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+        </Setter.Value>
+    </Setter>
+    </Style>
+
+
+    <Style x:Key="{x:Type ComboBox}" TargetType="ComboBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <ToggleButton
+                            Name="ToggleButton"
+                            Template="{StaticResource ComboBoxToggleButton}"
+                            Focusable="false"
+                            IsChecked="{Binding Path=IsDropDownOpen,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
+                            ClickMode="Press" />
+                        <ContentPresenter Name="ContentSite" IsHitTestVisible="False"
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}"
+                                          ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
+                                          Margin="5,4,23,4"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Left" />
+                        <Popup
+                            Name="Popup"
+                            Placement="Bottom"
+                            IsOpen="{TemplateBinding IsDropDownOpen}"
+                            AllowsTransparency="True"
+                            Focusable="False"
+                            PopupAnimation="Slide">
+                            <Grid
+                                Name="DropDown"
+                                SnapsToDevicePixels="True"
+                                MinWidth="{TemplateBinding ActualWidth}"
+                                MaxHeight="{TemplateBinding MaxDropDownHeight}">
+                                <Border
+                                    x:Name="DropDownBorder1"
+                                    Background="#777777" />
+                                <Border
+                                    x:Name="DropDownBorder2"
+                                    Background="{StaticResource WindowBackgroundBrush}" Margin="1 1 1 1" />
+                                <ScrollViewer SnapsToDevicePixels="True">
+                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained" />
+                                </ScrollViewer>
+                            </Grid>
+                        </Popup>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!-- CUSTOM COMBO BOX END -->
+
     <Style x:Key="ScrollBarLineButtonStyle" TargetType="{x:Type RepeatButton}">
-        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
                     <Canvas Height="18">
-                        <Polygon Fill="#44cccccc" Points="3,15 15,15 9,3"></Polygon>
+                        <Polygon Fill="#44cccccc" Points="3,15 15,15 9,3" />
                     </Canvas>
                 </ControlTemplate>
             </Setter.Value>
@@ -21,12 +174,12 @@
     </Style>
 
     <Style x:Key="ScrollBarLineButtonBottomStyle" TargetType="{x:Type RepeatButton}">
-        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
                     <Canvas Height="18">
-                        <Polygon Fill="#44cccccc" Points="3,3 9,15 15,3"></Polygon>
+                        <Polygon Fill="#44cccccc" Points="3,3 9,15 15,3" />
                     </Canvas>
                 </ControlTemplate>
             </Setter.Value>
@@ -34,25 +187,25 @@
     </Style>
 
     <Style x:Key="ScrollBarPageButtonStyle" TargetType="{x:Type RepeatButton}">
-        <Setter Property="IsTabStop" Value="False"/>
-        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
-                    <Border BorderBrush="Transparent"></Border>
+                    <Border BorderBrush="Transparent" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style x:Key="ScrollBarThumbStyle" TargetType="{x:Type Thumb}">
-        <Setter Property="IsTabStop" Value="False"/>
-        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Focusable" Value="False" />
         <Setter Property="Margin" Value="1,0,1,0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Thumb}">
-                    <Rectangle Fill="#44cccccc" Margin="2"></Rectangle>
+                    <Rectangle Fill="#44cccccc" Margin="2" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -61,39 +214,34 @@
     <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition MaxHeight="18"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition MaxHeight="18"/>
+                <RowDefinition MaxHeight="18" />
+                <RowDefinition Height="*" />
+                <RowDefinition MaxHeight="18" />
             </Grid.RowDefinitions>
 
             <RepeatButton Grid.Row="0" Height="18"
                           Style="{StaticResource ScrollBarLineButtonStyle}"
-                          Command="ScrollBar.LineUpCommand" >
-            </RepeatButton>
-            <Track Name="PART_Track" Grid.Row="1" 
+                          Command="ScrollBar.LineUpCommand" />
+            <Track Name="PART_Track" Grid.Row="1"
                    IsDirectionReversed="True">
                 <Track.DecreaseRepeatButton>
-                    <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButtonStyle}">
-                    </RepeatButton>
+                    <RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
                 </Track.DecreaseRepeatButton>
                 <Track.Thumb>
-                    <Thumb Style="{StaticResource ScrollBarThumbStyle}">
-                    </Thumb>
+                    <Thumb Style="{StaticResource ScrollBarThumbStyle}" />
                 </Track.Thumb>
                 <Track.IncreaseRepeatButton>
-                    <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButtonStyle}">
-                    </RepeatButton>
+                    <RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource ScrollBarPageButtonStyle}" />
                 </Track.IncreaseRepeatButton>
             </Track>
             <RepeatButton Grid.Row="3" Height="18"
                           Style="{StaticResource ScrollBarLineButtonBottomStyle}"
-                          Command="ScrollBar.LineDownCommand">
-            </RepeatButton>
+                          Command="ScrollBar.LineDownCommand" />
         </Grid>
     </ControlTemplate>
 
     <Style TargetType="{x:Type ScrollBar}">
-        <Setter Property="Template" Value="{StaticResource VerticalScrollBar}"/>
+        <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
     </Style>
 
 
@@ -101,7 +249,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <ContentPresenter x:Name="ContentPresenter" Opacity="0.7"/>
+                    <ContentPresenter x:Name="ContentPresenter" Opacity="0.7" />
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter TargetName="ContentPresenter" Property="Opacity" Value="1" />
@@ -126,8 +274,7 @@
                     NonClientFrameEdges="None"
                     GlassFrameThickness="0"
                     ResizeBorderThickness="7"
-                    CaptionHeight="24"
-                />
+                    CaptionHeight="24" />
             </Setter.Value>
         </Setter>
         <EventSetter Event="Loaded" Handler="WindowLoaded" />
@@ -136,56 +283,63 @@
                 <ControlTemplate TargetType="{x:Type Window}">
                     <Border x:Name="MainBorder" Padding="7 7 7 5">
                         <Grid TextOptions.TextRenderingMode="ClearType" TextOptions.TextFormattingMode="Display">
-                            <Border x:Name="PartBorder" Width="Auto" Height="Auto" Background="{DynamicResource BackgroundColor}"
-                                BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Padding="0">
+                            <Border x:Name="PartBorder" Width="Auto" Height="Auto"
+                                    Background="{DynamicResource BackgroundColor}"
+                                    BorderBrush="{StaticResource BorderColor}" BorderThickness="1" Padding="0">
                                 <Grid VerticalAlignment="Stretch">
                                     <Grid Name="Topbar"
-                                            Height="30" 
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Top"
+                                          Height="30"
+                                          HorizontalAlignment="Stretch"
+                                          VerticalAlignment="Top"
                                           Panel.ZIndex="10">
-                                        <Border Name="Border" 
-                                                HorizontalAlignment="Stretch" 
+                                        <Border Name="Border"
+                                                HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Stretch"
                                                 BorderBrush="#22ffffff"
                                                 BorderThickness="0">
                                             <Grid>
                                                 <Grid HorizontalAlignment="Right" VerticalAlignment="Top">
                                                     <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
-                                                        <ColumnDefinition Width="Auto"></ColumnDefinition>
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
                                                     </Grid.ColumnDefinitions>
-                                                    <Button x:Name="MinButton" Grid.Column="0" Width="32" Height="25" Style="{DynamicResource ButtonStyle}"
-                                                Click="MinButtonClick" WindowChrome.IsHitTestVisibleInChrome="True">
+                                                    <Button x:Name="MinButton" Grid.Column="0" Width="32" Height="25"
+                                                            Style="{DynamicResource ButtonStyle}"
+                                                            Click="MinButtonClick"
+                                                            WindowChrome.IsHitTestVisibleInChrome="True">
                                                         <Grid Width="32" Height="25" Background="Transparent">
                                                             <Path
-                                                            Stroke="{StaticResource BrushColor}"
-                                                            StrokeThickness="2"
-                                                            Data="m10,16 h12 "/>
+                                                                Stroke="{StaticResource BrushColor}"
+                                                                StrokeThickness="2"
+                                                                Data="m10,16 h12 " />
                                                         </Grid>
                                                     </Button>
-                                                    <Button x:Name="MaxButton" Grid.Column="1" Width="32" Height="25" Style="{DynamicResource ButtonStyle}"
-                                                Click="MaxButtonClick" WindowChrome.IsHitTestVisibleInChrome="True">
+                                                    <Button x:Name="MaxButton" Grid.Column="1" Width="32" Height="25"
+                                                            Style="{DynamicResource ButtonStyle}"
+                                                            Click="MaxButtonClick"
+                                                            WindowChrome.IsHitTestVisibleInChrome="True">
                                                         <Grid Width="32" Height="25" Background="Transparent">
                                                             <Path
-                                                            Stroke="{StaticResource BrushColor}"
-                                                            StrokeThickness="2"
-                                                            Data="m12,9 h9 v7 h-9 v-8"/>
+                                                                Stroke="{StaticResource BrushColor}"
+                                                                StrokeThickness="2"
+                                                                Data="m12,9 h9 v7 h-9 v-8" />
                                                             <Path
-                                                            x:Name="MaxButtonAdditive"   
-                                                            Stroke="{StaticResource BrushColor}"
-                                                            StrokeThickness="1.5"
-                                                            Data=""/>
+                                                                x:Name="MaxButtonAdditive"
+                                                                Stroke="{StaticResource BrushColor}"
+                                                                StrokeThickness="1.5"
+                                                                Data="" />
                                                         </Grid>
                                                     </Button>
-                                                    <Button x:Name="CloseButton" Grid.Column="2" Width="32" Height="25" Style="{DynamicResource ButtonStyle}"
-                                                Click="CloseButtonClick" WindowChrome.IsHitTestVisibleInChrome="True">
+                                                    <Button x:Name="CloseButton" Grid.Column="2" Width="32" Height="25"
+                                                            Style="{DynamicResource ButtonStyle}"
+                                                            Click="CloseButtonClick"
+                                                            WindowChrome.IsHitTestVisibleInChrome="True">
                                                         <Grid Width="32" Height="25" Background="Transparent">
                                                             <Path
-                                                            Stroke="{StaticResource BrushColor}"
-                                                            StrokeThickness="2"
-                                                            Data="M10,7 L20,17 M10,17 L20,7"/>
+                                                                Stroke="{StaticResource BrushColor}"
+                                                                StrokeThickness="2"
+                                                                Data="M10,7 L20,17 M10,17 L20,7" />
                                                         </Grid>
                                                     </Button>
                                                 </Grid>
@@ -193,14 +347,14 @@
                                         </Border>
                                     </Grid>
                                     <ContentPresenter
-                                        Name="WindowContent"/>
+                                        Name="WindowContent" />
                                 </Grid>
                             </Border>
                         </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Maximized">
-                            <Setter TargetName="MaxButtonAdditive" Property="Data" Value="m14,6 h10 v7"/>
+                            <Setter TargetName="MaxButtonAdditive" Property="Data" Value="m14,6 h10 v7" />
                         </Trigger>
                         <Trigger Property="WindowState" Value="Normal">
                             <Setter TargetName="PartBorder" Property="Effect">

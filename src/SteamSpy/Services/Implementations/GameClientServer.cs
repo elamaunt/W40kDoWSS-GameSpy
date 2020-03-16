@@ -25,9 +25,7 @@ namespace ThunderHawk
 {
     public class SingleClientServer : IClientServer
     {
-        
-        public static bool ShouldShowGames; // Для костыля с миганием
-        
+
         UdpPortHandler _serverReport;
         TcpPortHandler _serverRetrieve;
         TcpPortHandler _clientManager;
@@ -116,7 +114,6 @@ namespace ThunderHawk
             CoreContext.MasterServer.LoginErrorReceived += OnLoginErrorReceived;
 
             SteamLobbyManager.LobbyChatMessage += OnLobbyChatMessageReceived;
-            //SteamLobbyManager.LobbyMemberUpdated += OnLobbyMemberUpdated;
             SteamLobbyManager.LobbyMemberLeft += OnLobbyMemberLeft;
             SteamLobbyManager.TopicUpdated += OnTopicUpdated;
         }
@@ -548,23 +545,26 @@ namespace ThunderHawk
 
             CoreContext.OpenLogsService.Log($"Active mod [{activeMod}] [{activeVersion}]");
 
+            CoreContext.ThunderHawkModManager.CurrentModName = activeMod;
+            CoreContext.ThunderHawkModManager.CurrentModVersion = activeVersion;
+
             if (activeMod == null || activeVersion == null)
             {
                 CoreContext.OpenLogsService.Log($"HandleLogin invalid mode");
 
                 _clientManager.Send(node, DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\You can login only with ThunderHawk active mod.\id\1\final\"));
-                CoreContext.SystemService.ShowMessageWindow($"Temporary entry is allowed only with the active {CoreContext.ThunderHawkModManager.ModName} {CoreContext.ThunderHawkModManager.ModVersion} mod.");
+                CoreContext.SystemService.ShowMessageWindow($"Temporary entry is allowed only with the active {CoreContext.ThunderHawkModManager.ValidModName} {CoreContext.ThunderHawkModManager.ValidModVersion} mod.");
                 return;
             }
 
-            if (!activeMod.Equals(CoreContext.ThunderHawkModManager.ModName, StringComparison.OrdinalIgnoreCase))
+            if (!activeMod.Equals(CoreContext.ThunderHawkModManager.ValidModName, StringComparison.OrdinalIgnoreCase) && !activeMod.Equals(CoreContext.ThunderHawkModManager.VanilaModName, StringComparison.OrdinalIgnoreCase))
             {
-                if (!activeVersion.Equals(CoreContext.ThunderHawkModManager.ModVersion, StringComparison.OrdinalIgnoreCase))
+                if (!activeVersion.Equals(CoreContext.ThunderHawkModManager.ValidModVersion, StringComparison.OrdinalIgnoreCase))
                 {
                     CoreContext.OpenLogsService.Log($"HandleLogin invalid mode {activeMod}");
 
                     _clientManager.Send(node, DataFunctions.StringToBytes(@"\error\\err\0\fatal\\errmsg\You can login only with ThunderHawk active mod.\id\1\final\"));
-                    CoreContext.SystemService.ShowMessageWindow($"Temporary entry is allowed only with the active {CoreContext.ThunderHawkModManager.ModName} {CoreContext.ThunderHawkModManager.ModVersion} mod.");
+                    CoreContext.SystemService.ShowMessageWindow($"Temporary entry is allowed only with the active {CoreContext.ThunderHawkModManager.ValidModName} {CoreContext.ThunderHawkModManager.ValidModVersion} mod.");
                     return;
                 }
             }
@@ -900,10 +900,10 @@ namespace ThunderHawk
                 var mod = dictionary["Mod"];
                 var modVersion = dictionary["ModVer"];
 
-                if (!CoreContext.ThunderHawkModManager.ModName.Equals(mod, StringComparison.OrdinalIgnoreCase))
+                if (!CoreContext.ThunderHawkModManager.ValidModName.Equals(mod, StringComparison.OrdinalIgnoreCase))
                     return;
 
-                if (!CoreContext.ThunderHawkModManager.ModVersion.Equals(modVersion, StringComparison.OrdinalIgnoreCase))
+                if (!CoreContext.ThunderHawkModManager.ValidModVersion.Equals(modVersion, StringComparison.OrdinalIgnoreCase))
                     return;
 
                 var playersCount = int.Parse(dictionary["Players"]);
@@ -1780,7 +1780,7 @@ namespace ThunderHawk
                 }
             }
 
-            SteamLobbyManager.LoadLobbies(null, GetIndicator())
+            SteamLobbyManager.LoadLobbies(null, GetIndicator(), true)
                .ContinueWith(task =>
                {
                    try
@@ -1819,33 +1819,26 @@ namespace ThunderHawk
                            _lastLoadedLobbies[channelHash] = server;
                        }
 
-                       Logger.Info("SERVERS VALIDATE VALUE ~" + validate+"~");
-                       var encryptedBytes = GSEncoding.Encode("pXL838".ToAssciiBytes(), DataFunctions.StringToBytes(validate), unencryptedBytes, unencryptedBytes.LongLength);
+                       Logger.Info("SERVERS VALIDATE VALUE ~" + validate + "~");
+                       var encryptedBytes = GSEncoding.Encode("pXL838".ToAssciiBytes(),
+                           DataFunctions.StringToBytes(validate), unencryptedBytes, unencryptedBytes.LongLength);
 
-                       Logger.Info("SERVERS bytes "+ encryptedBytes.Length);
+                       Logger.Info("SERVERS bytes " + encryptedBytes.Length);
 
-                       if (ShouldShowGames)
+                       int autoGames = 0;
+                       int customGames = 0;
+                       // TODO вынести в отдельно
+                       for (int i = 0; i < servers.Length; i++)
                        {
-                           int autoGames = 0;
-                           int customGames = 0;
-                           // TODO вынести в отдельно
-                           for (int i = 0; i < servers.Length; i++)
-                           {
-                               var server = servers[i];
-                               if (server.Ranked) autoGames++;
-                               else customGames++;
-                           }
-                           
-                           CoreContext.ClientServer.SendAsServerMessage(
-                               "Received game list: " + customGames + " - custom; " + autoGames +
-                               " - auto. Processing");
-                           handler.Send(node, encryptedBytes);
+                           var server = servers[i];
+                           if (server.Ranked) autoGames++;
+                           else customGames++;
                        }
-                       else
-                       {
-                           CoreContext.ClientServer.SendAsServerMessage("PreSearching games");
-                           ShouldShowGames = true;
-                       }
+
+                       CoreContext.ClientServer.SendAsServerMessage(
+                           "Received game list: " + customGames + " - custom; " + autoGames +
+                           " - auto; Mod: "+ CoreContext.ThunderHawkModManager.CurrentModName);
+                       handler.Send(node, encryptedBytes);
 
                        LobbiesUpdatedByRequest?.Invoke(servers.Select(x => new GameHostInfo()
                        {
@@ -1966,7 +1959,7 @@ namespace ThunderHawk
         void OnServerReport(UdpPortHandler handler, byte[] receivedBytes, IPEndPoint remote)
         {
             var str = ToUtf8(receivedBytes, receivedBytes.Length);
-            Logger.Trace("REPORT " + str);
+            Logger.Info("REPORT " + str);
 
             if (receivedBytes[0] == (byte)MessageType.AVAILABLE)
             {
@@ -2314,9 +2307,9 @@ namespace ThunderHawk
         public string GetIndicator()
         {
 #if SPACEWAR
-            return "SOULSTORM";
+            return "THUNDERHAWK_DEBUG" + CoreContext.UpdaterService.CurrentVersion;
 #else
-            return CoreContext.ThunderHawkModManager.ModName + " "+ CoreContext.ThunderHawkModManager.ModVersion;
+            return "THUNDERHAWK_PROD" + CoreContext.UpdaterService.CurrentVersion;
 #endif
         }
 

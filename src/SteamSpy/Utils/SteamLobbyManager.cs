@@ -124,14 +124,7 @@ namespace ThunderHawk.Utils
 
             switch (change)
             {
-               /* case EChatMemberStateChange.k_EChatMemberStateChangeEntered:
-                    { 
-                        var name = SteamMatchmaking.GetLobbyMemberData(_currentLobby.Value, new CSteamID(update.m_ulSteamIDUserChanged), LobbyDataKeys.MEMBER_NAME);
-                        var profileId = SteamMatchmaking.GetLobbyMemberData(_currentLobby.Value, new CSteamID(update.m_ulSteamIDUserChanged), LobbyDataKeys.MEMBER_PROFILE_ID);
 
-                        LobbyMemberEntered(update.m_ulSteamIDUserChanged, profileId, name);
-                        break;
-                    }*/
                 case EChatMemberStateChange.k_EChatMemberStateChangeLeft:
                 case EChatMemberStateChange.k_EChatMemberStateChangeKicked:
                 case EChatMemberStateChange.k_EChatMemberStateChangeBanned:
@@ -145,23 +138,6 @@ namespace ThunderHawk.Utils
             }
         }
 
-        public static string GetKeyValue(string name, string key)
-        {
-            if (_currentLobby == null)
-                return string.Empty;
-
-            var count = SteamMatchmaking.GetNumLobbyMembers(_currentLobby.Value);
-
-            for (int i = 0; i < count; i++)
-            {
-                var id = SteamMatchmaking.GetLobbyMemberByIndex(_currentLobby.Value, i);
-                var memberName = SteamMatchmaking.GetLobbyMemberData(_currentLobby.Value, id, LobbyDataKeys.MEMBER_NAME);
-                if (memberName == name)
-                    return SteamMatchmaking.GetLobbyMemberData(_currentLobby.Value, id, key);
-            }
-
-            return string.Empty;
-        }
 
         public static int GetLobbyMembersCount()
         {
@@ -435,7 +411,7 @@ namespace ThunderHawk.Utils
             }
         }
 
-        public static Task<GameServerDetails[]> LoadLobbies(string gameVariant = null, string indicator = null)
+        public static Task<GameServerDetails[]> LoadLobbies(string gameVariant = null, string indicator = null, bool filterByMod = false)
         {
             lock (LOCK)
             {
@@ -457,12 +433,12 @@ namespace ThunderHawk.Utils
 
                         Console.WriteLine("Лобби найдено " + result.m_nLobbiesMatching);
 
-                        tcs.SetResult(HandleGameLobbies(result));
+                        tcs.SetResult(HandleGameLobbies(result, null, filterByMod));
                     });
             }
         }
 
-        private static GameServerDetails[] HandleGameLobbies(LobbyMatchList_t param, string indicatorFilter = null)
+        private static GameServerDetails[] HandleGameLobbies(LobbyMatchList_t param, string indicatorFilter = null, bool filterByMod = false)
         {
             var lobbies = new List<GameServerDetails>();
 
@@ -538,6 +514,11 @@ namespace ThunderHawk.Utils
                                 if (Math.Abs(scoreValue - serverScore) > 180)
                                     continue;
                             }
+                        }
+
+                        if (filterByMod)
+                        {
+                            if(!server.GameVariant.Contains(CoreContext.ThunderHawkModManager.CurrentModName)) continue;
                         }
 
                         if (!server.HasPlayers)

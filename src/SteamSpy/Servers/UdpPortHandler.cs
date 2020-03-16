@@ -24,8 +24,8 @@ namespace ThunderHawk
         public UdpPortHandler(int port, DataHandler handlerDelegate, ExceptionHandler errorHandler)
         {
             _port = port;
-            _exceptionHandlerDelegate = errorHandler;
             _handlerDelegate = handlerDelegate;
+            _exceptionHandlerDelegate = errorHandler;
         }
 
         public void Start()

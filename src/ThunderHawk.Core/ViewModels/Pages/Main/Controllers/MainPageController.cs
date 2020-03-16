@@ -57,7 +57,7 @@ namespace ThunderHawk.Core
                     .AttachIndicator(Frame.LoadingIndicator);
             }
 
-            Frame.ActiveModRevision.Text = $"Thunderhawk <b>" + CoreContext.ThunderHawkModManager.ModVersion + "</b>";
+            Frame.ActiveModRevision.Text = $"Thunderhawk <b>" + CoreContext.ThunderHawkModManager.ValidModVersion + "</b>";
             Frame.LaunchGame.Action = LaunchThunderhawk;
             Frame.LaunchSteamGame.Action = LaunchSteam;
 
@@ -100,9 +100,8 @@ namespace ThunderHawk.Core
             Frame.LaunchSteamGame.Text = "Thunderhawk launched";
             Frame.NewsVisible = false;
             Frame.InGameVisible = true;
-            
 
-            CoreContext.LaunchService.LaunchGameAndWait("thunderhawk")
+            CoreContext.LaunchService.LaunchGameAndWait("thunderhawk", Frame.GameModeSelectedValue)
                 .OnFaultOnUi(ex => Frame.UserInteractions.ShowErrorNotification(ex.Message))
                 .OnContinueOnUi(t =>
                 {
@@ -128,8 +127,8 @@ namespace ThunderHawk.Core
 
         void ResetButtons()
         {
-            Frame.LaunchGame.Text = "Launch Thunderhawk\n          (1x1, 2x2)";
-            Frame.LaunchSteamGame.Text = "Launch Steam\n(3x3, 4x4, ffa)";
+            Frame.LaunchGame.Text = "Launch Thunderhawk";
+            Frame.LaunchSteamGame.Text = "Launch Steam";
             Frame.LaunchGame.Enabled = true;
             Frame.LaunchSteamGame.Enabled = true;
         }

@@ -9,9 +9,14 @@ namespace ThunderHawk
     {
         const string ModFolderName = @"Mod";
 
-        public string ModName => "ThunderHawk";
-        public string ModVersion => "1.5.9";
-        
+        public string VanilaModName => "dxp2";
+        public string ValidModName => "ThunderHawk";
+        public string ValidModVersion => "1.5.9";
+
+        public string CurrentModName { get; set; } = "---";
+
+        public string CurrentModVersion { get; set; } = "---";
+
         public void DeployModAndModule(string gamePath)
         {
             try

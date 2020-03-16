@@ -12,6 +12,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading;
 
 namespace GSMasterServer.Servers

@@ -146,8 +146,8 @@
     <Compile Include="PageExtensions\UserInteractionsExtension.cs" />
     <Compile Include="Servers\TcpPortHandler.cs" />
     <Compile Include="Servers\UdpPortHandler.cs" />
-    <Compile Include="Services\Implementations\SingleClientServer.cs" />
-    <Compile Include="Services\Implementations\SingleMasterServer.cs" />
+    <Compile Include="Services\Implementations\GameClientServer.cs" />
+    <Compile Include="Services\Implementations\LauncherClientServer.cs" />
     <Compile Include="Services\Implementations\UpdaterService.cs" />
     <Compile Include="StaticClasses\Soulstorm\InGameHelper.cs" />
     <Compile Include="ThunderHawk.cs" />
@@ -848,6 +848,7 @@
     <Resource Include="Resources\Images\thunderhawk_icon.png" />
     <Resource Include="Resources\Images\warning-mark.png" />
     <Resource Include="Resources\Images\YbubakaGuide.png" />
+    <Resource Include="Resources\Images\bottomArrow.png" />
     <Resource Include="thunderhawk.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Resource>

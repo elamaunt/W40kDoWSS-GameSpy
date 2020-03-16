@@ -247,20 +247,6 @@ namespace ThunderHawk
                                 isGameNow = true;
                                 readTestStats();
                             }
-                            
-                            
-                            // Если мы присоединились к игре или покинули список игр, ставим флаг-костыль, чтобы игры не обновлялись дважды
-                            searchLine = "Lobby - Join success"; 
-                            var searchLine2 = "Lobby - LOE_News received";
-                            var searchLine3 = "Automatch report variant key";
-                            index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);
-                            var index2 = line.IndexOf(searchLine2, StringComparison.OrdinalIgnoreCase);
-                            var index3 = line.IndexOf(searchLine3, StringComparison.OrdinalIgnoreCase);
-                            if (index != -1 || index2 != -1 || index3 != -1)
-                            {
-                                SingleClientServer.ShouldShowGames = false;
-                                readTestStats();
-                            }
 
                             searchLine = "finished loading";
                             index = line.IndexOf(searchLine, StringComparison.OrdinalIgnoreCase);

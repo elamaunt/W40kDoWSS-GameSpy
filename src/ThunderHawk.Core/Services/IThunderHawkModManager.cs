@@ -2,8 +2,12 @@
 {
     public interface IThunderHawkModManager
     {
-        string ModName { get; }
-        string ModVersion { get; }
+        
+        string VanilaModName { get; }
+        string ValidModName { get; }
+        string ValidModVersion { get; }
+        string CurrentModName { get; set; }
+        string CurrentModVersion{ get; set; }
         void DeployModAndModule(string gamePath);
     }
 }

@@ -63,18 +63,21 @@ namespace ThunderHawk.Core
             var source = new ObservableCollection<ItemViewModel>();
 
             int maxPlayers = 0;
+            String gameVariant = "";
 
-            foreach (var host in hosts.OrderBy(x => x.MaxPlayers).OrderBy(x => x.Players))
+            foreach (var host in hosts.OrderBy(x => x.MaxPlayers).ThenBy(x => x.GameVariant).ThenBy(x => x.Players))
             {
                 if (!host.Ranked)
                     continue;
 
-                if (maxPlayers != host.MaxPlayers)
+                // эта логика для отображения заголовков 1х1 - thunderhawk, 2x2 - vanila и т.д.
+                if (maxPlayers != host.MaxPlayers && gameVariant != host.GameVariant)
                 {
                     maxPlayers = host.MaxPlayers;
+                    gameVariant = host.GameVariant;
 
                     var separator = new GamesSeparatorItemViewModel();
-                    separator.Header.Text = $"{maxPlayers / 2}vs{maxPlayers / 2}";
+                    separator.Header.Text = $"{maxPlayers / 2}vs{maxPlayers / 2} - " + getHumanReadableGameMode(gameVariant);
                     source.Add(separator);
                 }
 
@@ -89,6 +92,15 @@ namespace ThunderHawk.Core
             _timer?.Dispose();
             CoreContext.MasterServer.GameBroadcastReceived -= OnBroadcastReceived;
             base.OnUnbind();
+        }
+        
+        private String getHumanReadableGameMode(String gameVariant)
+        {
+            if (gameVariant.Contains("thunderhawk"))
+            {
+                return "Thunderhawk - " + gameVariant.Substring(0, 5);
+            }
+            return gameVariant;
         }
     }
 }

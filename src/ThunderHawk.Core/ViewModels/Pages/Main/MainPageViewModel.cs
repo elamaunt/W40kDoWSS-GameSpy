@@ -9,9 +9,9 @@ namespace ThunderHawk.Core
     {
         public ControlFrame LoadingIndicator { get; } = new ControlFrame() { Visible = false };
         public ListFrame<NewsItemViewModel> News { get; } = new ListFrame<NewsItemViewModel>();
-        public ButtonFrame LaunchGame { get; } = new ButtonFrame() { Text = "Launch Thunderhawk\n          (1x1, 2x2)" };
+        public ButtonFrame LaunchGame { get; } = new ButtonFrame() { Text = "Launch Thunderhawk" };
         
-        public ButtonFrame LaunchSteamGame { get; } = new ButtonFrame() { Text = "Launch Steam\n(3x3, 4x4, ffa)" };
+        public ButtonFrame LaunchSteamGame { get; } = new ButtonFrame() { Text = "Launch Steam" };
         public ActionFrame FAQLabel { get; } = new ActionFrame();
 
         public ActionFrame Tweaks { get; } = new ActionFrame();
@@ -34,8 +34,8 @@ namespace ThunderHawk.Core
         
         public PlayerFrameInGame Player6 { get; } = new PlayerFrameInGame();
         public PlayerFrameInGame Player7 { get; } = new PlayerFrameInGame();
-        
-        //public Uri Map { get; set; } = new Uri("pack://application:,,,/ThunderHawk;component/Resources/Images/Maps/default.jpg");
+
+        public string GameModeSelectedValue { get; set; } = "Classic bug fix";
 
         
         private bool inGameVisible = false;

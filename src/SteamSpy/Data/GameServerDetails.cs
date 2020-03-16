@@ -32,7 +32,7 @@ namespace ThunderHawk
 
         public bool Ranked => GameName == "whamdowfram";
         public bool IsTeamplay => GetOrDefault("teamplay") == "1";
-        public bool HasPlayers => GetOrDefault("numplayers") != "0";
+        public bool HasPlayers => Int32.Parse(GetOrDefault("numplayers")) > 0;
         public string PlayersCount => GetOrDefault("numplayers");
         public string HostPort => GetOrDefault("hostport");
         public string HostName => GetOrDefault("hostname");

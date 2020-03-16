@@ -33,7 +33,7 @@ namespace ThunderHawk
             }
         }*/
 
-        public Task LaunchGameAndWait(String server)
+        public Task LaunchGameAndWait(String server, String mode)
         {
             if (!CoreContext.LaunchService.TryGetOrChoosePath(out string path))
                 return Task.CompletedTask;
@@ -90,7 +90,16 @@ namespace ThunderHawk
                             CopySchemes(path);
                             ProcessManager.KillDowStatsProccesses();
 
-                            procParams += " -modname ThunderHawk";
+                            if (mode == "Classic bug fix")
+                            {
+                                
+                                procParams += " -modname dxp2";
+                            }
+                            else
+                            {
+                                procParams += " -modname ThunderHawk";
+                            }
+                            
 
                             var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
                             {

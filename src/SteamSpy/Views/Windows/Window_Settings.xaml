@@ -29,6 +29,8 @@
             <Button Margin="5 0 0 0"  Width="120" Height="22" Content="Change game path" Foreground="White" framework:WPFBinder.Frame="ChangeGamePath" HorizontalAlignment="Left"/>
         </StackPanel>
     </Grid>
+    
+    
 
 
 </framework:BindableWindow>
