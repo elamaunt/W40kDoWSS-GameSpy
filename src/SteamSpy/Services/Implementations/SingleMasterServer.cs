@@ -52,6 +52,8 @@ namespace ThunderHawk
         public event Action ConnectionLost;
         public event Action Connected;
         public event Action<string[]> NicksReceived;
+        public event Action<bool> CanAuthorizeReceived;
+        public event Action<bool> RegistrationByLauncherReceived;
         public event Action<LoginInfo> LoginInfoReceived;
         public event Action<StatsInfo[], int, int> PlayersTopLoaded;
         public event Action<GameInfo[]> LastGamesLoaded;
@@ -701,6 +703,32 @@ namespace ThunderHawk
 
            _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
         }
+        
+        public void RequestRegistration(string login, string password)
+        {
+            var message = _clientPeer.CreateMessage();
+
+            message.WriteJsonMessage(new RequestRegistrationByLauncher
+            {
+                Login = login,
+                Password = password
+            });
+
+            _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        public void RequestCanAuthorize(string login, string password)
+        {
+            var message = _clientPeer.CreateMessage();
+
+            message.WriteJsonMessage(new RequestCanAuthorizeMessage
+            {
+                Login = login,
+                Password = password
+            });
+
+            _clientPeer.SendMessage(message, NetDeliveryMethod.ReliableUnordered);
+        }
 
         public void RequestNameCheck(string name)
         {
@@ -876,6 +904,16 @@ namespace ThunderHawk
         public void HandleMessage(NetConnection senderConnection, AllUserNicksMessage message)
         {
             NicksReceived?.Invoke(message.Nicks ?? new string[0]);
+        }
+
+        public void HandleMessage(NetConnection senderConnection, ResponseCanAuthorizeMessage message)
+        {
+            CanAuthorizeReceived?.Invoke(message.CanAuthorize);
+        }
+
+        public void HandleMessage(NetConnection senderConnection, ResponseRegistrationByLauncherMessage message)
+        {
+            RegistrationByLauncherReceived?.Invoke(message.RegistrationSuccess);
         }
 
         public void HandleMessage(NetConnection senderConnection, NameCheckMessage message)

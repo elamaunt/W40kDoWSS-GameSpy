@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <PackageReference Include="EasyHook" Version="2.7.7097" />
+    <PackageReference Include="Microsoft.Xaml" Version="4.0.0.1" />
   </ItemGroup>
 
 </Project>

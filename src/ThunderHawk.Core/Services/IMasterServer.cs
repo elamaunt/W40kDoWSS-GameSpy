@@ -23,6 +23,8 @@ namespace ThunderHawk.Core
         void RequestUserStats(long profileId);
         void RequestUserStats(string name);
         void RequestAllUserNicks(string email);
+        void RequestCanAuthorize(string login, string password);
+        void RequestRegistration(string login, string password);
         void RequestNameCheck(string name);
 
         void SendChatMessage(string text, bool fromGame);
@@ -37,6 +39,8 @@ namespace ThunderHawk.Core
         ///ulong ActiveProfileName { get; }
 
         event Action<string[]> NicksReceived;
+        event Action<bool> CanAuthorizeReceived;
+        event Action<bool> RegistrationByLauncherReceived;
         event Action<string, long?> NameCheckReceived;
         event Action<string> LoginErrorReceived;
         

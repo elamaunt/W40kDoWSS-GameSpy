@@ -329,7 +329,7 @@
                           Foreground="#AAAAAA"
                           Margin="0 10 0 0">
                     <ComboBoxItem IsSelected="true" Content="Classic bug fix" />
-                    <ComboBoxItem Content="Thunderhawk" />
+                    <ComboBoxItem Content="ThunderHawk" />
                 </ComboBox>
 
                 <StackPanel Orientation="Horizontal">

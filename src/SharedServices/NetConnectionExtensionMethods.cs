@@ -64,6 +64,8 @@ namespace SharedServices
                 case MessageTypes.RequestPlayersTop: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestPlayersTopMessage>(json, Settings)); break;
                 case MessageTypes.RequestLastGames: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestLastGamesMessage>(json, Settings)); break;
                 case MessageTypes.RequestAllUserNicks: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestAllUserNicksMessage>(json, Settings)); break;
+                case MessageTypes.RequestCanAuthorize: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestCanAuthorizeMessage>(json, Settings)); break;
+                case MessageTypes.RequestRegistrationByLauncher: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestRegistrationByLauncher>(json, Settings)); break;
                 case MessageTypes.RequestNameCheck: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestNameCheckMessage>(json, Settings)); break;
                 case MessageTypes.SetKeyValue: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<SetKeyValueMessage>(json, Settings)); break;
                 case MessageTypes.RequestNewUser: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<RequestNewUserMessage>(json, Settings)); break;
@@ -97,6 +99,8 @@ namespace SharedServices
                 case MessageTypes.PlayersTop: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<PlayersTopMessage>(json, Settings)); break;
                 case MessageTypes.LastGames: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LastGamesMessage>(json, Settings)); break;
                 case MessageTypes.AllUserNicks: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<AllUserNicksMessage>(json, Settings)); break;
+                case MessageTypes.ResponseCanAuthorize: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<ResponseCanAuthorizeMessage>(json, Settings)); break;
+                case MessageTypes.ResponseRegistrationByLauncher: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<ResponseRegistrationByLauncherMessage>(json, Settings)); break;
                 case MessageTypes.NameCheck: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<NameCheckMessage>(json, Settings)); break;
                 case MessageTypes.LoginError: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LoginErrorMessage>(json, Settings)); break;
                 case MessageTypes.SetKeyValue: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<SetKeyValueMessage>(json, Settings)); break;

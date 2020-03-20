@@ -30,11 +30,7 @@ namespace ThunderHawk.Core
                 (ChatTabViewModel = new PageTabViewModel(ChatViewModel = new ChatPageViewModel())),
                 new PageTabViewModel(StatsViewModel = new StatsPageViewModel()),
                 new PageTabViewModel(new TweaksPageViewModel()),
-                new PageTabViewModel(LogsViewModel = new LogsPageViewModel())//,
-                //new PageTabViewModel(new FAQPageViewModel())
-                
-                //new ModificationsPageViewModel(){ Enabled = false },
-                //new AllNewsPageViewModel(){ Enabled = false }
+                new PageTabViewModel(LogsViewModel = new LogsPageViewModel())
             };
 
             Pages.SelectedItem = Pages.DataSource[0];

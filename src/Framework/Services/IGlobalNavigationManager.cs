@@ -11,5 +11,7 @@ namespace Framework
 
         IBindableWindow OpenWindow<WindowViewModelType>(Action<IDataBundle> inflateBundle = null)
             where WindowViewModelType : WindowViewModel, new();
+
+        void CloseWindow(string title);
     }
 }

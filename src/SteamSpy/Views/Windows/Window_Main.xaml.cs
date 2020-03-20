@@ -1,6 +1,7 @@
 ﻿using Framework;
 using Framework.WPF;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using ThunderHawk.Core;
@@ -10,6 +11,8 @@ namespace ThunderHawk
     public partial class Window_Main : IGlobalNavigationManager, IMainWindowView
     {
         MainWindowViewModel ViewModel => base.ViewModel as MainWindowViewModel;
+
+        private List<BindableWindow> createdWindows = new List<BindableWindow>();
 
         public Window_Main()
         {
@@ -53,8 +56,20 @@ namespace ThunderHawk
 
             var window = WPFPageHelper.InstantiateWindow(viewModel);
             window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            createdWindows.Add(window);
             window.Show();
             return window;
+        }
+
+        public void CloseWindow(string windowName)
+        {
+            foreach (var window in createdWindows)
+            {
+                if (window.Title == windowName) 
+                {
+                    window.Close();
+                }
+            } 
         }
 
         public void GoBack()

@@ -843,6 +843,55 @@ namespace GSMasterServer.Servers
 
             _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
         }
+        
+        public void HandleMessage(NetConnection connection, RequestCanAuthorizeMessage message)
+        {
+            bool profileCanAuthorize = false;
+            
+            var login = message.Login;
+            var password = message.Password;
+
+            var profile = Database.MainDBInstance.GetProfileByName(login);
+
+            if (profile != null)
+            {
+                if (profile.Passwordenc == password.ToMD5()) profileCanAuthorize = true;
+            }
+
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(new ResponseCanAuthorizeMessage()
+            {
+                CanAuthorize = profileCanAuthorize
+            });
+
+            _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+        }
+        
+        public void HandleMessage(NetConnection connection, RequestRegistrationByLauncher message)
+        {
+            bool registrationSuccess = false;
+            
+            var login = message.Login;
+            var password = message.Password;
+
+            var profile = Database.MainDBInstance.GetProfileByName(login);
+
+            if (profile == null)
+            {
+                var steamId = connection.RemoteHailMessage.PeekUInt64();
+                Database.MainDBInstance.CreateProfile(login, password.ToMD5(), steamId, "thunderhawk@dowonline.steam", "??", connection.RemoteEndPoint.Address);
+                registrationSuccess = true;
+            }
+            
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(new ResponseRegistrationByLauncherMessage
+            {
+                RegistrationSuccess = registrationSuccess
+            });
+
+            _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+            
+        }
 
         public void HandleMessage(NetConnection connection, RequestNameCheckMessage message)
         {

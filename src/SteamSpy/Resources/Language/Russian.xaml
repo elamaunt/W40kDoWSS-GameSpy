@@ -26,7 +26,7 @@
     <system:String x:Key="ApplyRecommended">Применить рекомендации</system:String>
     <system:String x:Key="ChooseTweaks">Либо выберите нужные для вас пункты ниже. Выделенные - рекомендуемые.</system:String>
     <system:String x:Key="RecommendedToInstallation">Рекомендуется к установке</system:String>
-
+    
     <!-- Tweaks Description -->
     <system:String x:Key="UnlockerTweakTitle">Разблокировка рас DOW, WA, DC</system:String>
     <system:String x:Key="UnlockerTweakDescription">Делает доступными все 9 рас для игры по мультиплееру.</system:String>
@@ -40,7 +40,30 @@
     <system:String x:Key="HotKeysTweakDescription">Вы можете установить улучшенные горячие клавиши, где клавиша каждой иконки соответствует ее положениею на экране. </system:String>
 
     <!-- Settings -->
+    <system:String x:Key="Settings">НАСТРОЙКИ</system:String>
+    <system:String x:Key="EnableLobbyFiltering">Фильтровать лобби по рейтингу</system:String>
+    <system:String x:Key="EnableLobbyFilteringDescription">Если данная настройка включена, то вы не попадетесь в автоматче с тем, у кого рейтинг на 180 больше или меньше вашего</system:String>
     <system:String x:Key="DisableFog">Отключить туман</system:String>
     <system:String x:Key="ChangeGamePath">Сменить путь к игре</system:String>
+    
+    <!-- Authorization -->
+    <system:String x:Key="ShouldLaunchGame">Запустить игру</system:String>
+    <system:String x:Key="Authorization">АВТОРИЗАЦИЯ</system:String>
+    <system:String x:Key="ChooseLogin">Выберите логин</system:String>
+    <system:String x:Key="EnterPassword">Введите пароль</system:String>
+    <system:String x:Key="Authorize">Авторизоваться</system:String>
+    <system:String x:Key="YourAccounts">Ваши аккаунты</system:String>
+    <system:String x:Key="LogOut">Выйти</system:String>
+    <system:String x:Key="CreateAnotherAccount">Создать ещё аккаунт</system:String>
+    <system:String x:Key="WrongLoginOrPassword">Неверное имя пользователя или пароль</system:String>
+    
+    <!-- Registration -->
+    <system:String x:Key="Registration">РЕГИСТРАЦИЯ</system:String>
+    <system:String x:Key="EnterLogin">Введите логин</system:String>
+    <system:String x:Key="RepeatPassword">Повторите пароль</system:String>
+    <system:String x:Key="Register">Зарегистрироваться</system:String>
+    <system:String x:Key="PasswordsNotMatch">Пароли не совпадают</system:String>
+    <system:String x:Key="AccountAlreadyUse">Данное имя пользователя уже используется</system:String>
+    
     
 </ResourceDictionary>

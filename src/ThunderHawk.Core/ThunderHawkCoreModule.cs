@@ -6,10 +6,14 @@ namespace ThunderHawk.Core
     {
         public override void RegisterComponents(ComponentBatch batch)
         {
-            batch.RegisterControllerFactory(() => new MainPageController());
+            var mainPageController = new MainPageController();
+            
+            batch.RegisterControllerFactory(() => mainPageController);
             batch.RegisterControllerFactory(() => new MainWindowNavigationController());
             batch.RegisterControllerFactory(() => new MainWindowController());
             batch.RegisterControllerFactory(() => new SettingsWindowController());
+            batch.RegisterControllerFactory(() => new AuthorizationWindowController(mainPageController));
+            batch.RegisterControllerFactory(() => new RegistrationWindowController(mainPageController));
             batch.RegisterControllerFactory(() => new TweakItemController());
             batch.RegisterControllerFactory(() => new TweaksPageController());
             batch.RegisterControllerFactory(() => new FaqPageController());

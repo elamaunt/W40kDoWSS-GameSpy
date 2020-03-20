@@ -139,6 +139,7 @@
     <Compile Include="Http\QuickMimeTypeMapper.cs" />
     <Compile Include="Http\Route.cs" />
     <Compile Include="LogConfigurator.cs" />
+    <Compile Include="Services\Implementations\AccountService.cs" />
     <Compile Include="Services\Implementations\InGameService.cs" />
     <Compile Include="Services\Implementations\ResourcesService.cs" />
     <Compile Include="StaticClasses\Soulstorm\ActiveModDetector.cs" />
@@ -147,9 +148,11 @@
     <Compile Include="Servers\TcpPortHandler.cs" />
     <Compile Include="Servers\UdpPortHandler.cs" />
     <Compile Include="Services\Implementations\GameClientServer.cs" />
-    <Compile Include="Services\Implementations\LauncherClientServer.cs" />
+    <Compile Include="Services\Implementations\SingleMasterServer.cs" />
     <Compile Include="Services\Implementations\UpdaterService.cs" />
     <Compile Include="StaticClasses\Soulstorm\InGameHelper.cs" />
+    <Compile Include="Styles\AuthorizationWindowStyle.cs" />
+    <Compile Include="Styles\RegistrationWindowStyle.cs" />
     <Compile Include="ThunderHawk.cs" />
     <Compile Include="Data\AddressInfo.cs" />
     <Compile Include="Data\GameServer.cs" />
@@ -201,6 +204,8 @@
       <DependentUpon>ErrorNotificationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Windows\Controllers\MainWindowAnimateNavigationController.cs" />
+    <Compile Include="Views\Windows\Window_Authorization.xaml.cs" />
+    <Compile Include="Views\Windows\Window_Registration.xaml.cs" />
     <Compile Include="Views\Windows\Window_Main.xaml.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -222,6 +227,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Styles\AuthorizationWindowStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\ButtonStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -231,6 +240,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Styles\Colors.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\RegistrationWindowStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -333,9 +346,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Windows\Window_Authorization.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Windows\Window_Main.xaml">
       <SubType>Designer</SubType>
       <Generator>XamlIntelliSenseFileGenerator</Generator>
+    </Page>
+    <Page Include="Views\Windows\Window_Registration.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Windows\Window_Settings.xaml">
       <SubType>Designer</SubType>

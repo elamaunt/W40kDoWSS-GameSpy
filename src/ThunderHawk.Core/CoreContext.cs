@@ -9,6 +9,7 @@ namespace ThunderHawk.Core
         public static ISystemService SystemService => Service<ISystemService>.Get();
         public static ILangService LangService => Service<ILangService>.Get();
         public static INewsProvider NewsProvider => Service<INewsProvider>.Get();
+        public static IAccountService AccountService => Service<IAccountService>.Get();
         public static ILaunchService LaunchService => Service<ILaunchService>.Get();
         public static ITweaksService TweaksService => Service<ITweaksService>.Get();
 

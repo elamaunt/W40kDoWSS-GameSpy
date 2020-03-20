@@ -8,7 +8,7 @@
         TextOptions.TextFormattingMode="Ideal"
         RenderOptions.ClearTypeHint="Auto"
         mc:Ignorable="d"
-        Title="Settings" Height="340" Width="400" Style="{DynamicResource SettingsWindowStyle}">
+        Title="Settings" Height="260" Width="400" Style="{DynamicResource SettingsWindowStyle}">
 
     <framework:BindableWindow.Resources>
         <DataTemplate x:Key="dt">
@@ -18,15 +18,15 @@
 
     <Grid Margin="16 16 16 16">
         <StackPanel Orientation="Vertical">
-            <!--<CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="ThunderHawkModAutoSwitch" Style="{DynamicResource SettingsCheckBoxStyle}"/>-->
+            <!--<CheckBox Margin="5 0 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="ThunderHawkModAutoSwitch" Style="{DynamicResource SettingsCheckBoxStyle}"/>
             <CheckBox Margin="5 20 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="DesktopNotificationsEnabled" Style="{DynamicResource SettingsCheckBoxStyle}"/>
-            <!--<CheckBox Margin="5 20 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="LaunchThunderHawkAtStartup" Style="{DynamicResource SettingsCheckBoxStyle}"/>-->
+            <CheckBox Margin="5 20 0 0" VerticalAlignment="Top" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="LaunchThunderHawkAtStartup" Style="{DynamicResource SettingsCheckBoxStyle}"/>-->
 
             <CheckBox Margin="5 20 0 0" VerticalAlignment="Top" HorizontalAlignment="Left" IsThreeState="False" Foreground="White" TextBlock.LineStackingStrategy="MaxHeight" framework:WPFBinder.Frame="LimitRatingLobby" Style="{DynamicResource SettingsCheckBoxStyle}"/>
-            <TextBlock MaxWidth="300" HorizontalAlignment="Left" Margin="5 6 0 10" Foreground="White" TextWrapping="Wrap" framework:WPFBinder.Frame="LimitRatingLobbyInfo"/>
+            <TextBlock MaxWidth="300" HorizontalAlignment="Left" Margin="5 6 0 10" Foreground="White" FontStyle="Italic" TextWrapping="Wrap" Text="{DynamicResource EnableLobbyFilteringDescription}"/>
 
-            <TextBlock MaxWidth="300" HorizontalAlignment="Left" Margin="5 10 0 2" Foreground="White" TextWrapping="Wrap" framework:WPFBinder.Frame="GamePath"/>
-            <Button Margin="5 0 0 0"  Width="120" Height="22" Content="Change game path" Foreground="White" framework:WPFBinder.Frame="ChangeGamePath" HorizontalAlignment="Left"/>
+            <TextBlock MaxWidth="350" HorizontalAlignment="Left" Margin="5 10 0 2" Foreground="White" TextWrapping="Wrap" framework:WPFBinder.Frame="GamePath" />
+            <Button Margin="5 2 0 0"  Width="120" Height="22" Foreground="White" framework:WPFBinder.Frame="ChangeGamePath" HorizontalAlignment="Left"/>
         </StackPanel>
     </Grid>
     

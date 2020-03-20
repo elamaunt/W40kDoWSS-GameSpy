@@ -1,0 +1,41 @@
+﻿<framework:BindableWindow x:Class="ThunderHawk.Window_Authorization"
+                          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                          xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                          xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                          xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+                          xmlns:core="clr-namespace:ThunderHawk.Core;assembly=ThunderHawk.Core"
+                          xmlns:local="clr-namespace:ThunderHawk"
+                          TextOptions.TextRenderingMode="Auto"
+                          TextOptions.TextFormattingMode="Ideal"
+                          RenderOptions.ClearTypeHint="Auto"
+                          mc:Ignorable="d"
+                          Title="Authorization" Height="240" Width="300" Style="{DynamicResource AuthorizationWindowStyle}">
+
+    <framework:BindableWindow.Resources>
+        <DataTemplate x:Key="dt">
+            <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+        </DataTemplate>
+    </framework:BindableWindow.Resources>
+
+    <Grid Margin="16 16 16 6">
+        <StackPanel Orientation="Vertical">
+
+            <TextBlock Margin="5 0 0 0" Foreground="#bbffffff" HorizontalAlignment="Center"
+                       Text="{DynamicResource EnterLogin}" />
+            <TextBox Margin="5 2 0 0" PreviewTextInput="TextBox_OnPreviewTextInputLogin" />
+            <TextBlock Margin="5 10 0 0" Foreground="#bbffffff" HorizontalAlignment="Center"
+                       Text="{DynamicResource EnterPassword}" />
+            <PasswordBox Margin="5 2 0 0" PreviewTextInput="TextBox_OnPreviewTextInputPassword" />
+
+            <Button Margin="5 10 0 0" Height="22" Foreground="White" framework:WPFBinder.Frame="Authorize"
+                    HorizontalAlignment="Stretch" />
+            <TextBlock Margin="5 2 0 0" Height="30" Foreground="#bbddffaa" framework:WPFBinder.Frame="AccountsLabel"
+                       TextWrapping="Wrap" />
+            <Button Margin="5 5 0 0" HorizontalAlignment="Right" framework:WPFBinder.Frame="CreateAnotherAccount"
+                    BorderThickness="0" />
+        </StackPanel>
+    </Grid>
+
+
+</framework:BindableWindow>

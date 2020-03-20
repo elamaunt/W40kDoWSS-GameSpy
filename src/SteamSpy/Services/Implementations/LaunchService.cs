@@ -5,7 +5,9 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using Framework;
 using ThunderHawk.Core;
 using ThunderHawk.StaticClasses.Soulstorm;
 using ThunderHawk.Utils;
@@ -14,8 +16,9 @@ namespace ThunderHawk
 {
     public class LaunchService : ILaunchService
     {
-
         public string GamePath => PathFinder.GamePath;
+        public double PreparingProgress { get; set; }
+        public string PreparingModName { get; set; }
         public bool IsGamePreparingToStart { get; set; }
 
         public Process GameProcess { get; private set; }
@@ -33,8 +36,17 @@ namespace ThunderHawk
             }
         }*/
 
-        public Task LaunchGameAndWait(String server, String mode)
+        private static EventWaitHandle threadWaitHandle;
+
+        public Task LaunchGameAndWait(String server, String mode, IGlobalNavigationManager navigationManager)
         {
+            _authorizationWindowShow =
+                false; // флаг, который указывает, что окно авторизации уже было выведено пользователю.
+            _shouldStopRunSs =
+                false; // флаг, который указывает, что мы должны прекратить запуск СС. Может установиться другим потоком.
+
+            this.navigationManager = navigationManager;
+
             if (!CoreContext.LaunchService.TryGetOrChoosePath(out string path))
                 return Task.CompletedTask;
 
@@ -43,6 +55,7 @@ namespace ThunderHawk
             return Task.Factory.StartNew(async () =>
             {
                 ProcessManager.KillAllGameProccessesWithoutWindow();
+                threadWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
 
                 if (!CoreContext.MasterServer.IsConnected && server == "thunderhawk")
                     throw new Exception("Server is unavailable");
@@ -53,7 +66,19 @@ namespace ThunderHawk
                 if (!PathFinder.IsPathFound())
                     throw new Exception("Path to game not found");
 
-                CoreContext.ThunderHawkModManager.DeployModAndModule(path);
+                CoreContext.AccountService.SendCheckAuthorizedOnSsProfile();
+                CoreContext.MasterServer.CanAuthorizeReceived += canAuthorizeReceive;
+                threadWaitHandle.WaitOne();
+                if (!_canLoginByProfileRemindPassword)
+                {
+                    CoreContext.MasterServer.NicksReceived += GetUserNicks;
+                    CoreContext.MasterServer.RequestAllUserNicks("это тут нах не нужно, по стим ID придет");
+                    threadWaitHandle.WaitOne();
+                }
+                if (_shouldStopRunSs) throw new UnauthorizedAccessException();
+
+                if(mode == "ThunderHawk")
+                CoreContext.ThunderHawkModManager.DeployModAndModule(path, "ThunderHawk");
 
                 IPHostEntry entry = null;
 
@@ -61,7 +86,7 @@ namespace ThunderHawk
                 {
                     entry = Dns.GetHostEntry("gamespygp");
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     FixHosts();
                 }
@@ -79,10 +104,9 @@ namespace ThunderHawk
                 {
                     try
                     {
-                        
-                        var exeFileName = server == "thunderhawk" ? 
-                            Path.Combine(Environment.CurrentDirectory,  "GameFiles", "Patch1.2", "Soulstorm.exe") : 
-                            Path.Combine(PathFinder.GamePath, "Soulstorm.exe");
+                        var exeFileName = server == "thunderhawk"
+                            ? Path.Combine(Environment.CurrentDirectory, "GameFiles", "Patch1.2", "Soulstorm.exe")
+                            : Path.Combine(PathFinder.GamePath, "Soulstorm.exe");
                         var procParams = "-nomovies -forcehighpoly";
 
                         if (server == "thunderhawk")
@@ -92,14 +116,13 @@ namespace ThunderHawk
 
                             if (mode == "Classic bug fix")
                             {
-                                
                                 procParams += " -modname dxp2";
                             }
                             else
                             {
                                 procParams += " -modname ThunderHawk";
                             }
-                            
+
 
                             var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
                             {
@@ -118,10 +141,7 @@ namespace ThunderHawk
                             // to read warning.log from the begining after start game
                             Task.Delay(10000).ContinueWith(t => { CoreContext.InGameService.DropSsConsoleOffset(); });
 
-                            ssProc.Exited += (s, e) =>
-                            {
-                                tcs.TrySetResult(ssProc);
-                            };
+                            ssProc.Exited += (s, e) => { tcs.TrySetResult(ssProc); };
                         }
                         else
                         {
@@ -132,12 +152,11 @@ namespace ThunderHawk
                             void StartApp()
                             {
                                 steamGameProc.StartInfo.FileName = SteamApiHelper.GetSteamExePath();
-                                steamGameProc.StartInfo.Arguments = "-applaunch 9450 -modname DXP2 -nomovies -forcehighpoly";
+                                steamGameProc.StartInfo.Arguments =
+                                    "-applaunch 9450 -modname DXP2 -nomovies -forcehighpoly";
                                 steamGameProc.Start();
                             }
                         }
-
-                        
                     }
                     catch (Exception ex)
                     {
@@ -157,6 +176,35 @@ namespace ThunderHawk
             }).Unwrap();
         }
 
+
+        private IGlobalNavigationManager navigationManager;
+        private bool _shouldStopRunSs;
+        private bool _canLoginByProfileRemindPassword;
+        private bool _authorizationWindowShow;
+
+        void canAuthorizeReceive(bool canAuthorize)
+        {
+            _canLoginByProfileRemindPassword = canAuthorize;
+            if (!canAuthorize) _shouldStopRunSs = true;
+            threadWaitHandle.Set();
+        }
+        void GetUserNicks(string[] nicks)
+        {
+            if (!_authorizationWindowShow)
+            {
+                if (nicks.Length == 0)
+                {
+                    navigationManager.OpenWindow<RegistrationWindowViewModel>();
+                }
+                else
+                {
+                    navigationManager.OpenWindow<AuthorizationWindowViewModel>();
+                }
+                _authorizationWindowShow = true;
+                threadWaitHandle.Set();
+            }
+        }
+
         private void CopySchemes(string gamePath)
         {
             var profiles = Directory.GetDirectories(Path.Combine(gamePath, "Profiles"));
@@ -172,7 +220,7 @@ namespace ThunderHawk
                     if (!Directory.Exists(targetDir))
                     {
                         Directory.CreateDirectory(targetDir);
-                        foreach(var file in files)
+                        foreach (var file in files)
                         {
                             File.Copy(file, Path.Combine(targetDir, Path.GetFileName(file)), true);
                         }
@@ -187,7 +235,8 @@ namespace ThunderHawk
             process.WaitForExit();
 
             if (process.ExitCode == 1)
-                throw new Exception("Can not modify hosts file. You should modify HOSTS manually in C:\\Windows\\System32\\drivers\\etc. Use sample from discord https://discordapp.com/invite/Tfgf3yd");
+                throw new Exception(
+                    "Can not modify hosts file. You should modify HOSTS manually in C:\\Windows\\System32\\drivers\\etc. Use sample from discord https://discordapp.com/invite/Tfgf3yd");
         }
 
         async Task RemoveFogLoop(Task task, Process ssProc)
@@ -231,9 +280,8 @@ namespace ThunderHawk
 
                 File.WriteAllLines(localConfig, lines);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-
             }
         }
 
@@ -274,14 +322,16 @@ namespace ThunderHawk
         }
 
         [DllImport("kernel32.dll")]
-        static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer, uint dwLength);
+        static extern int VirtualQueryEx(IntPtr hProcess, IntPtr lpAddress, out MEMORY_BASIC_INFORMATION lpBuffer,
+            uint dwLength);
 
         [DllImport("kernel32.dll", SetLastError = false)]
         public static extern void GetSystemInfo(out SystemInfo Info);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize, out IntPtr lpNumberOfBytesRead);
-       
+        static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [Out] byte[] lpBuffer, int dwSize,
+            out IntPtr lpNumberOfBytesRead);
+
         [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
         static extern unsafe int memcmp(byte* b1, byte* b2, int count);
 
@@ -306,24 +356,25 @@ namespace ThunderHawk
 
                 byte[] chunk = new byte[1024];
 
-                byte* p = (byte*)0;
-                var max = (byte*)si.MaximumApplicationAddress;
+                byte* p = (byte*) 0;
+                var max = (byte*) si.MaximumApplicationAddress;
 
                 while (p < max)
                 {
-                    if (VirtualQueryEx(process.Handle, (IntPtr)p, out var info, (uint)sizeof(MEMORY_BASIC_INFORMATION)) == sizeof(MEMORY_BASIC_INFORMATION))
+                    if (VirtualQueryEx(process.Handle, (IntPtr) p, out var info,
+                            (uint) sizeof(MEMORY_BASIC_INFORMATION)) == sizeof(MEMORY_BASIC_INFORMATION))
                     {
-                        p = (byte*)info.BaseAddress;
+                        p = (byte*) info.BaseAddress;
                         //chunk.resize(info.RegionSize);
 
                         //var s = Marshal.SizeOf(info.RegionSize);
-                        var s = (int)info.RegionSize;
+                        var s = (int) info.RegionSize;
                         if (chunk.Length < s)
                             chunk = new byte[s];
 
-                        if (ReadProcessMemory(process.Handle, (IntPtr)p, chunk, s, out var bytesRead))
+                        if (ReadProcessMemory(process.Handle, (IntPtr) p, chunk, s, out var bytesRead))
                         {
-                            var rs = (int)bytesRead;
+                            var rs = (int) bytesRead;
 
                             if (rs >= str.Length)
                             {
@@ -331,12 +382,13 @@ namespace ThunderHawk
                                 {
                                     if (CompareBuffers(str, 0, chunk, i, str.Length) == 0)
                                     {
-                                        var value = Encoding.ASCII.GetString(chunk, i-100, str.Length + 100);
-                                        Console.WriteLine("F "+ value);
+                                        var value = Encoding.ASCII.GetString(chunk, i - 100, str.Length + 100);
+                                        Console.WriteLine("F " + value);
                                     }
                                 }
                             }
                         }
+
                         p += s;
                     }
                 }

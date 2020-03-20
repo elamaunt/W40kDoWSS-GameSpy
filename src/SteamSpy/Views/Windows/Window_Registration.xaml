@@ -1,0 +1,41 @@
+﻿<framework:BindableWindow x:Class="ThunderHawk.Window_Registration"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:framework="clr-namespace:Framework.WPF;assembly=Framework.WPF"
+        TextOptions.TextRenderingMode="Auto"
+        TextOptions.TextFormattingMode="Ideal"
+        RenderOptions.ClearTypeHint="Auto"
+        mc:Ignorable="d"
+        Title="Registration" Height="300" Width="300" Style="{DynamicResource RegistrationWindowStyle}">
+
+    <framework:BindableWindow.Resources>
+        <DataTemplate x:Key="dt">
+            <TextBlock Text="{Binding}" TextWrapping="Wrap" />
+        </DataTemplate>
+    </framework:BindableWindow.Resources>
+
+    <Grid Margin="16 16 16 16">
+        <StackPanel Orientation="Vertical">
+            <TextBlock Margin="5 0 0 0" Foreground="#bbffffff" HorizontalAlignment="Center"
+                       Text="{DynamicResource EnterLogin}" />
+            <TextBox Margin="5 2 0 0" framework:WPFBinder.Frame="Login" PreviewTextInput="TextBox_OnPreviewTextInputLogin" />
+            <TextBlock Margin="5 10 0 0" Foreground="#bbffffff" HorizontalAlignment="Center"
+                       Text="{DynamicResource EnterPassword}" />
+            <PasswordBox Margin="5 2 0 0" framework:WPFBinder.Frame="Password" PreviewTextInput="TextBox_OnPreviewTextInputPassword"/>
+            <TextBlock Margin="5 10 0 0" Foreground="#bbffffff" HorizontalAlignment="Center"
+                       Text="{DynamicResource RepeatPassword}" />
+            <PasswordBox Margin="5 2 0 0" framework:WPFBinder.Frame="ConfirmPassword" PreviewTextInput="TextBox_OnPreviewTextInputPasswordRepeat" />
+
+            <Button Margin="5 10 0 0" Height="22" Foreground="White" framework:WPFBinder.Frame="Register"
+                    HorizontalAlignment="Stretch" />
+            <TextBlock Margin="5 2 0 0" Height="30" Foreground="#bbddffaa" framework:WPFBinder.Frame="HelpLabel"
+                       TextWrapping="Wrap" />
+        </StackPanel>
+    </Grid>
+    
+    
+
+
+</framework:BindableWindow>

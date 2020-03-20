@@ -2309,7 +2309,7 @@ namespace ThunderHawk
 #if SPACEWAR
             return "THUNDERHAWK_DEBUG" + CoreContext.UpdaterService.CurrentVersion;
 #else
-            return "THUNDERHAWK_PROD" + CoreContext.UpdaterService.CurrentVersion;
+            return "THUNDERHAWK_PROD";
 #endif
         }
 

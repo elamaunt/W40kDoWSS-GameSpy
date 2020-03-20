@@ -92,7 +92,7 @@ namespace ThunderHawk.Core
             Frame.GlobalNavigationManager.OpenPage<TweaksPageViewModel>();
         }
 
-        void LaunchThunderhawk()
+        public void LaunchThunderhawk()
         {
             Frame.LaunchGame.Enabled = false;
             Frame.LaunchSteamGame.Enabled = false;
@@ -101,8 +101,12 @@ namespace ThunderHawk.Core
             Frame.NewsVisible = false;
             Frame.InGameVisible = true;
 
-            CoreContext.LaunchService.LaunchGameAndWait("thunderhawk", Frame.GameModeSelectedValue)
-                .OnFaultOnUi(ex => Frame.UserInteractions.ShowErrorNotification(ex.Message))
+            CoreContext.LaunchService.LaunchGameAndWait("thunderhawk", Frame.GameModeSelectedValue, Frame.GlobalNavigationManager)
+                .OnFaultOnUi(ex =>
+                {
+                    if (!(ex is UnauthorizedAccessException)) // иначе мы просто окно выведем и попросим юзера авторизоавться
+                        Frame.UserInteractions.ShowErrorNotification(ex.Message);
+                })
                 .OnContinueOnUi(t =>
                 {
                     ResetButtons();
@@ -121,7 +125,7 @@ namespace ThunderHawk.Core
             //TODO: пофиксить этот костыль нормальным определением запущенного стим СС
             Task.Delay(10000).ContinueWith(t => RunOnUIThread(() => { ResetButtons(); }));
 
-            CoreContext.LaunchService.LaunchGameAndWait("steam")
+            CoreContext.LaunchService.LaunchGameAndWait("steam", Frame.GameModeSelectedValue, Frame.GlobalNavigationManager)
                 .OnFaultOnUi(ex => Frame.UserInteractions.ShowErrorNotification(ex.Message));
         }
 
@@ -165,8 +169,13 @@ namespace ThunderHawk.Core
                             Frame.InfoLabel.Text = "Can't subscribe to soulstorm process";
                         }
                         else Frame.InfoLabel.Text = "Successful subscribe to Soulstorm - waiting for the game start";
-                        
-                        if (CoreContext.LaunchService.IsGamePreparingToStart) Frame.InfoLabel.Text = "Preparing thunderhawk mod, pls wait...";
+
+                        if (CoreContext.LaunchService.IsGamePreparingToStart)
+                        {
+                            Frame.InfoLabel.Text = "Preparing "+ 
+                                                   CoreContext.LaunchService.PreparingModName + " mod, pls wait " + 
+                                                   Math.Round(CoreContext.LaunchService.PreparingProgress,2)*100 + "%";
+                        }
                         
 
                         SetTabsToDefault();

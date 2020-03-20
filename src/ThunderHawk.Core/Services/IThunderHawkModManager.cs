@@ -8,6 +8,6 @@
         string ValidModVersion { get; }
         string CurrentModName { get; set; }
         string CurrentModVersion{ get; set; }
-        void DeployModAndModule(string gamePath);
+        void DeployModAndModule(string gamePath, string modeNmae);
     }
 }

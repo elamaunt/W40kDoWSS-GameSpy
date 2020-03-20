@@ -26,8 +26,7 @@
     <system:String x:Key="ApplyRecommended">Apply recommended</system:String>
     <system:String x:Key="ChooseTweaks">Or you can apply tweaks manually below. Highlighted are recommended.</system:String>
     <system:String x:Key="RecommendedToInstallation">Recommended for installation</system:String>
-
-
+    
     <!-- Tweaks Description -->
     <system:String x:Key="UnlockerTweakTitle">Race unlocker</system:String>
     <system:String x:Key="UnlockerTweakDescription">Allows you to play all 9 races in multiplayer.</system:String>
@@ -41,7 +40,30 @@
     <system:String x:Key="HotKeysTweakDescription">You can install custom hotkeys with q,w,e,r,a,s,d,f,z,x,c,v buttons</system:String>
 
     <!-- Settings -->
+    <system:String x:Key="Settings">SETTINGS</system:String>
+    <system:String x:Key="EnableLobbyFiltering">Enable lobby filtering by MMR</system:String>
+    <system:String x:Key="EnableLobbyFilteringDescription">If enabled you will not see Ranked games with more than 180 rating deviation and other players also will not see you lobby with same deviation.</system:String>
     <system:String x:Key="DisableFog">Disable fog</system:String>
     <system:String x:Key="ChangeGamePath">Change game path</system:String>
+    
+    <!-- Authorization -->
+    <system:String x:Key="ShouldLaunchGame">Launch game</system:String>
+    <system:String x:Key="Authorization">AUTHORIZATION</system:String>
+    <system:String x:Key="ChooseLogin">Choose your login</system:String>
+    <system:String x:Key="EnterPassword">Enter password</system:String>
+    <system:String x:Key="Authorize">Authorize</system:String>
+    <system:String x:Key="YourAccounts">Your accounts</system:String>
+    <system:String x:Key="LogOut">LogOut</system:String>
+    <system:String x:Key="CreateAnotherAccount">Create another account</system:String>
+    <system:String x:Key="WrongLoginOrPassword">Wrong login or password</system:String>
+    
+    
+    <!-- Registration -->
+    <system:String x:Key="Registration">REGISTRATION</system:String>
+    <system:String x:Key="EnterLogin">Enter login</system:String>
+    <system:String x:Key="RepeatPassword">Repeat password</system:String>
+    <system:String x:Key="Register">Register</system:String>
+    <system:String x:Key="PasswordsNotMatch">Passwords do not match</system:String>
+    <system:String x:Key="AccountAlreadyUse">Username already in use</system:String>
 
 </ResourceDictionary>

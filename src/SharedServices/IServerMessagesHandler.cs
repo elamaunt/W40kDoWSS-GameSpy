@@ -19,6 +19,8 @@ namespace SharedServices
         void HandleMessage(NetConnection senderConnection, PlayersTopMessage message);
         void HandleMessage(NetConnection senderConnection, LastGamesMessage message);
         void HandleMessage(NetConnection senderConnection, AllUserNicksMessage message);
+        void HandleMessage(NetConnection senderConnection, ResponseCanAuthorizeMessage message);
+        void HandleMessage(NetConnection senderConnection, ResponseRegistrationByLauncherMessage message);
         void HandleMessage(NetConnection senderConnection, NameCheckMessage message);
         void HandleMessage(NetConnection senderConnection, LoginErrorMessage message);
         void HandleMessage(NetConnection senderConnection, SetKeyValueMessage message);

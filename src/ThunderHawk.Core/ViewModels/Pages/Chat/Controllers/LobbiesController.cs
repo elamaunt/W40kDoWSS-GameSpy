@@ -71,7 +71,7 @@ namespace ThunderHawk.Core
                     continue;
 
                 // эта логика для отображения заголовков 1х1 - thunderhawk, 2x2 - vanila и т.д.
-                if (maxPlayers != host.MaxPlayers && gameVariant != host.GameVariant)
+                if (maxPlayers != host.MaxPlayers || gameVariant != host.GameVariant)
                 {
                     maxPlayers = host.MaxPlayers;
                     gameVariant = host.GameVariant;
