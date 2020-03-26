@@ -100,6 +100,10 @@ namespace ThunderHawk.Core
             {
                 return "Thunderhawk - " + gameVariant.Substring(0, 5);
             }
+            if (gameVariant.Contains("jbugfixmod"))
+            {
+                return "Classic bug fix";
+            }
             return gameVariant;
         }
     }

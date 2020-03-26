@@ -3,7 +3,7 @@
     public interface IThunderHawkModManager
     {
         
-        string VanilaModName { get; }
+        string JBugfixModName { get; }
         string ValidModName { get; }
         string ValidModVersion { get; }
         string CurrentModName { get; set; }

@@ -557,7 +557,7 @@ namespace ThunderHawk
                 return;
             }
 
-            if (!activeMod.Equals(CoreContext.ThunderHawkModManager.ValidModName, StringComparison.OrdinalIgnoreCase) && !activeMod.Equals(CoreContext.ThunderHawkModManager.VanilaModName, StringComparison.OrdinalIgnoreCase))
+            if (!activeMod.Equals(CoreContext.ThunderHawkModManager.ValidModName, StringComparison.OrdinalIgnoreCase) && !activeMod.Equals(CoreContext.ThunderHawkModManager.JBugfixModName, StringComparison.OrdinalIgnoreCase))
             {
                 if (!activeVersion.Equals(CoreContext.ThunderHawkModManager.ValidModVersion, StringComparison.OrdinalIgnoreCase))
                 {
@@ -899,12 +899,6 @@ namespace ThunderHawk
 
                 var mod = dictionary["Mod"];
                 var modVersion = dictionary["ModVer"];
-
-                if (!CoreContext.ThunderHawkModManager.ValidModName.Equals(mod, StringComparison.OrdinalIgnoreCase))
-                    return;
-
-                if (!CoreContext.ThunderHawkModManager.ValidModVersion.Equals(modVersion, StringComparison.OrdinalIgnoreCase))
-                    return;
 
                 var playersCount = int.Parse(dictionary["Players"]);
 
@@ -2315,12 +2309,12 @@ namespace ThunderHawk
 
         string RusNews => @" Привет! Вы на сервере elamaunt'а под названием THUNDERHAWK
 
-Добро пожаловать на бета-тест 2.10
+Добро пожаловать на бета-тест 2.20
 .
 Пожалуйста, не играете в режимах 3х3 и 4х4, пока мы не пофиксим блоки игроков друг с другом, это может вызвать проблемы на сервере. 
 .
 Функционально сервер почти полностью готов. Остались некоторые незначительные ошибки и невозможность играть командой в автоматче.
-Временно вы можете играть только с использование мода ThunderHawk.
+Временно вы можете играть только с использование модов ThunderHawk и BugFix.
 Фикс багов, доработки баланса и фикс пафинга (для Техники) внедрены в этот мод.
 Текущая версия сервера наиболее близка к тому, каким будет сервер в окончательном виде.
 .
@@ -2372,12 +2366,12 @@ namespace ThunderHawk
 
         string EnNews => @" Hello! You are on elamaunt's server THUNDERHAWK.
 .
-Welcome on BETA-test 2.10!
+Welcome on BETA-test 2.20!
 .
 Pls, don't play here 3x3 and 4x4 untill we fix blocks. 
 .
 The server is almost complete. There are some minor bugs and the inability to play as a team of friends in automatch.
-Temporary you can play only with ThunderHawk mod.
+Temporary you can play only with ThunderHawk and bugfix mod.
 Bugfix, balance changes and pathfinding (for vehicle) fix are introduced in this mod.
 The current version of the server is closest to what the server will be completely. 
 .

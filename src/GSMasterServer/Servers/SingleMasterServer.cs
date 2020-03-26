@@ -376,6 +376,8 @@ namespace GSMasterServer.Servers
         
         public void HandleMessage(NetConnection connection, GameFinishedMessage message)
         {
+            if (message.ModName != "thunderhawk") message.IsRateGame = false;
+            
             if (message.SessionId == null || message.Players.IsNullOrEmpty())
                 return;
             

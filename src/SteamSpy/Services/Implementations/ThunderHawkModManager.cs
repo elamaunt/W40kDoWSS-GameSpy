@@ -10,9 +10,9 @@ namespace ThunderHawk
     {
         const string ModFolderName = @"Mod";
 
-        public string VanilaModName => "dxp2";
+        public string JBugfixModName => "JBugfixMod";
         public string ValidModName => "ThunderHawk";
-        public string ValidModVersion => "1.5.9";
+        public string ValidModVersion => "1.6.0";
 
         public string CurrentModName { get; set; } = "---";
 
@@ -28,7 +28,7 @@ namespace ThunderHawk
                 if (Directory.Exists(Path.Combine("Mod", ".git")))
                     Directory.Delete(Path.Combine("Mod", ".git"), true);
 
-                var launcherModulePath = Path.Combine(ModFolderName, "ThunderHawk.module");
+                var launcherModulePath = Path.Combine(ModFolderName, modName + ".module");
                 var modulePath = Path.Combine(gamePath, modName + ".module");
                 var modPath = Path.Combine(gamePath, modName);
 

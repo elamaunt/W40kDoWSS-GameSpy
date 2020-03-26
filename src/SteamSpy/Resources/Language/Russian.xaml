@@ -36,7 +36,8 @@
     <system:String x:Key="RuFontTweakDescription">Добавляет поддержку русского текста в чате игры.</system:String>
     <system:String x:Key="FogTweakTitle">Отключение тумана</system:String>
     <system:String x:Key="FogTweakDescription">Отключает туман, который заслоняет обзор при сильном отдалении камеры.</system:String>
-    <system:String x:Key="HotKeysTweakTitle">GridKeys - горячие клавиши QWER</system:String>
+    <system:String x:Key="HotKeysTweakTitleThunder">Thunderhawk - GridKeys - горячие клавиши QWER</system:String>
+    <system:String x:Key="HotKeysTweakTitle">Bug fix mod - GridKeys - горячие клавиши QWER</system:String>
     <system:String x:Key="HotKeysTweakDescription">Вы можете установить улучшенные горячие клавиши, где клавиша каждой иконки соответствует ее положениею на экране. </system:String>
 
     <!-- Settings -->
@@ -63,6 +64,7 @@
     <system:String x:Key="RepeatPassword">Повторите пароль</system:String>
     <system:String x:Key="Register">Зарегистрироваться</system:String>
     <system:String x:Key="PasswordsNotMatch">Пароли не совпадают</system:String>
+    <system:String x:Key="PasswordsNotInput">Пароль не должен быть пустым</system:String>
     <system:String x:Key="AccountAlreadyUse">Данное имя пользователя уже используется</system:String>
     
     

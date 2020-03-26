@@ -7,9 +7,9 @@ using ThunderHawk.StaticClasses.Soulstorm;
 
 namespace ThunderHawk.Tweaks
 {
-    public class GridHotkeys : ITweak
+    public class GridHotkeysThunder : ITweak
     {
-        public string TweakTitle => CoreContext.LangService.GetString("HotKeysTweakTitle");
+        public string TweakTitle => CoreContext.LangService.GetString("HotKeysTweakTitleThunder");
 
         public string TweakDescription => CoreContext.LangService.GetString("HotKeysTweakDescription");
 
@@ -30,14 +30,14 @@ namespace ThunderHawk.Tweaks
         }
         public bool CheckTweak()
         {
-            var gridKeys = Path.Combine("GameFiles", "Tweaks", "GridKeys", "jbugfixmod", "KEYDEFAULTS.LUA");
+            var gridKeys = Path.Combine("GameFiles", "Tweaks", "GridKeys", "thunderhawk", "KEYDEFAULTS.LUA");
 
             if (!File.Exists(gridKeys))
                 throw new Exception("Could not find GridKeys in GameFiles!");
 
             var gamePath = PathFinder.GamePath;
             var profileName = GetCurrentProfileName(gamePath);
-            var profilePath = Path.Combine(gamePath, "Profiles", profileName, "jbugfixmod");
+            var profilePath = Path.Combine(gamePath, "Profiles", profileName, "thunderhawk");
             var keyDefPath = Path.Combine(profilePath, "KEYDEFAULTS.LUA");
 
             return File.Exists(keyDefPath) && File.ReadLines(gridKeys).SequenceEqual(File.ReadLines(keyDefPath));
@@ -45,14 +45,14 @@ namespace ThunderHawk.Tweaks
 
         public void EnableTweak()
         {
-            var gridKeys = Path.Combine("GameFiles", "Tweaks", "GridKeys", "jbugfixmod", "KEYDEFAULTS.LUA");
+            var gridKeys = Path.Combine("GameFiles", "Tweaks", "GridKeys", "thunderhawk", "KEYDEFAULTS.LUA");
 
             if (!File.Exists(gridKeys))
                 throw new Exception("Could not find GridKeys in GameFiles!");
 
             var gamePath = PathFinder.GamePath;
             var profileName = GetCurrentProfileName(gamePath);
-            var profilePath = Path.Combine(gamePath, "Profiles", profileName, "jbugfixmod");
+            var profilePath = Path.Combine(gamePath, "Profiles", profileName, "thunderhawk");
             var keyDefPath = Path.Combine(profilePath, "KEYDEFAULTS.LUA");
 
             if (!Directory.Exists(profilePath))
@@ -64,7 +64,7 @@ namespace ThunderHawk.Tweaks
         {
             var gamePath = PathFinder.GamePath;
             var profileName = GetCurrentProfileName(gamePath);
-            var profilePath = Path.Combine(gamePath, "Profiles", profileName, "jbugfixmod");
+            var profilePath = Path.Combine(gamePath, "Profiles", profileName, "thunderhawk");
             var keyDefPath = Path.Combine(profilePath, "KEYDEFAULTS.LUA");
 
             if (File.Exists(keyDefPath))

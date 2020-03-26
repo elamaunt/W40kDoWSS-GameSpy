@@ -179,15 +179,15 @@ namespace ThunderHawk.Core
 
             switch (game.Type)
             {
-                case GameType._1v1: return  $"1vs1 {ranked}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
-                case GameType._2v2: return $"2vs2 {ranked}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
+                case GameType._1v1: return  $"1vs1 {ranked}   /   {game.ModName}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
+                case GameType._2v2: return $"2vs2 {ranked}   /   {game.ModName}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
                 case GameType._3v3_4v4:
                     {
                         if (game.Players.Length == 8)
-                            return $"4vs4 {ranked}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
-                        return $"3vs3 {ranked}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
+                            return $"4vs4 {ranked}   /   {game.ModName}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
+                        return $"3vs3 {ranked}   /   {game.ModName}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
                     }
-                default: return $"non-standard   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
+                default: return $"non-standard   /   {game.ModName}   /   {game.Map?.ToUpperInvariant()}   /   {ToTimeString(game.Duration)}";
             }
         }
 

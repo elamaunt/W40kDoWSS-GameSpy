@@ -75,10 +75,17 @@ namespace ThunderHawk
                     CoreContext.MasterServer.RequestAllUserNicks("это тут нах не нужно, по стим ID придет");
                     threadWaitHandle.WaitOne();
                 }
+
                 if (_shouldStopRunSs) throw new UnauthorizedAccessException();
 
-                if(mode == "ThunderHawk")
-                CoreContext.ThunderHawkModManager.DeployModAndModule(path, "ThunderHawk");
+                if (mode == "ThunderHawk")
+                {
+                    CoreContext.ThunderHawkModManager.DeployModAndModule(path, "ThunderHawk");
+                }
+                else
+                {
+                    CoreContext.ThunderHawkModManager.DeployModAndModule(path, "JBugfixMod");
+                }
 
                 IPHostEntry entry = null;
 
@@ -116,7 +123,7 @@ namespace ThunderHawk
 
                             if (mode == "Classic bug fix")
                             {
-                                procParams += " -modname dxp2";
+                                procParams += " -modname JBugfixMod";
                             }
                             else
                             {
@@ -188,6 +195,7 @@ namespace ThunderHawk
             if (!canAuthorize) _shouldStopRunSs = true;
             threadWaitHandle.Set();
         }
+
         void GetUserNicks(string[] nicks)
         {
             if (!_authorizationWindowShow)
@@ -200,6 +208,7 @@ namespace ThunderHawk
                 {
                     navigationManager.OpenWindow<AuthorizationWindowViewModel>();
                 }
+
                 _authorizationWindowShow = true;
                 threadWaitHandle.Set();
             }
@@ -247,6 +256,7 @@ namespace ThunderHawk
                 {
                     return;
                 }
+
                 await Task.Delay(1000);
             }
         }

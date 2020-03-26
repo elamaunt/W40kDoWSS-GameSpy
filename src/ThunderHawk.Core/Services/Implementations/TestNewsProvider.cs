@@ -19,6 +19,34 @@ namespace ThunderHawk.Core
 
                     Russian = new NewsLanguageItemDTO
                     {
+                        Title = "ThunderHawk 2.20",
+                        Annotation = "Изменения в проекте",
+                        Body =
+                            "<b>Дорогие игроки!</b>\n\nМы вынесли авторизацию и регистрацию в лаунчер, а также добавили классическую версию игры с исправленными багами!\nРейтинг в bug fix ещё не готов (чтобы не смешивать ладдер классики и thunderhawk мода)\n\n" +
+                            "Огромное спасибо \"Фрегату из горизонта\" за фикс багов и JGHAMO за фикс паффинга!"
+                    },
+
+                    English = new NewsLanguageItemDTO
+                    {
+                        Title = "ThunderHawk 2.20",
+                        Annotation = "Changes in project",
+                        Body =
+                            "<b>Dear Players!</b>\n\n" +
+                            "We move registration and authorization to launcher and also add classic bug fix mod.\n" +
+                            "Rate games in classic mode temporary unavailable (bad idea to mix classic and thunderhawk players in one ladder)\n\n" +
+                            "Thanks \"Фрегат из горизонта\" for bug fix and JGHAMO for path fix!"
+                    },
+
+                    ImagePath = "pack://application:,,,/ThunderHawk;component/Resources/Images/Dark_Reapers_Squad.jpg",
+                    CreatedDate = new DateTime(2020, 03, 28)
+                },
+                
+                new NewsItemDTO()
+                {
+                    Author = "Anibus",
+
+                    Russian = new NewsLanguageItemDTO
+                    {
                         Title = "ThunderHawk 2.10",
                         Annotation = "Изменения в проекте",
                         Body =
@@ -64,7 +92,7 @@ namespace ThunderHawk.Core
 
                     ImagePath = "pack://application:,,,/ThunderHawk;component/Resources/Images/ThunderHawk2.png",
                     CreatedDate = new DateTime(2019, 12, 21)
-                },
+                }/*,
 
                 new NewsItemDTO()
                 {
@@ -90,7 +118,7 @@ namespace ThunderHawk.Core
 
                     ImagePath = "pack://application:,,,/ThunderHawk;component/Resources/Images/MapContest.png",
                     CreatedDate = new DateTime(2019, 9, 12)
-                },
+                }*/,
 
                 /*new NewsItemDTO()
                 {

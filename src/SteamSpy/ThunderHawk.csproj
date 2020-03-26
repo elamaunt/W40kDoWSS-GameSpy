@@ -173,6 +173,7 @@
     <Compile Include="Tweaks\Camera.cs" />
     <Compile Include="Tweaks\FogSwitcher.cs" />
     <Compile Include="Tweaks\GridHotkeys.cs" />
+    <Compile Include="Tweaks\GridHotkeysThunder.cs" />
     <Compile Include="Tweaks\RuFont.cs" />
     <Compile Include="Tweaks\Unlocker.cs" />
     <Compile Include="Utils\LoginHelper.cs" />
@@ -396,7 +397,7 @@
     <None Include="GameFiles\Tweaks\Camera\camera_low.lua">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="GameFiles\Tweaks\GridKeys\KEYDEFAULTS.LUA">
+    <None Include="GameFiles\Tweaks\GridKeys\jbugfixmod\KEYDEFAULTS.LUA">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="GameFiles\Patch1.2\dbghelp.dll">
@@ -482,6 +483,9 @@
     </None>
     <None Include="GameFiles\Patch1.2\WXPMod.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="GameFiles\Tweaks\GridKeys\thunderhawk\KEYDEFAULTS.LUA">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="GameFiles\Tweaks\RuFontOriginal\albertus extra bold12.fnt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -644,6 +648,7 @@
     <Resource Include="Resources\Images\Background_NewsViewer.jpg" />
     <Resource Include="Resources\Images\Background_Stats.jpg" />
     <Resource Include="Resources\Images\Background_Tweaks.jpg" />
+    <Resource Include="Resources\Images\Dark_Reapers_Squad.jpg" />
     <Resource Include="Resources\Images\BestPlayer.png" />
     <Resource Include="Resources\Images\bottom.png" />
     <Resource Include="Resources\Images\cantrun-mark.png" />
@@ -960,6 +965,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\" />
+    <Folder Include="GameFiles\Tweaks\GridKeys\jbugfixmod" />
     <Folder Include="Views\Pages\" />
   </ItemGroup>
   <ItemGroup>
