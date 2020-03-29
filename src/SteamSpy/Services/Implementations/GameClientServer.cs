@@ -2309,7 +2309,7 @@ namespace ThunderHawk
 
         string RusNews => @" Привет! Вы на сервере elamaunt'а под названием THUNDERHAWK
 
-Добро пожаловать на бета-тест 2.20
+Добро пожаловать на бета-тест 2.21
 .
 Пожалуйста, не играете в режимах 3х3 и 4х4, пока мы не пофиксим блоки игроков друг с другом, это может вызвать проблемы на сервере. 
 .
@@ -2366,7 +2366,7 @@ namespace ThunderHawk
 
         string EnNews => @" Hello! You are on elamaunt's server THUNDERHAWK.
 .
-Welcome on BETA-test 2.20!
+Welcome on BETA-test 2.21!
 .
 Pls, don't play here 3x3 and 4x4 untill we fix blocks. 
 .

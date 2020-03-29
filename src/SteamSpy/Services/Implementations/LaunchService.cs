@@ -40,6 +40,8 @@ namespace ThunderHawk
 
         public Task LaunchGameAndWait(String server, String mode, IGlobalNavigationManager navigationManager)
         {
+            
+            
             _authorizationWindowShow =
                 false; // флаг, который указывает, что окно авторизации уже было выведено пользователю.
             _shouldStopRunSs =
@@ -47,8 +49,11 @@ namespace ThunderHawk
 
             this.navigationManager = navigationManager;
 
-            if (!CoreContext.LaunchService.TryGetOrChoosePath(out string path))
+            if (!CoreContext.LaunchService.TryGetOrChoosePath(out var path))
                 return Task.CompletedTask;
+            
+            Logger.Info("Launch game procedure started. Game path: "+ path);
+            
 
             CoreContext.OpenLogsService.Log($"Launch Game");
 
@@ -71,6 +76,7 @@ namespace ThunderHawk
                 threadWaitHandle.WaitOne();
                 if (!_canLoginByProfileRemindPassword)
                 {
+                    Logger.Info("Login and password, remind in game, incorrect or empty, form user nics request.");
                     CoreContext.MasterServer.NicksReceived += GetUserNicks;
                     CoreContext.MasterServer.RequestAllUserNicks("это тут нах не нужно, по стим ID придет");
                     threadWaitHandle.WaitOne();
@@ -119,7 +125,6 @@ namespace ThunderHawk
                         if (server == "thunderhawk")
                         {
                             CopySchemes(path);
-                            ProcessManager.KillDowStatsProccesses();
 
                             if (mode == "Classic bug fix")
                             {
@@ -130,7 +135,7 @@ namespace ThunderHawk
                                 procParams += " -modname ThunderHawk";
                             }
 
-
+                            Logger.Info("Start "+ exeFileName +" with params " + procParams);
                             var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
                             {
                                 UseShellExecute = true,
@@ -198,14 +203,17 @@ namespace ThunderHawk
 
         void GetUserNicks(string[] nicks)
         {
+            
             if (!_authorizationWindowShow)
             {
                 if (nicks.Length == 0)
                 {
+                    Logger.Info("No nicks, that bind to current steam id, show registration window.");
                     navigationManager.OpenWindow<RegistrationWindowViewModel>();
                 }
                 else
                 {
+                    Logger.Info("User already have " + nicks.Length + "accounts on server, show authorization window.");
                     navigationManager.OpenWindow<AuthorizationWindowViewModel>();
                 }
 

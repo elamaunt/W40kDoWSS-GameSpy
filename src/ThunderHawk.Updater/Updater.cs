@@ -77,8 +77,6 @@ namespace ThunderHawk.Updater
         {
             foreach (var directory in Directory.EnumerateDirectories(Environment.CurrentDirectory).ToArray())
             {
-                if (ShouldSkipDirectory(directory))
-                    continue;
 
                 try
                 {
@@ -105,17 +103,6 @@ namespace ThunderHawk.Updater
 
                 }
             }
-        }
-
-        static bool ShouldSkipDirectory(string directory)
-        {
-            //if (directory.EndsWith("mod\\", StringComparison.OrdinalIgnoreCase))
-            //    return true;
-
-            //if (directory.EndsWith("\\mod", StringComparison.OrdinalIgnoreCase))
-            //    return true;
-
-            return false;
         }
 
        static bool ShouldSkipFile(string file)

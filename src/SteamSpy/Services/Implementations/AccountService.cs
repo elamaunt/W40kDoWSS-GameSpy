@@ -31,7 +31,11 @@ namespace ThunderHawk
         public void SendCheckAuthorizedOnSsProfile()
         {
             var (login, pass) = readPlayerCfgLoginPass();
+            // TODO Revork this hotfix
+            if (login == null) login = "undefined";
+            if (pass == null) pass = "undefined";
             CanAuthorizeRequest(login, pass);
+            Logger.Info("Send authorize request. Login - " + login);
         }
 
         public void RegisterRequest(string login, string password)
