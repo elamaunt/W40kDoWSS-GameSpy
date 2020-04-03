@@ -204,6 +204,7 @@
     <Compile Include="Views\ErrorNotificationWindow.xaml.cs">
       <DependentUpon>ErrorNotificationWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Windows\Controllers\InputFieldValidation.cs" />
     <Compile Include="Views\Windows\Controllers\MainWindowAnimateNavigationController.cs" />
     <Compile Include="Views\Windows\Window_Authorization.xaml.cs" />
     <Compile Include="Views\Windows\Window_Registration.xaml.cs" />

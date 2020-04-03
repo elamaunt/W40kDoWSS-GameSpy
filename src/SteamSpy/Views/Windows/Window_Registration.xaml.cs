@@ -17,7 +17,7 @@ namespace ThunderHawk
             // Insert the previewed text into the existing text in the textbox.
             var fullText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
 
-            var inPutIsValid = inputIsValid(fullText);
+            var inPutIsValid = InputFieldValidation.IsValidInputName(fullText);
             if (inPutIsValid) CoreContext.AccountService.RegInputFieldLogin = fullText;
             e.Handled = !inPutIsValid;
         }
@@ -30,10 +30,9 @@ namespace ThunderHawk
             var passBox = sender as PasswordBox;
             // Use SelectionStart property to find the caret position.
             // Insert the previewed text into the existing text in the textbox.
-            // var fullText = passBox.Password.Insert(pass.SelectionStart, e.Text);
             var fullPass = passBox.Password + e.Text;
 
-            var inPutIsValid = inputIsValid(fullPass);
+            var inPutIsValid = InputFieldValidation.IsValidInputPassword(fullPass);
             if (inPutIsValid) CoreContext.AccountService.RegInputFieldPassword = fullPass;
             e.Handled = !inPutIsValid;
         }
@@ -43,22 +42,11 @@ namespace ThunderHawk
             var passBox = sender as PasswordBox;
             // Use SelectionStart property to find the caret position.
             // Insert the previewed text into the existing text in the textbox.
-            // var fullText = passBox.Password.Insert(pass.SelectionStart, e.Text);
             var fullPass = passBox.Password + e.Text;
 
-            var inPutIsValid = inputIsValid(fullPass);
+            var inPutIsValid = InputFieldValidation.IsValidInputPassword(fullPass);
             if (inPutIsValid) CoreContext.AccountService.RegInputFieldConfirmPassword = fullPass;
             e.Handled = !inPutIsValid;
-        }
-
-        private bool inputIsValid(string text)
-        {
-            Regex regexObj = new Regex("^[A-Za-z0-9_-]+$(?#case sensitive, matches only lower a-z)", RegexOptions.Multiline);
-            Match matchResults = regexObj.Match(text);
-            
-            if (matchResults.Success && text.Length < 15) return true;
-
-            return false;
         }
 
     }
