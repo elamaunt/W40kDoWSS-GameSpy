@@ -1,8 +1,8 @@
 ﻿using Steamworks;
 using System;
-using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using ThunderHawk.Core;
 using ThunderHawk.Utils;
 
@@ -16,6 +16,10 @@ namespace ThunderHawk
 
         AppId_t AppId = AppId_t.Invalid;
 
+        ulong _steamIdUnderTest;
+        private CancellationTokenSource _testTokenSource;
+        TaskCompletionSource<bool> _testAwaitingTask;
+
         readonly Callback<PersonaStateChange_t> _personaStateChangeCallback;
         readonly Callback<FriendRichPresenceUpdate_t> _richPresenceUpdateCallback;
 
@@ -26,6 +30,21 @@ namespace ThunderHawk
         {
             _personaStateChangeCallback = Callback<PersonaStateChange_t>.Create(OnPersonaStateChange);
             _richPresenceUpdateCallback = Callback<FriendRichPresenceUpdate_t>.Create(OnFriendRichPresenceChanged);
+
+            PortBindingManager.TestBufferReceived += OnTestBufferReceived;
+        }
+
+        private void OnTestBufferReceived(CSteamID remoteId, byte[] buffer, uint bytesCount)
+        {
+            if (buffer[0] == 1)
+            {
+                if (_steamIdUnderTest == remoteId.m_SteamID)
+                    _testAwaitingTask?.TrySetResult(true);
+            }
+            else
+            {
+                SteamUserStates.SendTestBuffer(remoteId.m_SteamID, 1200, 2);
+            }
         }
 
         void OnPersonaStateChange(PersonaStateChange_t param)
@@ -107,7 +126,35 @@ namespace ThunderHawk
 
         public void TestConnectionWithPlayer(ulong steamId)
         {
-            SteamUserStates.CheckConnection(steamId, 1200);
+            if (_testAwaitingTask != null)
+            {
+                MessageBox.Show("Test already in progress. Please, wait for result");
+                return;
+            }
+
+            _testTokenSource = new CancellationTokenSource();
+            _testAwaitingTask = new TaskCompletionSource<bool>();
+            _steamIdUnderTest = steamId;
+
+            _testAwaitingTask.Task.ContinueWith(t =>
+            {
+                _testAwaitingTask = null;
+                _testTokenSource?.Dispose();
+                _testTokenSource = null;
+
+                if (t.IsCanceled || t.IsFaulted)
+                {
+                    MessageBox.Show("Test failed. Connection isn't established with the player");
+                }
+                else
+                {
+                    MessageBox.Show("Test succeded. Connection is stable");
+                }
+            }, TaskContinuationOptions.AttachedToParent);
+
+            _testTokenSource.Token.Register(() => _testAwaitingTask.TrySetCanceled());
+            SteamUserStates.SendTestBuffer(steamId, 1200, 2);
+            _testTokenSource.CancelAfter(10000);
         }
 
         public void ResetPortBindingWithPlayer(ulong steamId)

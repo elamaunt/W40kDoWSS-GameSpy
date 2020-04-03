@@ -1,5 +1,4 @@
 ﻿using Framework;
-using System;
 using System.Collections.ObjectModel;
 
 namespace ThunderHawk.Core
@@ -19,14 +18,17 @@ namespace ThunderHawk.Core
             Info = userInfo;
             Name.Text = userInfo.UIName;
 
-            ContextMenu = new MenuFrame()
+            if (!userInfo.IsUser)
             {
-                MenuItems = new ObservableCollection<IMenuItemFrame>()
+                ContextMenu = new MenuFrame()
                 {
-                    new MenuButtonFrame(){ Text = "Test connection with this player", Action = OnTestConnectionClicked },
-                    new MenuButtonFrame(){ Text = "Reset port binding with this player (dont use if you in game with this player)", Action = OnResetPortClicked }
-                }
-            };
+                    MenuItems = new ObservableCollection<IMenuItemFrame>()
+                    {
+                        new MenuButtonFrame(){ Text = "Test connection with this player", Action = OnTestConnectionClicked },
+                        new MenuButtonFrame(){ Text = "Reset port binding with this player (dont use if you in game with this player)", Action = OnResetPortClicked }
+                    }
+                };
+            }
         }
 
         void OnTestConnectionClicked()

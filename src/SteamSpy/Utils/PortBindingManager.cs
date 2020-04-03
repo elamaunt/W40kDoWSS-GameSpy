@@ -1,5 +1,6 @@
 ﻿using GSMasterServer.Servers;
 using Steamworks;
+using System;
 using System.Collections.Concurrent;
 using System.Linq;
 
@@ -7,9 +8,11 @@ namespace ThunderHawk.Utils
 {
     public static class PortBindingManager
     {
-        static byte[] _receiveBuffer = new byte[1024];
+        static byte[] _receiveBuffer = new byte[1200];
     
         static readonly ConcurrentDictionary<CSteamID, ServerSteamPortRetranslator> PortBindings = new ConcurrentDictionary<CSteamID, ServerSteamPortRetranslator>();
+
+        public static event Action<CSteamID, byte[], uint> TestBufferReceived;
 
         public static CSteamID? GetSteamIdByPort(ushort port)
         {
@@ -26,6 +29,15 @@ namespace ThunderHawk.Utils
             uint size, bytesReaded;
             CSteamID remoteSteamId;
             P2PSessionState_t state;
+
+            while (SteamNetworking.IsP2PPacketAvailable(out size, 2))
+            {
+                if (size == 0)
+                    continue;
+
+                if (SteamNetworking.ReadP2PPacket(_receiveBuffer, size, out bytesReaded, out remoteSteamId, 2))
+                    TestBufferReceived?.Invoke(remoteSteamId, _receiveBuffer, bytesReaded);
+            }
 
             while (SteamNetworking.IsP2PPacketAvailable(out size, 1))
             {

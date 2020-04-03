@@ -25,13 +25,29 @@ namespace ThunderHawk
             UserSessionChanged?.Invoke(param.m_steamIDRemote.m_SteamID, UserState.Disconnected);
         }
 
-        public static void CheckConnection(ulong steamId, uint bufferSize = 1)
+        public static void SendSuccededTestBuffer(ulong steamId, uint bufferSize = 1, int channel = 1)
         {
             var userId = new CSteamID(steamId);
 
             var buffer = new byte[bufferSize];
 
-            SteamNetworking.SendP2PPacket(userId, buffer, bufferSize, EP2PSend.k_EP2PSendReliable, 1);
+            for (int i = 0; i < buffer.Length; i++)
+                buffer[i] = 1;
+
+            SteamNetworking.SendP2PPacket(userId, buffer, bufferSize, EP2PSend.k_EP2PSendReliable, channel);
+
+            var state = GetUserState(steamId);
+
+            UserSessionChanged?.Invoke(steamId, state);
+        }
+
+        public static void SendTestBuffer(ulong steamId, uint bufferSize = 1, int channel = 1)
+        {
+            var userId = new CSteamID(steamId);
+
+            var buffer = new byte[bufferSize];
+
+            SteamNetworking.SendP2PPacket(userId, buffer, bufferSize, EP2PSend.k_EP2PSendReliable, channel);
 
             var state = GetUserState(steamId);
 

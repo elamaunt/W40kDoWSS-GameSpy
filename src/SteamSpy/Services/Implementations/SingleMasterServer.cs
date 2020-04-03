@@ -103,7 +103,7 @@ namespace ThunderHawk
                     continue;
 
                 if (userPair.Value.State != UserState.Connected)
-                    SteamUserStates.CheckConnection(userPair.Key);
+                    SteamUserStates.SendTestBuffer(userPair.Key);
             }
         }
 
@@ -363,7 +363,7 @@ namespace ThunderHawk
             if (_users.TryAdd(message.SteamId, info))
                 UserConnected?.Invoke(info);
 
-            SteamUserStates.CheckConnection(message.SteamId);
+            SteamUserStates.SendTestBuffer(message.SteamId);
         }
 
         public void HandleMessage(NetConnection connection, ChatMessageMessage message)
@@ -440,7 +440,7 @@ namespace ThunderHawk
                 if (user.SteamId == SteamUser.GetSteamID().m_SteamID)
                     CurrentProfile = userInfo;
                 else
-                    SteamUserStates.CheckConnection(user.SteamId);
+                    SteamUserStates.SendTestBuffer(user.SteamId);
 
                 if (!user.ProfileId.HasValue)
                     continue;
