@@ -32,7 +32,7 @@ namespace GSMasterServer.Servers
             : this()
         {
             RemoteUserSteamId = userId;
-            SteamUserStates.SendTestBuffer(userId.m_SteamID);
+            SteamUserStates.SendTestBufferAndCheckConnection(userId.m_SteamID);
         }
 
         public ServerSteamPortRetranslator()

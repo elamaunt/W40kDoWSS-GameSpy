@@ -35,13 +35,9 @@ namespace ThunderHawk
                 buffer[i] = 1;
 
             SteamNetworking.SendP2PPacket(userId, buffer, bufferSize, EP2PSend.k_EP2PSendReliable, channel);
-
-            var state = GetUserState(steamId);
-
-            UserSessionChanged?.Invoke(steamId, state);
         }
 
-        public static void SendTestBuffer(ulong steamId, uint bufferSize = 1, int channel = 1)
+        public static void SendTestBufferAndCheckConnection(ulong steamId, uint bufferSize = 1, int channel = 1)
         {
             var userId = new CSteamID(steamId);
 

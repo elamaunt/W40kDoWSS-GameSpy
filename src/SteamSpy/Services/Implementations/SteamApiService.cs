@@ -43,7 +43,7 @@ namespace ThunderHawk
             }
             else
             {
-                SteamUserStates.SendTestBuffer(remoteId.m_SteamID, 1200, 2);
+                SteamUserStates.SendSuccededTestBuffer(remoteId.m_SteamID, 1200, 2);
             }
         }
 
@@ -153,7 +153,7 @@ namespace ThunderHawk
             }, TaskContinuationOptions.AttachedToParent);
 
             _testTokenSource.Token.Register(() => _testAwaitingTask.TrySetCanceled());
-            SteamUserStates.SendTestBuffer(steamId, 1200, 2);
+            SteamUserStates.SendTestBufferAndCheckConnection(steamId, 1200, 2);
             _testTokenSource.CancelAfter(10000);
         }
 
