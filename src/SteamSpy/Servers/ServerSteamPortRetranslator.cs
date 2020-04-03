@@ -40,6 +40,11 @@ namespace GSMasterServer.Servers
             StartServer();
         }
 
+        public void ResetLocalPoint()
+        {
+            LocalPoint = null;
+        }
+
         public void Dispose()
         {
             Dispose(true);

@@ -1,5 +1,6 @@
 ﻿using Steamworks;
 using System;
+using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using ThunderHawk.Core;
@@ -102,6 +103,16 @@ namespace ThunderHawk
 
                 return hosts;
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
+        }
+
+        public void TestConnectionWithPlayer(ulong steamId)
+        {
+            SteamUserStates.CheckConnection(steamId, 1200);
+        }
+
+        public void ResetPortBindingWithPlayer(ulong steamId)
+        {
+            PortBindingManager.AddOrUpdatePortBinding(new CSteamID(steamId)).ResetLocalPoint();
         }
     }
 }

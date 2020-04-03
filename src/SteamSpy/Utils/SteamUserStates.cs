@@ -1,8 +1,6 @@
 ﻿using Steamworks;
 using System;
-using System.Threading.Tasks;
 using ThunderHawk.Core;
-using ThunderHawk.Utils;
 
 namespace ThunderHawk
 {
@@ -27,11 +25,13 @@ namespace ThunderHawk
             UserSessionChanged?.Invoke(param.m_steamIDRemote.m_SteamID, UserState.Disconnected);
         }
 
-        public static void CheckConnection(ulong steamId)
+        public static void CheckConnection(ulong steamId, uint bufferSize = 1)
         {
             var userId = new CSteamID(steamId);
 
-            SteamNetworking.SendP2PPacket(userId, new byte[] { 0 }, 1, EP2PSend.k_EP2PSendReliable, 1);
+            var buffer = new byte[bufferSize];
+
+            SteamNetworking.SendP2PPacket(userId, buffer, bufferSize, EP2PSend.k_EP2PSendReliable, 1);
 
             var state = GetUserState(steamId);
 

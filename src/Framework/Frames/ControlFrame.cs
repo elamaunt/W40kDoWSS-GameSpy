@@ -30,5 +30,18 @@
                 FirePropertyChanged(nameof(Enabled));
             }
         }
+
+        IMenuFrame _menu;
+        public IMenuFrame ContextMenu
+        {
+            get => _menu;
+            set
+            {
+                if (_menu == value)
+                    return;
+                _menu = value;
+                FirePropertyChanged(nameof(ContextMenu));
+            }
+        }
     }
 }

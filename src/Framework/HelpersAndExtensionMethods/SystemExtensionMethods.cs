@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,6 +67,11 @@ namespace Framework
         public static ObservableCollection<T> ToObservableCollection<T>(this IEnumerable<T> sequence)
         {
             return new ObservableCollection<T>(sequence);
+        }
+
+        public static bool IsNullOrEmpty<ElementType>(this IEnumerable<ElementType> self)
+        {
+            return self == null || !self.Any();
         }
 
         public static bool IsNullOrEmpty<ElementType>(this ICollection<ElementType> @string)

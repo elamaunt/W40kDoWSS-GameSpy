@@ -19,5 +19,7 @@ namespace ThunderHawk.Core
         Task<GameHostInfo[]> LoadLobbies();
         ulong GetUserSteamId();
         DateTime GetCurrentTime();
+        void TestConnectionWithPlayer(ulong steamId);
+        void ResetPortBindingWithPlayer(ulong steamId);
     }
 }

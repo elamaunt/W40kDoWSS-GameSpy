@@ -75,9 +75,14 @@
     <Compile Include="Controllers\Binders\ContentControlWithIListFrameBinder.cs" />
     <Compile Include="Controllers\Binders\FrameWithINavigationPanelFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ListViewWithIListFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\MenuBaseWithIMenuFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\MenuItemWithActionFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\MenuItemWithIMenuItemFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\MenuItemWithISubMenuItemFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\MenuItemWithIToggleFrameBinder.cs" />
     <Compile Include="Controllers\Binders\TextBoxBaseWithITextEditorFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ToggleButtonWithIToggleFrameBinder.cs" />
-    <Compile Include="Controllers\Binders\UIElementWithIControlFrameBinder.cs" />
+    <Compile Include="Controllers\Binders\FrameworkElementWithIControlFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithByteArrayFrameBinder.cs" />
     <Compile Include="Controllers\Binders\ImageWithIUriFrameBinder.cs" />
     <Compile Include="Controllers\Binders\LabelWithITextFrameBinder.cs" />

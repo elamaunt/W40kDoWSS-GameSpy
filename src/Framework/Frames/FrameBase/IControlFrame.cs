@@ -4,5 +4,6 @@
     {
         bool Visible { get; set; }
         bool Enabled { get; set; }
+        IMenuFrame ContextMenu { get; set; }
     }
 }

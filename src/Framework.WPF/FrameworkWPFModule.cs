@@ -19,12 +19,17 @@
             batch.RegisterControllerFactory(() => new TextBoxBaseWithITextFrameBinder());
             batch.RegisterControllerFactory(() => new TextBlockWithIActionFrameBinder());
             batch.RegisterControllerFactory(() => new ContentControlWithIListFrameBinder());
-            batch.RegisterControllerFactory(() => new UIElementWithIControlFrameBinder());
+            batch.RegisterControllerFactory(() => new FrameworkElementWithIControlFrameBinder());
             batch.RegisterControllerFactory(() => new ToggleButtonWithIToggleFrameBinder());
             batch.RegisterControllerFactory(() => new FrameWithIListFrameBinder());
             batch.RegisterControllerFactory(() => new FrameWithINavigationPanelFrameBinder());
             batch.RegisterControllerFactory(() => new ListViewWithIListFrameBinder());
             batch.RegisterControllerFactory(() => new TextBoxBaseWithITextEditorFrameBinder());
+            batch.RegisterControllerFactory(() => new MenuBaseWithIMenuFrameBinder());
+            batch.RegisterControllerFactory(() => new MenuItemWithIMenuItemFrameBinder());
+            batch.RegisterControllerFactory(() => new MenuItemWithActionFrameBinder());
+            batch.RegisterControllerFactory(() => new MenuItemWithISubMenuItemFrameBinder());
+            batch.RegisterControllerFactory(() => new MenuItemWithIToggleFrameBinder());
         }
     }
 }
