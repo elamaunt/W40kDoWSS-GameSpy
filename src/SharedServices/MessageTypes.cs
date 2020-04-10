@@ -34,6 +34,18 @@
         LoginError,
         SetKeyValue,
         RequestNewUser,
-        NewUser
+        NewUser,
+        LeaveLobby,
+        EnterLobby,
+        CreateLobby,
+        UpdateLobby,
+        EnteredInLobby,
+        LobbyChatLine,
+        LobbyKeyValue,
+        RequestLobbies,
+        Lobbies,
+        LobbyGameStarted,
+        LobbyCreated,
+        LobbyLeft
     }
 }

@@ -183,7 +183,7 @@ namespace ThunderHawk
                     CoreContext.OpenLogsService.Log($"Game process cleared");
                     GameProcess = null;
                     CoreContext.ClientServer.Stop();
-                    SteamLobbyManager.LeaveFromCurrentLobby();
+                    CoreContext.MasterServer.LeaveFromCurrentLobby();
                 }
             }).Unwrap();
         }

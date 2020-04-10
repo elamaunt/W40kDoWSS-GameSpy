@@ -170,29 +170,6 @@ namespace System
             return Convert.ToInt32(self);
         }
 
-        public static int ParseToIntOrDefault(this string self, int defaultValue = 0)
-        {
-            if (!self.IsNullOrWhiteSpace())
-            {
-                int value;
-                if (int.TryParse(self, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
-                    return value;
-            }
-            return defaultValue;
-        }
-
-        public static ulong ParseToUlongOrDefault(this string self, ulong defaultValue = 0)
-        {
-            if (!self.IsNullOrWhiteSpace())
-            {
-                ulong value;
-                if (ulong.TryParse(self, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
-                    return value;
-            }
-
-            return defaultValue;
-        }
-
         public static bool IsNullOrEmpty(this string self)
         {
             return string.IsNullOrEmpty(self);

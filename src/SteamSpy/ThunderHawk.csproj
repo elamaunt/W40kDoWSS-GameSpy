@@ -127,7 +127,8 @@
     <Compile Include="Controllers\Binders\TabItemWithPageViewModelBinder.cs" />
     <Compile Include="Controllers\IControlExtension.cs" />
     <Compile Include="Controllers\PageExtendingController.cs" />
-    <Compile Include="Data\GameServerDetails.cs" />
+    <Compile Include="Data\LobbyData.cs" />
+    <Compile Include="Data\LobbyMemberData.cs" />
     <Compile Include="Effects\IndicatorEffect.cs" />
     <Compile Include="Effects\RectBlurEffect.cs" />
     <Compile Include="ExplorerExtensions.cs" />
@@ -141,6 +142,7 @@
     <Compile Include="LogConfigurator.cs" />
     <Compile Include="Services\Implementations\AccountService.cs" />
     <Compile Include="Services\Implementations\InGameService.cs" />
+    <Compile Include="Services\Implementations\SingleMasterServer_LOBBY.cs" />
     <Compile Include="Services\Implementations\ResourcesService.cs" />
     <Compile Include="StaticClasses\Soulstorm\ActiveModDetector.cs" />
     <Compile Include="StaticClasses\Soulstorm\DowstatsReplaySender.cs" />
@@ -191,7 +193,6 @@
     <Compile Include="Utils\RandomHelper.cs" />
     <Compile Include="Utils\SteamApiHelper.cs" />
     <Compile Include="Utils\SteamExtensionMethods.cs" />
-    <Compile Include="Utils\SteamLobbyManager.cs" />
     <Compile Include="Utils\SteamRichPresences.cs" />
     <Compile Include="Utils\SteamUserStates.cs" />
     <Compile Include="Utils\SystemExtensionMethods.cs" />
@@ -966,7 +967,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Config\" />
-    <Folder Include="GameFiles\Tweaks\GridKeys\jbugfixmod" />
     <Folder Include="Views\Pages\" />
   </ItemGroup>
   <ItemGroup>

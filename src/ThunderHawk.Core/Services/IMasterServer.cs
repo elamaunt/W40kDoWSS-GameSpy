@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using SharedServices;
 
 namespace ThunderHawk.Core
@@ -69,7 +71,32 @@ namespace ThunderHawk.Core
         GameInfo[] LastGames { get; }
         StatsInfo[] PlayersTop { get; }
 
+        bool IsInLobbyNow { get; }
+        bool HasHostedLobby { get; }
         void SendKeyValuesChanged(string name, string[] pairs);
+
         void RequestNewUser(Dictionary<string, string> pairs);
+
+
+        event Action<ulong, string, long> LobbyMemberLeft;
+        event Action<ulong, string> LobbyChatMessage;
+        void UpdateCurrentLobby(GameServerDetails details, string indicator);
+        void LeaveFromCurrentLobby();
+        void SendInLobbyChat(string line);
+        void SetLobbyKeyValue(string key, string value);
+        void SetLobbyTopic(string topic);
+        string GetLocalLobbyMemberData(string key);
+        int GetLobbyMembersCount();
+        string GetLobbyMemberName(int i);
+        string GetLobbyMemberData(int i, string key);
+        int GetCurrentLobbyMaxPlayers();
+        void SetCurrentLobbyMaxPlayers(int value);
+        string GetLobbyTopic();
+        string[] GetCurrentLobbyMembers();
+        void EnterInLobby(ulong hostSteamId, string localRoomHash, string shortUser, string name, string profileId);
+        Task<GameServerDetails[]> LoadLobbies(string gameVariant, string indicator, bool filterByMod = false);
+        void SetLobbyJoinable(bool joinable);
+        void CreatePublicLobby(string name, string shortUser, string flags, string indicator);
+        void SetLobbyGameStarted();
     }
 }

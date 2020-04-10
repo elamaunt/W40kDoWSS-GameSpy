@@ -1,8 +1,8 @@
-﻿using Steamworks;
+﻿using Framework;
 using System;
 using System.Collections.Generic;
 
-namespace ThunderHawk
+namespace ThunderHawk.Core
 {
     public class GameServerDetails
     {
@@ -26,9 +26,9 @@ namespace ThunderHawk
                 return GetOrDefault(key);
             }
         }
+
         public string RoomHash { get; set; }
-        public CSteamID HostSteamId { get; set; }
-        public CSteamID LobbySteamId { get; set; }
+        public ulong HostSteamId { get; set; }
 
         public bool Ranked => GameName == "whamdowfram";
         public bool IsTeamplay => GetOrDefault("teamplay") == "1";
@@ -61,6 +61,5 @@ namespace ThunderHawk
                 !String.IsNullOrWhiteSpace(GameVer) &&
                 !String.IsNullOrWhiteSpace(GameType) &&
                 MaxPlayers != "0";
-
     }
 }

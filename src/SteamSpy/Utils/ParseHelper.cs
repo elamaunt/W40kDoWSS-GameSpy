@@ -1,10 +1,12 @@
 ﻿using GSMasterServer.Utils;
+using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using ThunderHawk.Core;
 using ThunderHawk.Data;
 
 namespace ThunderHawk.Utils
@@ -96,7 +98,7 @@ namespace ThunderHawk.Utils
                 var queryPort = ushort.Parse(server.GetOrDefault("QueryPort"));
                 var iPAddress = server.GetOrDefault("IPAddress");
 
-                var retranslator = PortBindingManager.AddOrUpdatePortBinding(server.HostSteamId);
+                var retranslator = PortBindingManager.AddOrUpdatePortBinding(new CSteamID(server.HostSteamId));
 
                 retranslator.AttachedServer = server;
 

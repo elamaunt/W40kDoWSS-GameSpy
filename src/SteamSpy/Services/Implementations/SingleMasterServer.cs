@@ -14,7 +14,7 @@ using ThunderHawk.Utils;
 
 namespace ThunderHawk
 {
-    public class SingleMasterServer : IServerMessagesHandler, IMasterServer
+    public partial class SingleMasterServer : IServerMessagesHandler, IMasterServer
     {
         public UserInfo CurrentProfile { get; private set; }
 
@@ -71,6 +71,7 @@ namespace ThunderHawk
         public string ModName => _hailMessage?.ModName;
         public string ModVersion => _hailMessage?.ModVersion;
         public string ActiveGameVariant => _hailMessage?.ActiveGameVariant;
+
 
         public SingleMasterServer()
         {

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -11,6 +12,38 @@ namespace Framework
 {
     public static class SystemExtensionMethods
     {
+        public static B GetValueOrDefault<T, B>(this Dictionary<T, B> self, T key)
+        {
+            B value;
+
+            if (key == null)
+                return default(B);
+            self.TryGetValue(key, out value);
+            return value;
+        }
+
+        public static int ParseToIntOrDefault(this string self, int defaultValue = 0)
+        {
+            if (!self.IsNullOrWhiteSpace())
+            {
+                int value;
+                if (int.TryParse(self, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
+                    return value;
+            }
+            return defaultValue;
+        }
+
+        public static ulong ParseToUlongOrDefault(this string self, ulong defaultValue = 0)
+        {
+            if (!self.IsNullOrWhiteSpace())
+            {
+                ulong value;
+                if (ulong.TryParse(self, NumberStyles.Any, CultureInfo.InvariantCulture, out value))
+                    return value;
+            }
+
+            return defaultValue;
+        }
         public static T ConvertToOrDefault<T>(this string value)
         {
             if (value.IsNullOrWhiteSpace())

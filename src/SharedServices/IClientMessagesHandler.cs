@@ -12,13 +12,21 @@ namespace SharedServices
         void HandleMessage(NetConnection connection, LogoutMessage message);
         void HandleMessage(NetConnection connection, GameFinishedMessage message);
         void HandleMessage(NetConnection connection, RequestUsersMessage message);
-        void HandleMessage(NetConnection senderConnection, RequestPlayersTopMessage requestPlayersTopMessage);
-        void HandleMessage(NetConnection senderConnection, RequestLastGamesMessage requestLastGamesMessage);
-        void HandleMessage(NetConnection senderConnection, RequestAllUserNicksMessage requestAllUserNicksMessage);
-        void HandleMessage(NetConnection senderConnection, RequestCanAuthorizeMessage requestCanAuthorizeMessage);
-        void HandleMessage(NetConnection senderConnection, RequestRegistrationByLauncher requestRegistrationByLauncher);
-        void HandleMessage(NetConnection senderConnection, RequestNameCheckMessage requestNameCheckMessage);
-        void HandleMessage(NetConnection senderConnection, SetKeyValueMessage setKeyValueMessage);
-        void HandleMessage(NetConnection senderConnection, RequestNewUserMessage requestNewUserMessage);
+        void HandleMessage(NetConnection senderConnection, RequestPlayersTopMessage message);
+        void HandleMessage(NetConnection senderConnection, RequestLastGamesMessage message);
+        void HandleMessage(NetConnection senderConnection, RequestAllUserNicksMessage message);
+        void HandleMessage(NetConnection senderConnection, RequestCanAuthorizeMessage message);
+        void HandleMessage(NetConnection senderConnection, RequestRegistrationByLauncher message);
+        void HandleMessage(NetConnection senderConnection, RequestNameCheckMessage message);
+        void HandleMessage(NetConnection senderConnection, SetKeyValueMessage message);
+        void HandleMessage(NetConnection senderConnection, RequestNewUserMessage message);
+        void HandleMessage(NetConnection senderConnection, LeaveLobbyMessage message);
+        void HandleMessage(NetConnection senderConnection, EnterLobbyMessage message);
+        void HandleMessage(NetConnection senderConnection, CreateLobbyMessage message);
+        void HandleMessage(NetConnection senderConnection, UpdateLobbyMessage message);
+        void HandleMessage(NetConnection senderConnection, LobbyChatLineMessage message);
+        void HandleMessage(NetConnection senderConnection, LobbyKeyValueMessage message);
+        void HandleMessage(NetConnection senderConnection, RequestLobbiesMessage message);
+        void HandleMessage(NetConnection senderConnection, LobbyGameStartedMessage message);
     }
 }

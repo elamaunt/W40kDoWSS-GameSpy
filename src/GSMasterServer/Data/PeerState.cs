@@ -5,12 +5,15 @@ namespace GSMasterServer.Data
 {
     public class PeerState
     {
-        public WeakReference<NetConnection> Connection { get; }
-        public ulong SteamId { get; }
-        public ProfileDBO ActiveProfile { get; set; }
-        public string Status { get; set; }
-        public string BFlags { get; set; }
-        public string BStats { get; set; }
+        public readonly WeakReference<NetConnection> Connection;
+        public readonly ulong SteamId;
+        public ProfileDBO ActiveProfile;
+
+        public string Status;
+        public string BFlags;
+        public string BStats;
+
+        public LobbyPeerState? LobbyState;
 
         public PeerState(ulong steamId, NetConnection connection)
         {

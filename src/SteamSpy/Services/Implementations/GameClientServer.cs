@@ -54,7 +54,6 @@ namespace ThunderHawk
 
         string _enteredLobbyHash;
         string _localServerHash;
-        GameServerDetails _localServer;
         string _flags;
 
         byte[] _gameNameBytes;
@@ -68,11 +67,6 @@ namespace ThunderHawk
 
         const string XorKEY = "GameSpy3D";
         volatile int _sessionCounter;
-
-        CancellationTokenSource _lobbyTokenSource;
-        volatile bool _gameLaunchReceived;
-
-        CancellationToken Token => _lobbyTokenSource.Token;
 
         readonly ConcurrentDictionary<string, GameServerDetails> _lastLoadedLobbies = new ConcurrentDictionary<string, GameServerDetails>();
 
@@ -113,9 +107,8 @@ namespace ThunderHawk
             CoreContext.MasterServer.NameCheckReceived += OnNameCheckReceived;
             CoreContext.MasterServer.LoginErrorReceived += OnLoginErrorReceived;
 
-            SteamLobbyManager.LobbyChatMessage += OnLobbyChatMessageReceived;
-            SteamLobbyManager.LobbyMemberLeft += OnLobbyMemberLeft;
-            SteamLobbyManager.TopicUpdated += OnTopicUpdated;
+            CoreContext.MasterServer.LobbyMemberLeft += OnLobbyMemberLeft;
+            CoreContext.MasterServer.LobbyChatMessage += OnLobbyChatMessageReceived;
         }
 
         void OnNewUserReceived(string name, long? id, string email)
@@ -193,12 +186,12 @@ namespace ThunderHawk
                 return;
 
             if (previousName != null && previousProfile.HasValue)
-                SendToClientChat($":{previousName}!X{GetEncodedIp(user, previousName)}X|{previousProfile.Value}@127.0.0.1 PART #GPG!1 :Leaving\r\n");
+                SendToClientChat($":{previousName}!X{GetEncodedIp(previousName)}X|{previousProfile.Value}@127.0.0.1 PART #GPG!1 :Leaving\r\n");
 
             if (!user.IsProfileActive)
                 return;
 
-            SendToClientChat($":{newName}!X{GetEncodedIp(user, newName)}X|{user.ActiveProfileId}@127.0.0.1 JOIN #GPG!1\r\n");
+            SendToClientChat($":{newName}!X{GetEncodedIp(newName)}X|{user.ActiveProfileId}@127.0.0.1 JOIN #GPG!1\r\n");
 
             if (user.BStats != null)
                 SendToClientChat($":s 702 #GPG!1 #GPG!1 {newName} BCAST :\\b_stats\\{user.BStats}\r\n");
@@ -219,7 +212,7 @@ namespace ThunderHawk
 
             if (user.IsProfileActive)
             {
-                SendToClientChat($":{user.Name}!X{GetEncodedIp(user, user.Name)}X|{user.ActiveProfileId}@127.0.0.1 JOIN #GPG!1\r\n");
+                SendToClientChat($":{user.Name}!X{GetEncodedIp(user.Name)}X|{user.ActiveProfileId}@127.0.0.1 JOIN #GPG!1\r\n");
 
                 if (user.BStats != null)
                     SendToClientChat($":s 702 #GPG!1 #GPG!1 {user.Name} BCAST :\\b_stats\\{user.BStats}\r\n");
@@ -240,7 +233,7 @@ namespace ThunderHawk
                 return;
 
             if (user.IsProfileActive)
-                SendToClientChat($":{user.UIName}!X{GetEncodedIp(user, user.UIName)}X|{user.ActiveProfileId}@127.0.0.1 PART #GPG!1 :Leaving\r\n");
+                SendToClientChat($":{user.UIName}!X{GetEncodedIp(user.UIName)}X|{user.ActiveProfileId}@127.0.0.1 PART #GPG!1 :Leaving\r\n");
         }
 
         void OnStatsAccept(TcpPortHandler handler, TcpClientNode node, CancellationToken token)
@@ -284,7 +277,7 @@ namespace ThunderHawk
 
             if (values[1] == _user)
             {
-                UpdateGameLaunchState();
+                //UpdateGameLaunchState();
                 return;
             }
 
@@ -295,7 +288,7 @@ namespace ThunderHawk
 
             SendToClientChat($":{values[1]} JOIN #GSP!whamdowfr!{_enteredLobbyHash}\r\n");
 
-            UpdateGameLaunchState();
+            //UpdateGameLaunchState();
 
             /*SendToClientChat($":{nick}!Xu4FpqOa9X|{userValues[2]}@192.168.159.128 JOIN #GSP!whamdowfr!{_enteredLobbyHash}\r\n");
             SendToClientChat($":s 702 #GPG!1 #GPG!1 {nick} BCAST :\\b_flags\\s\r\n");
@@ -317,7 +310,7 @@ namespace ThunderHawk
             return Math.Abs(v).ToString();
         }
 
-        void UpdateGameLaunchState()
+       /* void UpdateGameLaunchState()
         {
             _gameLaunchReceived = SteamLobbyManager.IsLobbyFull;
 
@@ -326,7 +319,7 @@ namespace ThunderHawk
                 CoreContext.OpenLogsService.Log("LOBBY IF FULL NOW");
                 Logger.Info("LOBBY IF FULL NOW");
             }
-        }
+        }*/
 
         void HandleRemoteSetckeyCommand(string[] values)
         {
@@ -361,35 +354,10 @@ namespace ThunderHawk
             SendToClientChat($":{_user} UTM #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
         }
 
-        void OnTopicUpdated(string topic)
+        void OnLobbyMemberLeft(ulong memberSteamId, string name, long profileId)
         {
-        }
-
-        void OnLobbyMemberLeft(ulong memberSteamId, bool disconnected)
-        {
-            var info = CoreContext.MasterServer.GetUserInfo(memberSteamId);
-
-            if (info == null)
-            {
-                CoreContext.OpenLogsService.Log($"RemoteLeft but unknown");
-                return;
-            }
-
-            var details = _localServer;
-
-            try
-            {
-                if (details != null)
-                    SteamLobbyManager.UpdateCurrentLobby(details, GetIndicator());
-            }
-            catch(Exception ex)
-            {
-                Logger.Warn(ex);
-            }
-
-            CoreContext.OpenLogsService.Log($"RemoteLeft {_enteredLobbyHash} {GetNickHash(info.Name)}");
-
-            SendToClientChat($":{info.Name}!X{GetEncodedIp(info, info.Name)}X|{info.ActiveProfileId}@127.0.0.1 PART #GSP!whamdowfr!{_enteredLobbyHash} :Leaving\r\n");
+            CoreContext.OpenLogsService.Log($"RemoteLeft {_enteredLobbyHash} {GetNickHash(name)}");
+            SendToClientChat($":{name}!X{GetEncodedIp(name)}X|{profileId}@127.0.0.1 PART #GSP!whamdowfr!{_enteredLobbyHash} :Leaving\r\n");
         }
 
         void OnChatMessageReceived(MessageInfo message)
@@ -449,7 +417,7 @@ namespace ThunderHawk
         {
             CoreContext.OpenLogsService.Log($"ThunderHawk restart");
             Stop();
-            RecreateLobbyToken();
+            CoreContext.MasterServer.LeaveFromCurrentLobby();
             Start();
         }
 
@@ -494,7 +462,7 @@ namespace ThunderHawk
                     break;
                 case "logout":
                     CoreContext.MasterServer.RequestLogout();
-                    SteamLobbyManager.LeaveFromCurrentLobby();
+                    CoreContext.MasterServer.LeaveFromCurrentLobby();
                     break;
                 case "registernick":
                     Thread.Sleep(2000);
@@ -1043,7 +1011,7 @@ namespace ThunderHawk
 
         void HandleUtmCommand(TcpPortHandler handler, string line)
         {
-            SteamLobbyManager.SendInLobbyChat(line);
+            CoreContext.MasterServer.SendInLobbyChat(line);
         }
 
         void HandlePartCommand(TcpPortHandler handler, string[] values)
@@ -1053,40 +1021,15 @@ namespace ThunderHawk
 
             if (channelName == "#GPG!1")
             {
+                // Main chat - ignore
             }
             else
             {
-                if (_gameLaunchReceived)
-                {
-                    _enteredLobbyHash = null;
-                    _localServerHash = null;
+                _enteredLobbyHash = null;
+                _localServerHash = null;
 
-                    var hash = _enteredLobbyHash;
-                    Thread.MemoryBarrier();
-
-                    CoreContext.OpenLogsService.Log($"Lobby leave with delay");
-
-                    Task.Delay(30000).ContinueWith(t =>
-                    {
-                        if (hash == _enteredLobbyHash)
-                        {
-                            SteamLobbyManager.LeaveFromCurrentLobby();
-
-                            _enteredLobbyHash = null;
-                            _localServerHash = null;
-                        }
-                    });
-                }
-                else
-                {
-                    _enteredLobbyHash = null;
-                    _localServerHash = null;
-
-                    SteamLobbyManager.LeaveFromCurrentLobby();
-                }
+                CoreContext.MasterServer.LeaveFromCurrentLobby();
             }
-
-            _gameLaunchReceived = false;
 
             var profile = CoreContext.MasterServer.CurrentProfile;
 
@@ -1101,7 +1044,7 @@ namespace ThunderHawk
         void HandleTopicCommand(TcpPortHandler handler, TcpClientNode node, string[] values)
         {
             // :Bambochuk2!Xu4FpqOa9X|4@192.168.159.128 TOPIC #GSP!whamdowfr!76561198408785287 :Bambochuk2
-            SteamLobbyManager.SetLobbyTopic(values[2]);
+            CoreContext.MasterServer.SetLobbyTopic(values[2]);
             SendToClientChat(node, $":{_user} TOPIC #GSP!whamdowfr!{_enteredLobbyHash} :{values[2]}\r\n");
 
             //TOPIC #GSP!whamdowfr!Ml39ll1K9M :elamaunt
@@ -1231,9 +1174,9 @@ namespace ThunderHawk
 
                     // Skip first empty entry
                     for (int i = 1; i < pairs.Length; i += 2)
-                        SteamLobbyManager.SetKeyValue(pairs[i], pairs[i + 1]);
+                        CoreContext.MasterServer.SetLobbyKeyValue(pairs[i], pairs[i + 1]);
 
-                    SteamLobbyManager.SendInLobbyChat(line);
+                    CoreContext.MasterServer.SendInLobbyChat(line);
                     HandleRemoteSetckeyCommand(values);
                 }
             }
@@ -1258,7 +1201,7 @@ namespace ThunderHawk
                     if (values[1].EndsWith("-thq"))
                         values[1] = values[1].Substring(0, values[1].Length - 4);
 
-                    SteamLobbyManager.SendInLobbyChat(string.Join(" ", values));
+                    CoreContext.MasterServer.SendInLobbyChat(string.Join(" ", values));
                 }
             }
         }
@@ -1278,7 +1221,7 @@ namespace ThunderHawk
             {
                 //var roomHash = channelName.Split('!')[2];
 
-                if (!SteamLobbyManager.IsInLobbyNow)
+                if (!CoreContext.MasterServer.IsInLobbyNow)
                 {
                     for (int k = 0; k < keys.Length; k++)
                     {
@@ -1292,7 +1235,7 @@ namespace ThunderHawk
                         if (key == "username")
                             value = _shortUser;
                         else
-                            value = SteamLobbyManager.GetLocalMemberData(key);
+                            value = CoreContext.MasterServer.GetLocalLobbyMemberData(key);
 
                         builder.Append(@"\" + value);
                     }
@@ -1301,13 +1244,13 @@ namespace ThunderHawk
                 }
                 else
                 {
-                    var count = SteamLobbyManager.GetLobbyMembersCount();
+                    var count = CoreContext.MasterServer.GetLobbyMembersCount();
 
                     for (int i = 0; i < count; i++)
                     {
                         builder.Clear();
 
-                        var name = SteamLobbyManager.GetLobbyMemberName(i);
+                        var name = CoreContext.MasterServer.GetLobbyMemberName(i);
 
                         if (name == null)
                             continue;
@@ -1319,7 +1262,7 @@ namespace ThunderHawk
                             if (string.IsNullOrWhiteSpace(key))
                                 continue;
 
-                            var value = SteamLobbyManager.GetLobbyMemberData(i, key);
+                            var value = CoreContext.MasterServer.GetLobbyMemberData(i, key);
 
                             builder.Append(@"\" + value);
                         }
@@ -1359,7 +1302,7 @@ namespace ThunderHawk
                                 if (user.IsUser)
                                     value = _shortUser;
                                 else
-                                    value = $"X{GetEncodedIp(user, user.UIName)}X|{user.ActiveProfileId ?? 0}";
+                                    value = $"X{GetEncodedIp(user.UIName)}X|{user.ActiveProfileId ?? 0}";
                             }
 
                             if (key == "b_stats")
@@ -1381,7 +1324,7 @@ namespace ThunderHawk
             }
         }
 
-        string GetEncodedIp(UserInfo user, string name)
+        string GetEncodedIp(string name)
         {
             // Fake
             var builder = new StringBuilder();
@@ -1399,8 +1342,6 @@ namespace ThunderHawk
             }
 
             return builder.ToString();
-
-            // return $"{(char)((int?)name?.ElementAt(0) + user.ActiveProfileId ?? 0) ?? 'a'}{name?.ElementAt(1) ?? 'b'}{name?.ElementAt(2) ?? 'c'}{name?.ElementAt(3) ?? 'd'}{name?.ElementAt(4) ?? 'e'}{name?.ElementAt(5) ?? 'r'}{name?.ElementAt(6) ?? 't'}{name?.ElementAt(7) ?? 'y'}";
         }
 
         void HandleQuitCommand(TcpPortHandler handler, string[] values)
@@ -1424,7 +1365,7 @@ namespace ThunderHawk
 
                     if (_lastLoadedLobbies.TryGetValue(roomHash, out GameServerDetails details))
                     {
-                        var maxPLayers = SteamLobbyManager.GetLobbyMaxPlayers();
+                        var maxPLayers = CoreContext.MasterServer.GetCurrentLobbyMaxPlayers();
 
                         if (maxPLayers == 2 || maxPLayers == 4 || maxPLayers == 6 || maxPLayers == 8)
                             SendToClientChat(node, $":s 324 {_name} {channelName} +l {maxPLayers}\r\n");
@@ -1437,7 +1378,7 @@ namespace ThunderHawk
                         {
                             if (values.Length < 4)
                             {
-                                var max = SteamLobbyManager.GetLobbyMaxPlayers();
+                                var max = CoreContext.MasterServer.GetCurrentLobbyMaxPlayers();
 
                                 if (max > 0 && max < 9)
                                     SendToClientChat(node, $":s 324 {_name} {channelName} +l {max}\r\n");
@@ -1449,7 +1390,7 @@ namespace ThunderHawk
                                 var maxPlayers = values[3];
 
                                 if (int.TryParse(maxPlayers, out int value))
-                                    SteamLobbyManager.SetLobbyMaxPlayers(value);
+                                    CoreContext.MasterServer.SetCurrentLobbyMaxPlayers(value);
 
                                 SendToClientChat(node, $":{_user} MODE #GSP!whamdowfr!{_enteredLobbyHash} +l {maxPlayers}\r\n");
                             }
@@ -1465,8 +1406,6 @@ namespace ThunderHawk
         void HandleJoinCommand(TcpPortHandler handler, TcpClientNode node, string line, string[] values)
         {
             var channelName = values[1];
-
-            _gameLaunchReceived = false;
 
             if (channelName.StartsWith("#GPG", StringComparison.OrdinalIgnoreCase))
             {
@@ -1512,9 +1451,9 @@ namespace ThunderHawk
                     {
                         CoreContext.OpenLogsService.Log($"Try to enter lobby [{roomHash}]");
 
-                        var lobbyId = details.LobbySteamId;
-                        SteamLobbyManager.EnterInLobby(lobbyId, _shortUser, _name, _profileId.ToString(), RecreateLobbyToken())
-                            .OnFaultOnUi(() =>
+                        var hostId = details.HostSteamId;
+                        CoreContext.MasterServer.EnterInLobby(hostId, roomHash, _shortUser, _name, _profileId.ToString());
+                            /*.OnFaultOnUi(() =>
                             {
                                 SendToClientChat(node, $":{_user} {channelName} :Bad Channel Mask\r\n");
                             })
@@ -1533,7 +1472,7 @@ namespace ThunderHawk
 
                                 var playersList = new StringBuilder();
 
-                                var usersInLobby = SteamLobbyManager.GetCurrentLobbyMembers();
+                                var usersInLobby = CoreContext.MasterServer.GetCurrentLobbyMembers();
 
                                 for (int i = 0; i < usersInLobby.Length; i++)
                                 {
@@ -1541,16 +1480,16 @@ namespace ThunderHawk
                                     playersList.Append(usersInLobby[i] + " ");
                                 }
 
-                                SteamLobbyManager.SendInLobbyChat($"JOIN {_user}");
+                                CoreContext.MasterServer.SendInLobbyChat($"JOIN {_user}");
 
                                 SendToClientChat(node, $":{_user} JOIN {channelName}\r\n");
 
-                                var topic = SteamLobbyManager.GetLobbyTopic() ?? "No topic is set";
+                                var topic = CoreContext.MasterServer.GetLobbyTopic() ?? "No topic is set";
 
                                 SendToClientChat(node, $":s 331 {channelName} :{topic}\r\n");
                                 SendToClientChat(node, $":s 353 {_name} = {channelName} :@{playersList}\r\n");
                                 SendToClientChat(node, $":s 366 {_name} {channelName} :End of NAMES list\r\n");
-                            });
+                            });*/
                     }
                     else
                     {
@@ -1774,7 +1713,7 @@ namespace ThunderHawk
                 }
             }
 
-            SteamLobbyManager.LoadLobbies(null, GetIndicator(), true)
+            CoreContext.MasterServer.LoadLobbies(null, GetIndicator(), true)
                .ContinueWith(task =>
                {
                    try
@@ -1836,7 +1775,7 @@ namespace ThunderHawk
 
                        LobbiesUpdatedByRequest?.Invoke(servers.Select(x => new GameHostInfo()
                        {
-                           IsUser = x.HostSteamId == SteamUser.GetSteamID(),
+                           IsUser = x.HostSteamId == SteamUser.GetSteamID().m_SteamID,
                            MaxPlayers = x.MaxPlayers.ParseToIntOrDefault(),
                            Players = x.PlayersCount.ParseToIntOrDefault(),
                            Ranked = x.Ranked,
@@ -1994,9 +1933,8 @@ namespace ThunderHawk
                         CoreContext.OpenLogsService.Log($"Clear local server");
 
                         Logger.Trace("REPORT: ClearServerDetails");
-                        SteamLobbyManager.SetLobbyJoinable(false);
+                        CoreContext.MasterServer.SetLobbyGameStarted();
                         _challengeResponded = false;
-                        _localServer = null;
                     }
                     else
                     {
@@ -2014,10 +1952,8 @@ namespace ThunderHawk
                         details["score_"] = serverScore;
                         details.LobbyLimited = AppSettings.LimitRatingLobby;
 
-                        SteamLobbyManager.UpdateCurrentLobby(details, GetIndicator());
+                        CoreContext.MasterServer.UpdateCurrentLobby(details, GetIndicator());
                         CoreContext.OpenLogsService.Log($"Update local server [{details.IsValid}]");
-
-                        _localServer = details;
 
                         if (details.IsValid && details.Ranked)
                             CoreContext.MasterServer.RequestGameBroadcast(details.IsTeamplay, details.GameVariant, details.MaxPlayers.ParseToIntOrDefault(), details.PlayersCount.ParseToIntOrDefault(), serverScore.ParseToIntOrDefault(), AppSettings.LimitRatingLobby, details.Ranked);
@@ -2047,8 +1983,8 @@ namespace ThunderHawk
 
                     handler.Send(response, remote);
 
-                    if (!SteamLobbyManager.IsInLobbyNow)
-                        SteamLobbyManager.CreatePublicLobby(default, _name, _shortUser, _flags, GetIndicator()).Wait();
+                    if (!CoreContext.MasterServer.HasHostedLobby)
+                        CoreContext.MasterServer.CreatePublicLobby(_name, _shortUser, _flags, GetIndicator());
                 }
                 else
                 {
@@ -2066,11 +2002,6 @@ namespace ThunderHawk
             }
         }
 
-        CancellationToken RecreateLobbyToken()
-        {
-            return (_lobbyTokenSource = _lobbyTokenSource.Recreate()).Token;
-        }
-
         void RefreshServerPing(IPEndPoint remote)
         {
             // TODO
@@ -2080,12 +2011,10 @@ namespace ThunderHawk
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void Stop()
         {
-            _gameLaunchReceived = false;
             _challengeResponded = false;
             _inChat = false;
             _enteredLobbyHash = null;
             _localServerHash = null;
-            _localServer = null;
 
             _serverReport.Stop();
             _serverRetrieve.Stop();

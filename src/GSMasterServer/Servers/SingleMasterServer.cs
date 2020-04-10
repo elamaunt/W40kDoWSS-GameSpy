@@ -10,9 +10,9 @@ using reality::Reality.Net.GameSpy.Servers;
 using SharedServices;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
 
 namespace GSMasterServer.Servers
@@ -33,6 +33,7 @@ namespace GSMasterServer.Servers
 
 
         readonly ConcurrentDictionary<ulong, PeerState> _userStates = new ConcurrentDictionary<ulong, PeerState>();
+        readonly ConcurrentDictionary<ulong, LobbyState> _lobbies = new ConcurrentDictionary<ulong, LobbyState>();
 
         readonly NetServer _serverPeer;
         string _lastPlayersTopJson;
@@ -967,6 +968,236 @@ namespace GSMasterServer.Servers
             mes.WriteJsonMessage(m);
 
             _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void HandleMessage(NetConnection connection, LeaveLobbyMessage message)
+        {
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+
+            if (_userStates.TryGetValue(steamId, out PeerState user))
+            {
+                var lobby = user.LobbyState;
+
+                if (lobby.HasValue)
+                    LeaveLobby(user, lobby.Value);
+            }
+        }
+
+        public void HandleMessage(NetConnection connection, EnterLobbyMessage message)
+        {
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+
+            if (_userStates.TryGetValue(steamId, out PeerState user))
+            {
+                var lobbyState = user.LobbyState;
+                if (lobbyState != null)
+                    LeaveLobby(user, lobbyState.Value);
+
+                var profile = user.ActiveProfile;
+                if (profile == null)
+                    return;
+
+                if (_lobbies.TryGetValue(message.HostId, out LobbyState enteringLobby))
+                    EnterLobby(user, profile, enteringLobby);
+            }
+        }
+
+        public void HandleMessage(NetConnection connection, CreateLobbyMessage message)
+        {
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+
+            if (_userStates.TryGetValue(steamId, out PeerState user))
+            {
+                var lobby = user.LobbyState;
+
+                if (lobby.HasValue)
+                    LeaveLobby(user, lobby.Value);
+               
+                var profile = user.ActiveProfile;
+
+                if (profile == null)
+                    return;
+
+                var newLobby = new LobbyState(steamId);
+
+                if (_lobbies.TryAdd(steamId, newLobby))
+                {
+                    Logger.Info($"CreateLobby {steamId}, UserName = {profile.Name}");
+
+                    var mes = _serverPeer.CreateMessage();
+                    mes.WriteJsonMessage(new LobbyCreatedMessage());
+                    _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableOrdered);
+                }
+            }
+        }
+
+        public void HandleMessage(NetConnection connection, UpdateLobbyMessage message)
+        {
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+
+            if (_lobbies.TryGetValue(steamId, out LobbyState lobby))
+            {
+                if (message.Indicator != null)
+                    lobby.Indicator = message.Indicator;
+
+                if (message.Properties != null)
+                    lobby.Properties = new ReadOnlyDictionary<string, string>(message.Properties);
+
+                if (message.Joinable.HasValue)
+                    lobby.Joinable = message.Joinable.Value;
+
+                if (message.MaxPlayers.HasValue)
+                    lobby.MaxPlayers = message.MaxPlayers.Value;
+            }
+        }
+
+        public void HandleMessage(NetConnection connection, LobbyChatLineMessage message)
+        {
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+
+            if (_userStates.TryGetValue(steamId, out PeerState user))
+            {
+                message.SteamId = steamId;
+                message.Nick = user.ActiveProfile?.Name;
+
+                var peerLobbyState = user.LobbyState;
+
+                if (peerLobbyState == null)
+                    return;
+
+                SendToAllLobbyMembers(peerLobbyState.Value.Lobby, message);
+            }
+        }
+
+        public void HandleMessage(NetConnection connection, LobbyKeyValueMessage message)
+        {
+            if (message.Key == null)
+                return;
+
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+
+            if (_userStates.TryGetValue(steamId, out PeerState user))
+            {
+                var userLobbyState = user.LobbyState;
+
+                if (!userLobbyState.HasValue)
+                    return;
+
+                var lobbyMemberState = userLobbyState.Value;
+
+                message.ProfileId = lobbyMemberState.ProfileId;
+                message.Name = lobbyMemberState.Nick;
+                message.SteamId = steamId;
+
+                lobbyMemberState.KeyValues[message.Key] = message.Value;
+
+                SendToAllLobbyMembers(userLobbyState.Value.Lobby, message);
+            }
+        }
+
+        public void HandleMessage(NetConnection connection, RequestLobbiesMessage message)
+        {
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+            var mes = _serverPeer.CreateMessage();
+
+            var lobbies = _lobbies.Where(x => x.Value.Joinable).Select(x => new LobbyPart()
+            {
+                HostSteamId = x.Value.HostId,
+                Indicator = x.Value.Indicator,
+                Properties = x.Value.Properties,
+                MaxPlayers = x.Value.MaxPlayers,
+                PlayersCount = x.Value.PlayersCount
+            }).ToArray();
+
+            Logger.Info($"RequestLobbies UserId = {steamId}, LobbiesCount = {_lobbies.Count}, LobbiesReturnCount = {lobbies.Length}");
+
+            mes.WriteJsonMessage(new LobbiesMessage()
+            {
+                Lobbies = lobbies
+            });
+
+            _serverPeer.SendMessage(mes, connection, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        public void HandleMessage(NetConnection connection, LobbyGameStartedMessage message)
+        {
+            var steamId = connection.RemoteHailMessage.PeekUInt64();
+
+            if (_lobbies.TryGetValue(steamId, out LobbyState lobby))
+            {
+                Logger.Info($"LobbyGameStarted HostId = {lobby.HostId}");
+                lobby.GameStarted = true;
+            }
+        }
+
+        void KillLobby(LobbyState lobby)
+        {
+            Logger.Info($"KillLobby HostId = {lobby.HostId}");
+            lobby.HostLeftFromThisLobby = true;
+        }
+
+        void LeaveLobby(PeerState user, LobbyPeerState lobbyPeerState)
+        {
+            if (lobbyPeerState.Lobby.HostId == user.SteamId)
+            {
+                if (_lobbies.TryRemove(user.SteamId, out LobbyState oldLobby))
+                    KillLobby(oldLobby);
+            }
+
+            lock (lobbyPeerState.Lobby)
+            {
+                if (lobbyPeerState.Lobby.Members.Remove(lobbyPeerState))
+                {
+                    user.LobbyState = null;
+
+                    Logger.Info($"LeaveLobby HostId = {lobbyPeerState.Lobby.HostId}, UserName = {lobbyPeerState.Nick}");
+                    SendToAllLobbyMembers(lobbyPeerState.Lobby, new LobbyLeftMessage()
+                    {
+                        SteamId = user.SteamId,
+                        Nick = lobbyPeerState.Nick,
+                        ProfileId = lobbyPeerState.ProfileId
+                    });
+                }
+            }
+        }
+
+        void EnterLobby(PeerState user, ProfileDBO profile, LobbyState lobby)
+        {
+            var position = Interlocked.Increment(ref lobby.PlayersCount);
+
+            if (position > lobby.MaxPlayers)
+                return;
+
+            lock (lobby)
+            {
+                var state = new LobbyPeerState(user, lobby, profile);
+                user.LobbyState = state;
+                lobby.Members.AddLast(state);
+
+                Logger.Info($"EnterLobby HostId = {lobby.HostId}, UserName = {profile.Name}");
+
+                SendToAllLobbyMembers(lobby, new EnteredInLobbyMessage()
+                {
+                    SteamId = user.SteamId,
+                    Nick = profile.Name,
+                    ProfileId = profile.Id
+                });
+            }
+        }
+
+        private void SendToAllLobbyMembers(LobbyState lobby, Message message)
+        {
+            var mes = _serverPeer.CreateMessage();
+            mes.WriteJsonMessage(message);
+
+            lock (lobby)
+            {
+                foreach (var memberState in lobby.Members)
+                {
+                    if (memberState.User.Connection.TryGetTarget(out NetConnection memberConnection))
+                        _serverPeer.SendMessage(mes, memberConnection, NetDeliveryMethod.ReliableOrdered);
+                }
+            }
         }
 
         private static string DecryptPassword(string password)

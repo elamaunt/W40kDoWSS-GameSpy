@@ -26,6 +26,8 @@ namespace ThunderHawk
         public event Action<ulong> UserStateChanged;
         public event Action<ulong> UserRichPresenceChanged;
 
+        public ulong SteamId => SteamUser.GetSteamID().m_SteamID;
+
         public SteamApiService()
         {
             _personaStateChangeCallback = Callback<PersonaStateChange_t>.Create(OnPersonaStateChange);
@@ -95,7 +97,7 @@ namespace ThunderHawk
         {
             return new DateTime(1970, 1, 1).AddSeconds(SteamUtils.GetServerRealTime()).ToLocalTime();
         }
-
+        /*
         public Task<GameHostInfo[]> LoadLobbies()
         {
             return SteamLobbyManager.LoadLobbies(null, CoreContext.ClientServer.GetIndicator()).ContinueWith(task => 
@@ -122,7 +124,7 @@ namespace ThunderHawk
 
                 return hosts;
             }, TaskContinuationOptions.OnlyOnRanToCompletion);
-        }
+        }*/
 
         public void TestConnectionWithPlayer(ulong steamId)
         {
