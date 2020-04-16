@@ -15,7 +15,7 @@ namespace ThunderHawk.Core
         bool IsGamePreparingToStart { set; get; }
         Process GameProcess { get; }
 
-        Task LaunchGameAndWait(String server, String mode, IGlobalNavigationManager globalNavigationManager);
+        Task LaunchGameAndWait(String mode, IGlobalNavigationManager globalNavigationManager);
         bool TryGetOrChoosePath(out string path);
         void ChangeGamePath();
         void ActivateGameWindow();

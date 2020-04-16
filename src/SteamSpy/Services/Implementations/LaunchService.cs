@@ -38,10 +38,8 @@ namespace ThunderHawk
 
         private static EventWaitHandle threadWaitHandle;
 
-        public Task LaunchGameAndWait(String server, String mode, IGlobalNavigationManager navigationManager)
+        public Task LaunchGameAndWait(String mode, IGlobalNavigationManager navigationManager)
         {
-            
-            
             _authorizationWindowShow =
                 false; // флаг, который указывает, что окно авторизации уже было выведено пользователю.
             _shouldStopRunSs =
@@ -51,9 +49,8 @@ namespace ThunderHawk
 
             if (!CoreContext.LaunchService.TryGetOrChoosePath(out var path))
                 return Task.CompletedTask;
-            
-            Logger.Info("Launch game procedure started. Game path: "+ path);
-            
+
+            Logger.Info("Launch game procedure started. Game path: " + path);
 
             CoreContext.OpenLogsService.Log($"Launch Game");
 
@@ -62,7 +59,7 @@ namespace ThunderHawk
                 ProcessManager.KillAllGameProccessesWithoutWindow();
                 threadWaitHandle = new EventWaitHandle(false, EventResetMode.ManualReset);
 
-                if (!CoreContext.MasterServer.IsConnected && server == "thunderhawk")
+                if (!CoreContext.MasterServer.IsConnected)
                     throw new Exception("Server is unavailable");
 
                 if (ProcessManager.GameIsRunning())
@@ -117,58 +114,40 @@ namespace ThunderHawk
                 {
                     try
                     {
-                        var exeFileName = server == "thunderhawk"
-                            ? Path.Combine(Environment.CurrentDirectory, "GameFiles", "Patch1.2", "Soulstorm.exe")
-                            : Path.Combine(PathFinder.GamePath, "Soulstorm.exe");
+                        var exeFileName = Path.Combine(Environment.CurrentDirectory, "GameFiles", "Patch1.2",
+                            "Soulstorm.exe");
                         var procParams = "-nomovies -forcehighpoly";
 
-                        if (server == "thunderhawk")
+                        CopySchemes(path);
+
+                        if (mode == "Classic bug fix")
                         {
-                            CopySchemes(path);
-
-                            if (mode == "Classic bug fix")
-                            {
-                                procParams += " -modname JBugfixMod";
-                            }
-                            else
-                            {
-                                procParams += " -modname ThunderHawk";
-                            }
-
-                            Logger.Info("Start "+ exeFileName +" with params " + procParams);
-                            var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
-                            {
-                                UseShellExecute = true,
-                                WorkingDirectory = path
-                            });
-
-                            GameProcess = ssProc;
-
-                            CoreContext.ClientServer.Start();
-
-                            ssProc.EnableRaisingEvents = true;
-
-                            Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
-
-                            // to read warning.log from the begining after start game
-                            Task.Delay(10000).ContinueWith(t => { CoreContext.InGameService.DropSsConsoleOffset(); });
-
-                            ssProc.Exited += (s, e) => { tcs.TrySetResult(ssProc); };
+                            procParams += " -modname JBugfixMod";
                         }
                         else
                         {
-                            Process steamGameProc = new Process();
-
-                            StartApp();
-
-                            void StartApp()
-                            {
-                                steamGameProc.StartInfo.FileName = SteamApiHelper.GetSteamExePath();
-                                steamGameProc.StartInfo.Arguments =
-                                    "-applaunch 9450 -modname DXP2 -nomovies -forcehighpoly";
-                                steamGameProc.Start();
-                            }
+                            procParams += " -modname ThunderHawk";
                         }
+
+                        Logger.Info("Start " + exeFileName + " with params " + procParams);
+                        var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
+                        {
+                            UseShellExecute = true,
+                            WorkingDirectory = path
+                        });
+
+                        GameProcess = ssProc;
+
+                        CoreContext.ClientServer.Start();
+
+                        ssProc.EnableRaisingEvents = true;
+
+                        Task.Run(() => RemoveFogLoop(tcs.Task, ssProc));
+
+                        // to read warning.log from the begining after start game
+                        Task.Delay(10000).ContinueWith(t => { CoreContext.InGameService.DropSsConsoleOffset(); });
+
+                        ssProc.Exited += (s, e) => { tcs.TrySetResult(ssProc); };
                     }
                     catch (Exception ex)
                     {
@@ -203,7 +182,6 @@ namespace ThunderHawk
 
         void GetUserNicks(string[] nicks)
         {
-            
             if (!_authorizationWindowShow)
             {
                 if (nicks.Length == 0)

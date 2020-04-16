@@ -347,21 +347,6 @@
                                               Opacity="0.4" />
                         </Button.Effect>
                     </Button>
-
-                    <Button
-                        Margin="10 8 0 0"
-                        Padding="8 8 8 8"
-                        Width="200"
-                        Height="52"
-                        FontSize="15"
-                        framework:WPFBinder.Frame="LaunchSteamGame"
-                        Content="{DynamicResource LaunchSteamGame}"
-                        Style="{DynamicResource LaunchButtonStyle2}">
-                        <Button.Effect>
-                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="10"
-                                              Opacity="0.4" />
-                        </Button.Effect>
-                    </Button>
                 </StackPanel>
 
 
