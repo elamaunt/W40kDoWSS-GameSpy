@@ -59,7 +59,6 @@ namespace ThunderHawk.Core
 
             Frame.ActiveModRevision.Text = $"Thunderhawk <b>" + CoreContext.ThunderHawkModManager.ValidModVersion + "</b>";
             Frame.LaunchGame.Action = LaunchThunderhawk;
-            Frame.LaunchSteamGame.Action = LaunchSteam;
 
             // InGamePage
             Frame.InGameLabel.Text = "Refresh";
@@ -95,13 +94,11 @@ namespace ThunderHawk.Core
         public void LaunchThunderhawk()
         {
             Frame.LaunchGame.Enabled = false;
-            Frame.LaunchSteamGame.Enabled = false;
             Frame.LaunchGame.Text = "Thunderhawk launched";
-            Frame.LaunchSteamGame.Text = "Thunderhawk launched";
             Frame.NewsVisible = false;
             Frame.InGameVisible = true;
 
-            CoreContext.LaunchService.LaunchGameAndWait("thunderhawk", Frame.GameModeSelectedValue, Frame.GlobalNavigationManager)
+            CoreContext.LaunchService.LaunchGameAndWait(Frame.GameModeSelectedValue, Frame.GlobalNavigationManager)
                 .OnFaultOnUi(ex =>
                 {
                     if (!(ex is UnauthorizedAccessException)) // иначе мы просто окно выведем и попросим юзера авторизоавться
@@ -115,26 +112,10 @@ namespace ThunderHawk.Core
                 });
         }
 
-        void LaunchSteam()
-        {
-            Frame.LaunchGame.Enabled = false;
-            Frame.LaunchSteamGame.Enabled = false;
-            Frame.LaunchGame.Text = "Steam launched";
-            Frame.LaunchSteamGame.Text = "Steam launched";
-
-            //TODO: пофиксить этот костыль нормальным определением запущенного стим СС
-            Task.Delay(10000).ContinueWith(t => RunOnUIThread(() => { ResetButtons(); }));
-
-            CoreContext.LaunchService.LaunchGameAndWait("steam", Frame.GameModeSelectedValue, Frame.GlobalNavigationManager)
-                .OnFaultOnUi(ex => Frame.UserInteractions.ShowErrorNotification(ex.Message));
-        }
-
         void ResetButtons()
         {
             Frame.LaunchGame.Text = "Launch Thunderhawk";
-            Frame.LaunchSteamGame.Text = "Launch Steam";
             Frame.LaunchGame.Enabled = true;
-            Frame.LaunchSteamGame.Enabled = true;
         }
 
         /*
