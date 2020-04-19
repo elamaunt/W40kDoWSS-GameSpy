@@ -16,10 +16,7 @@ namespace ThunderHawk
         
         public static bool IsValidInputPassword(string password)
         {
-            Regex regexObj = new Regex("^[A-Za-z0-9_-]+$(?#case sensitive, matches only lower a-z)", RegexOptions.Multiline);
-            Match matchResults = regexObj.Match(password);
-            
-            if (matchResults.Success && password.Length < 21) return true;
+            if (password.Length < 21) return true;
             return false;
         }
     }
