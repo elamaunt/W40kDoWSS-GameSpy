@@ -53,6 +53,15 @@ namespace ThunderHawk
         {
             var viewModel = new WindowViewModelType();
             PassDataIfNeeded(viewModel, inflateBundle);
+            
+            foreach (var wind in createdWindows) // forbid multiple windows
+            {
+                if (wind.Title == PageHelper.GetPageViewModelName(viewModel))
+                {
+                    wind.Focus();
+                    return wind;
+                }
+            }
 
             var window = WPFPageHelper.InstantiateWindow(viewModel);
             window.WindowStartupLocation = WindowStartupLocation.CenterScreen;
@@ -63,13 +72,18 @@ namespace ThunderHawk
 
         public void CloseWindow(string windowName)
         {
+            BindableWindow windowToRemove = null;
             foreach (var window in createdWindows)
             {
-                if (window.Title == windowName) 
+                if (window.Title == windowName)
                 {
+                    windowToRemove = window;
                     window.Close();
                 }
-            } 
+            }
+            
+            if(windowToRemove != null) createdWindows.Remove(windowToRemove);
+            
         }
 
         public void GoBack()

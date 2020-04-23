@@ -23,6 +23,7 @@ namespace ThunderHawk.Core
             CoreContext.MasterServer.RequestAllUserNicks("это тут нах не нужно, по стим ID придет");
             Frame.Authorize.Action = AuthorizeOnServer;
             Frame.CreateAnotherAccount.Action = CreateAnotherAccountWindow;
+            Frame.Close.Action = Close;
             CoreContext.MasterServer.NicksReceived += PrintUserNicks;
             CoreContext.MasterServer.CanAuthorizeReceived += CanAuthorizeReceiveInWindow;
         }
@@ -40,6 +41,20 @@ namespace ThunderHawk.Core
             CoreContext.MasterServer.CanAuthorizeReceived -= CanAuthorizeReceiveInWindow;
             Frame.GlobalNavigationManager.CloseWindow("Authorization");
             Frame.GlobalNavigationManager.OpenWindow<RegistrationWindowViewModel>();
+        }
+
+        protected override void OnUnbind()
+        {
+            CoreContext.MasterServer.NicksReceived -= PrintUserNicks;
+            CoreContext.MasterServer.CanAuthorizeReceived -= CanAuthorizeReceiveInWindow;
+            base.OnUnbind();
+        }
+
+        private void Close()
+        {
+            CoreContext.MasterServer.NicksReceived -= PrintUserNicks;
+            CoreContext.MasterServer.CanAuthorizeReceived -= CanAuthorizeReceiveInWindow;
+            Frame.GlobalNavigationManager.CloseWindow("Authorization");
         }
 
         void PrintUserNicks(string[] nicks)

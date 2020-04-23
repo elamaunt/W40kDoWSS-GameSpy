@@ -16,7 +16,10 @@ namespace ThunderHawk
         
         public static bool IsValidInputPassword(string password)
         {
-            if (password.Length < 21) return true;
+            Regex regexObj = new Regex("[а-яА-Я]+", RegexOptions.Multiline);
+            Match matchResults = regexObj.Match(password);
+            // No russian symbols in password
+            if (!matchResults.Success && password.Length < 21) return true;
             return false;
         }
     }

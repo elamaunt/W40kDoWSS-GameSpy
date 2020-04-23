@@ -3,11 +3,16 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using Framework;
+using ThunderHawk.Core;
 
 namespace ThunderHawk.Styles
 {
+    
+    
     public partial class AuthorizationWindowStyle
     {
+        private IGlobalNavigationManager GlobalNavigationManager => Service<IGlobalNavigationManager>.Get();
         void WindowLoaded(object sender, RoutedEventArgs e)
         {
             ((Window)sender).StateChanged += WindowStateChanged;
@@ -36,11 +41,6 @@ namespace ThunderHawk.Styles
             {
                 containerBorder.Padding = new Thickness(7, 7, 7, 5);
             }
-        }
-
-        void CloseButtonClick(object sender, RoutedEventArgs e)
-        {
-            sender.ForWindowFromTemplate(w => SystemCommands.CloseWindow(w));
         }
     }
 }
