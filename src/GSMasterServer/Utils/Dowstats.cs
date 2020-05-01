@@ -53,6 +53,7 @@ namespace GSMasterServer.Utils
                 parameters["mmr1x1p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score1v1.ToString();
                 parameters["mmr2x2p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score2v2.ToString();
                 parameters["mmr3x3p" + dowStatsPIndex] = gameUserInfo[i].Profile.Score3v3.ToString();
+                parameters["mmrBattleRoyalep" + dowStatsPIndex] = gameUserInfo[i].Profile.ScoreBattleRoyale.ToString();
                 switch (gameUserInfo[i].Part.Race)
                 {
                     case Race.space_marine_race:

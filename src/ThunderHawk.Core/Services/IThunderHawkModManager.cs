@@ -4,6 +4,7 @@
     {
         
         string JBugfixModName { get; }
+        string BattleRoyaleModName { get; }
         string ValidModName { get; }
         string ValidModVersion { get; }
         string CurrentModName { get; set; }

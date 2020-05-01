@@ -130,9 +130,13 @@ namespace ThunderHawk
                             {
                                 procParams += " -modname JBugfixMod";
                             }
-                            else
+                            else if (mode == "ThunderHawk")
                             {
                                 procParams += " -modname ThunderHawk";
+                            }
+                            else
+                            {
+                                procParams += " -modname BattleRoyale";
                             }
 
                             Logger.Info("Start "+ exeFileName +" with params " + procParams);

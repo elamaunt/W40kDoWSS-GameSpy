@@ -11,6 +11,16 @@
         {
             return state.Score3v3;
         }
+        
+        internal static void ScoreBattleRoyaleUpdated(ProfileDBO state, long value)
+        {
+            state.ScoreBattleRoyale = value;
+        }
+
+        internal static long ScoreBattleRoyaleSelector(ProfileDBO state)
+        {
+            return state.ScoreBattleRoyale;
+        }
 
         internal static void Score2v2Updated(ProfileDBO state, long value)
         {

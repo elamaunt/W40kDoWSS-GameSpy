@@ -542,12 +542,12 @@ namespace GSMasterServer.Servers
                     }
                 }
             }
+            
+            Func<ProfileDBO, long> scoreSelector = null;
+            Action<ProfileDBO, long> scoreUpdater = null;
 
             if (message.IsRateGame)
             {
-                Func<ProfileDBO, long> scoreSelector = null;
-                Action<ProfileDBO, long> scoreUpdater = null;
-
                 switch (gameType)
                 {
                     case GameType.Unknown:
@@ -568,6 +568,12 @@ namespace GSMasterServer.Servers
                         break;
                     default:
                         break;
+                }
+
+                if (message.ModName == "Battle Royale")
+                {
+                    scoreSelector = StatsDelegates.ScoreBattleRoyaleSelector;
+                    scoreUpdater = StatsDelegates.ScoreBattleRoyaleUpdated;
                 }
 
                 var players1Team = teams[0];
@@ -621,6 +627,19 @@ namespace GSMasterServer.Servers
                     part.RatingDelta = rx;
 
                     scoreUpdater(info.Profile, Math.Max(1000L, scoreSelector(info.Profile) + rx));
+                }
+            }
+            else if (message.ModName == "Battle royale")// && message.Map == "5p_aceria_forests" 
+            {
+                for (int i = 0; i < playerInfos.Length; i++)
+                {
+                    var info = playerInfos[i];
+                    var playerData = game.Players[i];
+
+                    var isWin = playerData.FinalState == PlayerFinalState.Winner;
+
+                    var newBRRate = CorrectDeltaBattleRoyale(info.Profile.ScoreBattleRoyale, isWin, i + 1);
+                    scoreUpdater(info.Profile, newBRRate);
                 }
             }
 
@@ -722,6 +741,20 @@ namespace GSMasterServer.Servers
             }
 
             return rx;
+        }
+
+        long CorrectDeltaBattleRoyale(long currentScore, bool isWin, int startPosition)
+        {
+            // за проигрыш
+            if (currentScore <= 100 && !isWin) return 5;
+            if (currentScore > 100 && currentScore <= 200 && !isWin) return 0;
+            if (currentScore > 300 && currentScore <= 400 && !isWin) return -5;
+            if (currentScore > 400 && currentScore <= 500 && !isWin) return -7;
+            if (currentScore > 500 && !isWin) return -8;
+            
+            
+            if (isWin && (startPosition == 2||startPosition == 5)) return 30;
+            return 25;
         }
 
         void UpdateStreak(GamePlayerInfo info)

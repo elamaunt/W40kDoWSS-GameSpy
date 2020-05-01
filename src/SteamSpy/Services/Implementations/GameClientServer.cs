@@ -557,7 +557,9 @@ namespace ThunderHawk
                 return;
             }
 
-            if (!activeMod.Equals(CoreContext.ThunderHawkModManager.ValidModName, StringComparison.OrdinalIgnoreCase) && !activeMod.Equals(CoreContext.ThunderHawkModManager.JBugfixModName, StringComparison.OrdinalIgnoreCase))
+            if (!activeMod.Equals(CoreContext.ThunderHawkModManager.ValidModName, StringComparison.OrdinalIgnoreCase) 
+            && !activeMod.Equals(CoreContext.ThunderHawkModManager.JBugfixModName, StringComparison.OrdinalIgnoreCase)
+            && !activeMod.Equals(CoreContext.ThunderHawkModManager.BattleRoyaleModName, StringComparison.OrdinalIgnoreCase))
             {
                 if (!activeVersion.Equals(CoreContext.ThunderHawkModManager.ValidModVersion, StringComparison.OrdinalIgnoreCase))
                 {

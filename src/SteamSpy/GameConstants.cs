@@ -7,7 +7,7 @@
 #if SPACEWAR
         public const string SERVER_ADDRESS = "192.168.159.1";
 #else
-        public const string SERVER_ADDRESS = "139.59.210.74";
+        public const string SERVER_ADDRESS = "192.168.1.33";
 #endif
         //public const string SERVER_ADDRESS = "127.0.0.1";
     }

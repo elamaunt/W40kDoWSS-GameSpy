@@ -19,6 +19,7 @@ namespace GSMasterServer.Data
 
 
         public long Score1v1 { get; set; }
+        public long ScoreBattleRoyale { get; set; }
         public long Score2v2 { get; set; }
         public long Score3v3 { get; set; }
 

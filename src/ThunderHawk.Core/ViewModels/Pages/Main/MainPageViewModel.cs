@@ -35,7 +35,7 @@ namespace ThunderHawk.Core
         public PlayerFrameInGame Player6 { get; } = new PlayerFrameInGame();
         public PlayerFrameInGame Player7 { get; } = new PlayerFrameInGame();
 
-        public string GameModeSelectedValue { get; set; } = "ThunderHawk";
+        public string GameModeSelectedValue { get; set; } = "Battle royale";
 
         
         private bool inGameVisible = false;
