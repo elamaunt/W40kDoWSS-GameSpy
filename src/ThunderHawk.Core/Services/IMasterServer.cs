@@ -79,7 +79,10 @@ namespace ThunderHawk.Core
 
 
         event Action<ulong, string, long> LobbyMemberLeft;
-        event Action<ulong, string> LobbyChatMessage;
+        event Action<ulong, string, string> LobbyChatMessage;
+        event Action<ulong, string, string, string> LobbyMemberKeyValueChanged;
+        event Action LobbyCreated;
+
         void UpdateCurrentLobby(GameServerDetails details, string indicator);
         void LeaveFromCurrentLobby();
         void SendInLobbyChat(string line);

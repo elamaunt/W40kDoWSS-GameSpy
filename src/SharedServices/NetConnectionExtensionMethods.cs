@@ -114,6 +114,12 @@ namespace SharedServices
                 case MessageTypes.SetKeyValue: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<SetKeyValueMessage>(json, Settings)); break;
                 case MessageTypes.NewUser: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<NewUserMessage>(json, Settings)); break;
                 case MessageTypes.GameFinished: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<GameFinishedMessage>(json, Settings)); break;
+                case MessageTypes.EnteredInLobby: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<EnteredInLobbyMessage>(json, Settings)); break;
+                case MessageTypes.LobbyChatLine: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LobbyChatLineMessage>(json, Settings)); break;
+                case MessageTypes.LobbyKeyValue: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LobbyKeyValueMessage>(json, Settings)); break;
+                case MessageTypes.Lobbies: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LobbiesMessage>(json, Settings)); break;
+                case MessageTypes.LobbyCreated: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LobbyCreatedMessage>(json, Settings)); break;
+                case MessageTypes.LobbyLeft: handler.HandleMessage(self.SenderConnection, JsonConvert.DeserializeObject<LobbyLeftMessage>(json, Settings)); break;
                 default:
                     break;
             }

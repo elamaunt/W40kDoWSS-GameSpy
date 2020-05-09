@@ -1,12 +1,23 @@
 ﻿using Framework;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace ThunderHawk.Core
 {
     public class GameServerDetails
     {
-        readonly Dictionary<string, string> _values = new Dictionary<string, string>();
+        readonly Dictionary<string, string> _values;
+
+        public GameServerDetails(ReadOnlyDictionary<string, string> properties)
+        {
+            _values = new Dictionary<string, string>(properties);
+        }
+
+        public GameServerDetails()
+        {
+            _values = new Dictionary<string, string>();
+        }
 
         public Dictionary<string, string> Properties => _values;
 

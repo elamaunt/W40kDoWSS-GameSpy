@@ -26,5 +26,11 @@ namespace SharedServices
         void HandleMessage(NetConnection senderConnection, SetKeyValueMessage message);
         void HandleMessage(NetConnection senderConnection, NewUserMessage newUserMessage);
         void HandleMessage(NetConnection connection, GameFinishedMessage message);
+        void HandleMessage(NetConnection senderConnection, EnteredInLobbyMessage enteredInLobbyMessage);
+        void HandleMessage(NetConnection senderConnection, LobbyChatLineMessage lobbyChatLineMessage);
+        void HandleMessage(NetConnection senderConnection, LobbyKeyValueMessage lobbyKeyValueMessage);
+        void HandleMessage(NetConnection senderConnection, LobbiesMessage lobbiesMessage);
+        void HandleMessage(NetConnection senderConnection, LobbyCreatedMessage lobbyCreatedMessage);
+        void HandleMessage(NetConnection senderConnection, LobbyLeftMessage lobbyLeftMessage);
     }
 }

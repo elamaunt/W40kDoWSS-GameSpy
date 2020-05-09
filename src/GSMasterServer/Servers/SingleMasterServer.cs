@@ -1057,13 +1057,14 @@ namespace GSMasterServer.Servers
 
             if (_userStates.TryGetValue(steamId, out PeerState user))
             {
-                message.SteamId = steamId;
-                message.Nick = user.ActiveProfile?.Name;
-
                 var peerLobbyState = user.LobbyState;
 
                 if (peerLobbyState == null)
                     return;
+
+                message.SteamId = steamId;
+                message.Nick = user.ActiveProfile?.Name;
+                message.HostSteamId = peerLobbyState.Value.Lobby.HostId;
 
                 SendToAllLobbyMembers(peerLobbyState.Value.Lobby, message);
             }
@@ -1087,11 +1088,12 @@ namespace GSMasterServer.Servers
 
                 message.ProfileId = lobbyMemberState.ProfileId;
                 message.Name = lobbyMemberState.Nick;
+                message.HostSteamId = lobbyMemberState.Lobby.HostId;
                 message.SteamId = steamId;
 
                 lobbyMemberState.KeyValues[message.Key] = message.Value;
 
-                SendToAllLobbyMembers(userLobbyState.Value.Lobby, message);
+                SendToAllLobbyMembers(lobbyMemberState.Lobby, message);
             }
         }
 
@@ -1153,6 +1155,7 @@ namespace GSMasterServer.Servers
                     Logger.Info($"LeaveLobby HostId = {lobbyPeerState.Lobby.HostId}, UserName = {lobbyPeerState.Nick}");
                     SendToAllLobbyMembers(lobbyPeerState.Lobby, new LobbyLeftMessage()
                     {
+                        HostSteamId = lobbyPeerState.Lobby.HostId,
                         SteamId = user.SteamId,
                         Nick = lobbyPeerState.Nick,
                         ProfileId = lobbyPeerState.ProfileId

@@ -16,7 +16,9 @@ namespace ThunderHawk
         public event Action<EnteredInLobbyMessage> EnterInLobbyDataReceived;
 
         public event Action<ulong, string, long> LobbyMemberLeft;
-        public event Action<ulong, string> LobbyChatMessage;
+        public event Action<ulong, string, string> LobbyChatMessage;
+        public event Action<ulong, string, string, string> LobbyMemberKeyValueChanged;
+        public event Action LobbyCreated;
 
         public event Action<GameServerDetails[]> LobbiesReceived;
 
@@ -186,6 +188,71 @@ namespace ThunderHawk
                 Indicator = indicator
             });
             _clientPeer.SendMessage(mes, NetDeliveryMethod.ReliableOrdered);
+        }
+
+        public void HandleMessage(NetConnection connection, EnteredInLobbyMessage message)
+        {
+            var lobby = _currentlobbyData;
+
+            if (lobby == null)
+            {
+                if (message.SteamId == CoreContext.SteamApi.SteamId)
+                {
+                    lobby = new LobbyData();
+                    EnterInLobbyDataReceived?.Invoke(message);
+                }
+            }
+            else
+            {
+                if (message.SteamId == CoreContext.SteamApi.SteamId)
+                    return;
+            }
+        }
+
+        public void HandleMessage(NetConnection connection, LobbyChatLineMessage message)
+        {
+            var lobby = _currentlobbyData;
+
+            if (lobby != null && lobby.Host.SteamId == message.HostSteamId)
+                LobbyChatMessage?.Invoke(message.SteamId ?? 0, message.Nick, message.Line);
+        }
+
+        public void HandleMessage(NetConnection connection, LobbyKeyValueMessage message)
+        {
+            var lobby = _currentlobbyData;
+
+            if (lobby != null && lobby.Host.SteamId == message.HostSteamId)
+            {
+                var membersList = lobby.Members;
+                var member = membersList?.FirstOrDefault(x => x.SteamId == message.SteamId);
+
+                if (member == null)
+                    return;
+
+                LobbyMemberKeyValueChanged?.Invoke(message.SteamId ?? 0, message.Name, message.Key, message.Value);
+            }
+        }
+
+        public void HandleMessage(NetConnection connection, LobbiesMessage message)
+        {
+            if (message.Lobbies == null)
+                return;
+
+            LobbiesReceived?.Invoke(message.Lobbies.Select(x => new GameServerDetails(x.Properties)).ToArray());
+        }
+
+        public void HandleMessage(NetConnection connection, LobbyCreatedMessage message)
+        {
+            _currentlobbyData = new LobbyData();
+            LobbyCreated?.Invoke();
+        }
+
+        public void HandleMessage(NetConnection connection, LobbyLeftMessage message)
+        {
+            var lobby = _currentlobbyData;
+
+            if (lobby != null && lobby.Host.SteamId == message.HostSteamId)
+                LobbyMemberLeft?.Invoke(message.SteamId, message.Nick, message.ProfileId);
         }
     }
 }

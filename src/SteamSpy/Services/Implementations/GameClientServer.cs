@@ -252,7 +252,7 @@ namespace ThunderHawk
             Stop();
         }
 
-        void OnLobbyChatMessageReceived(ulong memberId, string message)
+        void OnLobbyChatMessageReceived(ulong memberId, string message, string para)
         {
             Logger.Info("RECV-FROM-LOBBY-CHAT " + message);
 
