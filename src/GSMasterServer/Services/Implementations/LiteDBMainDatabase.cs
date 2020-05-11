@@ -67,6 +67,7 @@ namespace GSMasterServer.Services.Implementations
                 Score1v1 = 1000,
                 Score2v2 = 1000,
                 Score3v3 = 1000,
+                ScoreBattleRoyale = 1000,
                 Modified = DateTime.UtcNow.Ticks
             };
 

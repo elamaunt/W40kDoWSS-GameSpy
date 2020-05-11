@@ -817,7 +817,7 @@ namespace ThunderHawk
                             if (CoreContext.ThunderHawkModManager.CurrentModName.Equals(CoreContext
                                 .ThunderHawkModManager.BattleRoyaleModName.ToLower()))
                             {
-                                keysResult.Append(stats.ScoreBattleRoyale + 1000);
+                                keysResult.Append(stats.ScoreBattleRoyale);
                             }
                             else keysResult.Append(stats.Score1v1);
                             break;
@@ -825,7 +825,7 @@ namespace ThunderHawk
                             if (CoreContext.ThunderHawkModManager.CurrentModName.ToLower().Equals(CoreContext
                                 .ThunderHawkModManager.BattleRoyaleModName.ToLower()))
                             {
-                                keysResult.Append(stats.ScoreBattleRoyale + 1000);
+                                keysResult.Append(stats.ScoreBattleRoyale);
                             }
                             else keysResult.Append(stats.Score2v2);
                             break;
@@ -833,7 +833,7 @@ namespace ThunderHawk
                             if (CoreContext.ThunderHawkModManager.CurrentModName.ToLower().Equals(CoreContext
                                 .ThunderHawkModManager.BattleRoyaleModName.ToLower()))
                             {
-                                keysResult.Append(stats.ScoreBattleRoyale + 1000);
+                                keysResult.Append(stats.ScoreBattleRoyale);
                             }
                             else keysResult.Append(stats.Score3v3_4v4);
                             break;
