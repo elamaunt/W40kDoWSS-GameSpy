@@ -328,7 +328,7 @@
                           ItemContainerStyle="{DynamicResource ComboBoxItemStyle}"
                           Foreground="#AAAAAA"
                           Margin="0 10 0 0">
-                    <ComboBoxItem Content="Battle royale" />
+                    <ComboBoxItem Content="Battle royale beta" />
                     <ComboBoxItem Content="ThunderHawk" />
                     <ComboBoxItem Content="Classic bug fix" />
                 </ComboBox>

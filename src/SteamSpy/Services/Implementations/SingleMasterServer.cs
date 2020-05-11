@@ -327,6 +327,7 @@ namespace ThunderHawk
             info.Score1v1 = message.Score1v1;
             info.Score2v2 = message.Score2v2;
             info.Score3v3 = message.Score3v3;
+            info.ScoreBattleRoyale = message.ScoreBattleRoyale;
             info.Wins = message.Wins;
 
             if (message.ActiveProfileId.HasValue)
@@ -341,6 +342,7 @@ namespace ThunderHawk
                     Score1v1 = message.Score1v1.Value,
                     Score2v2 = message.Score2v2.Value,
                     Score3v3_4v4 = message.Score3v3.Value,
+                    ScoreBattleRoyale = message.ScoreBattleRoyale.Value,
                     Disconnects = message.Disconnects.Value,
                     AverageDuration = message.Average.Value
                 }, (profileId, stats) =>
@@ -353,6 +355,7 @@ namespace ThunderHawk
                     stats.Score1v1 = message.Score1v1.Value;
                     stats.Score2v2 = message.Score2v2.Value;
                     stats.Score3v3_4v4 = message.Score3v3.Value;
+                    stats.ScoreBattleRoyale = message.ScoreBattleRoyale.Value;
                     stats.Disconnects = message.Disconnects.Value;
                     stats.AverageDuration = message.Average.Value;
 

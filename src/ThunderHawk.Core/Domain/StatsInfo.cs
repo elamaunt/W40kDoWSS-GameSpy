@@ -14,6 +14,7 @@ namespace ThunderHawk.Core
         public long Score1v1 { get; set; }
         public long Score2v2 { get; set; }
         public long Score3v3_4v4 { get; set; }
+        public long ScoreBattleRoyale { get; set; }
         public long AverageDuration { get; set; }
         public long Disconnects { get; set; }
         public long Best1v1Winstreak { get; set; }

@@ -629,8 +629,8 @@ namespace GSMasterServer.Servers
                     scoreUpdater(info.Profile, Math.Max(1000L, scoreSelector(info.Profile) + rx));
                 }
             }
-            else if (message.ModName == "Battle royale")// && message.Map == "5p_aceria_forests" 
-            {
+            else if (message.ModName == "BattleRoyale")
+            {    
                 for (int i = 0; i < playerInfos.Length; i++)
                 {
                     var info = playerInfos[i];
@@ -638,8 +638,8 @@ namespace GSMasterServer.Servers
 
                     var isWin = playerData.FinalState == PlayerFinalState.Winner;
 
-                    var newBRRate = CorrectDeltaBattleRoyale(info.Profile.ScoreBattleRoyale, isWin, i + 1);
-                    scoreUpdater(info.Profile, newBRRate);
+                    var newBrRate = CorrectDeltaBattleRoyale(info.Profile.ScoreBattleRoyale, isWin, message.Map, i + 1);
+                    scoreUpdater(info.Profile, newBrRate);
                 }
             }
 
@@ -743,18 +743,32 @@ namespace GSMasterServer.Servers
             return rx;
         }
 
-        long CorrectDeltaBattleRoyale(long currentScore, bool isWin, int startPosition)
+        long CorrectDeltaBattleRoyale(long currentScore, bool isWin, string map, int startPosition)
         {
-            // за проигрыш
-            if (currentScore <= 100 && !isWin) return 5;
-            if (currentScore > 100 && currentScore <= 200 && !isWin) return 0;
-            if (currentScore > 300 && currentScore <= 400 && !isWin) return -5;
-            if (currentScore > 400 && currentScore <= 500 && !isWin) return -7;
-            if (currentScore > 500 && !isWin) return -8;
+            if (map == "5p_aceria_forests")
+            {
+                if (currentScore <= 100 && !isWin) return 5;
+                if (currentScore > 100 && currentScore <= 200 && !isWin) return 0;
+                if (currentScore > 300 && currentScore <= 400 && !isWin) return -5;
+                if (currentScore > 400 && currentScore <= 500 && !isWin) return -7;
+                if (currentScore > 500 && !isWin) return -8;
             
+                if (isWin && (startPosition == 2||startPosition == 5)) return 25;
+                return 20;
+            }
             
-            if (isWin && (startPosition == 2||startPosition == 5)) return 30;
-            return 25;
+            if (map == "5p_vyasastan" || map == "5p_eye_of_gorgon")
+            {
+                if (currentScore <= 100 && !isWin) return 5;
+                if (currentScore > 100 && currentScore <= 200 && !isWin) return 0;
+                if (currentScore > 300 && currentScore <= 400 && !isWin) return -5;
+                if (currentScore > 400 && currentScore <= 500 && !isWin) return -7;
+                if (currentScore > 500 && !isWin) return -8;
+            
+                return 24;
+            }
+
+            return 0;
         }
 
         void UpdateStreak(GamePlayerInfo info)

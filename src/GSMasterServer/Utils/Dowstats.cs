@@ -92,10 +92,10 @@ namespace GSMasterServer.Utils
                 }
             }
             
-            if(playerCount % 2 != 0 && playerCount%2 != winCounter) return; // ФФА не нужно
 
+            var gameType = winCounter.ToString();
 
-            var gameType = winCounter.ToString();    
+            if (playerCount == 5 && winCounter == 1) gameType = "5";
             
             parameters["type"] = gameType;
             parameters["map"] = game.Map;

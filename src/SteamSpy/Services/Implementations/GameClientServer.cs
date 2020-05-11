@@ -813,9 +813,30 @@ namespace ThunderHawk
 
                     switch (key)
                     {
-                        case "points": keysResult.Append(stats.Score1v1); break;
-                        case "points2": keysResult.Append(stats.Score2v2); break;
-                        case "points3": keysResult.Append(stats.Score3v3_4v4); break;
+                        case "points":
+                            if (CoreContext.ThunderHawkModManager.CurrentModName.Equals(CoreContext
+                                .ThunderHawkModManager.BattleRoyaleModName.ToLower()))
+                            {
+                                keysResult.Append(stats.ScoreBattleRoyale + 1000);
+                            }
+                            else keysResult.Append(stats.Score1v1);
+                            break;
+                        case "points2":
+                            if (CoreContext.ThunderHawkModManager.CurrentModName.ToLower().Equals(CoreContext
+                                .ThunderHawkModManager.BattleRoyaleModName.ToLower()))
+                            {
+                                keysResult.Append(stats.ScoreBattleRoyale + 1000);
+                            }
+                            else keysResult.Append(stats.Score2v2);
+                            break;
+                        case "points3":
+                            if (CoreContext.ThunderHawkModManager.CurrentModName.ToLower().Equals(CoreContext
+                                .ThunderHawkModManager.BattleRoyaleModName.ToLower()))
+                            {
+                                keysResult.Append(stats.ScoreBattleRoyale + 1000);
+                            }
+                            else keysResult.Append(stats.Score3v3_4v4);
+                            break;
                         case "stars": keysResult.Append(stats.StarsCount); break;
                         case "games": keysResult.Append(stats.GamesCount); break;
                         case "wins": keysResult.Append(stats.WinsCount); break;
