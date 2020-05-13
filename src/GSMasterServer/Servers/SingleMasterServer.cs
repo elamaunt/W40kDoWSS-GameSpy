@@ -190,9 +190,10 @@ namespace GSMasterServer.Servers
                 Score1v1 = state.ActiveProfile?.Score1v1,
                 Score2v2 = state.ActiveProfile?.Score2v2,
                 Score3v3 = state.ActiveProfile?.Score3v3,
+                ScoreBattleRoyale = state.ActiveProfile?.ScoreBattleRoyale,
                 Best1v1Winstreak = state.ActiveProfile?.Best1v1Winstreak,
                 Average = state.ActiveProfile?.AverageDuractionTicks,
-                Disconnects = state.ActiveProfile?.Disconnects,
+                Disconnects = state.ActiveProfile?.Disconnects
             });
 
             _serverPeer.SendToAll(mes, NetDeliveryMethod.ReliableOrdered);
@@ -290,6 +291,7 @@ namespace GSMasterServer.Servers
                 Score1v1 = profile.Score1v1,
                 Score2v2 = profile.Score2v2,
                 Score3v3_4v4 = profile.Score3v3,
+                ScoreBattleRoyale = profile.ScoreBattleRoyale,
                 SteamId = profile.SteamId,
                 Modified = profile.Modified,
                 Best1v1Winstreak = profile.Best1v1Winstreak
@@ -349,6 +351,7 @@ namespace GSMasterServer.Servers
                 Score1v1 = profile.Score1v1,
                 Score2v2 = profile.Score2v2,
                 Score3v3 = profile.Score3v3,
+                ScoreBattleRoyale = profile.ScoreBattleRoyale,
                 Best1v1Winstreak = profile.Best1v1Winstreak,
                 Average = profile.AverageDuractionTicks,
                 Disconnects = profile.Disconnects,
@@ -745,6 +748,17 @@ namespace GSMasterServer.Servers
 
         long CorrectDeltaBattleRoyale(long currentScore, bool isWin, string map, int startPosition)
         {
+            if (map == "3p_heat_wave"|| map == "3p_faded_dreams"|| map == "3p_fortress")
+            {
+                if (currentScore <= 100 && !isWin) return 5;
+                if (currentScore > 100 && currentScore <= 200 && !isWin) return 0;
+                if (currentScore > 300 && currentScore <= 400 && !isWin) return -5;
+                if (currentScore > 400 && currentScore <= 500 && !isWin) return -7;
+                if (currentScore > 500 && !isWin) return -8;
+            
+                return 12;
+            }
+            
             if (map == "5p_aceria_forests")
             {
                 if (currentScore <= 100 && !isWin) return 5;
@@ -805,6 +819,7 @@ namespace GSMasterServer.Servers
                         Score1v1 = x.Score1v1,
                         Score2v2 = x.Score2v2,
                         Score3v3_4v4 = x.Score3v3,
+                        ScoreBattleRoyale = x.ScoreBattleRoyale,
                         SteamId = x.SteamId,
                         Modified = x.Modified,
                         Best1v1Winstreak = x.Best1v1Winstreak
@@ -837,6 +852,7 @@ namespace GSMasterServer.Servers
                     Score1v1 = x.ActiveProfile?.Score1v1,
                     Score2v2 = x.ActiveProfile?.Score2v2,
                     Score3v3 = x.ActiveProfile?.Score3v3,
+                    ScoreBattleRoyale = x.ActiveProfile?.ScoreBattleRoyale,
                     Best1v1Winstreak = x.ActiveProfile?.Best1v1Winstreak,
                     Status = x.Status,
                     BStats = x.BStats,

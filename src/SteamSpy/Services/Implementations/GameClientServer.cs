@@ -2332,12 +2332,12 @@ namespace ThunderHawk
 
         string RusNews => @" Привет! Вы на сервере elamaunt'а под названием THUNDERHAWK
 
-Добро пожаловать на бета-тест 2.21
+Добро пожаловать на бета-тест 2.22
 .
 Пожалуйста, не играете в режимах 3х3 и 4х4, пока мы не пофиксим блоки игроков друг с другом, это может вызвать проблемы на сервере. 
 .
 Функционально сервер почти полностью готов. Остались некоторые незначительные ошибки и невозможность играть командой в автоматче.
-Временно вы можете играть только с использование модов ThunderHawk и BugFix.
+Временно вы можете играть только с использование модов ThunderHawk, Battle royale и BugFix.
 Фикс багов, доработки баланса и фикс пафинга (для Техники) внедрены в этот мод.
 Текущая версия сервера наиболее близка к тому, каким будет сервер в окончательном виде.
 .
@@ -2389,12 +2389,12 @@ namespace ThunderHawk
 
         string EnNews => @" Hello! You are on elamaunt's server THUNDERHAWK.
 .
-Welcome on BETA-test 2.21!
+Welcome on BETA-test 2.22!
 .
 Pls, don't play here 3x3 and 4x4 untill we fix blocks. 
 .
 The server is almost complete. There are some minor bugs and the inability to play as a team of friends in automatch.
-Temporary you can play only with ThunderHawk and bugfix mod.
+Temporary you can play only with ThunderHawk, Battle royale and bugfix mod.
 Bugfix, balance changes and pathfinding (for vehicle) fix are introduced in this mod.
 The current version of the server is closest to what the server will be completely. 
 .

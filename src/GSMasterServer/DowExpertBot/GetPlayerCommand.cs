@@ -39,7 +39,7 @@ namespace GSMasterServer.DowExpertBot
             if (isRus)
             {
                 sb.AppendLine($"Ник: **{player.Name}**");
-                sb.AppendLine($"Очки 1v1: **{player.Score1v1}**, 2v2: **{player.Score2v2}**, 3v3: **{player.Score3v3}**");
+                sb.AppendLine($"Очки 1v1: **{player.Score1v1}**, 2v2: **{player.Score2v2}**, 3v3: **{player.Score3v3}**, BattleRoyale: **{player.ScoreBattleRoyale}**");
                 sb.AppendLine(
                     $"Победы: **{player.WinsCount}**, Игры: **{player.GamesCount}**, Процент побед: **{Math.Round(player.WinRate * 100, 2)}%**, Макс. череда побед: **{player.Best1v1Winstreak}**");
                 sb.AppendLine(
@@ -52,7 +52,7 @@ namespace GSMasterServer.DowExpertBot
             else
             {
                 sb.AppendLine($"Nickname: **{player.Name}**");
-                sb.AppendLine($"MMR 1v1: **{player.Score1v1}**, 2v2: **{player.Score2v2}**, 3v3: **{player.Score3v3}**");
+                sb.AppendLine($"MMR 1v1: **{player.Score1v1}**, 2v2: **{player.Score2v2}**, 3v3: **{player.Score3v3}**, BattleRoyale: **{player.ScoreBattleRoyale}**");
                 sb.AppendLine(
                     $"Wins: **{player.WinsCount}**, Games: **{player.GamesCount}**, WinRate: **{Math.Round(player.WinRate * 100, 2)}%**, Max Winstreak: **{player.Best1v1Winstreak}**");
                 sb.AppendLine(

@@ -13,6 +13,7 @@
         public long? Score1v1 { get; set; }
         public long? Score2v2 { get; set; }
         public long? Score3v3 { get; set; }
+        public long? ScoreBattleRoyale { get; set; }
         public long? Best1v1Winstreak { get; set; }
         public string Status { get; set; }
         public string BFlags { get; set; }

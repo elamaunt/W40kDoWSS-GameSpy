@@ -19,6 +19,34 @@ namespace ThunderHawk.Core
 
                     Russian = new NewsLanguageItemDTO
                     {
+                        Title = "ThunderHawk 2.22",
+                        Annotation = "Выпущена beta battle royale!",
+                        Body =
+                            "<b>Дорогие игроки!</b>\n\n" +
+                            "Этот апдейт убирает все изменения стандартных карт в bugfix моде.\n" +
+                            "Пофикшен баг в регистрации, когда нельзя создать ник более 15 символов.\n" +
+                            "Выпущена beta версия Battle royale!"
+                    },
+
+                    English = new NewsLanguageItemDTO
+                    {
+                        Title = "ThunderHawk 2.22",
+                        Annotation = "Battle royale beta",
+                        Body =
+                            "<b>Dear Players!</b>\n\n" +
+                            "- This update remove any changes from classic maps in bugfix mod. Fix registration bug.\n" +
+                            " Also release thunderhawk battle royale beta!"
+                    },
+
+                    ImagePath = "pack://application:,,,/ThunderHawk;component/Resources/Images/Background_Stats.jpg",
+                    CreatedDate = new DateTime(2020, 05, 15)
+                },
+                new NewsItemDTO()
+                {
+                    Author = "Anibus",
+
+                    Russian = new NewsLanguageItemDTO
+                    {
                         Title = "ThunderHawk 2.21",
                         Annotation = "Изменения в проекте",
                         Body =

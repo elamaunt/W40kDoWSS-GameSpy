@@ -412,6 +412,7 @@ namespace ThunderHawk
                     Score1v1 = user.Score1v1,
                     Score2v2 = user.Score2v2,
                     Score3v3 = user.Score3v3,
+                    ScoreBattleRoyale = user.ScoreBattleRoyale,
                     Wins = user.Wins,
                     Games = user.Games,
                     Average = user.Average,
@@ -429,6 +430,7 @@ namespace ThunderHawk
                     info.Score1v1 = user.Score1v1;
                     info.Score2v2 = user.Score2v2;
                     info.Score3v3 = user.Score3v3;
+                    info.ScoreBattleRoyale = user.ScoreBattleRoyale;
                     info.Wins = user.Wins;
                     info.Games = user.Games;
                     info.Average = user.Average;
@@ -453,6 +455,7 @@ namespace ThunderHawk
                     Score1v1 = user.Score1v1.Value,
                     Score2v2 = user.Score2v2.Value,
                     Score3v3_4v4 = user.Score3v3.Value,
+                    ScoreBattleRoyale = user.ScoreBattleRoyale.Value,
                     WinsCount = user.Wins.Value,
                     GamesCount = user.Games.Value,
                     AverageDuration = user.Average.Value,
@@ -466,6 +469,7 @@ namespace ThunderHawk
                     stats.Score1v1 = user.Score1v1.Value;
                     stats.Score2v2 = user.Score2v2.Value;
                     stats.Score3v3_4v4 = user.Score3v3.Value;
+                    stats.ScoreBattleRoyale = user.ScoreBattleRoyale.Value;
                     stats.WinsCount = user.Wins.Value;
                     stats.GamesCount = user.Games.Value;
                     stats.AverageDuration = user.Average.Value;
@@ -490,6 +494,7 @@ namespace ThunderHawk
                     Score1v1 = message.Score1v1.Value,
                     Score2v2 = message.Score2v2.Value,
                     Score3v3_4v4 = message.Score3v3.Value,
+                    ScoreBattleRoyale = message.ScoreBattleRoyale.Value,
                     WinsCount = message.Wins.Value,
                     GamesCount = message.Games.Value,
                     AverageDuration = message.Average.Value,
@@ -503,6 +508,7 @@ namespace ThunderHawk
                     stats.Score1v1 = message.Score1v1.Value;
                     stats.Score2v2 = message.Score2v2.Value;
                     stats.Score3v3_4v4 = message.Score3v3.Value;
+                    stats.ScoreBattleRoyale = message.ScoreBattleRoyale.Value;
                     stats.WinsCount = message.Wins.Value;
                     stats.GamesCount = message.Games.Value;
                     stats.AverageDuration = message.Average.Value;
@@ -530,6 +536,7 @@ namespace ThunderHawk
                 user.Score1v1 = message.Score1v1;
                 user.Score2v2 = message.Score2v2;
                 user.Score3v3 = message.Score3v3;
+                user.ScoreBattleRoyale = message.ScoreBattleRoyale;
                 user.Race = message.Race;
 
                 UserChanged?.Invoke(user);
@@ -648,6 +655,7 @@ namespace ThunderHawk
                 Score1v1 = message.Score1v1,
                 Score2v2 = message.Score2v2,
                 Score3v3_4v4 = message.Score3v3_4v4,
+                ScoreBattleRoyale = message.ScoreBattleRoyale,
                 Disconnects = message.Disconnects,
                 AverageDuration = message.AverageDuration
             }, (profileId, stats) =>
@@ -660,6 +668,7 @@ namespace ThunderHawk
                 stats.Score1v1 = message.Score1v1;
                 stats.Score2v2 = message.Score2v2;
                 stats.Score3v3_4v4 = message.Score3v3_4v4;
+                stats.ScoreBattleRoyale = message.ScoreBattleRoyale;
                 stats.Disconnects = message.Disconnects;
                 stats.AverageDuration = message.AverageDuration;
 
@@ -865,7 +874,8 @@ namespace ThunderHawk
                 WinsCount = message.WinsCount,
                 Score1v1 = message.Score1v1,
                 Score2v2 = message.Score2v2,
-                Score3v3_4v4 = message.Score3v3_4v4
+                Score3v3_4v4 = message.Score3v3_4v4,
+                ScoreBattleRoyale = message.ScoreBattleRoyale
             };
 
             return _stats[message.ProfileId] = stats;
