@@ -17,8 +17,6 @@ namespace ThunderHawk.Core
             batch.RegisterControllerFactory(() => new TweakItemController());
             batch.RegisterControllerFactory(() => new TweaksPageController());
             batch.RegisterControllerFactory(() => new FaqPageController());
-            batch.RegisterControllerFactory(() => new NewsItemController());
-            batch.RegisterControllerFactory(() => new NewsViewerController());
             batch.RegisterControllerFactory(() => new ChatPageController());
             batch.RegisterControllerFactory(() => new ChatUserController());
             batch.RegisterControllerFactory(() => new StatsPageController());

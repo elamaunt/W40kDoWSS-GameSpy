@@ -84,15 +84,6 @@ namespace ThunderHawk
 
                 if (_shouldStopRunSs) throw new UnauthorizedAccessException();
 
-                if (mode == "ThunderHawk")
-                {
-                    CoreContext.ThunderHawkModManager.DeployModAndModule(path, "ThunderHawk");
-                }
-                else
-                {
-                    CoreContext.ThunderHawkModManager.DeployModAndModule(path, "JBugfixMod");
-                }
-
                 IPHostEntry entry = null;
 
                 try
@@ -126,19 +117,6 @@ namespace ThunderHawk
                         {
                             CopySchemes(path);
 
-                            if (mode == "Classic bug fix")
-                            {
-                                procParams += " -modname JBugfixMod";
-                            }
-                            else if (mode == "ThunderHawk")
-                            {
-                                procParams += " -modname ThunderHawk";
-                            }
-                            else
-                            {
-                                procParams += " -modname BattleRoyale";
-                            }
-
                             Logger.Info("Start "+ exeFileName +" with params " + procParams);
                             var ssProc = Process.Start(new ProcessStartInfo(exeFileName, procParams)
                             {
@@ -158,20 +136,6 @@ namespace ThunderHawk
                             Task.Delay(10000).ContinueWith(t => { CoreContext.InGameService.DropSsConsoleOffset(); });
 
                             ssProc.Exited += (s, e) => { tcs.TrySetResult(ssProc); };
-                        }
-                        else
-                        {
-                            Process steamGameProc = new Process();
-
-                            StartApp();
-
-                            void StartApp()
-                            {
-                                steamGameProc.StartInfo.FileName = SteamApiHelper.GetSteamExePath();
-                                steamGameProc.StartInfo.Arguments =
-                                    "-applaunch 9450 -modname DXP2 -nomovies -forcehighpoly";
-                                steamGameProc.Start();
-                            }
                         }
                     }
                     catch (Exception ex)

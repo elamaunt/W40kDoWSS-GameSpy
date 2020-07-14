@@ -14,15 +14,8 @@ namespace ThunderHawk
     public class MainWindowBackgroundController : BindingController<Window_Main, MainWindowViewModel>,
         ICustomContentPresenter
     {
-        string DefaultImagePath
-        {
-            get
-            {
-                if (IsNewYear)
-                    return "pack://application:,,,/ThunderHawk;component/Resources/Images/Background_DefaultNY.png";
-                return "pack://application:,,,/ThunderHawk;component/Resources/Images/Background_Default.png";
-            }
-        }
+        private string DefaultImagePath =
+            "pack://application:,,,/ThunderHawk;component/Resources/Images/Background.png";
 
         string _currentPath;
 
@@ -93,18 +86,7 @@ namespace ThunderHawk
                 return;
             }
 
-            var name = $"Background_{content.GetName()}";
-
-            if (IsNewYear)
-            {
-                var nyName = name + "NY";
-
-                if (WPFPageHelper.TryGetImagePath(nyName, out string nyPath))
-                {
-                    ChangeTo(nyPath);
-                    return;
-                }
-            }
+            var name = $"Background";
 
             if (WPFPageHelper.TryGetImagePath(name, out string path))
                 ChangeTo(path);

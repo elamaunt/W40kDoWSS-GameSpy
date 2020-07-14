@@ -198,7 +198,6 @@
     <Compile Include="Utils\TaskHelper.cs" />
     <Compile Include="Views\Elements\Controllers\ChatUserColorController.cs" />
     <Compile Include="Views\Elements\Controllers\GamePlayersColorController.cs" />
-    <Compile Include="Views\Elements\Controllers\MainNewsPresentingController.cs" />
     <Compile Include="Views\Elements\Element_Game.cs" />
     <Compile Include="Views\Elements\Element_ChatUser.cs" />
     <Compile Include="Views\ErrorNotificationWindow.xaml.cs">
@@ -639,27 +638,14 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <Resource Include="Resources\Images\BackButton.png" />
-    <Resource Include="Resources\Images\Background_Chat.png" />
-    <Resource Include="Resources\Images\Background_ChatNY.png" />
-    <Resource Include="Resources\Images\Background_Default.png" />
-    <Resource Include="Resources\Images\Background_DefaultNY.png" />
-    <Resource Include="Resources\Images\Background_FAQ.png" />
-    <Resource Include="Resources\Images\Background_InGame.jpg" />
-    <Resource Include="Resources\Images\Background_InGameNY.jpg" />
-    <Resource Include="Resources\Images\Background_Logs.jpg" />
-    <Resource Include="Resources\Images\Background_NewsViewer.jpg" />
-    <Resource Include="Resources\Images\Background_Stats.jpg" />
-    <Resource Include="Resources\Images\Background_Tweaks.jpg" />
+    <Resource Include="Resources\Images\Background.png" />
     <Resource Include="Resources\Images\Dark_Reapers_Squad.jpg" />
-    <Resource Include="Resources\Images\BestPlayer.png" />
     <Resource Include="Resources\Images\bottom.png" />
     <Resource Include="Resources\Images\cantrun-mark.png" />
     <Resource Include="Resources\Images\emptyslot_icon.png" />
     <Resource Include="Resources\Images\error-mark.png" />
     <Resource Include="Resources\Images\fullslot_icon.png" />
     <Resource Include="Resources\Images\Indicator_Aquila.png" />
-    <Resource Include="Resources\Images\InGame.jpg" />
-    <Resource Include="Resources\Images\MapContest.png" />
     <Resource Include="Resources\Images\Maps\2p_abandon_all_hope.jpg" />
     <Resource Include="Resources\Images\Maps\2p_absolute_zero.jpg" />
     <Resource Include="Resources\Images\Maps\2p_antiga_bay.jpg" />
@@ -855,7 +841,6 @@
     <Resource Include="Resources\Images\Maps\[tp_mod]meeting_of_minds.jpg" />
     <Resource Include="Resources\Images\Maps\[tp_mod]quests_triumph.jpg" />
     <Resource Include="Resources\Images\Maps\[tp_mod]shrine_of_excellion.jpg" />
-    <Resource Include="Resources\Images\Primarismarines.jpg" />
     <Resource Include="Resources\Images\Races\chaos.png" />
     <Resource Include="Resources\Images\Races\darkEldar.png" />
     <Resource Include="Resources\Images\Races\default.png" />
@@ -870,12 +855,9 @@
     <Resource Include="Resources\Images\settings.png" />
     <Resource Include="Resources\Images\star.png" />
     <Resource Include="Resources\Images\success-mark.png" />
-    <Resource Include="Resources\Images\test-news-image.jpg" />
-    <Resource Include="Resources\Images\ThunderHawk2.png" />
     <Resource Include="Resources\Images\thunderhawk_full.png" />
     <Resource Include="Resources\Images\thunderhawk_icon.png" />
     <Resource Include="Resources\Images\warning-mark.png" />
-    <Resource Include="Resources\Images\YbubakaGuide.png" />
     <Resource Include="Resources\Images\bottomArrow.png" />
     <Resource Include="thunderhawk.ico">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

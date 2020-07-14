@@ -32,34 +32,8 @@ namespace ThunderHawk.Core
 
             RecreateToken();
 
-            if (Frame.News.DataSource.IsNullOrEmpty())
-            {
-                CoreContext.NewsProvider.LoadLastNews(Token)
-                    .OnCompletedOnUi(news =>
-                    {
-                        var newsSource = news.Select(x =>
-                            {
-                                var itemVM = new NewsItemViewModel(x);
-
-                                itemVM.Navigate.Action = () =>
-                                    Frame.GlobalNavigationManager?.OpenPage<NewsViewerPageViewModel>(bundle =>
-                                    {
-                                        bundle.SetString(nameof(NewsViewerPageViewModel.NewsItem), x.AsJson());
-                                    });
-
-                                return itemVM;
-                            })
-                            .ToObservableCollection();
-
-                        newsSource[0].Big = true;
-                        Frame.News.DataSource = newsSource;
-                    })
-                    .AttachIndicator(Frame.LoadingIndicator);
-            }
-
             Frame.ActiveModRevision.Text = $"Thunderhawk <b>" + CoreContext.ThunderHawkModManager.ValidModVersion + "</b>";
             Frame.LaunchGame.Action = LaunchThunderhawk;
-            Frame.LaunchSteamGame.Action = LaunchSteam;
 
             // InGamePage
             Frame.InGameLabel.Text = "Refresh";
@@ -95,9 +69,7 @@ namespace ThunderHawk.Core
         public void LaunchThunderhawk()
         {
             Frame.LaunchGame.Enabled = false;
-            Frame.LaunchSteamGame.Enabled = false;
             Frame.LaunchGame.Text = "Thunderhawk launched";
-            Frame.LaunchSteamGame.Text = "Thunderhawk launched";
             Frame.NewsVisible = false;
             Frame.InGameVisible = true;
 
@@ -115,26 +87,11 @@ namespace ThunderHawk.Core
                 });
         }
 
-        void LaunchSteam()
-        {
-            Frame.LaunchGame.Enabled = false;
-            Frame.LaunchSteamGame.Enabled = false;
-            Frame.LaunchGame.Text = "Steam launched";
-            Frame.LaunchSteamGame.Text = "Steam launched";
-
-            //TODO: пофиксить этот костыль нормальным определением запущенного стим СС
-            Task.Delay(10000).ContinueWith(t => RunOnUIThread(() => { ResetButtons(); }));
-
-            CoreContext.LaunchService.LaunchGameAndWait("steam", Frame.GameModeSelectedValue, Frame.GlobalNavigationManager)
-                .OnFaultOnUi(ex => Frame.UserInteractions.ShowErrorNotification(ex.Message));
-        }
 
         void ResetButtons()
         {
             Frame.LaunchGame.Text = "Launch Thunderhawk";
-            Frame.LaunchSteamGame.Text = "Launch Steam";
             Frame.LaunchGame.Enabled = true;
-            Frame.LaunchSteamGame.Enabled = true;
         }
 
         /*

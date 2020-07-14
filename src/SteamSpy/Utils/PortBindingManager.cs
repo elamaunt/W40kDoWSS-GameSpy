@@ -14,11 +14,6 @@ namespace ThunderHawk.Utils
 
         public static event Action<CSteamID, byte[], uint> TestBufferReceived;
 
-        public static CSteamID? GetSteamIdByPort(ushort port)
-        {
-            return PortBindings.Values.FirstOrDefault(x => x.Port == port)?.RemoteUserSteamId;
-        }
-
         public static ServerSteamPortRetranslator AddOrUpdatePortBinding(CSteamID id)
         {
             return PortBindings.GetOrAdd(id, steamId => new ServerSteamPortRetranslator(steamId)); 
