@@ -24,7 +24,6 @@ namespace ThunderHawk.Core
             batch.RegisterControllerFactory(() => new GameItemController());
             
             batch.RegisterServiceFactory<IHttpService>(() => new ThunderHawkHttpService());
-            batch.RegisterServiceFactory<INewsProvider>(() => new TestNewsProvider());
             batch.RegisterServiceFactory<IOpenLogsService>(() => new OpenLogsService());
         }
         

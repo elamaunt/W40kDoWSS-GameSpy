@@ -11,9 +11,8 @@ namespace ThunderHawk
         const string ModFolderName = @"Mod";
 
         public string JBugfixModName => "JBugfixMod";
-        public string BattleRoyaleModName => "BattleRoyale";
-        public string ValidModName => "ThunderHawk";
-        public string ValidModVersion => "1.6.0";
+        public string ValidModName => "dxp2";
+        public string ValidModVersion => "1.2";
 
         public string CurrentModName { get; set; } = "---";
 

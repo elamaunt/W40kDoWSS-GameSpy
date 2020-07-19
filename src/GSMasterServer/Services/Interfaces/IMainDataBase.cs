@@ -36,8 +36,6 @@ namespace GSMasterServer.Services
         void UpdateProfile2X2(Profile2X2DBO profile);
         void UpdateProfile3X3(Profile3X3DBO profile);
         void UpdateProfile4X4(Profile4X4DBO profile);
-
-        NewsDBO[] GetLastNews(int count);
         GameDBO[] GetLastGames();
         void SaveLastActiveProfileForSteamId(ulong steamId, long profileId);
         long? GetLastActiveProfileForSteamId(ulong steamId);

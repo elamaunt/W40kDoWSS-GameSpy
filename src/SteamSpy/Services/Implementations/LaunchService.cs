@@ -46,6 +46,7 @@ namespace ThunderHawk
                 false; // флаг, который указывает, что окно авторизации уже было выведено пользователю.
             _shouldStopRunSs =
                 false; // флаг, который указывает, что мы должны прекратить запуск СС. Может установиться другим потоком.
+            _sendRequestState = false; // флаг, что мы отправили что-то на сервер и ждем
 
             this.navigationManager = navigationManager;
 
@@ -73,7 +74,9 @@ namespace ThunderHawk
 
                 CoreContext.AccountService.SendCheckAuthorizedOnSsProfile();
                 CoreContext.MasterServer.CanAuthorizeReceived += canAuthorizeReceive;
-                threadWaitHandle.WaitOne();
+                _sendRequestState = true;
+                threadWaitHandle.WaitOne(5000);
+                if (_sendRequestState) throw new Exception("Can't check login and password, try again");
                 if (!_canLoginByProfileRemindPassword)
                 {
                     Logger.Info("Login and password, remind in game, incorrect or empty, form user nics request.");
@@ -158,20 +161,23 @@ namespace ThunderHawk
 
 
         private IGlobalNavigationManager navigationManager;
+        private bool _sendRequestState;
         private bool _shouldStopRunSs;
         private bool _canLoginByProfileRemindPassword;
         private bool _authorizationWindowShow;
 
         void canAuthorizeReceive(bool canAuthorize)
         {
+            Logger.Info("Receive can authorize response from server: " + canAuthorize);
             _canLoginByProfileRemindPassword = canAuthorize;
+            _sendRequestState = false;
             if (!canAuthorize) _shouldStopRunSs = true;
             threadWaitHandle.Set();
         }
 
         void GetUserNicks(string[] nicks)
         {
-            
+            _sendRequestState = false;
             if (!_authorizationWindowShow)
             {
                 if (nicks.Length == 0)

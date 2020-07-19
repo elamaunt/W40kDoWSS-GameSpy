@@ -36,8 +36,7 @@
     <system:String x:Key="RuFontTweakDescription">Adds support for Russian text in the game chat.</system:String>
     <system:String x:Key="FogTweakTitle">Fog Remover</system:String>
     <system:String x:Key="FogTweakDescription">You can disable fog which obscures the view when the camera is far away</system:String>
-    <system:String x:Key="HotKeysTweakTitleThunder">Thunderhawk - Grid Keys (QWER HotKeys)</system:String>
-    <system:String x:Key="HotKeysTweakTitle">Bug fix mod - Grid Keys (QWER HotKeys)</system:String>
+    <system:String x:Key="HotKeysTweakTitle">Grid Keys (QWER HotKeys)</system:String>
     <system:String x:Key="HotKeysTweakDescription">You can install custom hotkeys with q,w,e,r,a,s,d,f,z,x,c,v buttons</system:String>
 
     <!-- Settings -->

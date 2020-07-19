@@ -379,8 +379,6 @@ namespace GSMasterServer.Servers
         
         public void HandleMessage(NetConnection connection, GameFinishedMessage message)
         {
-            if (message.ModName != "thunderhawk") message.IsRateGame = false;
-            
             if (message.SessionId == null || message.Players.IsNullOrEmpty())
                 return;
             
@@ -573,12 +571,6 @@ namespace GSMasterServer.Servers
                         break;
                 }
 
-                if (message.ModName == "Battle Royale")
-                {
-                    scoreSelector = StatsDelegates.ScoreBattleRoyaleSelector;
-                    scoreUpdater = StatsDelegates.ScoreBattleRoyaleUpdated;
-                }
-
                 var players1Team = teams[0];
                 var players2Team = teams[1];
 
@@ -630,19 +622,6 @@ namespace GSMasterServer.Servers
                     part.RatingDelta = rx;
 
                     scoreUpdater(info.Profile, Math.Max(1000L, scoreSelector(info.Profile) + rx));
-                }
-            }
-            else if (message.ModName == "BattleRoyale")
-            {    
-                for (int i = 0; i < playerInfos.Length; i++)
-                {
-                    var info = playerInfos[i];
-                    var playerData = game.Players[i];
-
-                    var isWin = playerData.FinalState == PlayerFinalState.Winner;
-
-                    var newBrRate = CorrectDeltaBattleRoyale(info.Profile.ScoreBattleRoyale, isWin, message.Map, i + 1);
-                    scoreUpdater(info.Profile, newBrRate);
                 }
             }
 

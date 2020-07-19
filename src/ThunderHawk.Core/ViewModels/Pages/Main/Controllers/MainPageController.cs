@@ -123,7 +123,7 @@ namespace ThunderHawk.Core
                     {
                         if (CoreContext.LaunchService.GameProcess == null)
                         {
-                            Frame.InfoLabel.Text = "Can't subscribe to soulstorm process";
+                            Frame.InfoLabel.Text = "Game not running";
                         }
                         else Frame.InfoLabel.Text = "Successful subscribe to Soulstorm - waiting for the game start";
 

@@ -557,9 +557,7 @@ namespace ThunderHawk
                 return;
             }
 
-            if (!activeMod.Equals(CoreContext.ThunderHawkModManager.ValidModName, StringComparison.OrdinalIgnoreCase) 
-            && !activeMod.Equals(CoreContext.ThunderHawkModManager.JBugfixModName, StringComparison.OrdinalIgnoreCase)
-            && !activeMod.Equals(CoreContext.ThunderHawkModManager.BattleRoyaleModName, StringComparison.OrdinalIgnoreCase))
+            if (!activeMod.Equals(CoreContext.ThunderHawkModManager.ValidModName, StringComparison.OrdinalIgnoreCase))
             {
                 if (!activeVersion.Equals(CoreContext.ThunderHawkModManager.ValidModVersion, StringComparison.OrdinalIgnoreCase))
                 {
@@ -814,28 +812,13 @@ namespace ThunderHawk
                     switch (key)
                     {
                         case "points":
-                            if (CoreContext.ThunderHawkModManager.CurrentModName.Equals(CoreContext
-                                .ThunderHawkModManager.BattleRoyaleModName.ToLower()))
-                            {
-                                keysResult.Append(stats.ScoreBattleRoyale);
-                            }
-                            else keysResult.Append(stats.Score1v1);
+                            keysResult.Append(stats.Score1v1);
                             break;
                         case "points2":
-                            if (CoreContext.ThunderHawkModManager.CurrentModName.ToLower().Equals(CoreContext
-                                .ThunderHawkModManager.BattleRoyaleModName.ToLower()))
-                            {
-                                keysResult.Append(stats.ScoreBattleRoyale);
-                            }
-                            else keysResult.Append(stats.Score2v2);
+                            keysResult.Append(stats.Score2v2);
                             break;
                         case "points3":
-                            if (CoreContext.ThunderHawkModManager.CurrentModName.ToLower().Equals(CoreContext
-                                .ThunderHawkModManager.BattleRoyaleModName.ToLower()))
-                            {
-                                keysResult.Append(stats.ScoreBattleRoyale);
-                            }
-                            else keysResult.Append(stats.Score3v3_4v4);
+                            keysResult.Append(stats.Score3v3_4v4);
                             break;
                         case "stars": keysResult.Append(stats.StarsCount); break;
                         case "games": keysResult.Append(stats.GamesCount); break;
@@ -2331,8 +2314,8 @@ namespace ThunderHawk
         }
 
         string RusNews => @" Привет! Вы на сервере elamaunt'а под названием THUNDERHAWK
-
-Добро пожаловать на бета-тест 2.22
+.
+Добро пожаловать на бета-тест 2.23
 .
 Пожалуйста, не играете в режимах 3х3 и 4х4, пока мы не пофиксим блоки игроков друг с другом, это может вызвать проблемы на сервере. 
 .
@@ -2389,12 +2372,12 @@ namespace ThunderHawk
 
         string EnNews => @" Hello! You are on elamaunt's server THUNDERHAWK.
 .
-Welcome on BETA-test 2.22!
+Welcome on BETA-test 2.23!
 .
 Pls, don't play here 3x3 and 4x4 untill we fix blocks. 
 .
 The server is almost complete. There are some minor bugs and the inability to play as a team of friends in automatch.
-Temporary you can play only with ThunderHawk, Battle royale and bugfix mod.
+Temporary you can play only with ss 1.2.
 Bugfix, balance changes and pathfinding (for vehicle) fix are introduced in this mod.
 The current version of the server is closest to what the server will be completely. 
 .

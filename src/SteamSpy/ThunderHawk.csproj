@@ -173,7 +173,6 @@
     <Compile Include="Tweaks\Camera.cs" />
     <Compile Include="Tweaks\FogSwitcher.cs" />
     <Compile Include="Tweaks\GridHotkeys.cs" />
-    <Compile Include="Tweaks\GridHotkeysThunder.cs" />
     <Compile Include="Tweaks\RuFont.cs" />
     <Compile Include="Tweaks\Unlocker.cs" />
     <Compile Include="Utils\LoginHelper.cs" />

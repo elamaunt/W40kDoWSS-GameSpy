@@ -20,11 +20,9 @@
         </Grid.Resources>
 
         <Grid Margin="0 0 0 0"
-              Visibility="{Binding Path=NewsVisible, Converter={StaticResource BoolToVisibilityConverter} }">
+              Visibility="{Binding Path=NewsVisible, Converter={StaticResource BoolToVisibilityConverter} }" />
 
-        </Grid>
-
-        <Grid Margin="-140 30 0 0" Width="1300" Height="500">
+        <Grid Grid.Row="0" Margin="-140 30 0 0" Width="1300" Height="500">
             <TextBlock Text="{DynamicResource GameInfo}" FontSize="17" Margin="180 38 0 30" Foreground="#AAcccccc" />
 
             <StackPanel Orientation="Vertical" ClipToBounds="False"
@@ -44,7 +42,8 @@
                                 Background="Transparent"
                                 Foreground="Orange" framework:WPFBinder.Frame="Change" />-->
                         </StackPanel>
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    Visibility="{Binding Path=InGameVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel Orientation="Vertical" VerticalAlignment="Center" HorizontalAlignment="Stretch">
                                 <Border BorderThickness="1" BorderBrush="#33FFFFFF" CornerRadius="8,8,3,3"
                                         Padding="0 8 0 0"
@@ -213,35 +212,36 @@
                         </StackPanel>
                     </StackPanel>
                 </Border>
+                <StackPanel Orientation="Horizontal" />
             </StackPanel>
 
         </Grid>
 
+        <Grid Margin="-140 330 0 0" Width="1300" Height="500">
+            <StackPanel Orientation="Vertical" ClipToBounds="False"
+                        Margin="180 60 180 140"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch"
+                        ScrollViewer.HorizontalScrollBarVisibility="Hidden"
+                        ScrollViewer.PanningMode="VerticalOnly">
+                <Button
+                    Margin="0 8 0 0"
+                    Padding="8 8 8 8"
+                    Height="52"
+                    FontSize="15"
+                    framework:WPFBinder.Frame="LaunchGame"
+                    Content="{DynamicResource LaunchGame}"
+                    Style="{DynamicResource LaunchButtonStyle}">
+                    <Button.Effect>
+                        <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="10"
+                                          Opacity="0.4" />
+                    </Button.Effect>
+                </Button>
+            </StackPanel>
+        </Grid>
+
         <DockPanel Grid.Row="2" Margin="0 0 0 35">
 
-            <StackPanel Orientation="Vertical" DockPanel.Dock="Left">
-
-                <Grid />
-
-                <StackPanel Orientation="Horizontal">
-                    <Button
-                        Margin="0 8 0 0"
-                        Padding="8 8 8 8"
-                        Width="200"
-                        Height="52"
-                        FontSize="15"
-                        framework:WPFBinder.Frame="LaunchGame"
-                        Content="{DynamicResource LaunchGame}"
-                        Style="{DynamicResource LaunchButtonStyle}">
-                        <Button.Effect>
-                            <DropShadowEffect Color="Black" Direction="270" ShadowDepth="2" BlurRadius="10"
-                                              Opacity="0.4" />
-                        </Button.Effect>
-                    </Button>
-                </StackPanel>
-
-
-            </StackPanel>
 
             <TextBlock DockPanel.Dock="Left" VerticalAlignment="Bottom" Margin="18 0 0 0"
                        Style="{DynamicResource FreeTextStyle}" framework:WPFBinder.Frame="Tweaks" TextWrapping="Wrap"

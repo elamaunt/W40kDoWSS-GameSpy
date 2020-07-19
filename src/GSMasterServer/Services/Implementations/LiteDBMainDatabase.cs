@@ -14,7 +14,6 @@ namespace GSMasterServer.Services.Implementations
         LiteCollection<SteamUserDBO> SteamUsersTable => _db.GetCollection<SteamUserDBO>("STEAMUSERS");
         LiteCollection<GameDBO> GamesTable => _db.GetCollection<GameDBO>("GAMES");
         LiteCollection<ProfileDBO> ProfilesTable => _db.GetCollection<ProfileDBO>("USERS");
-        LiteCollection<NewsDBO> NewsTable => _db.GetCollection<NewsDBO>("NEWS");
         LiteCollection<Profile1X1DBO> Profiles1X1Table => _db.GetCollection<Profile1X1DBO>("PROFILES1X1");
         LiteCollection<Profile2X2DBO> Profiles2X2Table => _db.GetCollection<Profile2X2DBO>("PROFILES2X2");
         LiteCollection<Profile3X3DBO> Profiles3X3Table => _db.GetCollection<Profile3X3DBO>("PROFILES3X3");
@@ -37,11 +36,6 @@ namespace GSMasterServer.Services.Implementations
             _db.Engine.EnsureIndex("GAMES", nameof(GameDBO.Type), false);
             _db.Engine.EnsureIndex("GAMES", nameof(GameDBO.UploadedBy), false);
             _db.Engine.EnsureIndex("GAMES", nameof(GameDBO.Duration), false);
-
-            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.Author), true);
-            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.CreatedDate), false);
-            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.EditedDate), false);
-            _db.Engine.EnsureIndex("NEWS", nameof(NewsDBO.NewsType), false);
 
         }
 
@@ -247,10 +241,6 @@ namespace GSMasterServer.Services.Implementations
             Profiles4X4Table.Update(profile4X4);
         }
 
-        public NewsDBO[] GetLastNews(int count)
-        {
-            return NewsTable.Find(Query.All(nameof(NewsDBO.CreatedDate), Query.Descending), 0, count).ToArray();
-        }
 
         public GameDBO[] GetLastGames()
         {
